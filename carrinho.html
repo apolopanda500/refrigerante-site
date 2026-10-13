@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meu Carrinho - Refrigerantes ConvenÃ§Ã£o</title>
 <link rel="stylesheet" href="style.css">
+<script src="theme.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
@@ -41,7 +42,8 @@
 <body>
 <header class="main-header"><div class="container"><nav>
 <div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
-<ul class="nav-links"><li><a href="index.html"><i class="fa fa-box"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico de Pedidos</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
+<span class="mobile-menu-btn"><span></span><span></span><span></span></span>
+<ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-box"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> HistÃ³rico de Pedidos</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> ConfiguraÃ§Ãµes</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="header-actions">
 <a class="share-btn" href="#" onclick="compartilharSite();return false;" title="Compartilhar"><i class="fa fa-share-alt"></i> Compartilhar</a>
 <div class="cart-icon" title="Itens no carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
@@ -73,7 +75,7 @@ function renderCarrinho() {
     updateCartCount();
 
     if (cart.length === 0) {
-        box.innerHTML = '<div class="cart-vazio"><i class="fa fa-shopping-cart"></i><p>Seu carrinho estÃ¡ vazio.</p><a class="link-voltar" href="index.html">Ver produtos</a></div>';
+        box.innerHTML = '<div class="cart-vazio"><i class="fa fa-shopping-cart"></i><p>Seu carrinho est&aacute; vazio.</p><a class="link-voltar" href="index.html">Ver produtos</a></div>';
         res.innerHTML = "";
         btn.style.display = "none";
         return;
@@ -115,7 +117,27 @@ function removerItem(idx) {
 
 renderCarrinho();
 </script>
+
+<script>
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    const nav = document.getElementById('mainNav');
+    
+    if (menuBtn && nav) {
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+        
+        // Close menu when clicking a link
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                nav.classList.remove('active');
+            });
+        });
+    }
+</script>
+
 </body>
 </html>
-
-

@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Configurações - Refrigerantes Convenção</title>
+<title>ConfiguraÃ§Ãµes - Refrigerantes ConvenÃ§Ã£o</title>
 <link rel="stylesheet" href="style.css">
+<script src="theme.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -33,39 +34,40 @@
 </head>
 <body>
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
-<ul class="nav-links"><li><a href="index.html">Produtos</a></li><li><a href="meus-pedidos.html">Histórico</a></li><li><a href="configuracoes.html">Configurações</a></li><li><a href="perfil.html">Perfil</a></li></ul>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
+<span class="mobile-menu-btn"><span></span><span></span><span></span></span>
+<ul class="nav-links" id="mainNav"><li><a href="index.html">Produtos</a></li><li><a href="meus-pedidos.html">HistÃ³rico</a></li><li><a href="configuracoes.html">ConfiguraÃ§Ãµes</a></li><li><a href="perfil.html">Perfil</a></li></ul>
 <div class="header-actions"><div class="cart-icon" onclick="window.location.href='checkout.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div></div>
 </nav></div></header>
 
 <section class="page"><div class="container">
 <div class="page-head">
-  <h1><i class="fa fa-cog"></i> Configurações</h1>
-  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
+  <h1><i class="fa fa-cog"></i> ConfiguraÃ§Ãµes</h1>
+  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catÃ¡logo</a>
 </div>
 
-<div class="info-box"><i class="fa fa-info-circle"></i> As configurações são salvas apenas neste dispositivo.</div>
+<div class="info-box"><i class="fa fa-info-circle"></i> As configuraÃ§Ãµes sÃ£o salvas apenas neste dispositivo.</div>
 
 <div class="config-card">
-  <h2><i class="fa fa-bell"></i> Notificações</h2>
+  <h2><i class="fa fa-bell"></i> NotificaÃ§Ãµes</h2>
   <div class="config-row">
-    <div class="config-label">Notificações de pedido<small>Avisos quando o pedido mudar de status</small></div>
+    <div class="config-label">NotificaÃ§Ãµes de pedido<small>Avisos quando o pedido mudar de status</small></div>
     <label class="toggle"><input type="checkbox" id="cfgNotifPedido" checked><span class="slider"></span></label>
   </div>
   <div class="config-row">
-    <div class="config-label">Promoções e ofertas<small>Novidades e descontos</small></div>
+    <div class="config-label">PromoÃ§Ãµes e ofertas<small>Novidades e descontos</small></div>
     <label class="toggle"><input type="checkbox" id="cfgNotifPromo"><span class="slider"></span></label>
   </div>
 </div>
 
 <div class="config-card">
-  <h2><i class="fa fa-eye"></i> Aparência</h2>
+  <h2><i class="fa fa-eye"></i> AparÃªncia</h2>
   <div class="config-row">
     <div class="config-label">Modo escuro<small>Tema escuro</small></div>
     <label class="toggle"><input type="checkbox" id="cfgModoEscuro"><span class="slider"></span></label>
   </div>
   <div class="config-row">
-    <div class="config-label">Animações reduzidas<small>Reduzir animações da interface</small></div>
+    <div class="config-label">AnimaÃ§Ãµes reduzidas<small>Reduzir animaÃ§Ãµes da interface</small></div>
     <label class="toggle"><input type="checkbox" id="cfgReducedMotion"><span class="slider"></span></label>
   </div>
 </div>
@@ -73,11 +75,11 @@
 <div class="config-card">
   <h2><i class="fa fa-shopping-cart"></i> Carrinho e Pedidos</h2>
   <div class="config-row">
-    <div class="config-label">Lembrar último pedido<small>Preencher o último endereço automaticamente</small></div>
+    <div class="config-label">Lembrar Ãºltimo pedido<small>Preencher o Ãºltimo endereÃ§o automaticamente</small></div>
     <label class="toggle"><input type="checkbox" id="cfgLembrarPedido" checked><span class="slider"></span></label>
   </div>
   <div class="config-row">
-    <div class="config-label">Limpar carrinho ao finalizar<small>Esvaziar o carrinho após enviar</small></div>
+    <div class="config-label">Limpar carrinho ao finalizar<small>Esvaziar o carrinho apÃ³s enviar</small></div>
     <label class="toggle"><input type="checkbox" id="cfgLimparCarrinho" checked><span class="slider"></span></label>
   </div>
 </div>
@@ -89,18 +91,38 @@
     <button class="btn-limpar" onclick="limparCarrinho()"><i class="fa fa-trash"></i> Limpar</button>
   </div>
   <div class="config-row">
-    <div class="config-label">Limpar histórico de pedidos<small>Remover todos os pedidos deste dispositivo</small></div>
+    <div class="config-label">Limpar histÃ³rico de pedidos<small>Remover todos os pedidos deste dispositivo</small></div>
     <button class="btn-perigo" onclick="limparHistorico()"><i class="fa fa-exclamation-triangle"></i> Apagar tudo</button>
   </div>
 </div>
 
 <div class="version-info">
-  <i class="fa fa-leaf"></i> Refrigerantes Convenção — v2.0<br>
-  Feito com carinho para você
+  <i class="fa fa-leaf"></i> Refrigerantes ConvenÃ§Ã£o â€” v2.0<br>
+  Feito com carinho para vocÃª
 </div>
 </div></section>
 
 <script src="script.js"></script>
+<script>
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    const nav = document.getElementById('mainNav');
+    
+    if (menuBtn && nav) {
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+        
+        // Close menu when clicking a link
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                nav.classList.remove('active');
+            });
+        });
+    }
+</script>
 <script>
 (function() {
     var prefs = {};
@@ -113,6 +135,20 @@
         el.addEventListener("change", function() {
             prefs[id] = el.checked;
             try { localStorage.setItem("refrigerantePrefs", JSON.stringify(prefs)); } catch(e) {}
+            if (id === "cfgModoEscuro") {
+                if (el.checked) {
+                    document.documentElement.setAttribute("data-theme", "dark");
+                } else {
+                    document.documentElement.removeAttribute("data-theme");
+                }
+            }
+            if (id === "cfgReducedMotion") {
+                if (el.checked) {
+                    document.documentElement.setAttribute("data-motion", "reduced");
+                } else {
+                    document.documentElement.removeAttribute("data-motion");
+                }
+            }
         });
     });
 })();
@@ -125,11 +161,13 @@ function limparCarrinho() {
 }
 function limparHistorico() {
     if (confirm("ATENCAO: Isso apagara TODO o historico de pedidos deste dispositivo. Continuar?")) {
-        try { Object.keys(localStorage).forEach(function(k) { if (k.indexOf("pedidos_") === 0) localStorage.removeItem(k); }); } catch(e) {}
+        try { Object.keys(localStorage).forEach(function(k) { if (k.indexOf("convencao_pedidos") === 0 || k.indexOf("pedidos_") === 0) localStorage.removeItem(k); }); } catch(e) {}
         alert("Historico apagado!");
     }
 }
 </script>
 </body>
 </html>
+
+
 

@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Convenção - Delivery OFICIAL</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2226%22 text-anchor=%22middle%22 fill=%22%23e53935%22>🥤</text></svg>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<script src="theme.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;color:#333;background:#f0f2f5;padding-bottom:80px}
@@ -67,23 +70,100 @@ a{text-decoration:none;color:inherit}
 .fb2{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:#ECC400;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,.3);cursor:pointer;z-index:200;border:none}
 .fbb{position:absolute;top:-4px;right:-4px;background:#e53935;color:#fff;font-size:.65rem;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 @media(max-width:768px){.nl{display:none}.sw{top:48px}.tb{top:100px}}
+
+/* === IDENTIDADE VISUAL OFICIAL (cores extraidas do site oficial) === */
+.hd{background:#3d4465}
+.lg{color:#ffb822}
+.nl a{color:#c5cbe3}
+.bs{background:#ffb822;color:#3d4465}
+.ci{color:#fff}
+.cb,.fbb{background:#fc0758}
+.gi{color:#ffb822}
+.gc{background:#eeeef4;color:#646c9a}
+.gv{color:#a1a8c3}
+.pc,.gb{box-shadow:0 0 13px 0 rgba(82,63,105,0.05);border:1px solid #eeeef4}
+.pp{color:#3d4465}
+.qa{background:#ffb822;color:#3d4465}
+.qa.ok{background:#1dc9b7;color:#fff}
+.ft{background:#3d4465;color:#c5cbe3}
+.ft a{color:#ffb822}
+.fb2{background:#ffb822;color:#3d4465}
+.sw,.tb,.gb,.pc{background:#fff}
+
+/* === TEMA ESCURO (home) === */
+[data-theme="dark"] .sw,
+[data-theme="dark"] .tb,
+[data-theme="dark"] .gb,
+[data-theme="dark"] .pc{background:#1c1f33 !important;border-color:#353a5c !important}
+[data-theme="dark"] .gh:hover{background:#232742 !important}
+[data-theme="dark"] .gn,
+[data-theme="dark"] .pch{color:#e6e8f2 !important}
+[data-theme="dark"] .pds,
+[data-theme="dark"] .sf i{color:#a1a8c3 !important}
+[data-theme="dark"] .pib{background:#232742 !important}
+[data-theme="dark"] .sf input{background:#232742 !important;border-color:#353a5c !important;color:#e6e8f2 !important}
+[data-theme="dark"] .ti{background:#1c1f33 !important;border-color:#353a5c !important;color:#e6e8f2 !important}
+[data-theme="dark"] .ti.on{background:#ffb822 !important;color:#3d4465 !important}
+[data-theme="dark"] .qc{border-color:#353a5c !important}
+[data-theme="dark"] .qb{background:#232742 !important;color:#e6e8f2 !important}
+[data-theme="dark"] .qv{border-color:#353a5c !important;color:#e6e8f2 !important}
+[data-theme="dark"] .gc{background:#353a5c !important;color:#e6e8f2 !important}
+[data-theme="dark"] .pp{color:#ffb822 !important}
 </style>
 </head>
 <body>
 <div class="ld" id="ldBox"><div class="ldb"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="ldt">Carregando<br><b>Convenção - Delivery</b></div></div>
 <header class="hd"><nav>
 <div class="lg"><i class="fa fa-bottle-water"></i> Convenção</div>
-<ul class="nl"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
+<span class="mobile-menu-btn"><span></span><span></span><span></span></span>
+<ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="ha"><button class="bs" onclick="partilhar()"><i class="fa fa-share-alt"></i> Compartilhar</button>
 <div class="ci" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="cb" id="cBag">0</span></div></div>
 </nav></header>
 <div class="sw"><div class="si"><div class="sf"><i class="fa fa-search"></i><input type="text" placeholder="Buscar produto..." oninput="fs(this.value)"></div></div></div>
 <div class="tb"><div class="tr2" id="trRow"></div></div>
 <main class="pw" id="pwMain"></main>
-<footer class="ft"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p></footer>
+<footer class="ft"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p>
+<div id="operatingStatus" style="padding:8px;background:#e8f5e9;color:#2e7d32;border-radius:6;margin-top:4px;font-size:0.85rem"></div></footer>
 <button class="fb2" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
 
+<script>
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    const nav = document.getElementById('mainNav');
+    
+    if (menuBtn && nav) {
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+        
+        // Close menu when clicking a link
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                nav.classList.remove('active');
+            });
+        });
+    }
+</script>
 <script src="app.js"></script>
-</body>
+<footer class="ft"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p>
+<p style="font-size:0.7rem;color:#666;margin-top:4px">Atualizações: seg a sex, fechar sex 15h - Horário SP</p></footer>
 </html>
 
+
+/* ===== ABAS DE CATEGORIA (barra que estava sem estilo) ===== */
+.tr2{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;-webkit-overflow-scrolling:touch}
+.tr2::-webkit-scrollbar{height:6px}
+.tr2::-webkit-scrollbar-thumb{background:#d9d9dc;border-radius:6px}
+.ti{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;flex:0 0 auto;
+    padding:9px 16px;border:1px solid #eeeef4;border-radius:23px;background:#fff;
+    color:#646c9a;font-size:.85rem;font-weight:600;cursor:pointer;
+    transition:background .2s,color .2s,border-color .2s}
+.ti:hover{border-color:#ffb822;color:#3d4465}
+.ti.on{background:#3d4465;border-color:#3d4465;color:#fff}
+.ti .cn{display:inline-flex;align-items:center;justify-content:center;
+    min-width:20px;height:20px;padding:0 6px;border-radius:10px;
+    background:#eeeef4;color:#646c9a;font-size:.72rem;font-weight:700}
+.ti.on .cn{background:#ffb822;color:#3d4465}

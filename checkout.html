@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Finalizar Pedido - Refrigerantes ConvenÃ§Ã£o</title>
 <link rel="stylesheet" href="style.css">
+<script src="theme.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
@@ -37,8 +38,9 @@
 </head>
 <body>
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
-<ul class="nav-links"><li><a href="index.html"><i class="fa fa-box"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico de Pedidos</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
+<span class="mobile-menu-btn"><span></span><span></span><span></span></span>
+<ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-box"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico de Pedidos</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="header-actions">
 <div class="cart-icon" title="Itens"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
 </div>
@@ -99,6 +101,26 @@
 </div></section>
 
 <script src="script.js"></script>
+<script>
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    const nav = document.getElementById('mainNav');
+    
+    if (menuBtn && nav) {
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+        
+        // Close menu when clicking a link
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                nav.classList.remove('active');
+            });
+        });
+    }
+</script>
 
 <script>
 cart = getCart();
@@ -170,6 +192,7 @@ function enviarPedido() {
         itens: itens, subtotal: c.subtotal, total: c.total
     });
     localStorage.setItem("ultimoPedido", pedido.id);
+    try { localStorage.setItem("convencao_usuario", JSON.stringify({ nome: nome, tel: tel })); } catch(e) {}
     limparCarrinho();
     window.location.href = "pedido-sucesso.html";
 }

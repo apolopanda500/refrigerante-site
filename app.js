@@ -10,18 +10,18 @@ var CT=[
 {id:"ch",nm:"Chopp Ravache",ic:"fa-beer-mug-empty"}];
 var PD=[];
 function addP(c,n,d,p,i){PD.push({ct:c,nm:n,ds:d,pr:p,im:i})}
-addP("de","Chinotto 269ml Pct c12","Pack 12 latinhas","R$ 25,00","img/p01.jpg");
-addP("de","MSX 269ml Pct c12","Pack 12 latinhas","R$ 25,00","img/p02.jpg");
+// Destaques (sem repetir produtos que ja tem categoria propria)
 addP("de","Guarana Zero 269ml Pct c12","Sem acucar","R$ 35,00","img/p03.jpg");
-addP("de","Frutaina 2L Pct c6","4 sabores","R$ 27,00","img/p04.jpg");
-addP("2l","Cola 2L","Garrafa 2L","R$ 12,00","img/p05.jpg");
-addP("2l","Guarana 2L","Garrafa 2L","R$ 10,00","img/p06.jpg");
-addP("2l","Guarana Zero 2L","Zero 2L","R$ 10,00","img/p07.jpg");
-addP("2l","Laranja 2L","Garrafa 2L","R$ 10,00","img/p08.jpg");
-addP("2l","Uva 2L","Garrafa 2L","R$ 10,00","img/p09.jpg");
-addP("2l","Limao 2L","Garrafa 2L","R$ 10,00","img/p10.jpg");
-addP("2l","Abacaxi 2L","Garrafa 2L","R$ 10,00","img/p11.jpg");
-addP("2l","Guarana 2L Pct c6","Pack 6","R$ 55,00","img/p06.jpg");
+// Refrigerantes 2L - somente pacotes c6
+addP("2l","Guarana 2L Pct c6","Pack 6 garrafas","R$ 27,00","img/p06.jpg");
+addP("2l","Guarana Zero 2L Pct c6","Zero - Pack 6","R$ 27,00","img/p07.jpg");
+addP("2l","Frutaina 2L Pct c6","4 sabores - Pack 6","R$ 27,50","img/p04.jpg");
+addP("2l","Laranja 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p08.jpg");
+addP("2l","Uva 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p09.jpg");
+addP("2l","Limao 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p10.jpg");
+addP("2l","Abacaxi 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p11.jpg");
+addP("2l","Vitts Limao 2L Pct c6","Pack 6 garrafas","R$ 28,00","img/p27.jpg");
+addP("2l","Cola 2L Pct c6","Pack 6 garrafas","R$ 29,00","img/p05.jpg");
 addP("60","Guarana 600ml","Garrafa 600ml","R$ 6,00","img/p12.jpg");
 addP("60","Laranja 600ml","Garrafa 600ml","R$ 6,00","img/p13.jpg");
 addP("60","Uva 600ml","Garrafa 600ml","R$ 6,00","img/p14.jpg");
@@ -41,8 +41,7 @@ addP("ag","Agua 510ml Pct c12","Sem gas","R$ 12,00","img/p22.jpg");
 addP("ag","Agua Gas 510ml Pct c12","Com gas","R$ 12,00","img/p23.jpg");
 addP("ag","Agua 1500ml Pct c06","Sem gas","R$ 14,80","img/p24.jpg");
 addP("ag","Agua Gas 1500ml Pct c06","Com gas","R$ 14,80","img/p25.jpg");
-addP("ag","Vitts Limao 350ml","Limao","R$ 4,00","img/p26.jpg");
-addP("ag","Vitts Limao 2L","Limao 2L","R$ 10,00","img/p27.jpg");
+addP("35","Vitts Limao 350ml","Limao - Lata 350ml","R$ 4,00","img/p26.jpg");
 addP("ch","Chopp IPA 500ml","500ml","R$ 15,00","img/p28.jpg");
 addP("ch","Chopp Black 500ml","500ml","R$ 15,00","img/p29.jpg");
 addP("ch","Chopp Gold 500ml","500ml","R$ 15,00","img/p30.jpg");
@@ -69,7 +68,7 @@ h+='<div class="pc" data-d="'+(p.nm+" "+p.ds).toLowerCase()+'" data-pid="'+gid+'
 h+='<div class="pch">'+p.nm+'</div>';
 h+='<div class="pib"><img class="pi" src="'+p.im+'" alt="p" loading="lazy" onerror="this.style.display=\'none\'"></div>';
 h+='<div class="pdd"><span class="pds">'+p.ds+'</span><span class="pp">'+p.pr+'</span></div>';
-h+='<div class="qr"><div class="qc"><button type="button" class="qb" onclick="mQ(this,-1)">-</button><span class="qv">0</span><button type="button" class="qb" onclick="mQ(this,1)">+</button></div><button class="qa" onclick="aC(this)">Add</button></div></div>'}
+ h+='<div class="qr"><div class="qc"><button type="button" class="qb" onclick="mQ(this,-1)">-</button><span class="qv">0</span><button type="button" class="qb" onclick="mQ(this,1)">+</button></div><button class="qa" onclick="aC(this)">Adicionar</button></div></div>'}
 h+='</div></div></div>'}
 var w=document.getElementById("pwMain");if(w)w.innerHTML=h}
 function tgG(id){var e=document.getElementById("g-"+id);if(e)e.classList.toggle("op")}
@@ -96,8 +95,8 @@ var pid=cd.getAttribute("data-pid").split(".");var pr=PD[parseInt(pid[1])];if(!p
 var pv=0;var mm=String(pr.pr).match(/[\d.,]+/);if(mm)pv=parseFloat(mm[0].replace(/\./g,"").replace(",","."));
 var ct=JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");
 ct.push({name:pr.nm,price:pr.pr,priceNum:pv,qty:q});localStorage.setItem("refrigeranteCart",JSON.stringify(ct));
-cd.querySelector(".qv").textContent="0";bt.classList.add("ok");bt.textContent="OK!";
-setTimeout(function(){bt.classList.remove("ok");bt.textContent="Add"},1500);uC()}catch(e){}}
+ cd.querySelector(".qv").textContent="0";bt.classList.add("ok");bt.textContent="Adicionado!";
+ setTimeout(function(){bt.classList.remove("ok");bt.textContent="Adicionar"},1500);uC()}catch(e){}}
 function partilhar(){try{var u=location.href.split("#")[0];
 if(navigator.share){navigator.share({title:"Convencao",text:"Confira!",url:u}).catch(function(){})}
 else if(navigator.clipboard){navigator.clipboard.writeText(u);alert("Link copiado!")}}catch(e){}}

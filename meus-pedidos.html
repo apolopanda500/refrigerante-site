@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meus Pedidos - Refrigerantes Convenção</title>
+<title>Meus Pedidos - Refrigerantes ConvenÃ§Ã£o</title>
 <link rel="stylesheet" href="style.css">
+<script src="theme.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -40,29 +41,36 @@
 </head>
 <body>
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
-<ul class="nav-links"><li><a href="index.html">Produtos</a></li><li><a href="meus-pedidos.html">Meus Pedidos</a></li></ul>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
+<span class="mobile-menu-btn"><span></span><span></span><span></span></span>
+<ul class="nav-links" id="mainNav"><li><a href="index.html">Produtos</a></li><li><a href="meus-pedidos.html">Meus Pedidos</a></li></ul>
 <div class="header-actions"></div>
 </nav></div></header>
 
 <section class="page"><div class="container">
 <div class="page-head">
   <h1><i class="fa fa-clipboard-list"></i> Meus Pedidos</h1>
-  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
+  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catÃ¡logo</a>
 </div>
 
-<div class="aviso-info"><i class="fa fa-info-circle"></i> Digite o WhatsApp usado no pedido para acompanhar o status e o histórico.</div>
+<div class="aviso-info"><i class="fa fa-info-circle"></i> Seus pedidos aparecem automaticamente abaixo, com data e hora.</div>
 
-<div class="busca-card">
+<div id="loginBox" class="busca-card">
   <div class="busca-linha">
-    <input id="fTelBusca" type="text" placeholder="Seu WhatsApp (ex: 21999999999)">
-    <button class="btn-buscar" onclick="buscar()"><i class="fa fa-search"></i> Buscar</button>
+    <input id="fNomeLogin" type="text" placeholder="Seu nome">
+    <input id="fTelLogin" type="text" placeholder="Seu WhatsApp (ex: 21999999999)">
+    <button class="btn-buscar" onclick="entrar()"><i class="fa fa-sign-in"></i> Entrar</button>
   </div>
-  <div class="filtros" id="filtros" style="display:none">
-    <button class="filtro ativo" data-f="todos" onclick="filtrar('todos',this)">Todos</button>
-    <button class="filtro" data-f="andamento" onclick="filtrar('andamento',this)">Em andamento</button>
-    <button class="filtro" data-f="finalizados" onclick="filtrar('finalizados',this)">Finalizados</button>
-  </div>
+</div>
+
+<div class="filtros" id="filtros" style="display:none">
+  <button class="filtro ativo" data-f="todos" onclick="filtrar('todos',this)">Todos</button>
+  <button class="filtro" data-f="andamento" onclick="filtrar('andamento',this)">Em andamento</button>
+  <button class="filtro" data-f="finalizados" onclick="filtrar('finalizados',this)">Finalizados</button>
+</div>
+
+<div id="usuarioLogado" style="display:none;margin-bottom:18px;background:#e8f5e9;border-left:4px solid #43a047;padding:12px 16px;border-radius:8px;font-size:0.9rem;color:#2e7d32">
+  <i class="fa fa-user-check"></i> Conectado como <b id="nomeUsuario"></b> — <a href="#" onclick="sair();return false;" style="color:#c62828;font-weight:bold">sair</a>
 </div>
 
 <div id="listaPedidos"></div>
@@ -70,15 +78,77 @@
 
 <script src="script.js"></script>
 <script>
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    const nav = document.getElementById('mainNav');
+    
+    if (menuBtn && nav) {
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+        
+        // Close menu when clicking a link
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                nav.classList.remove('active');
+            });
+        });
+    }
+</script>
+<script>
 let pedidosAtuais = [];
 let filtroAtual = "todos";
+let usuarioLogado = null;
+
+function chaveSessao() { return "convencao_usuario"; }
+
+function salvarSessao(nome, tel) {
+    usuarioLogado = { nome: nome, tel: tel };
+    try { localStorage.setItem(chaveSessao(), JSON.stringify(usuarioLogado)); } catch(e) {}
+}
+function carregarSessao() {
+    try {
+        var s = localStorage.getItem(chaveSessao());
+        return s ? JSON.parse(s) : null;
+    } catch(e) { return null; }
+}
+function sair() {
+    try { localStorage.removeItem(chaveSessao()); } catch(e) {}
+    usuarioLogado = null;
+    pedidosAtuais = [];
+    document.getElementById("loginBox").style.display = "";
+    document.getElementById("usuarioLogado").style.display = "none";
+    document.getElementById("filtros").style.display = "none";
+    document.getElementById("listaPedidos").innerHTML = "";
+}
+
+function entrar() {
+    const nome = document.getElementById("fNomeLogin").value.trim();
+    const tel = document.getElementById("fTelLogin").value.trim();
+    if (!tel) { alert("Digite seu WhatsApp."); return; }
+    salvarSessao(nome || "Cliente", tel);
+    carregarPedidosDoUsuario();
+}
+
+function carregarPedidosDoUsuario() {
+    if (!usuarioLogado) return;
+    pedidosAtuais = pedidosPorTelefone(usuarioLogado.tel);
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("usuarioLogado").style.display = "";
+    document.getElementById("nomeUsuario").innerText = usuarioLogado.nome + " (" + usuarioLogado.tel + ")";
+    document.getElementById("filtros").style.display = pedidosAtuais.length ? "flex" : "none";
+    filtroAtual = "todos";
+    document.querySelectorAll(".filtro").forEach(function(b) { b.classList.toggle("ativo", b.dataset.f === "todos"); });
+    render();
+}
 
 function buscar() {
-    const tel = document.getElementById("fTelBusca").value.trim();
+    const tel = document.getElementById("fNomeLogin").value.trim() || document.getElementById("fTelLogin").value.trim();
     if (!tel) { alert("Digite seu WhatsApp."); return; }
-    pedidosAtuais = pedidosPorTelefone(tel);
-    document.getElementById("filtros").style.display = pedidosAtuais.length ? "flex" : "none";
-    render();
+    salvarSessao(usuarioLogado ? usuarioLogado.nome : "Cliente", tel);
+    carregarPedidosDoUsuario();
 }
 
 function filtrar(tipo, btn) {
@@ -98,7 +168,7 @@ function render() {
     }
 
     if (pedidosAtuais.length === 0) {
-        box.innerHTML = '<div class="vazio"><i class="fa fa-inbox"></i><p>Nenhum pedido encontrado para este WhatsApp.</p></div>';
+        box.innerHTML = '<div class="vazio"><i class="fa fa-inbox"></i><p>Você ainda não fez nenhum pedido.</p><a href="index.html" class="link-voltar">Ver produtos</a></div>';
         return;
     }
     if (lista.length === 0) {
@@ -115,12 +185,12 @@ function render() {
         h += '</div>';
         h += '<div class="pedido-total"><button class="btn-detalhe" onclick="toggleDetalhe(\'' + p.id + '\')"><i class="fa fa-chevron-down"></i> Ver detalhes</button><span class="val">' + formatBRL(p.total) + '</span></div>';
         h += '<div class="detalhe-extra" id="det-' + p.id + '">';
-        h += '<div><b>Entrega:</b> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + ' — ' + p.bairro + '</div>';
+        h += '<div><b>Entrega:</b> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + ' â€” ' + p.bairro + '</div>';
         h += '<div><b>Pagamento:</b> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco p/ " + p.troco + ")" : "") + '</div>';
-        h += '<div><b>Frete:</b> ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</div>';
+        h += '<div><b>Frete:</b> ' + (p.frete === 0 ? "GRÃTIS" : formatBRL(p.frete)) + '</div>';
         h += '<div class="timeline"><b>Acompanhamento:</b>';
         p.historico.forEach(function(ev) {
-            h += '<div class="timeline-item"><i class="fa fa-circle" style="font-size:0.5rem"></i> ' + (STATUS_LABEL[ev.status] || ev.status) + ' — ' + dataHora(ev.quando) + '</div>';
+            h += '<div class="timeline-item"><i class="fa fa-circle" style="font-size:0.5rem"></i> ' + (STATUS_LABEL[ev.status] || ev.status) + ' â€” ' + dataHora(ev.quando) + '</div>';
         });
         h += '</div></div></div>';
     });
@@ -132,8 +202,15 @@ function toggleDetalhe(id) {
     if (el) el.style.display = (el.style.display === "block") ? "none" : "block";
 }
 
-document.getElementById("fTelBusca").addEventListener("keypress", function(e) { if (e.key === "Enter") buscar(); });
+document.getElementById("fTelLogin").addEventListener("keypress", function(e) { if (e.key === "Enter") entrar(); });
+document.getElementById("fNomeLogin").addEventListener("keypress", function(e) { if (e.key === "Enter") entrar(); });
+
+// restaurar sessao e mostrar pedidos automaticamente
+usuarioLogado = carregarSessao();
+if (usuarioLogado) carregarPedidosDoUsuario();
 </script>
 </body>
 </html>
+
+
 
