@@ -214,6 +214,7 @@ function renderAdmin() {
     box.innerHTML = h;
 }
 function mudarStatus(id, status) {
+    if (!confirm("Confirma a alteração de status?")) return;
     atualizarStatus(id, status);
     renderAdmin();
 }
