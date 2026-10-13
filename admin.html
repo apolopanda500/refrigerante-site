@@ -171,14 +171,13 @@ function renderAdmin() {
     const pedidos = getPedidos();
     // Stats
     const total = pedidos.length;
-    const aguardando = pedidos.filter(p => p.status === "aguardando").length;
-    const andamento = pedidos.filter(p => ["confirmado","separacao","enviado"].includes(p.status)).length;
-    const faturamento = pedidos.filter(p => p.status !== "cancelado").reduce((t, p) => t + p.total, 0);
+    const cancelados = pedidos.filter(p => p.status === "cancelado").length;
     document.getElementById("stats").innerHTML =
         '<div class="stat"><div class="num">' + total + '</div><div class="lbl">Total de pedidos</div></div>' +
         '<div class="stat"><div class="num" style="color:#FF9800">' + aguardando + '</div><div class="lbl">Aguardando</div></div>' +
         '<div class="stat azul"><div class="num">' + andamento + '</div><div class="lbl">Em andamento</div></div>' +
-        '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>';
+        '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>' +
+        '<div class="stat" style="color:#f44336"><div class="num" style="color:#f44336">' + cancelados + '</div><div class="lbl">Cancelados</div></div>';
 
     let lista = pedidos;
     if (filtroAdminAtual !== "todos") lista = pedidos.filter(p => p.status === filtroAdminAtual);
