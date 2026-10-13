@@ -116,6 +116,7 @@ function renderAdmin() {
     const aguardando = pedidos.filter(p => p.status === "aguardando").length;
     const andamento = pedidos.filter(p => ["confirmado","separacao","enviado"].includes(p.status)).length;
     const faturamento = pedidos.filter(p => p.status !== "cancelado").reduce((t, p) => t + p.total, 0);
+    const cancelados = pedidos.filter(p => p.status === "cancelado").length;
     document.getElementById("stats").innerHTML =
         '<div class="stat"><div class="num">' + total + '</div><div class="lbl">Total de pedidos</div></div>' +
         '<div class="stat"><div class="num" style="color:#FF9800">' + aguardando + '</div><div class="lbl">Aguardando</div></div>' +
@@ -132,6 +133,7 @@ function renderAdmin() {
     }
     let h = "";
     lista.forEach(function(p) {
+        if (bairroAtual !== p.bairro) { bairroAtual = p.bairro; h += '<h3 style="margin:14px 0 6px;font-size:1rem;color:var(--primary-color);border-bottom:2px solid var(--accent-color);padding-bottom:4px">Bairro: ' + (p.bairro || "Sem bairro") + '</h3>'; }
         h += '<div class="pedido-card">';
         h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta">' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
         h += '<div class="pedido-info"><i class="fa fa-user"></i> ' + p.nome + ' &nbsp; <i class="fa fa-phone"></i> ' + p.tel + '</div>';
