@@ -62,6 +62,20 @@ a{text-decoration:none;color:inherit}
 .ti.on{color:#c4a600;border-bottom-color:#ECC400;background:#fffde7}
 </style>
 </head>
+<body>
+<div class="ld" id="ldBox"><div class="ldb"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="ldt">Carregando<br><b>Convenção - Delivery</b></div></div>
+<header class="hd"><nav>
+<div class="lg"><i class="fa fa-bottle-water"></i> Convenção</div>
+<ul class="nl"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
+<div class="ha"><button class="bs" onclick="partilhar()"><i class="fa fa-share-alt"></i> Compartilhar</button>
+<div class="ci" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="cb" id="cBag">0</span></div></div>
+</nav></header>
+<div class="sw"><div class="si"><div class="sf"><i class="fa fa-search"></i><input type="text" placeholder="Buscar produto..." oninput="fs(this.value)"></div></div></div>
+<div class="tb"><div class="tr2" id="trRow"></div></div>
+<main class="pw" id="pwMain"></main>
+<footer class="ft"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p></footer>
+<button class="fb2" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
+
 
 <div class="ld" id="ldBox"><div class="ldb"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="ldt">Carregando<br><b>Convenção - Delivery</b></div></div>
 <header class="hd"><nav>
@@ -74,126 +88,8 @@ a{text-decoration:none;color:inherit}
 <div class="tb"><div class="tr2" id="trRow"></div></div>
 <main class="pw" id="pwMain"></main>
 <footer class="ft"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p></footer>
-<button class="fb2" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
-
-<body>
-
-<script>
-var CT=[
-{id:"de",nm:"Destaques",ic:"fa-star"},
-{id:"2l",nm:"Refrigerantes 2L",ic:"fa-bottle-water"},
-{id:"60",nm:"Refrigerantes 600ml",ic:"fa-glass-water"},
-{id:"35",nm:"Refrigerantes 350ml",ic:"fa-mug-hot"}];
-var PD=[
-{ct:"de",nm:"Chinotto Convenção 269ml - Pacote c/12",ds:"Pack 12 latinhas",pr:"R$ 25,00",im:"img/Chinotto 269ml.jpg"},
-{ct:"de",nm:"Energético MSX Convenção 269ml - Pacote c/12",ds:"Pack 12 latinhas",pr:"R$ 25,00",im:"img/Energético MSX 269 ml .jpg"},
-{ct:"de",nm:"Guaraná Convenção Zero Açúcar 269ml - Pct c/12",ds:"Sem açúcar",pr:"R$ 35,00",im:"img/Guaraná Convenção Zero Açúcar Lata 269ml.jpg"},
-{ct:"de",nm:"Frutaína Convenção 2L - Pacote c/6",ds:"Laranja, limão, uva, abacaxi",pr:"R$ 27,00",im:"img/Frutaína Convenção 2L.jpg"},
-{ct:"2l",nm:"Cola Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 12,00",im:"img/cola2L.jpg"},
-{ct:"2l",nm:"Guaraná Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/guarana2L.jpg"},
-{ct:"2l",nm:"Guaraná Convenção Zero 2L",ds:"Zero 2 litros",pr:"R$ 10,00",im:"img/guaranaZERO2L.jpg"},
-{ct:"2l",nm:"Laranja Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/laranja2L.jpg"},
-{ct:"2l",nm:"Uva Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/uva2L.jpg"},
-{ct:"2l",nm:"Limão Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/limao2L.jpg"},
-{ct:"2l",nm:"Abacaxi Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/abacaxi2L.jpg"},
-{ct:"2l",nm:"Guaraná Convenção 2L - Pacote c/6",ds:"Pack 6 garrafas",pr:"R$ 55,00",im:"img/guarana2L.jpg"},
-{ct:"60",nm:"Guaraná Convenção 600ml",ds:"Garrafa 600ml",pr:"R$ 6,00",im:"img/Guaraná 600ml.jpg"},
-{ct:"60",nm:"Laranja Convenção 600ml",ds:"Garrafa 600ml",pr:"R$ 6,00",im:"img/Laranja 600ml.jpg"},
-{ct:"60",nm:"Uva Convenção 600ml",ds:"Garrafa 600ml",pr:"R$ 6,00",im:"img/Uva 600ml.jpg"},
-{ct:"60",nm:"Abacaxi Convenção 600ml",ds:"Garrafa 600ml",pr:"R$ 6,00",im:"img/Abacaxi 600ml.jpg"}
-];
-<script>
-var M2=[
-{id:"35",nm:"Refrigerantes 350ml",ic:"fa-mug-hot"},
-{id:"re",nm:"Refrescos e Chinotto",ic:"fa-lemon"},
-{id:"mx",nm:"MSX Energético",ic:"fa-bolt"},
-{id:"ag",nm:"Água",ic:"fa-tint"}];
-M2.forEach(function(x){CT.push(x)});
-var P2=[
-{ct:"35",nm:"Cola Convenção 350ml",ds:"Lata 350ml",pr:"R$ 5,00",im:"img/Cola Convenção 350ml.jpg"},
-{ct:"35",nm:"Guaraná Convenção 350ml",ds:"Lata 350ml",pr:"R$ 4,50",im:"img/Guaraná 350ml.jpg"},
-{ct:"35",nm:"Laranja Convenção 350ml",ds:"Lata 350ml",pr:"R$ 4,50",im:"img/Laranja 350ml.jpg"},
-{ct:"35",nm:"Uva Convenção 350ml",ds:"Lata 350ml",pr:"R$ 4,50",im:"img/Uva 350ml.jpg"},
-{ct:"35",nm:"Abacaxi Convenção 350ml",ds:"Lata 350ml",pr:"R$ 4,50",im:"img/Abacaxi 350ml.jpg"},
-{ct:"re",nm:"Chinotto Convenção 269ml",ds:"Lata 269ml",pr:"R$ 5,00",im:"img/Chinotto 269ml.jpg"},
-{ct:"re",nm:"Chinotto Convenção 269ml - Pacote c/12",ds:"Pack 12 latinhas",pr:"R$ 25,00",im:"img/Chinotto 269ml.jpg"},
-{ct:"re",nm:"Frutaína Convenção 2L",ds:"Laranja, limão, uva, abacaxi",pr:"R$ 7,00",im:"img/Frutaína Convenção 2L.jpg"},
-{ct:"mx",nm:"Energético MSX Convenção 269ml",ds:"Lata 269ml",pr:"R$ 5,00",im:"img/Energético MSX 269 ml .jpg"},
-{ct:"mx",nm:"Energético MSX Convenção 269ml - Pacote c/12",ds:"Pack 12 latinhas",pr:"R$ 25,00",im:"img/Energético MSX 269 ml .jpg"},
-{ct:"mx",nm:"Energético MSX Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 12,00",im:"img/MSX Convenção 2L.jpg"},
-{ct:"ag",nm:"Água Mineral Convenção 510ml - Pacote c/12",ds:"Sem gás",pr:"R$ 12,00",im:"img/Água 510ml.jpg"},
-{ct:"ag",nm:"Água Convenção com Gás 510ml - Pacote c/12",ds:"Com gás",pr:"R$ 12,00",im:"img/Água 510ml com gás.jpg"},
-{ct:"ag",nm:"Água Mineral Convenção 1500ml - Pacote c/06",ds:"Sem gás 1,5L",pr:"R$ 14,80",im:"img/Água 1500ml.jpg"},
-{ct:"ag",nm:"Água Convenção com Gás 1500ml - Pacote c/06",ds:"Com gás 1,5L",pr:"R$ 14,80",im:"img/AGUA Com GAS 1,5L.jpg"},
-<script>
-CT.push({id:"ch",nm:"Chopp Ravache",ic:"fa-beer-mug-empty"});
-var CH=[
-{n:"Chopp Ravache IPA 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE IPA 500ML.jpg"},
-{n:"Chopp Ravache Black 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE BLACK 500ML.jpg"},
-{n:"Chopp Ravache Gold 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE GOLD PET 500ML.jpg"},
-{n:"Chopp Ravache Pilsen 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE PILSEN PET 500ML.jpg"},
-{n:"Chopp Ravache Vinho 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE VINHO 500ML.jpg"},
-{n:"Chopp Ravache Malzbier 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE MALZBIER 500ML.jpg"},
-{n:"Chopp LEV 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP LEV 500ML.jpg"},
-{n:"Chopp Ravache Vinho PET 20L",d:"Barril 20 litros",p:"R$ 318,87",i:"img/CHOPP RAVACHE VINHO PET 20L, 30L.jpg"},
-{n:"Chopp Ravache Vinho PET 30L",d:"Barril 30 litros",p:"R$ 438,11",i:"img/CHOPP RAVACHE VINHO PET 20L, 30L.jpg"},
-{n:"Chopp Ravache PET 20L",d:"IPA, Gold, Pilsen, APA, LEV",p:"R$ 300,00",i:"img/CHOPP, RAVACHE, APA,GOLD,PILSEN,IPA,LEV, 20L,30L.jpg"},
-{n:"Chopp Ravache PET 30L",d:"IPA, Gold, Pilsen, APA, LEV",p:"R$ 400,00",i:"img/CHOPP, RAVACHE, APA,GOLD,PILSEN,IPA,LEV, 20L,30L.jpg"}];
-CH.forEach(function(x){PD.push({ct:"ch",nm:x.n,ds:x.d,pr:x.p,im:x.i})});
-</script>
-
-<script>
-function rT(){var h="";for(var i=0;i<CT.length;i++){var c=CT[i];var n=0;for(var j=0;j<PD.length;j++)if(PD[j].ct===c.id)n++;
-h+='<button class="ti'+(i===0?' on':'')+'" data-g="'+c.id+'" onclick="goG(\''+c.id+'\')"><i class="fa '+c.ic+'"></i> '+c.nm+' <span class="cn">'+n+'</span></button>'}document.getElementById("trRow").innerHTML=h}
-function rP(){var h="";for(var k=0;k<CT.length;k++){var c=CT[k];var ps=[];
-for(var j=0;j<PD.length;j++)if(PD[j].ct===c.id)ps.push({o:PD[j],x:j});
-if(!ps.length)continue;
-h+='<div class="gb op" id="g-'+c.id+'" data-gid="'+c.id+'"><div class="gh" onclick="tgG(\''+c.id+'\')"><div class="gl"><i class="fa '+c.ic+' gi"></i><span class="gn">'+c.nm+'</span><span class="gc">'+ps.length+'</span></div><i class="fa fa-chevron-down gv"></i></div><div class="gbd"><div class="pg">';
-for(var m=0;m<ps.length;m++){var p=ps[m].o,gid=c.id+"."+ps[m].x;
-h+='<div class="pc" data-d="'+(p.nm+" "+p.ds).toLowerCase()+'" data-pid="'+gid+'"><div class="pch">'+p.nm+'</div><div class="pib"><img class="pi" src="'+p.im+'" alt="'+p.nm+'" loading="lazy" onerror="this.style.display=\'none\'"></div><div class="pdd"><span class="pds">'+p.ds+'</span><span class="pp">'+p.pr+'</span></div><div class="qr"><div class="qc"><button type="button" class="qb" onclick="mQ(this,-1)">-</button><span class="qv">0</span><button type="button" class="qb" onclick="mQ(this,1)">+</button></div><button class="qa" onclick="aC(this)"><i class="fa fa-cart-plus"></i> Add</button></div></div>'}
-h+='</div></div></div>'}document.getElementById("pwMain").innerHTML=h}
-</script>
-
-{ct:"ag",nm:"Vitt's Limão Convenção 350ml",ds:"Refrigerante de limão",pr:"R$ 4,00",im:"img/Vitt s limão 350ml.jpg"},
-{ct:"ag",nm:"Vitt's Limão Convenção 2L",ds:"Refrigerante de limão 2L",pr:"R$ 10,00",im:"img/vittslimao2L.jpg"}];
-P2.forEach(function(x){PD.push({ct:x.ct,nm:x.nm,ds:x.ds,pr:x.pr,im:x.im})});
-</script>
-
-</script>
-
+<button class="fb2" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
 <script src="script.js"></script>
-<script>
-function tgG(id){var e=document.getElementById("g-"+id);if(e)e.classList.toggle("op")}
-function goG(id){var e=document.getElementById("g-"+id);if(!e)return;
-var t=e.getBoundingClientRect().top+window.pageYOffset-170;window.scrollTo({top:t,behavior:"smooth"});
-var a=document.querySelectorAll(".ti");for(var i=0;i<a.length;i++)a[i].classList.remove("on");
-var b=document.querySelector('.ti[data-g="'+id+'"]');if(b){b.classList.add("on");b.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"})}}
-function fs(t){var s=(t||"").toLowerCase().trim();
-var cs=document.querySelectorAll(".pc");for(var i=0;i<cs.length;i++){var c=cs[i];var d=c.getAttribute("data-d")||"";c.style.display=(!s||d.indexOf(s)>=0)?"":"none"}
-var gs=document.querySelectorAll(".gb");for(var j=0;j<gs.length;j++){var g=gs[j];var ok=false;
-var ps=g.querySelectorAll(".pc");for(var k=0;k<ps.length;k++)if(ps[k].style.display!=="none")ok=true;
-g.style.display=ok?"":"none";if(s&&ok)g.classList.add("op")}}
-function mQ(bt,dl){var s=bt.parentNode.querySelector(".qv");s.textContent=Math.max(0,(parseInt(s.textContent)||0)+dl)}
-function uC(){try{var it=JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");var t=0;for(var i=0;i<it.length;i++)t+=(it[i].qty||0);
-var a=document.getElementById("cBag"),b=document.getElementById("fBag");if(a)a.textContent=t;if(b)b.textContent=t}catch(e){}}
-function aC(bt){var cd=bt.parentNode.parentNode;var q=parseInt(cd.querySelector(".qv").textContent)||0;
-if(q<=0){alert("Use os botões + e - para escolher a quantidade.");return}
-var pid=cd.getAttribute("data-pid").split(".");var pr=null;
-for(var i=0;i<PD.length;i++){if(i===parseInt(pid[1])){pr=PD[i];break}}
-if(!pr)return;
-var pv=0;var mm=String(pr.pr).match(/[\d.,]+/);if(mm)pv=parseFloat(mm[0].replace(/\./g,"").replace(",","."));
-try{var ct=JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");ct.push({name:pr.nm,price:pr.pr,priceNum:pv,qty:q});localStorage.setItem("refrigeranteCart",JSON.stringify(ct))}catch(e){}
-cd.querySelector(".qv").textContent="0";bt.classList.add("ok");bt.innerHTML='<i class="fa fa-check"></i> OK!';
-setTimeout(function(){bt.classList.remove("ok");bt.innerHTML='<i class="fa fa-cart-plus"></i> Add'},1500);uC()}
-function partilhar(){var u=location.href.split("#")[0];
-if(navigator.share){navigator.share({title:"Refrigerantes Convenção",text:"Confira nosso catálogo!",url:u}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(u);alert("Link copiado!")}}
-document.addEventListener("DOMContentLoaded",function(){rT();rP();uC();
-setTimeout(function(){var l=document.getElementById("ldBox");if(l)l.classList.add("off")},700);
-window.addEventListener("scroll",function(){var s=window.pageYOffset+200;
-var gs=document.querySelectorAll(".gb");for(var i=0;i<gs.length;i++){var g=gs[i];
-if(s>=g.offsetTop&&s<g.offsetTop+g.offsetHeight){var gid=g.getAttribute("data-gid");
-var ts=document.querySelectorAll(".ti");for(var j=0;j<ts.length;j++)ts[j].classList.remove("on");
-var tb=document.querySelector('.ti[data-g="'+gid+'"]');if(tb)tb.classList.add("on")}}})});
-</script>
+<script src="app.js"></script>
 </body>
 </html>
