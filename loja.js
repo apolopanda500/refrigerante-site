@@ -45,6 +45,112 @@ var REGIOES = [
 var DIA_SOMENTE_PEDIDOS = 1;
 var TEXTO_SOMENTE_PEDIDOS = "Segunda-feira é o dia de montar os pedidos. A entrega começa na terça.";
 
+var OBS_CARGA = "O caminhão carrega um dia antes para sair na entrega.";
+
+/* ---------- HORARIOS: EMPRESA e ENTREGA sao diferentes ---------- */
+/* A LOJA abre para montar pedidos. O CAMINHAO entrega em outro horario. */
+var HORARIOS = {
+    loja: {
+        abre: 9,          // 09:00
+        fecha: 15,        // 15:00
+        rotulo: "Loja / Empresa",
+        obs: "Horario em que a loja monta e organiza os pedidos."
+    },
+    entrega: {
+        abre: 6,          // 06:00 - o freteiro sai as 6h
+        fecha: 18,        // 18:00 - entrega ate as 18h
+        rotulo: "Entrega nas ruas",
+        obs: "O freteiro sai a partir das 06:00 e entrega ate as 18:00."
+    },
+    carga: {
+        antecedencia: 1,  // o caminhao carrega UM DIA ANTES de sair
+        rotulo: "Carga",
+        obs: "O caminhao carrega um dia antes para sair na entrega."
+    }
+};
+
+/* ---------- agora em horario de SAO PAULO ---------- */
+function agoraSP() {
+    var d = new Date();
+    var utc = d.getTime() + d.getTimezoneOffset() * 60000;
+    var h = new Date(utc - 3 * 3600000);
+    return {
+        dia: h.getDay(),
+        hh: h.getHours(),
+        mm: h.getMinutes(),
+        minutos: h.getHours() * 60 + h.getMinutes()
+    };
+}
+
+/* ---------- a LOJA esta aberta agora? ---------- */
+function lojaAberta(agora) {
+    var a = agora || agoraSP();
+    if (typeof somentePedidos === "function" && somentePedidos(a.dia)) return false;
+    if (regioesDoDia(a.dia).length === 0) return false;
+    var L = HORARIOS.loja;
+    return a.minutos >= L.abre * 60 && a.minutos < L.fecha * 60;
+}
+
+/* ---------- a ENTREGA esta acontecendo agora? ---------- */
+function entregaAberta(agora) {
+    var a = agora || agoraSP();
+    if (typeof somentePedidos === "function" && somentePedidos(a.dia)) return false;
+    if (regioesDoDia(a.dia).length === 0) return false;
+    var E = HORARIOS.entrega;
+    return a.minutos >= E.abre * 60 && a.minutos < E.fecha * 60;
+}
+
+/* ---------- texto "das 6h as 18h" ---------- */
+function textoHorario(qual) {
+    var h = HORARIOS[qual];
+    return "das " + h.abre + "h às " + h.fecha + "h";
+}
+
+/* ============================================
+   PROXIMO DIA DE ENTREGA
+   O caminhao carrega UM DIA ANTES, entao um pedido
+   feito hoje so pode sair na entrega de AMANHA
+   ou depois, e so se for dia de entrega da regiao.
+   ============================================ */
+function proximoDiaEntrega(regiaoId, hoje) {
+    var dia = (hoje === undefined) ? agoraSP().dia : hoje;
+    var salto = HORARIOS.carga.antecedencia;   // 1 dia de antecedencia
+    for (var i = 1; i <= 14; i++) {
+        var cand = (dia + salto + i - 1 + 14) % 7;
+        if (atendeHoje(regiaoId, cand)) return cand;
+    }
+    return -1;
+}
+
+/* dia em que o caminhao carrega esse pedido */
+function diaDaCarga(regiaoId, hoje) {
+    var entrega = proximoDiaEntrega(regiaoId, hoje);
+    if (entrega === -1) return -1;
+    return (entrega - HORARIOS.carga.antecedencia + 7) % 7;
+}
+
+/* ---------- resumo completo para o cliente ---------- */
+function resumoEntrega(regiaoId) {
+    var a = agoraSP();
+    var reg = null;
+    REGIOES.forEach(function (r) { if (r.id === regiaoId) reg = r; });
+    if (!reg) return null;
+
+    var prox = proximoDiaEntrega(regiaoId, a.dia);
+    var carga = diaDaCarga(regiaoId, a.dia);
+
+    return {
+        regiao: reg,
+        entregaEm: prox,
+        entregaEmNome: prox === -1 ? "—" : NOMES_DIA_LONGOS[prox],
+        cargaEm: carga,
+        cargaEmNome: carga === -1 ? "—" : NOMES_DIA_LONGOS[carga],
+        janelaEntrega: textoHorario("entrega"),
+        horarioLoja: textoHorario("loja"),
+        atendendoHoje: reg.dias.indexOf(a.dia) >= 0
+    };
+}
+
 /* ---------- CAMINHOES ---------- */
 var CAMINHOES = [
     {

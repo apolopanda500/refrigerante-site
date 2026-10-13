@@ -117,6 +117,10 @@
   <div class="form-row">
     <div class="form-group"><label>Bairro</label><input type="text" id="pBairro" data-conta="bairro" placeholder="Seu bairro"></div>
     <div class="form-group"><label>Complemento</label><input type="text" id="pComplemento" data-conta="complemento" placeholder="Apto, bloco, etc."></div>
+    <div class="form-group"><label>Número</label><input type="text" id="pNumero" data-conta="numero" placeholder="Número"></div>
+    <div class="form-group"><label>Rua</label><input type="text" id="pRua" data-conta="rua" placeholder="Nome da rua"></div>
+    <div class="form-group"><label>CEP</label><input type="text" id="pCep" data-conta="cep" placeholder="CEP"></div>
+    <div class="form-group"><label>Observação</label><input type="text" id="pObs" data-conta="observacao" placeholder="Obs."></div>
   </div>
   <button class="btn-salvar" onclick="salvarPerfil()"><i class="fa fa-save"></i> Salvar alterações</button>
 </div>
@@ -164,6 +168,10 @@
     if (perfil.endereco) document.getElementById("pEndereco").value = perfil.endereco;
     if (perfil.bairro) document.getElementById("pBairro").value = perfil.bairro;
     if (perfil.complemento) document.getElementById("pComplemento").value = perfil.complemento;
+    if (perfil.numero) document.getElementById("pNumero").value = perfil.numero;
+    if (perfil.rua) document.getElementById("pRua").value = perfil.rua;
+    if (perfil.cep) document.getElementById("pCep").value = perfil.cep;
+    if (perfil.observacao) document.getElementById("pObs").value = perfil.observacao;
     if (perfil.nome) document.getElementById("avatarNome").textContent = perfil.nome;
     if (perfil.tel) document.getElementById("avatarTel").textContent = perfil.tel;
     var tp = 0, ti = 0, tg = 0;
@@ -182,7 +190,8 @@ function salvarPerfil() {
 
     var dados = {
         nome: f("pNome"), tel: f("pTel"), email: f("pEmail"),
-        endereco: f("pEndereco"), bairro: f("pBairro"), complemento: f("pComplemento")
+        endereco: f("pEndereco"), bairro: f("pBairro"), complemento: f("pComplemento"),
+        numero: f("pNumero"), rua: f("pRua"), cep: f("pCep"), observacao: f("pObs")
     };
 
     if (!dados.nome) { alert("Preencha o nome completo."); document.getElementById("pNome").focus(); return; }

@@ -56,6 +56,31 @@
 [data-theme="dark"] .reg-opcao.ativa{border-color:#ffb822;background:#232742}
 [data-theme="dark"] .aviso-regiao.ok{background:#14331f;color:#8fe0a8}
 [data-theme="dark"] .aviso-regiao.aviso{background:#3a3319;color:#ffd97a}
+
+.janela-entrega{
+    margin-top:12px;border-radius:12px;overflow:hidden;
+    border:2px solid var(--borda);background:var(--bg-alt);
+}
+.je-topo{
+    display:flex;align-items:center;gap:10px;padding:11px 13px;
+    background:var(--primary-color);color:#fff;font-size:.9rem;font-weight:700;
+}
+.je-topo i{color:var(--accent-color)}
+[data-theme="dark"] .je-topo{background:#ffb822;color:#3d4465}
+.je-linha{
+    display:flex;justify-content:space-between;gap:10px;align-items:center;
+    padding:9px 13px;font-size:.85rem;color:var(--text-color);
+    border-top:1px solid var(--borda);
+}
+.je-linha b{color:var(--primary-color);font-weight:700;text-align:right}
+.je-obs{
+    padding:10px 13px;font-size:.8rem;line-height:1.45;
+    color:var(--text-muted);border-top:1px dashed var(--borda);
+}
+.je-obs b{color:var(--primary-color)}
+[data-theme="dark"] .je-linha b,
+[data-theme="dark"] .je-obs b{color:#ffb822}
+[data-theme="dark"] .je-obs{color:#a1a8c3}
 </style>
 </head>
 <body>
@@ -79,6 +104,7 @@
       <label>Região de entrega *</label>
       <select id="fRegiao"></select>
       <div id="avisoRegiao" class="aviso-regiao"></div>
+      <div id="janelaEntrega"></div>
     </div>
     <div class="aviso" style="text-align:left"><i class="fa fa-info-circle"></i> Frete grátis para pedidos acima de R$ 150,00.</div>
   </div>
@@ -178,16 +204,27 @@ function calcular() {
 }
 
 function enviarPedido() {
-    const nome = document.getElementById("fNome").value.trim();
-    const tel = document.getElementById("fTel").value.trim();
-    const end = document.getElementById("fEnd").value.trim();
-    const bairro = document.getElementById("fBairro").value.trim();
-    const comp = document.getElementById("fComp").value.trim();
+    var d = (typeof Conta !== "undefined" && Conta.dados()) || {};
+    const nome = String(d.nome || "").trim();
+    const tel = String(d.tel || "").trim();
+    const end = String(d.endereco || "").trim();
+    const bairro = String(d.bairro || "").trim();
+    const rua = String(d.rua || "").trim();
+    const numero = String(d.numero || "").trim();
+    const comp = String(d.complemento || "").trim();
+    const obs = String(d.observacao || "").trim();
 
-    if (!nome || !tel || !end || !bairro) {
-        alert("Preencha os campos obrigatórios: Nome, WhatsApp, Endereço e Bairro.");
+    if (!nome || !tel || (!end && !rua) || !bairro) {
+        alert("Preencha nome, WhatsApp, endereço (rua/endereço) e bairro no Perfil.");
+        if (typeof mostrarAvisoPerfilFaltando === "function") mostrarAvisoPerfilFaltando();
         return;
     }
+
+    // monta o endereco completo para o pedido
+    var enderecoCompleto = [rua, numero].filter(function(x){return x;}).join(", ");
+    if (!enderecoCompleto) enderecoCompleto = end;
+    if (comp) enderecoCompleto += " - " + comp;
+    if (obs) enderecoCompleto += " (" + obs + ")";
 
 
     // confirmacao antes de enviar (respeita a configuracao do cliente)
@@ -211,13 +248,13 @@ function enviarPedido() {
     const itens = cart.map(function(i) { return { name: i.name, qty: i.qty, priceNum: i.priceNum, subtotal: i.priceNum * i.qty }; });
 
     const pedido = criarPedido({
-        nome: nome, tel: tel, end: end, bairro: bairro, comp: comp,
+        nome: nome, tel: tel, end: enderecoCompleto, bairro: bairro, comp: comp,
         regiao: regiaoTexto, frete: c.frete, pagamento: pagSelecionado, troco: trocoVal,
         itens: itens, subtotal: c.subtotal, total: c.total, digital: true
     });
     localStorage.setItem("ultimoPedido", pedido.id);
     if (typeof agendarAvanco === "function") agendarAvanco(pedido);
-    if (typeof Conta !== "undefined") Conta.salvar({ nome: nome, tel: tel, endereco: end, bairro: bairro, complemento: comp });
+    if (typeof Conta !== "undefined") Conta.salvar({ nome: nome, tel: tel, endereco: enderecoCompleto, bairro: bairro, complemento: comp, rua: rua, numero: numero, observacao: obs });
     limparCarrinho();
     window.location.href = "pedido-sucesso.html";
 }
@@ -240,8 +277,9 @@ function montarRegioes(){
     });
     if (atual && document.querySelector('#fRegiao option[value="' + atual + '"]')) sel.value = atual;
     else sel.value = REGIOES[0].id;
-    sel.onchange = function () { atualizarRegiao(); };
+    sel.onchange = function () { atualizarRegiao(); if (typeof pintarJanelaEntrega === "function") pintarJanelaEntrega(); };
     atualizarRegiao();
+    if (typeof pintarJanelaEntrega === "function") pintarJanelaEntrega();
 }
 
 function atualizarRegiao(){
@@ -300,6 +338,35 @@ function preencherComConta(){
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", preencherComConta);
 else preencherComConta();
+
+</script>
+<script>
+/* ===== quando o pedido sai e quando chega ===== */
+function pintarJanelaEntrega(){
+    var box = document.getElementById("janelaEntrega");
+    if (!box || typeof resumoEntrega !== "function") return;
+    var id = document.getElementById("fRegiao").value;
+    var r = resumoEntrega(id);
+    if (!r) { box.innerHTML = ""; return; }
+
+    var cargaHoje = (r.cargaEm === (typeof agoraSP === "function" ? agoraSP().dia : -1));
+    var cargaTxt = cargaHoje
+        ? "Hoje (" + r.cargaEmNome + ")"
+        : r.cargaEmNome;
+
+    box.innerHTML = '<div class="janela-entrega">'
+        + '<div class="je-topo"><i class="fa fa-truck"></i> Seu pedido vai sair assim</div>'
+        + '<div class="je-linha"><span>Região</span><b>' + r.regiao.nome + '</b></div>'
+        + '<div class="je-linha"><span>Dias de entrega</span><b>' + r.regiao.diasTexto + '</b></div>'
+        + '<div class="je-linha"><span>Caminhão carrega</span><b>' + cargaTxt + '</b></div>'
+        + '<div class="je-linha"><span>Entrega acontece</span><b>' + r.entregaEmNome + '</b></div>'
+        + '<div class="je-linha"><span>Horário da entrega</span><b>' + horaTexto(HORARIOS.entrega.abre, 0)
+        + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</b></div>'
+        + '<div class="je-obs"><i class="fa fa-info-circle"></i> ' + HORARIOS.carga.obs
+        + ' A loja funciona das ' + horaTexto(HORARIOS.loja.abre, 0)
+        + ' às ' + horaTexto(HORARIOS.loja.fecha, 0) + '.</div>'
+        + '</div>';
+}
 
 </script>
 </body>

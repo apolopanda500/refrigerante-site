@@ -6,7 +6,7 @@
 var Conta = (function () {
 
     var K_CONTA  = "convencao_usuario";   // { nome, tel }
-    var K_PERFIL = "refrigerantePerfil";   // { nome, tel, email, endereco, bairro, complemento }
+    var K_PERFIL = "refrigerantePerfil";   // { nome, tel, email, endereco, bairro, complemento, rua, numero, observacao, cep }
     var K_FOTO   = "refrigeranteFoto";     // dataURL da foto
     var MAX_FOTO = 1.6 * 1024 * 1024;     // 1,5 MB
 
@@ -34,7 +34,11 @@ var Conta = (function () {
             email: perfil.email || "",
             endereco: perfil.endereco || "",
             bairro: perfil.bairro || "",
+            rua: perfil.rua || "",
+            numero: perfil.numero || "",
             complemento: perfil.complemento || "",
+            observacao: perfil.observacao || "",
+            cep: perfil.cep || "",
             temNome: !!nome,
             temTel: !!tel,
             foto: (function () { try { return localStorage.getItem(K_FOTO) || ""; } catch (e) { return ""; } })()
@@ -59,7 +63,7 @@ var Conta = (function () {
             conta.tel = String(novo.tel || "").trim();
             perfil.tel = conta.tel;
         }
-        ['email', 'endereco', 'bairro', 'complemento'].forEach(function (k) {
+        ['email', 'endereco', 'bairro', 'rua', 'numero', 'complemento', 'observacao', 'cep'].forEach(function (k) {
             if (novo[k] !== undefined) perfil[k] = String(novo[k] || "").trim();
         });
 
@@ -88,22 +92,21 @@ var Conta = (function () {
         var arq = input && input.files && input.files[0];
         if (!arq) return;
         if (arq.size > MAX_FOTO) {
-            if (typeof avisar === "function") avisar("Foto muito grande. Use uma imagem de até 1,5 MB.");
-            else alert("Foto muito grande. Use uma imagem de até 1,5 MB.");
+            if (typeof avisar === "function") avisar("Foto muito grande. Use uma imagem de ate 1,5 MB.");
+            else alert("Foto muito grande. Use uma imagem de ate 1,5 MB.");
             input.value = "";
             return;
         }
         var leitor = new FileReader();
         leitor.onload = function (e) {
             if (salvarFoto(e.target.result) && cb) cb(e.target.result);
-            else alert("Não foi possível salvar a foto.");
+            else alert("Nao foi possivel salvar a foto.");
         };
-        leitor.onerror = function () { alert("Não foi possível ler a imagem."); };
+        leitor.onerror = function () { alert("Nao foi possivel ler a imagem."); };
         leitor.readAsDataURL(arq);
     }
 
     /* ---------- aplicar em qualquer elemento da pagina ---------- */
-    /* preenche campos com data-nome, data-tel, data-email, etc. */
     function aplicarEmTodos() {
         var d = dados();
 
@@ -115,13 +118,12 @@ var Conta = (function () {
             if (document.activeElement !== el) el.value = d.tel;
             el.placeholder = d.tel || "Seu WhatsApp";
         });
-        ['email', 'endereco', 'bairro', 'complemento'].forEach(function (k) {
+        ['email', 'endereco', 'bairro', 'rua', 'numero', 'complemento', 'observacao', 'cep'].forEach(function (k) {
             document.querySelectorAll("[data-conta='" + k + "']").forEach(function (el) {
                 if (document.activeElement !== el) el.value = d[k] || "";
             });
         });
 
-        /* avatares */
         document.querySelectorAll("[data-conta-foto]").forEach(function (box) {
             var img = box.querySelector("img");
             var txt = box.querySelector(".pa-texto, .avatar-texto");
@@ -134,18 +136,16 @@ var Conta = (function () {
             }
         });
 
-        /* nome de exibicao */
         document.querySelectorAll("[data-conta='nome-mostrar']").forEach(function (el) {
             el.textContent = d.nome || "Cliente";
         });
         document.querySelectorAll("[data-conta='tel-mostrar']").forEach(function (el) {
-            el.textContent = d.tel || "WhatsApp não informado";
+            el.textContent = d.tel || "WhatsApp nao informado";
         });
 
         return d;
     }
 
-    /* sincroniza se outra aba mudar */
     window.addEventListener("storage", function (e) {
         if (e.key === K_CONTA || e.key === K_PERFIL || e.key === K_FOTO) Conta.aplicarEmTodos();
     });

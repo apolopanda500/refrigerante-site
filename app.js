@@ -317,97 +317,102 @@ function horaBrasil(){
 }
 
 /* ============================================
-   HORARIO DE FUNCIONAMENTO
-   Abre 09:00 - fecha 15:00
-   So nos dias em que alguma regiao recebe entrega
+   HORARIOS
+   Loja (empresa): 09:00 as 15:00  - monta os pedidos
+   Entrega (rua): 06:00 as 18:00  - o freteiro entrega
+   O caminhao carrega UM DIA ANTES de sair
    ============================================ */
-var HORA_ABERTURA = 9;
-var HORA_FECHAMENTO = 15;
-
-function horarioDeHoje(){
-    var h = horaBrasil();
-    var dia = h.getDay();
-    var hh = h.getHours();
-    var mm = h.getMinutes();
-    var dentroDoTurno = (hh > HORA_ABERTURA || (hh === HORA_ABERTURA && mm >= 0)) && hh < HORA_FECHAMENTO;
-    var regioes = (typeof regioesDoDia === "function") ? regioesDoDia(dia) : [];
-    var temEntrega = regioes.length > 0;
-    return {
-        dia: dia, hh: hh, mm: mm,
-        regioes: regioes,
-        aberto: dentroDoTurno && temEntrega
-    };
-}
-
-function horaTexto(hh, mm){
+function horaTexto(hh, mm) {
     return (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
 }
 
-function pintarHorario(){
+function pintarHorario() {
     var el = document.getElementById("sideHorario");
     if (!el) return;
 
-    var t = horarioDeHoje();
-    var hhmm = horaTexto(t.hh, t.mm);
-    var nomeDia = NOMES_DIA_LONGOS[t.dia];
+    var a2 = (typeof agoraSP === "function") ? agoraSP() : { dia: new Date().getDay(), hh: new Date().getHours(), mm: new Date().getMinutes() };
+    var lojaOk = (typeof lojaAberta === "function") ? lojaAberta(a2) : false;
+    var entregaOk = (typeof entregaAberta === "function") ? entregaAberta(a2) : false;
+    var rs = (typeof regioesDoDia === "function") ? regioesDoDia(a2.dia) : [];
+    var soPedidos = (typeof somentePedidos === "function") && somentePedidos(a2.dia);
 
-    var status, motivo = "";
-    if (t.aberto) {
-        status = '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Aberto agora</div>';
-    } else if (typeof somentePedidos === "function" && somentePedidos(t.dia)) {
-        status = '<div class="wgt-status pedido"><i class="fa fa-clipboard-list"></i> Dia de montar pedidos</div>';
-        var proxPed = proximoDiaAtendente();
-        motivo = '<div class="wgt-linha"><span>Primeira entrega</span><b>' + NOMES_DIA_LONGOS[proxPed] + '</b></div>';
-    } else if (t.regioes.length === 0) {
-        status = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> Sem entrega hoje</div>';
-        var prox = proximoDiaAtendente();
-        motivo = '<div class="wgt-linha"><span>Próxima entrega</span><b>' + NOMES_DIA_LONGOS[prox] + '</b></div>';
-    } else if (t.hh < HORA_ABERTURA) {
-        status = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Abre às 09:00</div>';
+    /* ---- status da LOJA ---- */
+    var statusLoja;
+    if (soPedidos) {
+        statusLoja = '<div class="wgt-status pedido"><i class="fa fa-clipboard-list"></i> Dia de montar pedidos</div>';
+    } else if (lojaOk) {
+        statusLoja = '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Loja aberta agora</div>';
+    } else if (rs.length === 0) {
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> Loja fechada hoje</div>';
+    } else if (a2.hh < HORARIOS.loja.abre) {
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja abre ' + horaTexto(HORARIOS.loja.abre, 0) + '</div>';
     } else {
-        status = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Fechado - até 15:00</div>';
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja fechou às ' + horaTexto(HORARIOS.loja.fecha, 0) + '</div>';
     }
 
-    var regioesHoje = t.regioes.length
-        ? t.regioes.map(function (r) { return r.nome; }).join(", ")
-        : "Nenhuma";
+    /* ---- status da ENTREGA ---- */
+    var statusEntrega;
+    if (soPedidos || rs.length === 0) {
+        statusEntrega = '<div class="wgt-status fechado"><i class="fa fa-truck"></i> Sem entrega hoje</div>';
+    } else if (entregaOk) {
+        statusEntrega = '<div class="wgt-status aberto"><i class="fa fa-truck"></i> Freteiro entregando agora</div>';
+    } else if (a2.hh < HORARIOS.entrega.abre) {
+        statusEntrega = '<div class="wgt-status pedido"><i class="fa fa-sun"></i> Freteiro sai às ' + horaTexto(HORARIOS.entrega.abre, 0) + '</div>';
+    } else {
+        statusEntrega = '<div class="wgt-status fechado"><i class="fa fa-moon"></i> Entrega encerrada às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</div>';
+    }
 
-    el.innerHTML = '<h3><i class="fa fa-clock"></i> Horário de funcionamento</h3>' + status
-        + '<div class="wgt-linha"><span>Hoje</span><b>' + nomeDia + '</b></div>'
-        + '<div class="wgt-linha"><span>Agora</span><b>' + hhmm + '</b></div>'
-        + '<div class="wgt-linha"><span>Abre</span><b>09:00</b></div>'
-        + '<div class="wgt-linha"><span>Fecha</span><b>15:00</b></div>'
-        + '<div class="wgt-linha"><span>Entrega hoje</span><b>' + regioesHoje + '</b></div>'
-        + motivo;
+    var hoje = rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "Nenhuma";
+    var prox = (typeof proximoDiaAtendente === "function") ? proximoDiaAtendente() : 2;
+
+    el.innerHTML = '<h3><i class="fa fa-clock"></i> Horários</h3>'
+        + '<div class="hr-bloco">'
+        + '  <div class="hr-titulo"><i class="fa fa-store"></i> Loja (empresa)</div>'
+        + statusLoja
+        + '  <div class="wgt-linha"><span>Atende</span><b>' + textoHorario("loja") + '</b></div>'
+        + '</div>'
+        + '<div class="hr-bloco">'
+        + '  <div class="hr-titulo"><i class="fa fa-truck"></i> Entrega nas ruas</div>'
+        + statusEntrega
+        + '  <div class="wgt-linha"><span>Freteiro sai</span><b>' + horaTexto(HORARIOS.entrega.abre, 0) + '</b></div>'
+        + '  <div class="wgt-linha"><span>Entrega até</span><b>' + horaTexto(HORARIOS.entrega.fecha, 0) + '</b></div>'
+        + '</div>'
+        + '<div class="hr-aviso"><i class="fa fa-box"></i> <span>' + HORARIOS.carga.obs + '</span></div>'
+        + '<div class="wgt-linha"><span>Hoje (' + NOMES_DIA_LONGOS[a2.dia] + ')</span><b>' + hoje + '</b></div>'
+        + (rs.length ? '' : '<div class="wgt-linha"><span>Próxima entrega</span><b>' + NOMES_DIA_LONGOS[prox] + '</b></div>');
 }
 
 /* ============================================
-   FAIXA DO TOPO - agora 100% digital
+   FAIXA DO TOPO - 100% digital
    ============================================ */
-function pintarFaixaRegiao(){
+function pintarFaixaRegiao() {
     var el = document.getElementById("faixaRegiao");
     if (!el) return;
-    var t = horarioDeHoje();
+    var t = agoraSP();
+    var soPedidos = (typeof somentePedidos === "function") && somentePedidos(t.dia);
+    var rs = regioesDoDia(t.dia);
 
-    if (typeof somentePedidos === "function" && somentePedidos(t.dia)) {
+    if (soPedidos) {
         el.innerHTML = '<i class="fa fa-clipboard-list"></i> <span><b>Segunda é dia de montar pedidos.</b> '
-            + 'Você pode deixar seu pedido agendado e a entrega começa na '
-            + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '.</span>';
-    } else if (t.aberto) {
-        el.innerHTML = '<i class="fa fa-truck"></i> <span>Pedidos abertos agora para <b>'
-            + t.regioes.map(function (r) { return r.nome; }).join(", ")
-            + '</b> &middot; entrega até 15:00. Você confirma tudo aqui no site.</span>';
-    } else if (t.regioes.length === 0) {
-        var prox = proximoDiaAtendente();
+            + 'O caminhão carrega amanhã e a entrega começa na '
+            + NOMES_DIA_LONGOS[proximoDiaAtendente()] + ', das '
+            + horaTexto(HORARIOS.entrega.abre, 0) + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '.</span>';
+    } else if (lojaAberta(t)) {
+        el.innerHTML = '<i class="fa fa-truck"></i> <span>Pedidos abertos para <b>'
+            + rs.map(function (r) { return r.nome; }).join(", ")
+            + '</b>. O caminhão carrega amanhã e o freteiro entrega das '
+            + horaTexto(HORARIOS.entrega.abre, 0) + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '.</span>';
+    } else if (rs.length === 0) {
         el.innerHTML = '<i class="fa fa-info-circle"></i> <span>Hoje não entregamos. '
-            + 'A partir de <b>' + NOMES_DIA_LONGOS[prox] + '</b> os pedidos abrem novamente. '
+            + 'A partir de <b>' + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '</b> os pedidos abrem. '
             + 'Você pode deixar o pedido agendado.</span>';
-    } else if (t.hh < HORA_ABERTURA) {
-        el.innerHTML = '<i class="fa fa-clock"></i> <span>Abrimos às <b>09:00</b>. '
-            + 'Enquanto isso você pode montar o carrinho e agendar a entrega.</span>';
+    } else if (t.hh < HORARIOS.loja.abre) {
+        el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja abre às <b>'
+            + horaTexto(HORARIOS.loja.abre, 0) + '</b>. Enquanto isso monte o carrinho e agende.</span>';
     } else {
-        el.innerHTML = '<i class="fa fa-clock"></i> <span>Fechamos às <b>15:00</b>. '
-            + 'Agende seu pedido para o próximo dia de entrega da sua região.</span>';
+        el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja fecha às <b>'
+            + horaTexto(HORARIOS.loja.fecha, 0) + '</b>. Seu pedido de hoje sai na entrega de <b>'
+            + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '</b>.</span>';
     }
 }
 

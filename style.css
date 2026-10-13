@@ -1414,3 +1414,25 @@ button.bnr:hover{color:#fff}
 .chip.pedidos{background:#eef2ff;color:#2d3a8c;border-color:#c9d2f7}
 [data-theme="dark"] .chip.pedidos{background:#1e2547;color:#a8b6f5;border-color:#3a4590}
 [data-theme="dark"] .aviso-regiao.pedido{background:#1e2547;color:#a8b6f5}
+
+/* ===== BLOCOS DE HORARIO ===== */
+.hr-bloco{
+    padding:11px 12px;border-radius:11px;background:var(--bg-alt);
+    margin-bottom:10px;border:1px solid var(--borda);
+}
+.hr-titulo{
+    display:flex;align-items:center;gap:8px;
+    font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;
+    color:var(--primary-color);margin-bottom:9px;
+}
+.hr-titulo i{color:var(--accent-color)}
+.hr-bloco .wgt-linha{font-size:.84rem;padding:6px 0}
+.hr-aviso{
+    display:flex;align-items:flex-start;gap:9px;
+    padding:10px 12px;border-radius:10px;margin-bottom:10px;
+    background:#eef2ff;color:#2d3a8c;font-size:.83rem;line-height:1.4;font-weight:600;
+}
+.hr-aviso i{flex:0 0 auto;margin-top:2px}
+[data-theme="dark"] .hr-bloco{background:#232742;border-color:#353a5c}
+[data-theme="dark"] .hr-titulo{color:#ffb822}
+[data-theme="dark"] .hr-aviso{background:#1e2547;color:#a8b6f5}
