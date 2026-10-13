@@ -1436,3 +1436,4 @@ button.bnr:hover{color:#fff}
 [data-theme="dark"] .hr-bloco{background:#232742;border-color:#353a5c}
 [data-theme="dark"] .hr-titulo{color:#ffb822}
 [data-theme="dark"] .hr-aviso{background:#1e2547;color:#a8b6f5}
+body{font-size:1.15rem} .pc{font-size:1rem} .pn{font-size:1.1rem}
