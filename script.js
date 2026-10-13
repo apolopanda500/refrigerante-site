@@ -1,5 +1,5 @@
 ﻿// ============================================
-//  Refrigerantes ConvenÃ§Ã£o - Carrinho & Pedidos
+//  Refrigerantes Convenção - Carrinho & Pedidos
 // ============================================
 
 const MENTOR_WHATSAPP = "5521983158911"; // (21) 9-8315-8911
@@ -23,7 +23,7 @@ function formatBRL(n) {
     if (isNaN(v) || !isFinite(v)) return "R$ 0,00";
     return "R$ " + v.toFixed(2).replace(".", ",");
 }
-// getCart: lÃª localStorage e normaliza itens (trata dados legados / campos ausentes)
+// getCart: lê localStorage e normaliza itens (trata dados legados / campos ausentes)
 function getCart() {
     var s = localStorage.getItem("refrigeranteCart");
     if (!s) return [];
@@ -60,12 +60,12 @@ function calcTotalItens() {
     return cart.reduce((t, i) => t + (typeof i.qty === 'number' ? i.qty : 0), 0);
 }
 
-// ---------- InicializaÃ§Ã£o ----------
+// ---------- Inicialização ----------
 document.addEventListener("DOMContentLoaded", () => {
     cart = getCart();
     updateCartCount();
 
-    // AnimaÃ§Ã£o suave ao rolar (apenas no catÃ¡logo)
+    // Animação suave ao rolar (apenas no catálogo)
     if (document.querySelector(".product-item")) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ---------- CatÃ¡logo: quantidade e adicionar ----------
+// ---------- Catálogo: quantidade e adicionar ----------
 function mudarQtd(btn, delta) {
     const card = btn.closest(".product-item");
     if (!card) return;
@@ -104,13 +104,13 @@ function adicionarAoCarrinho(btn) {
     const qtd = parseInt(card.querySelector(".qtd-valor").textContent) || 0;
 
     if (qtd < 1) {
-        alert("Use os botÃµes + e - para escolher a quantidade.");
+        alert("Use os botões + e - para escolher a quantidade.");
         return;
     }
 
     const priceNum = parsePreco(priceStr);
     if (isNaN(priceNum) || priceNum <= 0) {
-        alert("Erro ao ler o preÃ§o do produto. Tente novamente.");
+        alert("Erro ao ler o preço do produto. Tente novamente.");
         return;
     }
     const existente = cart.find(i => i.name === name);
@@ -151,7 +151,7 @@ function mostrarToast(msg, type) {
 // ---------- Ir para o carrinho ----------
 function finalizarPedido() {
     if (cart.length === 0) {
-        alert("Seu carrinho estÃ¡ vazio! Adicione produtos com os botÃµes + e -.");
+        alert("Seu carrinho está vazio! Adicione produtos com os botões + e -.");
         return;
     }
     window.location.href = "carrinho.html";
@@ -168,8 +168,8 @@ function limparCarrinho() {
 // ---------- Compartilhar ----------
 async function compartilharSite() {
     const dados = {
-        title: "Refrigerantes ConvenÃ§Ã£o - Delivery Online",
-        text: "Confira nosso catÃ¡logo de refrigerantes, refrescos, Ã¡guas e chopp! PeÃ§a pelo WhatsApp.",
+        title: "Refrigerantes Convenção - Delivery Online",
+        text: "Confira nosso catálogo de refrigerantes, refrescos, águas e chopp! Peça pelo WhatsApp.",
         url: SHARE_URL
     };
     if (navigator.share) {
@@ -202,9 +202,9 @@ const PEDIDOS_KEY = "convencao_pedidos";
 const ADMIN_SENHA = "convencao2026";
 
 const STATUS_LABEL = {
-    aguardando: "Aguardando confirmaÃ§Ã£o",
+    aguardando: "Aguardando confirmação",
     confirmado: "Confirmado",
-    separacao: "Em separaÃ§Ã£o",
+    separacao: "Em separação",
     enviado: "Saiu para entrega",
     entregue: "Entregue",
     cancelado: "Cancelado"
@@ -252,7 +252,7 @@ function atualizarStatus(id, novoStatus) {
 }
 function dataHora(ts) {
     const d = new Date(ts);
-    return d.toLocaleDateString("pt-BR") + " Ã s " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleDateString("pt-BR") + " às " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 function statusBadge(status) {
     const cores = {
