@@ -151,7 +151,12 @@ function resumoEntrega(regiaoId) {
     };
 }
 
-/* ---------- CAMINHOES ---------- */
+/* ===== override de dias de entrega (config do vendedor) ===== */
+try {
+    var _ov = JSON.parse(localStorage.getItem("convencaoRegioesDias") || "{}");
+    REGIOES.forEach(function(r){ if(_ov[r.id]) r.dias = _ov[r.id]; });
+} catch(e){}
+
 var CAMINHOES = [
     {
         id: "verde",
