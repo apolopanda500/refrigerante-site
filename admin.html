@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="stylesheet" href="style.css">
-<script src="theme.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -19,7 +18,7 @@
 .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:22px; }
 .stat { background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06); padding:16px; text-align:center; }
 .stat .num { font-size:1.8rem; font-weight:bold; color:var(--primary-color); }
-.stat .lbl { font-size:0.82rem; color:#5f6570; margin-top:2px; }
+.stat .lbl { font-size:0.82rem; color:#777; margin-top:2px; }
 .stat.verde .num { color:#2e7d32; }
 .stat.azul .num { color:#1565c0; }
 .filtros { display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
@@ -28,7 +27,7 @@
 .pedido-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px 20px; margin-bottom:16px; }
 .pedido-topo { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
 .pedido-topo b { font-size:1.1rem; }
-.pedido-meta { font-size:0.85rem; color:#6b7280; }
+.pedido-meta { font-size:0.85rem; color:#888; }
 .pedido-info { font-size:0.9rem; color:#555; margin:6px 0; }
 .pedido-info i { color:var(--primary-color); width:18px; }
 .pedido-itens { font-size:0.88rem; color:#555; background:#fafafa; border-radius:8px; padding:10px 12px; margin:8px 0; }
@@ -38,54 +37,8 @@
 .b-confirmar{background:#2196F3}.b-separar{background:#9C27B0}.b-enviar{background:#00BCD4}.b-entregar{background:#4CAF50}.b-cancelar{background:#f44336}
 .btn-zap { background:#25D366; color:#fff; padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
 .pedido-total-linha { font-size:1.15rem; font-weight:bold; color:var(--primary-color); }
-.vazio { text-align:center; padding:50px; color:#6b7280; }
+.vazio { text-align:center; padding:50px; color:#888; }
 .btn-sair { background:none; border:none; color:#c62828; cursor:pointer; font-size:0.9rem; }
-
-/* ===== conta do vendedor ===== */
-.vend{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:18px}
-.vend-card{
-    background:#fff;border-radius:14px;padding:18px 20px;
-    box-shadow:0 0 13px 0 rgba(82,63,105,.06);border:1px solid #eeeef4;
-}
-.vend-card h3{
-    display:flex;align-items:center;gap:9px;margin:0 0 14px;
-    font-size:1rem;font-weight:800;color:var(--primary-color);text-transform:uppercase;letter-spacing:.3px;
-}
-.vend-card h3 i{color:var(--accent-color);font-size:1.1rem}
-.vend-linha{
-    display:flex;justify-content:space-between;gap:12px;align-items:center;
-    padding:8px 0;border-bottom:1px dashed #eeeef4;font-size:.9rem;color:var(--text-muted);
-}
-.vend-linha:last-child{border-bottom:0}
-.vend-linha b{color:var(--primary-color);font-weight:700;text-align:right}
-.vend-linha .placa{
-    font-family:'Courier New',monospace;font-weight:800;letter-spacing:.6px;
-    padding:3px 9px;border-radius:6px;background:var(--bg-alt);
-    border:1px solid var(--borda);color:var(--primary-color);font-size:.82rem;
-}
-.vend-dia{
-    display:flex;align-items:center;gap:9px;padding:7px 0;font-size:.9rem;
-    color:var(--text-color);
-}
-.vend-dia .dia-nome{
-    width:96px;flex:0 0 96px;font-weight:700;color:var(--primary-color);font-size:.85rem;
-}
-.vend-dia .regioes{display:flex;flex-wrap:wrap;gap:5px}
-.chip{
-    display:inline-flex;align-items:center;gap:5px;
-    padding:4px 10px;border-radius:12px;font-size:.76rem;font-weight:700;
-    background:var(--bg-alt);color:var(--text-muted);border:1px solid var(--borda);
-}
-.chip.on{background:#e7f6ec;color:#0a6b34;border-color:#bfe3cb}
-[data-theme="dark"] .vend-card{background:#1c1f33;border-color:#353a5c}
-[data-theme="dark"] .vend-card h3{color:#ffb822}
-[data-theme="dark"] .vend-linha{color:#a1a8c3;border-bottom-color:#353a5c}
-[data-theme="dark"] .vend-linha b{color:#e6e8f2}
-[data-theme="dark"] .vend-linha .placa{background:#232742;border-color:#454b70;color:#ffb822}
-[data-theme="dark"] .vend-dia{color:#cdd2e6}
-[data-theme="dark"] .vend-dia .dia-nome{color:#ffb822}
-[data-theme="dark"] .chip{background:#232742;border-color:#353a5c;color:#a1a8c3}
-[data-theme="dark"] .chip.on{background:#14331f;color:#8fe0a8;border-color:#2d6b46}
 </style>
 </head>
 <body>
@@ -97,23 +50,21 @@
 
 <section class="page"><div class="container">
 
-<div id="loginTela" style="display:none">
+<div id="loginTela">
   <div class="login-card">
     <div class="icone"><i class="fa fa-lock"></i></div>
     <h2 style="color:var(--primary-color)">Painel do Vendedor</h2>
-    <p style="color:#5f6570;font-size:0.9rem">Acesso restrito</p>
-    <input id="fUser" type="text" placeholder="Usuário" autocomplete="username" value="apolopanda500">
-    <input id="fSenha" type="password" placeholder="Senha" autocomplete="current-password">
+    <p style="color:#777;font-size:0.9rem">Acesso restrito</p>
+    <input id="fSenha" type="password" placeholder="Senha de acesso">
     <button onclick="entrar()"><i class="fa fa-sign-in-alt"></i> Entrar</button>
   </div>
 </div>
 
-<div id="painelTela" style="display:block">
+<div id="painelTela" style="display:none">
   <div class="page-head">
     <h1><i class="fa fa-tachometer-alt"></i> Pedidos</h1>
-    <span style="color:#6b7280;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
+    <span style="color:#888;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
   </div>
-  <div style="margin-bottom:10px"><label style="color:#ffb822;font-weight:700;margin-right:8px">Período:</label><select id="periodoVendas" onchange="renderAdmin()" style="padding:6px;font-size:.9rem;border-radius:6px"><option value="dia">Hoje</option><option value="sem">Semana</option><option value="mes">Mês</option><option value="ano">Ano</option><option value="all">Tudo</option></select></div>
   <div class="stats" id="stats"></div>
   <div class="filtros" id="filtros">
     <button class="filtro ativo" data-f="todos" onclick="filtrarAdmin('todos',this)">Todos</button>
@@ -122,32 +73,22 @@
     <button class="filtro" data-f="enviado" onclick="filtrarAdmin('enviado',this)">Enviados</button>
     <button class="filtro" data-f="entregue" onclick="filtrarAdmin('entregue',this)">Entregues</button>
   </div>
-  <div class="vend" id="contaVendedor"></div>
-<div class="config-card">
-  <h2><i class="fa fa-calendar-alt"></i> Editar dias de entrega</h2>
-  <div id="diasEdit"></div>
-</div>
-<div id="listaPedidos"></div>
+  <div id="listaPedidos"></div>
 </div>
 
 </div></section>
 
-<script src="conta.js"></script>
-<script src="loja.js"></script>
 <script src="script.js"></script>
 <script>
 let filtroAdminAtual = "todos";
 
 function entrar() {
-    const u = document.getElementById("fUser").value;
     const s = document.getElementById("fSenha").value;
-    const AUTH_USER = "apolopanda500";
-    const AUTH_PASS = "Flamengo903@";
-    if (u === AUTH_USER && s === AUTH_PASS) {
+    if (s === ADMIN_SENHA) {
         sessionStorage.setItem("adminLogado", "1");
         mostrarPainel();
     } else {
-        alert("Usuário ou senha incorretos!");
+        alert("Senha incorreta!");
     }
 }
 function sair() {
@@ -172,13 +113,14 @@ function renderAdmin() {
     const pedidos = getPedidos();
     // Stats
     const total = pedidos.length;
-    const cancelados = pedidos.filter(p => p.status === "cancelado").length;
+    const aguardando = pedidos.filter(p => p.status === "aguardando").length;
+    const andamento = pedidos.filter(p => ["confirmado","separacao","enviado"].includes(p.status)).length;
+    const faturamento = pedidos.filter(p => p.status !== "cancelado").reduce((t, p) => t + p.total, 0);
     document.getElementById("stats").innerHTML =
         '<div class="stat"><div class="num">' + total + '</div><div class="lbl">Total de pedidos</div></div>' +
         '<div class="stat"><div class="num" style="color:#FF9800">' + aguardando + '</div><div class="lbl">Aguardando</div></div>' +
         '<div class="stat azul"><div class="num">' + andamento + '</div><div class="lbl">Em andamento</div></div>' +
-        '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>' +
-        '<div class="stat" style="color:#f44336"><div class="num" style="color:#f44336">' + cancelados + '</div><div class="lbl">Cancelados</div></div>';
+        '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>';
 
     let lista = pedidos;
     if (filtroAdminAtual !== "todos") lista = pedidos.filter(p => p.status === filtroAdminAtual);
@@ -189,9 +131,7 @@ function renderAdmin() {
         return;
     }
     let h = "";
-    var bairroAtual = null;
-lista.forEach(function(p) {
-    if (bairroAtual !== p.bairro) { bairroAtual = p.bairro; h += '\n<h3 style="color:#ffb822;margin:16px 0 6px;font-size:1.2rem;border-bottom:1px solid #333;padding-bottom:6px;">Bairro: ' + (p.bairro || "—") + ' — ' + lista.filter(function(x){return x.bairro===p.bairro;}).length + ' pedido(s)</h3>'; }
+    lista.forEach(function(p) {
         h += '<div class="pedido-card">';
         h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta">' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
         h += '<div class="pedido-info"><i class="fa fa-user"></i> ' + p.nome + ' &nbsp; <i class="fa fa-phone"></i> ' + p.tel + '</div>';
@@ -207,175 +147,23 @@ lista.forEach(function(p) {
         h += '<button class="btn-st b-enviar" onclick="mudarStatus(\'' + p.id + '\',\'enviado\')">Enviado</button>';
         h += '<button class="btn-st b-entregar" onclick="mudarStatus(\'' + p.id + '\',\'entregue\')">Entregue</button>';
         h += '<button class="btn-st b-cancelar" onclick="mudarStatus(\'' + p.id + '\',\'cancelado\')">Cancelar</button>';
-        h += '<div style="display:inline-flex;gap:8px;margin-left:auto">';
-        h += '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> Cliente</a>';
-        h += '<a class="btn-zap" href="#" style="background:#1565c0" onclick="falarMotorista(\'' + p.id + '\');return false;"><i class="fa fa-truck"></i> Motorista</a>';
-        h += '</div>';
+        h += '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> Falar c/ cliente</a>';
         h += '</div></div>';
     });
     box.innerHTML = h;
 }
 function mudarStatus(id, status) {
-    if (!confirm("Confirma a alteração de status?")) return;
     atualizarStatus(id, status);
     renderAdmin();
 }
 function falarCliente(tel, id) {
     const p = getPedidos().find(x => x.id === id);
     if (!p) return;
-    const itens = p.itens.map(i => "• " + i.name + " x" + i.qty).join("\n");
-    let msg = "Olá " + p.nome + "! Sobre seu pedido " + p.id + "\n\n"
-        + "Produtos:\n" + itens + "\n\n"
-        + "Subtotal: " + formatBRL(p.subtotal) + "\n"
-        + "Frete: " + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + "\n"
-        + "Total: " + formatBRL(p.total) + "\n"
-        + "Pagamento: " + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + "\n"
-        + "Entrega: " + p.regiao + "\n"
-        + "Status: " + (p.status || "aguardando") + "\n\n"
-        + "Qualquer dúvida, respondo por aqui! 📦";
+    let msg = "Olá " + p.nome + "! Sobre seu pedido " + p.id + " (" + formatBRL(p.total) + "): ";
     window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
 }
-
-function falarMotorista(id) {
-    const pedido = getPedidos().find(x => x.id === id);
-    if (!pedido) return;
-    var cam = null;
-    if (typeof CAMINHOES !== "undefined") CAMINHOES.forEach(function(c){ if(!cam && c.regioes && c.regioes.indexOf(pedido.regiao ? pedido.regiao.toLowerCase().replace(/ /g,'') : '') >=0) cam=c; });
-    if(!cam && typeof CAMINHOES !== "undefined") cam = CAMINHOES[0];
-    const tel = cam ? cam.telefone : "";
-    const placa = cam ? cam.placa : "";
-    const mot = cam ? cam.motorista : "motorista";
-    const itens = pedido.itens.map(i => "• " + i.name + " x" + i.qty).join("\n");
-    let msg = "Olá " + mot + " (placa " + placa + ")!\n"
-        + "Entrega: " + pedido.regiao + " — pedido " + pedido.id + "\n\n"
-        + "Cliente: " + pedido.nome + "\n"
-        + "WhatsApp: " + pedido.tel + "\n"
-        + "Endereço: " + pedido.end + (pedido.comp ? " (" + pedido.comp + ")" : "") + " — " + pedido.bairro + "\n\n"
-        + "Produtos:\n" + itens + "\n\n"
-        + "Total: " + formatBRL(pedido.total) + "\n"
-        + "Pagamento: " + pedido.pagamento + "\n\n"
-        + "Favor preparar rota. Horário previsto: " + pedido.regiao + ". Boa entrega! 🚚";
-    window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
-}
-sessionStorage.setItem("adminLogado","1"); if(true) mostrarPainel();
-</script>
-<script>
-/* ===== conta do vendedor: regioes, dias e frota ===== */
-function pintarContaVendedor(){
-    var el = document.getElementById("contaVendedor");
-    if (!el || typeof REGIOES === "undefined") return;
-
-    var d = new Date().getDay();
-    var dias = "";
-
-    for (var i = 0; i <= 6; i++) {
-        var rs = regioesDoDia(i);
-        var chips;
-        if (rs.length) {
-            chips = rs.map(function (r) {
-                return '<span class="chip' + (i === d ? ' on' : '') + '">' + r.nome + '</span>';
-            }).join("");
-        } else if (typeof somentePedidos === "function" && somentePedidos(i)) {
-            chips = '<span class="chip pedidos">So para montar pedidos</span>';
-        } else {
-            chips = '<span class="chip">Sem entrega</span>';
-        }
-        dias += '<div class="vend-dia"><span class="dia-nome">' + NOMES_DIA[i] + '</span>'
-              + '<span class="regioes">' + chips + '</span></div>';
-    }
-
-    var frota = "";
-    CAMINHOES.forEach(function (c) {
-        var regs = c.regioes.map(function (r) {
-            for (var j = 0; j < REGIOES.length; j++) if (REGIOES[j].id === r) return REGIOES[j].nome;
-            return r;
-        }).join(", ");
-        frota += '<div class="vend-linha"><span>'
-               + '<i class="fa fa-truck" style="color:' + (c.cor === "verde" ? "#0f9d58" : "#2f6fb5") + '"></i> '
-               + c.corNome + ' - ' + c.modelo
-               + '</span><b>' + c.placa + '</b></div>'
-               + '<div class="vend-linha"><span>Motorista</span><b>'
-               + (c.motorista === "A INFORMAR" ? "A informar" : c.motorista) + '</b></div>'
-               + '<div class="vend-linha"><span>Telefone</span><b>'
-               + (c.telefone === "A INFORMAR" ? "A informar" : c.telefone) + '</b></div>'
-               + '<div class="vend-linha"><span>Atende</span><b>' + regs + '</b></div>';
-    });
-
-    var hoje = regioesDoDia(d);
-    var hojeTxt = hoje.length
-        ? hoje.map(function (r) { return r.nome; }).join(", ")
-        : "Nenhuma regiao hoje";
-
-    el.innerHTML =
-        '<div class="vend-card">'
-      + '  <h3><i class="fa fa-calendar-alt"></i> Agenda da semana</h3>'
-      + dias
-      + '  <div class="vend-linha" style="margin-top:10px"><span>Hoje (' + NOMES_DIA_LONGOS[d] + ')</span><b>' + hojeTxt + '</b></div>'
-      + '</div>'
-      + '<div class="vend-card">'
-      + '  <h3><i class="fa fa-truck"></i> Caminhoes e motoristas</h3>'
-      + frota
-      + '</div>'
-      + '<div class="vend-card">'
-      + '  <h3><i class="fa fa-store"></i> Dados da loja</h3>'
-      + '  <div class="vend-linha"><span>Loja</span><b>Refrigerantes Convencao</b></div>'
-      + '  <div class="vend-linha"><span>WhatsApp</span><b>(21) 9-8315-8911</b></div>'
-      + '  <div class="vend-linha"><span>E-mail</span><b>rickjax1234@gmail.com</b></div>'
-      + '  <div class="vend-linha"><span>Regioes atendidas</span><b>' + REGIOES.length + '</b></div>'
-      + '  <div class="vend-linha"><span>Caminhoes</span><b>' + CAMINHOES.length + '</b></div>'
-      + '</div>';
-}
-
-function moverPara(classe,novo) { document.querySelectorAll("."+classe).forEach(x=>x.classList.remove("ativo")); novo.classList.add("ativo"); }
-
-/* ===== editor de dias por regiao ===== */
-function pintarDiasEdit(){
-    var root=document.getElementById("diasEdit");
-    if(!root || typeof REGIOES === "undefined") return;
-    var dias=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
-    var html="";
-    REGIOES.forEach(function(r){
-        html += "<div style=\"margin-bottom:12px\"><b style=\"color:var(--primary-color)\">"+r.nome+"</b><br>";
-        dias.forEach(function(nd,ix){
-            var on = (r.dias.indexOf(ix)>=0) ? "checked" : "";
-            html += "<label style=\"margin-right:10px;font-size:.85rem;\"><input type=\"checkbox\" "+on+" onchange=\"toggleDiaRegiao('"+r.id+"',"+ix+",this)\"> "+nd+" </label>";
-        });
-        html += "</div>";
-    });
-    root.innerHTML=html;
-}
-function toggleDiaRegiao(rid,ix,cb){
-    var o={};
-    try{o=JSON.parse(localStorage.getItem("convencaoRegioesDias")||"{}");}catch(e){}
-    var r=null; REGIOES.forEach(function(x){if(x.id===rid)r=x;});
-    var d=r.dias.slice();
-    if(cb.checked){ if(d.indexOf(ix)<0)d.push(ix);}
-    else { d=d.filter(function(x){return x!==ix;}); }
-    r.dias=d;
-    o[rid]=d;
-    try{localStorage.setItem("convencaoRegioesDias",JSON.stringify(o));}catch(e){}
-}
-if (document.readyState==="loading") document.addEventListener("DOMContentLoaded",pintarDiasEdit); else pintarDiasEdit();
-
-
-
-
-function resumoBairroHtml() {
-    var resumo = {};
-    (typeof pedidos !== "undefined" ? pedidos : getPedidos()).forEach(function(p){
-        var b = p.bairro || p.regiao || "Sem bairro";
-        if (!resumo[b]) resumo[b] = { q:0, v:0 };
-        resumo[b].q++;
-        resumo[b].v += (p.total || 0);
-    });
-    var html = "<div style=\"clear:both;padding:6px 0\"><h4 style=\"margin:6px 0;color:#ffb822;font-size:1rem\">Vendas por bairro</h4>";
-    Object.keys(resumo).sort().forEach(function(b){
-        html += "<div style=\"display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #ddd\"><span>" + b + " (" + resumo[b].q + " pedido" + (resumo[b].q===1?"":"s") + ")</span><b style=\"color:#3d4465\">" + formatBRL(resumo[b].v) + "</b></div>";
-    });
-    html += "</div>";
-    box.innerHTML = box.innerHTML + html;
-}
-
+if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
 </body>
 </html>
+
