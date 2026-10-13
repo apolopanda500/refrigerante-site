@@ -214,9 +214,15 @@ function enviarPedido() {
     const comp = String(d.complemento || "").trim();
     const obs = String(d.observacao || "").trim();
 
+    const regiaoSel = document.getElementById("fRegiao");
+    const regiaoTexto = regiaoSel.options[regiaoSel.selectedIndex].text;
+    if (bairro && regiaoTexto.toLowerCase().indexOf(bairro.toLowerCase()) === -1) {
+        alert("A região selecionada (" + regiaoTexto + ") não corresponde ao bairro cadastrado (" + bairro + "). Ajuste ou corrija o cadastro.");
+        return;
+    }
+
     if (!nome || !tel || (!end && !rua) || !bairro) {
         alert("Preencha nome, WhatsApp, endereço (rua/endereço) e bairro no Perfil.");
-        if (typeof mostrarAvisoPerfilFaltando === "function") mostrarAvisoPerfilFaltando();
         return;
     }
 
@@ -242,7 +248,6 @@ function enviarPedido() {
     } catch (e) {}
 
     const c = calcular();
-    const regiaoSel = document.getElementById("fRegiao");
     const regiaoTexto = regiaoSel.options[regiaoSel.selectedIndex].text;
     const trocoVal = document.getElementById("fTroco").value.trim();
     const itens = cart.map(function(i) { return { name: i.name, qty: i.qty, priceNum: i.priceNum, subtotal: i.priceNum * i.qty }; });
