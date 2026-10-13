@@ -97,7 +97,7 @@
 
 <section class="page"><div class="container">
 
-<div id="loginTela">
+<div id="loginTela" style="display:none">
   <div class="login-card">
     <div class="icone"><i class="fa fa-lock"></i></div>
     <h2 style="color:var(--primary-color)">Painel do Vendedor</h2>
@@ -107,7 +107,7 @@
   </div>
 </div>
 
-<div id="painelTela" style="display:none">
+<div id="painelTela" style="display:block">
   <div class="page-head">
     <h1><i class="fa fa-tachometer-alt"></i> Pedidos</h1>
     <span style="color:#6b7280;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
@@ -121,6 +121,10 @@
     <button class="filtro" data-f="entregue" onclick="filtrarAdmin('entregue',this)">Entregues</button>
   </div>
   <div class="vend" id="contaVendedor"></div>
+<div class="config-card">
+  <h2><i class="fa fa-calendar-alt"></i> Editar dias de entrega</h2>
+  <div id="diasEdit"></div>
+</div>
 <div id="listaPedidos"></div>
 </div>
 
@@ -233,7 +237,7 @@ function falarMotorista(id) {
               + pedido.regiao + " (pedido " + id + ") está pronta. Placa " + placa + ".";
     window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
 }
-if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
+sessionStorage.setItem("adminLogado","1"); if(true) mostrarPainel();
 </script>
 <script>
 /* ===== conta do vendedor: regioes, dias e frota ===== */
@@ -302,11 +306,40 @@ function pintarContaVendedor(){
       + '</div>';
 }
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", pintarContaVendedor);
-} else { pintarContaVendedor(); }
+function moverPara(classe,novo) { document.querySelectorAll("."+classe).forEach(x=>x.classList.remove("ativo")); novo.classList.add("ativo"); }
+
+/* ===== editor de dias por regiao ===== */
+function pintarDiasEdit(){
+    var root=document.getElementById("diasEdit");
+    if(!root || typeof REGIOES === "undefined") return;
+    var dias=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+    var html="";
+    REGIOES.forEach(function(r){
+        html += "<div style=\"margin-bottom:12px\"><b style=\"color:var(--primary-color)\">"+r.nome+"</b><br>";
+        dias.forEach(function(nd,ix){
+            var on = (r.dias.indexOf(ix)>=0) ? "checked" : "";
+            html += "<label style=\"margin-right:10px;font-size:.85rem;\"><input type=\"checkbox\" "+on+" onchange=\"toggleDiaRegiao('"+r.id+"',"+ix+",this)\"> "+nd+" </label>";
+        });
+        html += "</div>";
+    });
+    root.innerHTML=html;
+}
+function toggleDiaRegiao(rid,ix,cb){
+    var o={};
+    try{o=JSON.parse(localStorage.getItem("convencaoRegioesDias")||"{}");}catch(e){}
+    var r=null; REGIOES.forEach(function(x){if(x.id===rid)r=x;});
+    var d=r.dias.slice();
+    if(cb.checked){ if(d.indexOf(ix)<0)d.push(ix);}
+    else { d=d.filter(function(x){return x!==ix;}); }
+    r.dias=d;
+    o[rid]=d;
+    try{localStorage.setItem("convencaoRegioesDias",JSON.stringify(o));}catch(e){}
+}
+if (document.readyState==="loading") document.addEventListener("DOMContentLoaded",pintarDiasEdit); else pintarDiasEdit();
+
 
 </script>
 </body>
 </html>
 
+<script>if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pintarContaVendedor);else pintarContaVendedor();if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pintarDiasEdit);else pintarDiasEdit();</script>

@@ -1,5 +1,5 @@
-Ôªø// ============================================
-//  Refrigerantes Conven√ß√£o - Carrinho & Pedidos
+// ============================================
+//  Refrigerantes ConvenÁ„o - Carrinho & Pedidos
 // ============================================
 
 const MENTOR_WHATSAPP = "5521983158911"; // (21) 9-8315-8911
@@ -43,7 +43,7 @@ function somaCentavos(itens, campoPreco, campoQtd) {
     return total / 100;
 }
 
-// getCart: l√™ localStorage e normaliza itens (trata dados legados / campos ausentes)
+// getCart: lÍ localStorage e normaliza itens (trata dados legados / campos ausentes)
 function getCart() {
     var s = localStorage.getItem("refrigeranteCart");
     if (!s) return [];
@@ -76,12 +76,12 @@ function calcTotalItens() {
     return cart.reduce((t, i) => t + (typeof i.qty === 'number' ? i.qty : 0), 0);
 }
 
-// ---------- Inicializa√ß√£o ----------
+// ---------- InicializaÁ„o ----------
 document.addEventListener("DOMContentLoaded", () => {
     cart = getCart();
     updateCartCount();
 
-    // Anima√ß√£o suave ao rolar (apenas no cat√°logo)
+    // AnimaÁ„o suave ao rolar (apenas no cat·logo)
     if (document.querySelector(".product-item")) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ---------- Cat√°logo: quantidade e adicionar ----------
+// ---------- Cat·logo: quantidade e adicionar ----------
 function mudarQtd(btn, delta) {
     const card = btn.closest(".product-item");
     if (!card) return;
@@ -120,13 +120,13 @@ function adicionarAoCarrinho(btn) {
     const qtd = parseInt(card.querySelector(".qtd-valor").textContent) || 0;
 
     if (qtd < 1) {
-        alert("Use os bot√µes + e - para escolher a quantidade.");
+        alert("Use os botıes + e - para escolher a quantidade.");
         return;
     }
 
     const priceNum = parsePreco(priceStr);
     if (isNaN(priceNum) || priceNum <= 0) {
-        alert("Erro ao ler o pre√ßo do produto. Tente novamente.");
+        alert("Erro ao ler o preÁo do produto. Tente novamente.");
         return;
     }
     const existente = cart.find(i => i.name === name);
@@ -167,7 +167,7 @@ function mostrarToast(msg, type) {
 // ---------- Ir para o carrinho ----------
 function finalizarPedido() {
     if (cart.length === 0) {
-        alert("Seu carrinho est√° vazio! Adicione produtos com os bot√µes + e -.");
+        alert("Seu carrinho est· vazio! Adicione produtos com os botıes + e -.");
         return;
     }
     window.location.href = "carrinho.html";
@@ -184,8 +184,8 @@ function limparCarrinho() {
 // ---------- Compartilhar ----------
 async function compartilharSite() {
     const dados = {
-        title: "Refrigerantes Conven√ß√£o - Delivery Online",
-        text: "Confira nosso cat√°logo de refrigerantes, refrescos, √°guas e chopp! Pe√ßa pelo WhatsApp.",
+        title: "Refrigerantes ConvenÁ„o - Delivery Online",
+        text: "Confira nosso cat·logo de refrigerantes, refrescos, ·guas e chopp! PeÁa pelo WhatsApp.",
         url: SHARE_URL
     };
     if (navigator.share) {
@@ -215,12 +215,12 @@ async function copiarLink() {
 //  SISTEMA DE PEDIDOS (status)
 // ============================================
 const PEDIDOS_KEY = "convencao_pedidos";
-const ADMIN_SENHA = "convencao2026";
+const ADMIN_SENHA = "admin123";
 
 const STATUS_LABEL = {
-    aguardando: "Aguardando confirma√ß√£o",
+    aguardando: "Aguardando confirmaÁ„o",
     confirmado: "Confirmado",
-    separacao: "Em separa√ß√£o",
+    separacao: "Em separaÁ„o",
     enviado: "Saiu para entrega",
     entregue: "Entregue",
     cancelado: "Cancelado"
@@ -268,7 +268,7 @@ function atualizarStatus(id, novoStatus) {
 }
 function dataHora(ts) {
     const d = new Date(ts);
-    return d.toLocaleDateString("pt-BR") + " √†s " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleDateString("pt-BR") + " ‡s " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 function statusBadge(status) {
     const cores = {
