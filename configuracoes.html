@@ -290,7 +290,21 @@
   </div>
 </div>
 
-<div class="version-info">
+<div class="config-card">
+  <h2><i class="fa fa-telegram-plane"></i> Notificação por Telegram</h2>
+  <div class="config-row">
+    <div class="config-label">Ativar alertas<small>Recebê notificação quando um pedido é feito</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgTelegram"><span class="slider"></span></label>
+  </div>
+  <div class="config-row config-col">
+    <label class="config-label">Bot Token</label>
+    <input type="text" id="cfgTelegramToken" placeholder="123456:ABC-DEF..." style="width:100%;padding:10px">
+  </div>
+  <div class="config-row config-col">
+    <label class="config-label">Chat ID</label>
+    <input type="text" id="cfgTelegramChatId" placeholder="-1001234567890" style="width:100%;padding:10px">
+  </div>
+</div>
   <i class="fa fa-leaf"></i> Refrigerantes Convenção — v2.0<br>
   Feito com carinho para você
 </div>
@@ -416,7 +430,18 @@ function aviso(msg){
 }
 
 document.addEventListener("DOMContentLoaded", function(){
-    carregarConta();
+  var p = {};
+  try { p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
+  assoc(p);
+  var u = document.getElementById("cfgTelegramToken");
+  var c = document.getElementById("cfgTelegramChatId");
+  var t = document.getElementById("cfgTelegram");
+  if (u) { u.value = p.cfgTelegramToken || ""; u.onchange = function(){ var pp=carregarPrefs(); pp.cfgTelegramToken=u.value.trim(); salvarPrefs(pp); }; }
+  if (c) { c.value = p.cfgTelegramChatId || ""; c.onchange = function(){ var pp=carregarPrefs(); pp.cfgTelegramChatId=c.value.trim(); salvarPrefs(pp); }; }
+  if (t) { t.checked = !!p.cfgTelegram; t.addEventListener("change",function(){ var pp=carregarPrefs(); pp.cfgTelegram=t.checked; salvarPrefs(pp); }); }
+});
+function assoc(p){}
+
     var foto = document.getElementById("inputFoto");
     if (foto) foto.addEventListener("change", function(){
         var self = this;
