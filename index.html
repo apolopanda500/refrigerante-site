@@ -9,21 +9,27 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;color:#333;background:#f0f2f5;padding-bottom:80px}
 a{text-decoration:none;color:inherit}
-.ld{position:fixed;top:0;left:0;right:0;bottom:0;background:#1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999}.ld.off{display:none}
-.ldb{display:flex;gap:4px;margin-bottom:16px}.ldb span{width:6px;height:40px;background:#ECC400;border-radius:3px;animation:lb .6s ease-in-out infinite alternate}
-.ldb span:nth-child(2){animation-delay:.1s}.ldb span:nth-child(3){animation-delay:.2s}
+.ld{position:fixed;top:0;left:0;right:0;bottom:0;background:#1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
+.ld.off{display:none}
+.ldb{display:flex;gap:4px;margin-bottom:16px}
+.ldb span{width:6px;height:40px;background:#ECC400;border-radius:3px;animation:lb .6s ease-in-out infinite alternate}
+.ldb span:nth-child(2){animation-delay:.1s}
+.ldb span:nth-child(3){animation-delay:.2s}
 @keyframes lb{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
 .ldt{color:#fff;font-size:.9rem;text-align:center}
 .hd{background:#1a1a2e;position:sticky;top:0;z-index:100}
 .hd nav{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:12px 20px}
 .lg{font-size:1.3rem;font-weight:700;color:#ECC400;display:flex;align-items:center;gap:10px}
-.nl{display:flex;gap:20px;list-style:none}.nl a{color:#ccc;font-size:.85rem;font-weight:500}
+.nl{display:flex;gap:20px;list-style:none}
+.nl a{color:#ccc;font-size:.85rem;font-weight:500}
 .ha{display:flex;align-items:center;gap:14px}
 .bs{padding:7px 16px;background:#ECC400;color:#1a1a2e;border-radius:20px;font-weight:600;font-size:.8rem;cursor:pointer;border:none}
 .ci{position:relative;cursor:pointer;font-size:1.4rem;color:#fff}
 .cb{position:absolute;top:-8px;right:-10px;background:#e53935;color:#fff;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
 .sw{background:#fff;padding:12px 20px;box-shadow:0 2px 12px rgba(0,0,0,.08);position:sticky;top:53px;z-index:99}
-.si{max-width:1200px;margin:0 auto}.sf{position:relative}.sf i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#999}
+.si{max-width:1200px;margin:0 auto}
+.sf{position:relative}
+.sf i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#999}
 .sf input{width:100%;padding:10px 14px 10px 40px;border:2px solid #e0e0e0;border-radius:25px;font-size:.9rem;outline:none}
 .sf input:focus{border-color:#ECC400}
 .tb{background:#fff;border-bottom:2px solid #eee;position:sticky;top:107px;z-index:98;overflow-x:auto}
@@ -31,10 +37,14 @@ a{text-decoration:none;color:inherit}
 .gb{margin-bottom:8px;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);overflow:hidden}
 .gh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;user-select:none}
 .gh:hover{background:#fafafa}
-.gl{display:flex;align-items:center;gap:12px}.gi{font-size:1.3rem;color:#c4a600;width:32px;text-align:center}
-.gn{font-size:1.05rem;font-weight:700}.gc{font-size:.75rem;background:#ECC400;color:#1a1a2e;padding:2px 8px;border-radius:10px;font-weight:600}
-.gv{font-size:.9rem;color:#999;transition:transform .3s}.gb.op .gv{transform:rotate(180deg)}
-.gbd{display:none;padding:0 16px 16px}.gb.op .gbd{display:block}
+.gl{display:flex;align-items:center;gap:12px}
+.gi{font-size:1.3rem;color:#c4a600;width:32px;text-align:center}
+.gn{font-size:1.05rem;font-weight:700}
+.gc{font-size:.75rem;background:#ECC400;color:#1a1a2e;padding:2px 8px;border-radius:10px;font-weight:600}
+.gv{font-size:.9rem;color:#999;transition:transform .3s}
+.gb.op .gv{transform:rotate(180deg)}
+.gbd{display:none;padding:0 16px 16px}
+.gb.op .gbd{display:block}
 .pg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 @media(max-width:900px){.pg{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.pg{grid-template-columns:1fr}}
@@ -44,22 +54,19 @@ a{text-decoration:none;color:inherit}
 .pib{width:100%;aspect-ratio:1;background:#f8f8f8;display:flex;align-items:center;justify-content:center;padding:8px}
 .pi{max-width:100%;max-height:100%;object-fit:contain}
 .pdd{padding:8px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
-.pds{font-size:.78rem;color:#888}.pp{font-size:1.1rem;font-weight:700;color:#43a047;margin-top:auto}
+.pds{font-size:.78rem;color:#888}
+.pp{font-size:1.1rem;font-weight:700;color:#43a047;margin-top:auto}
 .qr{display:flex;align-items:center;gap:8px;padding:8px 14px 12px}
 .qc{display:flex;border:2px solid #e0e0e0;border-radius:8px;overflow:hidden}
 .qb{width:34px;height:34px;background:#f5f5f5;border:none;font-size:1rem;cursor:pointer}
 .qv{width:36px;text-align:center;font-weight:700;height:34px;line-height:34px;border-left:2px solid #e0e0e0;border-right:2px solid #e0e0e0}
 .qa{flex:1;height:34px;background:#ECC400;color:#1a1a2e;border:none;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer}
 .qa.ok{background:#43a047;color:#fff}
-.ft{background:#1a1a2e;color:#ccc;text-align:center;padding:20px;font-size:.85rem;margin-top:40px}.ft a{color:#ECC400;font-weight:600}
+.ft{background:#1a1a2e;color:#ccc;text-align:center;padding:20px;font-size:.85rem;margin-top:40px}
+.ft a{color:#ECC400;font-weight:600}
 .fb2{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:#ECC400;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,.3);cursor:pointer;z-index:200;border:none}
 .fbb{position:absolute;top:-4px;right:-4px;background:#e53935;color:#fff;font-size:.65rem;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 @media(max-width:768px){.nl{display:none}.sw{top:48px}.tb{top:100px}}
-
-.tb::-webkit-scrollbar{display:none}
-.tr2{display:flex;max-width:1200px;margin:0 auto;padding:0 10px;min-width:max-content}
-.ti{padding:12px 18px;font-size:.82rem;font-weight:600;color:#666;cursor:pointer;white-space:nowrap;border:none;border-bottom:3px solid transparent;background:none}
-.ti.on{color:#c4a600;border-bottom-color:#ECC400;background:#fffde7}
 </style>
 </head>
 <body>
@@ -76,20 +83,7 @@ a{text-decoration:none;color:inherit}
 <footer class="ft"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p></footer>
 <button class="fb2" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
 
-
-<div class="ld" id="ldBox"><div class="ldb"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="ldt">Carregando<br><b>Convenção - Delivery</b></div></div>
-<header class="hd"><nav>
-<div class="lg"><i class="fa fa-bottle-water"></i> Convenção</div>
-<ul class="nl"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
-<div class="ha"><button class="bs" onclick="partilhar()"><i class="fa fa-share-alt"></i> Compartilhar</button>
-<div class="ci" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="cb" id="cBag">0</span></div></div>
-</nav></header>
-<div class="sw"><div class="si"><div class="sf"><i class="fa fa-search"></i><input type="text" id="sIn" placeholder="Buscar produto..." oninput="fs(this.value)"></div></div></div>
-<div class="tb"><div class="tr2" id="trRow"></div></div>
-<main class="pw" id="pwMain"></main>
-<footer class="ft"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p></footer>
-<button class="fb2" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
-<script src="script.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
+

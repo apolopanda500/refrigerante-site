@@ -46,6 +46,14 @@ addP("ag","Vitts Limao 2L","Limao 2L","R$ 10,00","img/p27.jpg");
 addP("ch","Chopp IPA 500ml","500ml","R$ 15,00","img/p28.jpg");
 addP("ch","Chopp Black 500ml","500ml","R$ 15,00","img/p29.jpg");
 addP("ch","Chopp Gold 500ml","500ml","R$ 15,00","img/p30.jpg");
+addP("ch","Chopp Pilsen 500ml","500ml","R$ 15,00","img/p31.jpg");
+addP("ch","Chopp Vinho 500ml","500ml","R$ 15,00","img/p32.jpg");
+addP("ch","Chopp Malzbier 500ml","500ml","R$ 15,00","img/p33.jpg");
+addP("ch","Chopp LEV 500ml","500ml","R$ 15,00","img/p34.jpg");
+addP("ch","Chopp Vinho PET 20L","Barril 20L","R$ 318,87","img/p35.jpg");
+addP("ch","Chopp Vinho PET 30L","Barril 30L","R$ 438,11","img/p35.jpg");
+addP("ch","Chopp PET 20L","Variados","R$ 300,00","img/p36.jpg");
+addP("ch","Chopp PET 30L","Variados","R$ 400,00","img/p36.jpg");
 function rT(){var h="";for(var i=0;i<CT.length;i++){var c=CT[i],n=0;
 for(var j=0;j<PD.length;j++)if(PD[j].ct===c.id)n++;
 h+='<button class="ti'+(i===0?' on':'')+'" data-g="'+c.id+'" onclick="goG(\''+c.id+'\')"><i class="fa '+c.ic+'"></i> '+c.nm+' <span class="cn">'+n+'</span></button>'}
@@ -88,26 +96,10 @@ var pid=cd.getAttribute("data-pid").split(".");var pr=PD[parseInt(pid[1])];if(!p
 var pv=0;var mm=String(pr.pr).match(/[\d.,]+/);if(mm)pv=parseFloat(mm[0].replace(/\./g,"").replace(",","."));
 var ct=JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");
 ct.push({name:pr.nm,price:pr.pr,priceNum:pv,qty:q});localStorage.setItem("refrigeranteCart",JSON.stringify(ct));
+cd.querySelector(".qv").textContent="0";bt.classList.add("ok");bt.textContent="OK!";
+setTimeout(function(){bt.classList.remove("ok");bt.textContent="Add"},1500);uC()}catch(e){}}
 function partilhar(){try{var u=location.href.split("#")[0];
 if(navigator.share){navigator.share({title:"Convencao",text:"Confira!",url:u}).catch(function(){})}
 else if(navigator.clipboard){navigator.clipboard.writeText(u);alert("Link copiado!")}}catch(e){}}
-function boot(){try{rT()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}
-var l=document.getElementById("ldBox");if(l)l.style.display="none";
-window.addEventListener("scroll",function(){try{var s=window.pageYOffset+200;
-var gs=document.querySelectorAll(".gb");for(var i=0;i<gs.length;i++){var g=gs[i];
-if(s>=g.offsetTop&&s<g.offsetTop+g.offsetHeight){var gid=g.getAttribute("data-gid");
-var ts=document.querySelectorAll(".ti");for(var j=0;j<ts.length;j++)ts[j].classList.remove("on");
-var tb=document.querySelector('.ti[data-g="'+gid+'"]');if(tb)tb.classList.add("on")}}}catch(e){}})}
-if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",boot)}else{boot()}
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){try{rT()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"})}else{try{rT()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"}
 setTimeout(function(){var l=document.getElementById("ldBox");if(l)l.style.display="none"},3000);
-
-cd.querySelector(".qv").textContent="0";bt.classList.add("ok");bt.textContent="OK!";
-setTimeout(function(){bt.classList.remove("ok");bt.textContent="Add"},1500);uC()}catch(e){alert("Erro ao adicionar")}}}
-addP("ch","Chopp Pilsen 500ml","500ml","R$ 15,00","img/p31.jpg");
-addP("ch","Chopp Vinho 500ml","500ml","R$ 15,00","img/p32.jpg");
-addP("ch","Chopp Malzbier 500ml","500ml","R$ 15,00","img/p33.jpg");
-addP("ch","Chopp LEV 500ml","500ml","R$ 15,00","img/p34.jpg");
-addP("ch","Chopp Vinho PET 20L","Barril 20L","R$ 318,87","img/p35.jpg");
-addP("ch","Chopp Vinho PET 30L","Barril 30L","R$ 438,11","img/p35.jpg");
-addP("ch","Chopp PET 20L","Variados","R$ 300,00","img/p36.jpg");
-addP("ch","Chopp PET 30L","Variados","R$ 400,00","img/p36.jpg");
