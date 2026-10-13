@@ -217,8 +217,8 @@ function enviarPedido() {
     const regiaoSel = document.getElementById("fRegiao");
     const regiaoTexto = regiaoSel.options[regiaoSel.selectedIndex].text;
     if (bairro && regiaoTexto.toLowerCase().indexOf(bairro.toLowerCase()) === -1) {
-        alert("A região selecionada (" + regiaoTexto + ") não corresponde ao bairro cadastrado (" + bairro + "). Ajuste ou corrija o cadastro.");
-        return;
+        const continuar = confirm("A região selecionada (" + regiaoTexto + ") pode não corresponder ao bairro (" + bairro + "). Continuar mesmo assim?");
+        if (!continuar) return;
     }
 
     if (!nome || !tel || (!end && !rua) || !bairro) {
