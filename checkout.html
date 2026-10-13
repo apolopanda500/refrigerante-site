@@ -248,7 +248,6 @@ function enviarPedido() {
     } catch (e) {}
 
     const c = calcular();
-    const regiaoTexto = regiaoSel.options[regiaoSel.selectedIndex].text;
     const trocoVal = document.getElementById("fTroco").value.trim();
     const itens = cart.map(function(i) { return { name: i.name, qty: i.qty, priceNum: i.priceNum, subtotal: i.priceNum * i.qty }; });
 
@@ -387,4 +386,4 @@ function pintarJanelaEntrega(){
 </html>
 
 
-<script>document.addEventListener("DOMContentLoaded",function(){ if(typeof Conta!=="undefined" && Conta.estaVazia()){ alert("Faça login/complete seu perfil antes de finalizar."); location.href="perfil.html"; } });</script>
+<script>document.addEventListener("DOMContentLoaded",function(){ if(typeof Conta!=="undefined" && Conta.estaVazia()){ alert("Faï¿½a login/complete seu perfil antes de finalizar."); location.href="perfil.html"; } });</script>
