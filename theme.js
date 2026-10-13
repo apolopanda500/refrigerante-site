@@ -32,8 +32,8 @@
         else h.removeAttribute("data-contraste");
 
         // Modo compacto
-        if (p.cfgCompacto) h.setAttribute("data-layout", "compacto");
-        else h.removeAttribute("data-layout");
+/* ------ compacto desativado globalmente para evitar conflito com tema ------ */
+/* if (p.cfgCompacto) h.setAttribute("data-layout", "compacto"); else h.removeAttribute("data-layout"); */
 
         // Ver imagens dos produtos
         if (p.cfgVerImagens === false) h.setAttribute("data-imagens", "ocultas");
