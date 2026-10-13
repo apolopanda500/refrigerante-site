@@ -30,6 +30,66 @@
 .btn-perigo:hover { background:#d32f2f; }
 .info-box { background:#e8f5e9; border-left:4px solid #43a047; padding:14px 18px; border-radius:8px; font-size:0.9rem; color:#2e7d32; margin-bottom:18px; }
 .version-info { text-align:center; color:#999; font-size:0.82rem; padding:20px 0 10px; }
+
+/* ===== linhas de configuracao empilhadas ===== */
+.config-col{flex-direction:column;align-items:stretch;gap:12px}
+
+/* ===== botoes de opcao (tamanho da letra) ===== */
+.opcoes{display:flex;gap:8px;flex-wrap:wrap}
+.op-btn{
+    flex:1;min-width:92px;padding:11px 14px;
+    background:#f2f2f2;border:2px solid transparent;border-radius:10px;
+    color:#646c9a;font-weight:700;font-size:.88rem;cursor:pointer;
+    font-family:inherit;transition:all .18s ease;
+}
+.op-btn:hover{background:#e6e8f0;color:#3d4465}
+.op-btn.ativo{background:#3d4465;color:#fff;box-shadow:0 4px 12px rgba(61,68,101,.28)}
+
+/* ===== conta: foto + nome ===== */
+.conta-box{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.avatar-btn{
+    position:relative;width:78px;height:78px;flex:0 0 78px;
+    border-radius:50%;border:3px solid #ffb822;background:#eeeef4;
+    padding:0;cursor:pointer;overflow:visible;
+}
+.avatar-btn img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.avatar-btn .avatar-texto{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:1.6rem;font-weight:800;color:#646c9a;
+}
+.avatar-lapis{
+    position:absolute;right:-4px;bottom:-4px;
+    width:28px;height:28px;border-radius:50%;background:#3d4465;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:.72rem;
+    border:2px solid #fff;
+}
+.conta-info{flex:1;min-width:210px;display:flex;flex-direction:column;gap:9px}
+.conta-info input[type="text"]{
+    padding:11px 13px;border:1px solid #ddd;border-radius:9px;
+    font-size:.95rem;font-family:inherit;width:100%;
+}
+.conta-info input[type="text"]:focus{outline:none;border-color:#3d4465}
+.conta-acoes{display:flex;gap:8px;flex-wrap:wrap}
+.btn-mini{
+    padding:9px 16px;background:#3d4465;color:#fff;border:none;
+    border-radius:9px;font-weight:700;font-size:.85rem;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;font-family:inherit;
+}
+.btn-mini:hover{background:#646c9a}
+.btn-mini.neutro{background:#f2f2f2;color:#c62828}
+.btn-mini.neutro:hover{background:#ffebee}
+
+/* ===== tema escuro ===== */
+[data-theme="dark"] .config-col{background:#1c1f33}
+[data-theme="dark"] .op-btn{background:#232742 !important;color:#cdd2e6 !important}
+[data-theme="dark"] .op-btn:hover{background:#353a5c !important}
+[data-theme="dark"] .op-btn.ativo{background:#ffb822 !important;color:#3d4465 !important}
+[data-theme="dark"] .avatar-btn{background:#232742 !important;border-color:#ffb822 !important}
+[data-theme="dark"] .avatar-btn .avatar-texto{color:#a1a8c3 !important}
+[data-theme="dark"] .avatar-lapis{background:#ffb822 !important;color:#3d4465 !important;border-color:#1c1f33 !important}
+[data-theme="dark"] .conta-info input[type="text"]{background:#232742 !important;border-color:#454b70 !important;color:#e6e8f2 !important}
+[data-theme="dark"] .btn-mini{background:#ffb822 !important;color:#3d4465 !important}
+[data-theme="dark"] .btn-mini.neutro{background:#353a5c !important;color:#ff8a8a !important}
 </style>
 </head>
 <body>
@@ -46,6 +106,7 @@
   <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
 </div>
 
+<div class="status-msg ok" id="msgSalvo"></div>
 <div class="info-box"><i class="fa fa-info-circle"></i> As configurações são salvas apenas neste dispositivo.</div>
 
 <div class="config-card">
@@ -81,6 +142,72 @@
   <div class="config-row">
     <div class="config-label">Limpar carrinho ao finalizar<small>Esvaziar o carrinho após enviar</small></div>
     <label class="toggle"><input type="checkbox" id="cfgLimparCarrinho" checked><span class="slider"></span></label>
+  </div>
+</div>
+
+
+<div class="config-card">
+  <h2><i class="fa fa-universal-access"></i> Leitura e Acessibilidade</h2>
+  <div class="config-row config-col">
+    <div class="config-label">Tamanho da letra
+      <small>Deixe o texto maior para ler com facilidade</small>
+    </div>
+    <div class="opcoes" id="cfgFonteTamanho">
+      <button class="op-btn" data-v="normal" onclick="setOpcao('cfgFonteTamanho',this)">Normal</button>
+      <button class="op-btn" data-v="grande" onclick="setOpcao('cfgFonteTamanho',this)">Grande</button>
+      <button class="op-btn" data-v="muitogrande" onclick="setOpcao('cfgFonteTamanho',this)">Muito maior</button>
+    </div>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Alto contraste<small>Bordas fortes e texto mais escuro</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgAltoContraste"><span class="slider"></span></label>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Tela compacta<small>Produtos menores, mais cabem na tela</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgCompacto"><span class="slider"></span></label>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Mostrar fotos dos produtos<small>Desligue para o site carregar mais rápido</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgVerImagens" checked><span class="slider"></span></label>
+  </div>
+</div>
+
+<div class="config-card">
+  <h2><i class="fa fa-user-circle"></i> Minha conta</h2>
+  <div class="config-row config-col">
+    <div class="config-label">Foto e nome
+      <small>Usado no perfil e nas suas compras</small>
+    </div>
+    <div class="conta-box">
+      <button class="avatar-btn" id="avatarPreview" onclick="document.getElementById('inputFoto').click()" title="Trocar foto">
+        <img id="avatarImg" alt="" />
+        <span class="avatar-lapis"><i class="fa fa-camera"></i></span>
+      </button>
+      <div class="conta-info">
+        <input id="cfgNomeUsuario" type="text" placeholder="Seu nome de exibição" maxlength="40">
+        <input type="file" id="inputFoto" accept="image/*" hidden>
+        <div class="conta-acoes">
+          <button class="btn-mini" onclick="salvarConta()"><i class="fa fa-check"></i> Salvar</button>
+          <button class="btn-mini neutro" onclick="limparFoto()"><i class="fa fa-trash"></i> Tirar foto</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="config-card">
+  <h2><i class="fa fa-list-alt"></i> Preferências de compra</h2>
+  <div class="config-row">
+    <div class="config-label">Confirmar antes de finalizar<small>Perguntar antes de enviar o pedido</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgConfirmarPedido" checked><span class="slider"></span></label>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Avisos de promoção<small>Mostrar ofertas na tela</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgNotifPromo" checked><span class="slider"></span></label>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Salvar endereço automaticamente<small>Completar os dados no checkout</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgSalvarEndereco" checked><span class="slider"></span></label>
   </div>
 </div>
 
@@ -127,7 +254,7 @@
 (function() {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
-    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgModoEscuro","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho"];
+    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgModoEscuro","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco"];
     ids.forEach(function(id) {
         var el = document.getElementById(id);
         if (!el) return;
@@ -149,6 +276,9 @@
                     document.documentElement.removeAttribute("data-motion");
                 }
             }
+            if (id === "cfgAltoContraste" || id === "cfgCompacto" || id === "cfgVerImagens" || id === "cfgNotifPromo") {
+                if (typeof aplicarTema === "function") aplicarTema();
+            }
         });
     });
 })();
@@ -165,6 +295,108 @@ function limparHistorico() {
         alert("Histórico apagado!");
     }
 }
+</script>
+<script>
+
+/* ===== opcoes em botao (tamanho da letra) ===== */
+function setOpcao(chave, btn){
+    var p = carregarPrefs();
+    p[chave] = btn.dataset.v;
+    salvarPrefs(p);
+    document.querySelectorAll('#' + chave + ' .op-btn').forEach(function(b){
+        b.classList.toggle('ativo', b === btn);
+    });
+    if (typeof aplicarTema === 'function') aplicarTema();
+}
+
+function carregarPrefs(){
+    try { return JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); }
+    catch(e){ return {}; }
+}
+function salvarPrefs(p){
+    try { localStorage.setItem("refrigerantePrefs", JSON.stringify(p)); } catch(e){}
+}
+
+/* ===== conta: foto e nome ===== */
+var FOTO_KEY = "refrigeranteFoto";
+var NOME_KEY = "convencao_usuario";
+
+function carregarConta(){
+    var nome = "";
+    try { nome = (JSON.parse(localStorage.getItem(NOME_KEY) || "{}").nome) || ""; } catch(e){}
+    var inp = document.getElementById("cfgNomeUsuario");
+    if (inp) inp.value = nome;
+
+    var foto = "";
+    try { foto = localStorage.getItem(FOTO_KEY) || ""; } catch(e){}
+    mostrarAvatar(foto, nome);
+}
+
+function mostrarAvatar(src, nome){
+    var img = document.getElementById("avatarImg");
+    var txt = document.querySelector("#avatarPreview .avatar-texto");
+    if (img) {
+        if (src) { img.src = src; img.style.display = "block"; }
+        else { img.removeAttribute("src"); img.style.display = "none"; }
+    }
+    if (txt) {
+        var inicial = (nome && nome.trim()) ? nome.trim().charAt(0).toUpperCase() : "";
+        txt.textContent = inicial;
+        txt.style.display = src ? "none" : "flex";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+    carregarConta();
+    // marca o botao da opcao salva
+    var p = carregarPrefs();
+    var tam = p.cfgFonteTamanho || "normal";
+    document.querySelectorAll('#cfgFonteTamanho .op-btn').forEach(function(b){
+        b.classList.toggle("ativo", b.dataset.v === tam);
+    });
+
+    var foto = document.getElementById("inputFoto");
+    if (foto) foto.addEventListener("change", function(){
+        var arq = this.files && this.files[0];
+        if (!arq) return;
+        if (arq.size > 1.6 * 1024 * 1024) { alert("Foto muito grande. Use uma imagem de até 1,5 MB."); this.value = ""; return; }
+        var leitor = new FileReader();
+        leitor.onload = function(e){
+            try { localStorage.setItem(FOTO_KEY, e.target.result); } catch(err){ alert("Nao foi possivel salvar a foto."); return; }
+            var nome = (document.getElementById("cfgNomeUsuario") || {}).value || "";
+            mostrarAvatar(e.target.result, nome);
+            aviso("Foto atualizada com sucesso!");
+        };
+        leitor.readAsDataURL(arq);
+    });
+});
+
+function salvarConta(){
+    var nome = (document.getElementById("cfgNomeUsuario") || {}).value.trim() || "";
+    var u = {};
+    try { u = JSON.parse(localStorage.getItem(NOME_KEY) || "{}"); } catch(e){}
+    u.nome = nome;
+    try { localStorage.setItem(NOME_KEY, JSON.stringify(u)); } catch(e){}
+    mostrarAvatar(localStorage.getItem(FOTO_KEY) || "", nome);
+    aviso(nome ? "Nome salvo: " + nome : "Nome salvo");
+}
+
+function limparFoto(){
+    if (!confirm("Remover a foto do perfil?")) return;
+    try { localStorage.removeItem(FOTO_KEY); } catch(e){}
+    var nome = (document.getElementById("cfgNomeUsuario") || {}).value || "";
+    mostrarAvatar("", nome);
+    aviso("Foto removida");
+}
+
+function aviso(msg){
+    var box = document.getElementById("msgSalvo");
+    if (!box) { alert(msg); return; }
+    box.innerHTML = '<i class="fa fa-check-circle"></i> ' + msg;
+    box.style.display = "block";
+    setTimeout(function(){ box.style.display = "none"; }, 3000);
+}
+
 </script>
 </body>
 </html>

@@ -906,3 +906,97 @@ table tfoot td {
 [data-theme="dark"] .toggle .slider{background:#454b70 !important}
 [data-theme="dark"] .toggle input:checked + .slider{background:#ffb822 !important}
 [data-theme="dark"] .toggle .slider::before{background:#fff !important}
+
+/* ============================================
+   AJUSTES DE ACESSIBILIDADE E APARENCIA
+   Ativados pelo menu Configuracoes
+   ============================================ */
+
+/* --- Tamanho da fonte --- */
+[data-fonte="grande"] { font-size: 18px; }
+[data-fonte="grande"] .ti { font-size: 1.08rem; }
+[data-fonte="grande"] .pch { font-size: .96rem; }
+[data-fonte="grande"] .gn { font-size: 1.15rem; }
+[data-fonte="muitogrande"] { font-size: 20px; }
+[data-fonte="muitogrande"] .ti { font-size: 1.16rem; padding: 15px 26px; }
+[data-fonte="muitogrande"] .pch { font-size: 1.02rem; }
+[data-fonte="muitogrande"] .gn { font-size: 1.24rem; }
+
+/* --- Alto contraste --- */
+[data-contraste="alto"] .pc,
+[data-contraste="alto"] .gb,
+[data-contraste="alto"] .cart-item,
+[data-contraste="alto"] .config-card,
+[data-contraste="alto"] .pedido-card,
+[data-contraste="alto"] .busca-card { border-color: #000 !important; border-width: 2px !important; }
+[data-contraste="alto"] .pch,
+[data-contraste="alto"] .ci-name,
+[data-contraste="alto"] .config-label,
+[data-contraste="alto"] .pedido-itens { color: #000 !important; font-weight: 600; }
+[data-contraste="alto"] .pp,
+[data-contraste="alto"] .ci-subtotal,
+[data-contraste="alto"] .resumo-row.total { color: #b30000 !important; }
+[data-contraste="alto"] a { text-decoration: underline; }
+[data-contraste="alto"] .qa,
+[data-contraste="alto"] .btn-primario { background: #000 !important; color: #fff !important; }
+[data-contraste="alto"] .nav-links a { color: #fff !important; }
+[data-contraste="alto"] .main-header { border-bottom: 3px solid #000 !important; }
+[data-contraste="alto"] .detalhe-extra,
+[data-contraste="alto"] .detalhe { background: #fff !important; border: 2px solid #000 !important; }
+[data-contraste="alto"] .detalhe-extra div,
+[data-contrante="alto"] .timeline-item { color: #000 !important; }
+
+/* versao escura do alto contraste */
+[data-theme="dark"][data-contraste="alto"] .pc,
+[data-theme="dark"][data-contraste="alto"] .gb,
+[data-theme="dark"][data-contraste="alto"] .config-card,
+[data-theme="dark"][data-contraste="alto"] .pedido-card,
+[data-theme="dark"][data-contraste="alto"] .busca-card { border-color: #fff !important; }
+[data-theme="dark"][data-contraste="alto"] .pch,
+[data-theme="dark"][data-contraste="alto"] .ci-name,
+[data-theme="dark"][data-contraste="alto"] .config-label,
+[data-theme="dark"][data-contraste="alto"] .pedido-itens { color: #fff !important; }
+[data-theme="dark"][data-contraste="alto"] .pp { color: #ffd400 !important; }
+[data-theme="dark"][data-contraste="alto"] .detalhe-extra { background: #1c1f33 !important; border-color: #fff !important; }
+
+/* --- Modo compacto: menos espaco --- */
+[data-layout="compacto"] .pc { padding-bottom: 4px; }
+[data-layout="compacto"] .pib { aspect-ratio: 4/3; padding: 4px; }
+[data-layout="compacto"] .pch { font-size: .82rem; padding: 7px 10px 4px; }
+[data-layout="compacto"] .pdd { padding: 5px 10px; gap: 2px; }
+[data-layout="compacto"] .qr { padding: 5px 10px 8px; }
+[data-layout="compacto"] .gb { margin-bottom: 6px; }
+[data-layout="compacto"] .gbd { padding: 0 10px 10px; }
+[data-layout="compacto"] .ti { padding: 9px 16px; }
+[data-layout="compacto"] .cart-item { padding: 9px 0; }
+[data-layout="compacto"] .config-row { padding: 8px 0; }
+[data-layout="compacto"] .pedido-card { padding: 12px 14px; margin-bottom: 10px; }
+
+/* --- Ocultar fotos (mais rapido em celular antigo) --- */
+[data-imagens="ocultas"] .pib img { visibility: hidden; }
+
+/* ============================================
+   AVISO DE OFERTA (aparece em todas as telas)
+   ============================================ */
+.aviso-oferta{
+    position:fixed;left:16px;right:16px;bottom:16px;z-index:900;
+    display:flex;align-items:center;gap:12px;
+    background:#3d4465;color:#fff;
+    padding:14px 18px;border-radius:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+    font-size:.92rem;font-weight:500;
+    animation:sobe .35s cubic-bezier(.2,.8,.3,1);
+}
+.aviso-oferta > i{color:#ffb822;font-size:1.2rem;flex:0 0 auto}
+.aviso-oferta span{flex:1;line-height:1.35}
+.aviso-oferta b{color:#ffb822}
+.ao-fechar{
+    background:rgba(255,255,255,.14);border:0;color:#fff;
+    width:30px;height:30px;border-radius:50%;font-size:1.3rem;
+    cursor:pointer;line-height:1;flex:0 0 auto;
+}
+.ao-fechar:hover{background:#fc0758}
+@keyframes sobe{from{transform:translateY(120%);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-width:560px){
+    .aviso-oferta{left:10px;right:10px;bottom:10px;padding:12px 14px;font-size:.85rem}
+}

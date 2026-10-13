@@ -180,6 +180,21 @@ function enviarPedido() {
         return;
     }
 
+
+    // confirmacao antes de enviar (respeita a configuracao do cliente)
+    try {
+        var _p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+        if (_p.cfgConfirmarPedido !== false) {
+            var r = calcular();
+            var linhas = cart.map(function(i){ return "• " + i.name + " x" + i.qty; }).join("\n");
+            var resumo = "Confirmar o pedido?\n\n" + linhas + "\n\n"
+                + "Subtotal: " + formatBRL(r.subtotal) + "\n"
+                + "Frete: " + (r.frete === 0 ? "GRÁTIS" : formatBRL(r.frete)) + "\n"
+                + "Total: " + formatBRL(r.total) + "\n\nPagamento: " + pagSelecionado;
+            if (!confirm(resumo)) return;
+        }
+    } catch (e) {}
+
     const c = calcular();
     const regiaoSel = document.getElementById("fRegiao");
     const regiaoTexto = regiaoSel.options[regiaoSel.selectedIndex].text;
