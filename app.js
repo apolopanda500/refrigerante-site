@@ -73,6 +73,70 @@ addP("ch","Chopp APA Barril 20L","Barril 20L","R$ 330,00","img/p36.jpg");
 addP("ch","Chopp APA Barril 30L","Barril 30L","R$ 455,00","img/p36.jpg");
 addP("ch","Chopp IPA Barril 20L","Barril 20L","R$ 330,00","img/p36.jpg");
 addP("ch","Chopp IPA Barril 30L","Barril 30L","R$ 455,00","img/p36.jpg");
+
+// ============================================
+// BANNERS / ANUNCIOS  (monetizacao)
+// Edite aqui: troque titulo, texto, link e cor.
+// Use "imagem:" no lugar de "icone:" para uma foto.
+var BANNERS = [
+  {
+    pos:"topo",
+    icone:"fa fa-truck",
+    titulo:"Frete grátis acima de R$ 150",
+    texto:"Em toda a Zona Norte e Centro. Consulte seu CEP na entrega.",
+    link:"checkout.html",
+    cor:"#3d4465",
+    ativo:true
+  },
+  {
+    pos:"topo",
+    icone:"fa fa-box-open",
+    titulo:"Compre no pacote e economize",
+    texto:"Chopp, refrigerante e água com preço especial por pacote.",
+    link:"#",
+    cor:"#646c9a",
+    ativo:true
+  },
+  {
+    pos:"meio",
+    icone:"fa fa-glass-cheers",
+    titulo:"Festa com a Convenção",
+    texto:"Monte seu pedido para churrasco, birthday e eventos com desconto.",
+    link:"#",
+    cor:"#1dc9b7",
+    ativo:true
+  },
+  {
+    pos:"meio",
+    icone:"fa fa-headset",
+    titulo:"Fale com a gente",
+    texto:"WhatsApp (21) 9-8315-8911 - atendemos seg a sex das 9h às 15h.",
+    link:"https://wa.me/5521983158911",
+    cor:"#fc0758",
+    ativo:true
+  },
+  {
+    pos:"fim",
+    icone:"fa fa-bottle-water",
+    titulo:"Refrigerantes Convenção",
+    texto:"Pacotes de 6 e 12 unidades. Entrega para todo o Rio de Janeiro.",
+    link:"index.html",
+    cor:"#ffb822",
+    ativo:true
+  }
+];
+
+function renderBanners(pos){
+  var lista = BANNERS.filter(function(b){ return b.pos===pos && b.ativo; });
+  if(!lista.length) return "";
+  return lista.map(function(b){
+    return '<a class="bnr" href="'+b.link+'" style="background:'+b.cor+'">'
+      + '<i class="'+b.icone+' bnr-ic"></i>'
+      + '<span class="bnr-tx"><b>'+b.titulo+'</b><small>'+b.texto+'</small></span>'
+      + '<i class="fa fa-chevron-right bnr-go"></i></a>';
+  }).join("");
+}
+
 function rT(){var h="";for(var i=0;i<CT.length;i++){var c=CT[i],n=0;
 for(var j=0;j<PD.length;j++)if(PD[j].ct===c.id)n++;
 h+='<button class="ti'+(i===0?' on':'')+'" data-g="'+c.id+'" onclick="goG(\''+c.id+'\')"><i class="fa '+c.ic+'"></i> '+c.nm+' <span class="cn">'+n+'</span></button>'}
@@ -90,7 +154,9 @@ h+='<div class="pib"><img class="pi" src="'+p.im+'" alt="p" loading="lazy" onerr
 h+='<div class="pdd"><span class="pds">'+p.ds+'</span><span class="pp">'+p.pr+'</span></div>';
  h+='<div class="qr"><div class="qc"><button type="button" class="qb" onclick="mQ(this,-1)">-</button><span class="qv">0</span><button type="button" class="qb" onclick="mQ(this,1)">+</button></div><button class="qa" onclick="aC(this)">Adicionar</button></div></div>'}
 h+='</div></div></div>'}
-var w=document.getElementById("pwMain");if(w)w.innerHTML=h}
+var w=document.getElementById("pwMain");if(w)w.innerHTML=h;
+var bt=document.getElementById("bnrTopo");if(bt)bt.innerHTML=renderBanners("topo");
+var bf=document.getElementById("bnrFim");if(bf)bf.innerHTML=renderBanners("fim")}
 function tgG(id){var e=document.getElementById("g-"+id);if(e)e.classList.toggle("op")}
 function goG(id){var e=document.getElementById("g-"+id);if(!e)return;
 var t=e.getBoundingClientRect().top+window.pageYOffset-170;
@@ -110,7 +176,7 @@ for(var i=0;i<it.length;i++)t+=(it[i].qty||0);
 var a=document.getElementById("cBag"),b=document.getElementById("fBag");
 if(a)a.textContent=t;if(b)b.textContent=t}catch(e){}}
 function aC(bt){try{var cd=bt.parentNode.parentNode;var q=parseInt(cd.querySelector(".qv").textContent)||0;
-if(q<=0){alert("Use os botoes + e - para escolher a quantidade.");return}
+if(q<=0){alert("Use os botões + e - para escolher a quantidade.");return}
 var pid=cd.getAttribute("data-pid").split(".");var pr=PD[parseInt(pid[1])];if(!pr)return;
 var pv=0;var mm=String(pr.pr).match(/[\d.,]+/);if(mm)pv=parseFloat(mm[0].replace(/\./g,"").replace(",","."));
 var ct=JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");

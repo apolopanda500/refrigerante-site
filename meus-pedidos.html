@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meus Pedidos - Refrigerantes ConvenÃ§Ã£o</title>
+<title>Meus Pedidos - Refrigerantes Convenção</title>
 <link rel="stylesheet" href="style.css">
 <script src="theme.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -37,11 +37,49 @@
 .vazio { text-align:center; padding:50px 20px; color:#888; }
 .vazio i { font-size:3rem; color:#ddd; margin-bottom:12px; }
 .aviso-info { background:#e3f2fd; border-left:4px solid var(--secondary-color); padding:12px 16px; border-radius:8px; font-size:0.88rem; color:#1565c0; margin-bottom:18px; }
+
+/* ===== barra de sessao ===== */
+.sessao-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    background:#e8f5e9;border-left:4px solid #43a047;
+    padding:12px 16px;border-radius:8px;font-size:.92rem;color:#2e7d32;margin-bottom:18px}
+.sessao-bar b{color:#1b5e20}
+.btn-sair{margin-left:auto;background:none;border:1px solid #c62828;color:#c62828;
+    padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px}
+.btn-sair:hover{background:#c62828;color:#fff}
+
+/* ===== TEMA ESCURO legivel ===== */
+[data-theme="dark"] .page{background:#12121c !important}
+[data-theme="dark"] .busca-card,
+[data-theme="dark"] .pedido-card{background:#1c1f33 !important;border:1px solid #353a5c !important}
+[data-theme="dark"] .page-head h1{color:#ffb822 !important}
+[data-theme="dark"] .page-head a{color:#a1a8c3 !important}
+[data-theme="dark"] .pedido-topo b{color:#e6e8f2 !important}
+[data-theme="dark"] .pedido-meta{color:#a1a8c3 !important}
+[data-theme="dark"] .pedido-itens{color:#cdd2e6 !important}
+[data-theme="dark"] .pedido-total{border-top-color:#353a5c !important}
+[data-theme="dark"] .pedido-total .val{color:#ffb822 !important}
+[data-theme="dark"] .detalhe-extra{background:#232742 !important;border:1px solid #353a5c !important}
+[data-theme="dark"] .detalhe-extra div{color:#cdd2e6 !important}
+[data-theme="dark"] .detalhe-extra b{color:#ffb822 !important}
+[data-theme="dark"] .timeline-item{color:#cdd2e6 !important}
+[data-theme="dark"] .timeline-item i{color:#ffb822 !important}
+[data-theme="dark"] .btn-detalhe{color:#ffb822 !important}
+[data-theme="dark"] .btn-buscar{background:#ffb822 !important;color:#3d4465 !important}
+[data-theme="dark"] .filtro{background:#232742 !important;border-color:#353a5c !important;color:#cdd2e6 !important}
+[data-theme="dark"] .filtro.ativo{background:#ffb822 !important;color:#3d4465 !important;border-color:#ffb822 !important}
+[data-theme="dark"] .vazio{color:#a1a8c3 !important}
+[data-theme="dark"] .vazio i{color:#353a5c !important}
+[data-theme="dark"] .aviso-info{background:#232742 !important;border-left-color:#ffb822 !important;color:#e6e8f2 !important}
+[data-theme="dark"] .sessao-bar{background:#232742 !important;border-left-color:#ffb822 !important;color:#e6e8f2 !important}
+[data-theme="dark"] .sessao-bar b{color:#ffb822 !important}
+[data-theme="dark"] .btn-sair{border-color:#ff6b6b !important;color:#ff8a8a !important}
+[data-theme="dark"] .btn-sair:hover{background:#ff6b6b !important;color:#fff !important}
 </style>
 </head>
 <body>
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
 <ul class="nav-links" id="mainNav"><li><a href="index.html">Produtos</a></li><li><a href="meus-pedidos.html">Meus Pedidos</a></li></ul>
 <div class="header-actions"></div>
@@ -50,20 +88,18 @@
 <section class="page"><div class="container">
 <div class="page-head">
   <h1><i class="fa fa-clipboard-list"></i> Meus Pedidos</h1>
-  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catÃ¡logo</a>
+  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
 </div>
 
-<div class="aviso-info"><i class="fa fa-info-circle"></i> Seus pedidos aparecem automaticamente abaixo, com data e hora.</div>
+<div class="aviso-info"><i class="fa fa-info-circle"></i> Seus pedidos aparecem automaticamente, com data e hora. Não precisa digitar nada.</div>
 
-<div id="loginBox" class="busca-card">
-  <div class="busca-linha">
-    <input id="fNomeLogin" type="text" placeholder="Seu nome">
-    <input id="fTelLogin" type="text" placeholder="Seu WhatsApp (ex: 21999999999)">
-    <button class="btn-buscar" onclick="entrar()"><i class="fa fa-sign-in"></i> Entrar</button>
-  </div>
+<div id="usuarioLogado" class="sessao-bar">
+  <i class="fa fa-user-check"></i>
+  <span>Conectado como <b id="nomeUsuario">Cliente</b></span>
+  <button class="btn-sair" onclick="sair()"><i class="fa fa-sign-out-alt"></i> Sair</button>
 </div>
 
-<div class="filtros" id="filtros" style="display:none">
+<div class="filtros" id="filtros"> id="filtros" style="display:none">
   <button class="filtro ativo" data-f="todos" onclick="filtrar('todos',this)">Todos</button>
   <button class="filtro" data-f="andamento" onclick="filtrar('andamento',this)">Em andamento</button>
   <button class="filtro" data-f="finalizados" onclick="filtrar('finalizados',this)">Finalizados</button>
@@ -98,116 +134,107 @@
     }
 </script>
 <script>
-let pedidosAtuais = [];
-let filtroAtual = "todos";
-let usuarioLogado = null;
+var filtroAtual = "todos";
 
-function chaveSessao() { return "convencao_usuario"; }
+function chaveSessao(){ return "convencao_usuario"; }
 
-function salvarSessao(nome, tel) {
-    usuarioLogado = { nome: nome, tel: tel };
-    try { localStorage.setItem(chaveSessao(), JSON.stringify(usuarioLogado)); } catch(e) {}
+function carregarSessao(){
+  try{ var s = localStorage.getItem(chaveSessao()); return s ? JSON.parse(s) : null; }
+  catch(e){ return null; }
 }
-function carregarSessao() {
-    try {
-        var s = localStorage.getItem(chaveSessao());
-        return s ? JSON.parse(s) : null;
-    } catch(e) { return null; }
+function salvarSessao(nome, tel){
+  var u = { nome: nome, tel: tel };
+  try{ localStorage.setItem(chaveSessao(), JSON.stringify(u)); }catch(e){}
+  return u;
 }
-function sair() {
-    try { localStorage.removeItem(chaveSessao()); } catch(e) {}
-    usuarioLogado = null;
-    pedidosAtuais = [];
-    document.getElementById("loginBox").style.display = "";
-    document.getElementById("usuarioLogado").style.display = "none";
-    document.getElementById("filtros").style.display = "none";
-    document.getElementById("listaPedidos").innerHTML = "";
+function sair(){
+  try{ localStorage.removeItem(chaveSessao()); }catch(e){}
+  location.reload();
 }
 
-function entrar() {
-    const nome = document.getElementById("fNomeLogin").value.trim();
-    const tel = document.getElementById("fTelLogin").value.trim();
-    if (!tel) { alert("Digite seu WhatsApp."); return; }
-    salvarSessao(nome || "Cliente", tel);
-    carregarPedidosDoUsuario();
+/* ===== SEMPRE mostra os pedidos, sem pedir numero nem nome ===== */
+function mostrarPedidos(){
+  var todos = getPedidos();
+  var sessao = carregarSessao();
+  var lista = todos;
+
+  if (sessao && sessao.tel) {
+    lista = todos.filter(function(p){ return String(p.tel).replace(/\D/g,"") === String(sessao.tel).replace(/\D/g,""); });
+  }
+
+  var nomeEl = document.getElementById("nomeUsuario");
+  if (nomeEl) nomeEl.innerText = sessao ? (sessao.nome || "Cliente") : "Todos os pedidos deste dispositivo";
+
+  var f = document.getElementById("filtros");
+  if (f) f.style.display = lista.length ? "flex" : "none";
+
+  pedidosAtuais = lista;
+  filtroAtual = "todos";
+  document.querySelectorAll(".filtro").forEach(function(b){
+    b.classList.toggle("ativo", b.dataset.f === "todos");
+  });
+  render();
+}
+var pedidosAtuais = [];
+
+function filtrar(tipo, btn){
+  filtroAtual = tipo;
+  document.querySelectorAll(".filtro").forEach(function(b){ b.classList.remove("ativo"); });
+  if (btn) btn.classList.add("ativo");
+  render();
 }
 
-function carregarPedidosDoUsuario() {
-    if (!usuarioLogado) return;
-    pedidosAtuais = pedidosPorTelefone(usuarioLogado.tel);
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("usuarioLogado").style.display = "";
-    document.getElementById("nomeUsuario").innerText = usuarioLogado.nome + " (" + usuarioLogado.tel + ")";
-    document.getElementById("filtros").style.display = pedidosAtuais.length ? "flex" : "none";
-    filtroAtual = "todos";
-    document.querySelectorAll(".filtro").forEach(function(b) { b.classList.toggle("ativo", b.dataset.f === "todos"); });
-    render();
-}
+function render(){
+  var box = document.getElementById("listaPedidos");
+  if (!box) return;
+  var lista = pedidosAtuais;
 
-function buscar() {
-    const tel = document.getElementById("fNomeLogin").value.trim() || document.getElementById("fTelLogin").value.trim();
-    if (!tel) { alert("Digite seu WhatsApp."); return; }
-    salvarSessao(usuarioLogado ? usuarioLogado.nome : "Cliente", tel);
-    carregarPedidosDoUsuario();
-}
+  if (filtroAtual === "andamento") {
+    lista = lista.filter(function(p){ return ["aguardando","confirmado","separacao","enviado"].indexOf(p.status) >= 0; });
+  } else if (filtroAtual === "finalizados") {
+    lista = lista.filter(function(p){ return ["entregue","cancelado"].indexOf(p.status) >= 0; });
+  }
 
-function filtrar(tipo, btn) {
-    filtroAtual = tipo;
-    document.querySelectorAll(".filtro").forEach(b => b.classList.remove("ativo"));
-    btn.classList.add("ativo");
-    render();
-}
+  if (!pedidosAtuais.length) {
+    box.innerHTML = '<div class="vazio"><i class="fa fa-receipt"></i><p>Você ainda não fez nenhum pedido.</p>'
+      + '<a href="index.html" class="link-voltar"><i class="fa fa-arrow-left"></i> Ver produtos</a></div>';
+    return;
+  }
+  if (!lista.length) {
+    box.innerHTML = '<div class="vazio"><i class="fa fa-filter"></i><p>Nenhum pedido neste filtro.</p></div>';
+    return;
+  }
 
-function render() {
-    const box = document.getElementById("listaPedidos");
-    let lista = pedidosAtuais;
-    if (filtroAtual === "andamento") {
-        lista = lista.filter(p => ["aguardando","confirmado","separacao","enviado"].includes(p.status));
-    } else if (filtroAtual === "finalizados") {
-        lista = lista.filter(p => ["entregue","cancelado"].includes(p.status));
-    }
-
-    if (pedidosAtuais.length === 0) {
-        box.innerHTML = '<div class="vazio"><i class="fa fa-inbox"></i><p>Você ainda não fez nenhum pedido.</p><a href="index.html" class="link-voltar">Ver produtos</a></div>';
-        return;
-    }
-    if (lista.length === 0) {
-        box.innerHTML = '<div class="vazio"><i class="fa fa-filter"></i><p>Nenhum pedido neste filtro.</p></div>';
-        return;
-    }
-
-    let h = "";
-    lista.forEach(function(p) {
-        h += '<div class="pedido-card">';
-        h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta">' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
-        h += '<div class="pedido-itens">';
-        p.itens.forEach(function(i) { h += '<div>' + i.name + ' x' + i.qty + '</div>'; });
-        h += '</div>';
-        h += '<div class="pedido-total"><button class="btn-detalhe" onclick="toggleDetalhe(\'' + p.id + '\')"><i class="fa fa-chevron-down"></i> Ver detalhes</button><span class="val">' + formatBRL(p.total) + '</span></div>';
-        h += '<div class="detalhe-extra" id="det-' + p.id + '">';
-        h += '<div><b>Entrega:</b> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + ' â€” ' + p.bairro + '</div>';
-        h += '<div><b>Pagamento:</b> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco p/ " + p.troco + ")" : "") + '</div>';
-        h += '<div><b>Frete:</b> ' + (p.frete === 0 ? "GRÃTIS" : formatBRL(p.frete)) + '</div>';
-        h += '<div class="timeline"><b>Acompanhamento:</b>';
-        p.historico.forEach(function(ev) {
-            h += '<div class="timeline-item"><i class="fa fa-circle" style="font-size:0.5rem"></i> ' + (STATUS_LABEL[ev.status] || ev.status) + ' â€” ' + dataHora(ev.quando) + '</div>';
-        });
-        h += '</div></div></div>';
+  var h = "";
+  lista.forEach(function(p){
+    h += '<div class="pedido-card">';
+    h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta"><i class="fa fa-clock"></i> ' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
+    h += '<div class="pedido-itens">';
+    p.itens.forEach(function(i){ h += '<div>' + i.name + ' <b>x' + i.qty + '</b></div>'; });
+    h += '</div>';
+    h += '<div class="pedido-total"><button class="btn-detalhe" onclick="toggleDetalhe(\'' + p.id + '\')"><i class="fa fa-chevron-down"></i> Ver detalhes</button><span class="val">' + formatBRL(p.total) + '</span></div>';
+    h += '<div class="detalhe-extra" id="det-' + p.id + '">';
+    h += '<div><b>Cliente:</b> ' + (p.nome || "—") + (p.tel ? " &middot; " + p.tel : "") + '</div>';
+    h += '<div><b>Entrega:</b> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + " — " + p.bairro + '</div>';
+    h += '<div><b>Pagamento:</b> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</div>';
+    h += '<div><b>Frete:</b> ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</div>';
+    h += '<div><b>Subtotal:</b> ' + formatBRL(p.subtotal) + '</div>';
+    h += '<div class="timeline"><b>Acompanhamento:</b>';
+    p.historico.forEach(function(ev){
+      h += '<div class="timeline-item"><i class="fa fa-circle"></i> ' + (STATUS_LABEL[ev.status] || ev.status) + " — " + dataHora(ev.quando) + '</div>';
     });
-    box.innerHTML = h;
+    h += '</div></div></div>';
+  });
+  box.innerHTML = h;
 }
 
-function toggleDetalhe(id) {
-    const el = document.getElementById("det-" + id);
-    if (el) el.style.display = (el.style.display === "block") ? "none" : "block";
+function toggleDetalhe(id){
+  var el = document.getElementById("det-" + id);
+  if (el) el.style.display = (el.style.display === "block") ? "none" : "block";
 }
 
-document.getElementById("fTelLogin").addEventListener("keypress", function(e) { if (e.key === "Enter") entrar(); });
-document.getElementById("fNomeLogin").addEventListener("keypress", function(e) { if (e.key === "Enter") entrar(); });
-
-// restaurar sessao e mostrar pedidos automaticamente
-usuarioLogado = carregarSessao();
-if (usuarioLogado) carregarPedidosDoUsuario();
+document.addEventListener("DOMContentLoaded", function(){ mostrarPedidos(); });
+if (document.readyState !== "loading") mostrarPedidos();
 </script>
 </body>
 </html>

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Finalizar Pedido - Refrigerantes ConvenÃ§Ã£o</title>
+<title>Finalizar Pedido - Refrigerantes Convenção</title>
 <link rel="stylesheet" href="style.css">
 <script src="theme.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -56,25 +56,25 @@
       <div class="campo"><label>Nome completo *</label><input id="fNome" type="text" placeholder="Seu nome"></div>
       <div class="campo"><label>WhatsApp *</label><input id="fTel" type="text" placeholder="(21) 99999-9999"></div>
     </div>
-    <div class="campo"><label>EndereÃ§o (rua, nÃºmero) *</label><input id="fEnd" type="text" placeholder="Rua, nÃºmero"></div>
+    <div class="campo"><label>Endereço (rua, número) *</label><input id="fEnd" type="text" placeholder="Rua, número"></div>
     <div class="linha2">
       <div class="campo"><label>Bairro *</label><input id="fBairro" type="text" placeholder="Bairro"></div>
-      <div class="campo"><label>Complemento</label><input id="fComp" type="text" placeholder="Apto, referÃªncia..."></div>
+      <div class="campo"><label>Complemento</label><input id="fComp" type="text" placeholder="Apto, referência..."></div>
     </div>
   </div>
 
   <div class="card-section">
-    <h2><i class="fa fa-truck"></i> RegiÃ£o de Entrega (Frete)</h2>
+    <h2><i class="fa fa-truck"></i> Região de Entrega (Frete)</h2>
     <div class="campo">
-      <label>Selecione a regiÃ£o *</label>
+      <label>Selecione a região *</label>
       <select id="fRegiao" onchange="calcular()">
-        <option value="8">Centro e bairros prÃ³ximos â€” R$ 8,00</option>
-        <option value="12">Zona Norte / Zona Sul â€” R$ 12,00</option>
-        <option value="15">Zona Oeste â€” R$ 15,00</option>
-        <option value="20">Baixada / RegiÃµes afastadas â€” R$ 20,00</option>
+        <option value="8">Centro e bairros próximos — R$ 8,00</option>
+        <option value="12">Zona Norte / Zona Sul — R$ 12,00</option>
+        <option value="15">Zona Oeste — R$ 15,00</option>
+        <option value="20">Baixada / Regiões afastadas — R$ 20,00</option>
       </select>
     </div>
-    <div class="aviso" style="text-align:left"><i class="fa fa-info-circle"></i> Frete grÃ¡tis para pedidos acima de R$ 150,00.</div>
+    <div class="aviso" style="text-align:left"><i class="fa fa-info-circle"></i> Frete grátis para pedidos acima de R$ 150,00.</div>
   </div>
 
   <div class="card-section">
@@ -82,7 +82,7 @@
     <label class="pag-opcao ativa"><input type="radio" name="pag" value="Pix" checked onchange="selPag(this)"><i class="fa fa-qrcode"></i><span>Pix</span></label>
     <label class="pag-opcao"><input type="radio" name="pag" value="Dinheiro" onchange="selPag(this)"><i class="fa fa-money-bill-wave"></i><span>Dinheiro</span></label>
     <div class="troco-box" id="trocoBox"><div class="campo"><label>Troco para quanto?</label><input id="fTroco" type="text" placeholder="Ex: 100,00" oninput="calcular()"></div></div>
-    <label class="pag-opcao"><input type="radio" name="pag" value="CartÃ£o" onchange="selPag(this)"><i class="fa fa-credit-card"></i><span>CartÃ£o (na entrega)</span></label>
+    <label class="pag-opcao"><input type="radio" name="pag" value="Cartão" onchange="selPag(this)"><i class="fa fa-credit-card"></i><span>Cartão (na entrega)</span></label>
   </div>
 </div>
 
@@ -94,7 +94,7 @@
     <div class="resumo-row" id="rFreteRow"><span>Frete</span><span id="rFrete">R$ 0,00</span></div>
     <div class="resumo-row total"><span>Total</span><span id="rTotal">R$ 0,00</span></div>
     <button class="btn-enviar" id="btnEnviar" onclick="enviarPedido()"><i class="fa fa-check-circle"></i> Finalizar Pedido</button>
-    <div class="aviso">Acompanhe o status do seu pedido na pÃ¡gina "Meus Pedidos".</div>
+    <div class="aviso">Acompanhe o status do seu pedido na página "Meus Pedidos".</div>
   </div>
 </div>
 </div>
@@ -159,7 +159,7 @@ function calcular() {
     const frRow = document.getElementById("rFreteRow");
     if (frete === 0) {
         frRow.classList.add("gratis");
-        fr.innerText = "GRÃTIS";
+        fr.innerText = "GRÁTIS";
     } else {
         frRow.classList.remove("gratis");
         fr.innerText = formatBRL(frete);
@@ -176,7 +176,7 @@ function enviarPedido() {
     const comp = document.getElementById("fComp").value.trim();
 
     if (!nome || !tel || !end || !bairro) {
-        alert("Preencha os campos obrigatÃ³rios: Nome, WhatsApp, EndereÃ§o e Bairro.");
+        alert("Preencha os campos obrigatórios: Nome, WhatsApp, Endereço e Bairro.");
         return;
     }
 

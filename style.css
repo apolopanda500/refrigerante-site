@@ -1,10 +1,10 @@
-﻿/* ============================================
-   REFRIGERANTES CONVENÃ‡ÃƒO - STYLE OPTIMIZADO
+/* ============================================
+   REFRIGERANTES CONVENÇÃO - STYLE OPTIMIZADO
    ============================================ */
 
-/* ===== VARIÃVEIS CSS ===== */
+/* ===== VARIÁVEIS CSS ===== */
 :root {
-    /* Paleta oficial ConvenÃ§Ã£o (extraida do site oficial) */
+    /* Paleta oficial Convenção (extraida do site oficial) */
     --primary-color: #3d4465;
     --secondary-color: #646c9a;
     --accent-color: #ffb822;
@@ -90,7 +90,7 @@ body::before {
     50% { opacity: 0.95; }
 }
 
-/* PartÃ­culas cintilantes */
+/* Partículas cintilantes */
 .particle {
     position: fixed;
     background: rgba(229, 57, 53, 0.3);
@@ -126,7 +126,7 @@ h2 { font-size: calc(var(--font-size-h2) * 1.1); }
 h3 { font-size: 1.2rem; }
 p { margin-bottom: 1rem; }
 
-/* ===== BOTÃ•ES ===== */
+/* ===== BOTÕES ===== */
 .btn {
     display: inline-block;
     padding: 12px 24px;
@@ -247,7 +247,7 @@ p { margin-bottom: 1rem; }
     }
 }
 
-/* ===== NAVEGAÃ‡ÃƒO ===== */
+/* ===== NAVEGAÇÃO ===== */
 .nav-links {
     display: flex;
     gap: 30px;
@@ -318,7 +318,7 @@ p { margin-bottom: 1rem; }
     .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translateY(-6px); }
 }
 
-/* ===== SEÃ‡Ã•ES ===== */
+/* ===== SEÇÕES ===== */
 .section {
     padding: 60px 0;
 }
@@ -832,3 +832,77 @@ table tfoot td {
 
 /* versao escura do cabecalho unificado */
 [data-theme="dark"] .main-header { background: #1c1f33 !important; }
+
+/* ============================================
+   TEMA ESCURO LEGIVEL - tabelas, formularios e cartoes
+   Sem isto o texto ficava escuro sobre fundo escuro
+   ============================================ */
+[data-theme="dark"] .page{background:#12121c !important}
+
+[data-theme="dark"] .config-card,
+[data-theme="dark"] .perfil-card,
+[data-theme="dark"] .card,
+[data-theme="dark"] .info-box,
+[data-theme="dark"] .card-section{
+    background:#1c1f33 !important;
+    border:1px solid #353a5c !important;
+    color:#e6e8f2 !important;
+}
+[data-theme="dark"] .config-card h2,
+[data-theme="dark"] .perfil-card h2,
+[data-theme="dark"] .card h2{color:#ffb822 !important}
+
+/* labels e textos de formulario */
+[data-theme="dark"] .config-label,
+[data-theme="dark"] .perfil-label,
+[data-theme="dark"] label,
+[data-theme="dark"] .campo label{color:#e6e8f2 !important}
+[data-theme="dark"] .config-label small,
+[data-theme="dark"] .perfil-label small{color:#a1a8c3 !important}
+
+/* campos: fundo e borda visiveis, texto claro */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="tel"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] select,
+[data-theme="dark"] textarea{
+    background:#232742 !important;
+    border:1px solid #454b70 !important;
+    color:#e6e8f2 !important;
+}
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder{color:#8f97b5 !important}
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus{
+    border-color:#ffb822 !important;
+    outline:none !important;
+}
+
+/* botoes */
+[data-theme="dark"] .btn-primario,
+[data-theme="dark"] .btn-enviar,
+[data-theme="dark"] .btn-salvar{background:#ffb822 !important;color:#3d4465 !important}
+[data-theme="dark"] .btn-secundario{background:#232742 !important;color:#ffb822 !important;border-color:#ffb822 !important}
+[data-theme="dark"] .btn-perigo{background:#ff5252 !important;color:#fff !important}
+[data-theme="dark"] .btn-limpar{background:#3a3a55 !important;color:#e6e8f2 !important}
+
+/* caixas de aviso */
+[data-theme="dark"] .info-box{background:#232742 !important;border-left-color:#ffb822 !important;color:#e6e8f2 !important}
+[data-theme="dark"] .aviso-info{background:#232742 !important;border-left-color:#ffb822 !important;color:#e6e8f2 !important}
+
+/* linhas divisórias */
+[data-theme="dark"] .config-row,
+[data-theme="dark"] .pedido-total{border-bottom-color:#353a5c !important}
+
+/* texto geral e vazios */
+[data-theme="dark"] .version-info,
+[data-theme="dark"] .vazio{color:#a1a8c3 !important}
+[data-theme="dark"] .page-head h1{color:#ffb822 !important}
+[data-theme="dark"] .page-head a{color:#a1a8c3 !important}
+
+/* alternador (toggle) */
+[data-theme="dark"] .toggle .slider{background:#454b70 !important}
+[data-theme="dark"] .toggle input:checked + .slider{background:#ffb822 !important}
+[data-theme="dark"] .toggle .slider::before{background:#fff !important}

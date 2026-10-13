@@ -170,6 +170,42 @@ a{text-decoration:none;color:inherit}
     .ti{padding:11px 18px;font-size:.92rem}
 }
 @media(max-width:768px){.tb{top:100px}}
+
+/* ============================================
+   BANNERS / ANUNCIOS
+   ============================================ */
+.bnr{
+    display:flex;align-items:center;gap:14px;
+    margin:14px 0;padding:16px 20px;border-radius:14px;
+    color:#fff;text-decoration:none;
+    box-shadow:0 4px 14px rgba(61,68,101,.18);
+    transition:transform .18s ease,box-shadow .18s ease;
+    overflow:hidden;position:relative;
+}
+.bnr::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(120deg,rgba(255,255,255,.14),transparent 55%);
+    pointer-events:none;
+}
+.bnr:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(61,68,101,.3);color:#fff}
+.bnr-ic{
+    font-size:1.5rem;width:52px;height:52px;flex:0 0 52px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.18);border-radius:14px;
+}
+.bnr-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.bnr-tx b{font-size:1.02rem;font-weight:800;line-height:1.25}
+.bnr-tx small{font-size:.82rem;opacity:.9;line-height:1.35}
+.bnr-go{font-size:.85rem;opacity:.8;flex:0 0 auto}
+
+@media(max-width:560px){
+    .bnr{padding:13px 14px;gap:11px;border-radius:12px}
+    .bnr-ic{width:42px;height:42px;flex:0 0 42px;font-size:1.2rem}
+    .bnr-tx b{font-size:.92rem}
+    .bnr-tx small{font-size:.75rem}
+    .bnr-go{display:none}
+}
+[data-theme="dark"] .bnr{box-shadow:0 4px 14px rgba(0,0,0,.4)}
 </style>
 </head>
 <body>
@@ -188,7 +224,9 @@ a{text-decoration:none;color:inherit}
 
 <div class="tb"><div class="tr2" id="trRow"></div></div>
 
+<div class="pw" id="bnrTopo"></div>
 <main class="pw" id="pwMain"></main>
+<div class="pw" id="bnrFim"></div>
 
 <button class="fb2" onclick="location.href='checkout.html'" aria-label="Carrinho"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
 

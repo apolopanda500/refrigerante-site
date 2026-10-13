@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel do Vendedor - Refrigerantes ConvenÃ§Ã£o</title>
+<title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="stylesheet" href="style.css">
 <script src="theme.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -44,7 +44,7 @@
 </head>
 <body>
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <ul class="nav-links"><li><a href="index.html">Ver loja</a></li></ul>
 <div class="header-actions"><button class="btn-sair" id="btnSair" onclick="sair()" style="display:none">Sair</button></div>
 </nav></div></header>
@@ -136,15 +136,15 @@ function renderAdmin() {
         h += '<div class="pedido-card">';
         h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta">' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
         h += '<div class="pedido-info"><i class="fa fa-user"></i> ' + p.nome + ' &nbsp; <i class="fa fa-phone"></i> ' + p.tel + '</div>';
-        h += '<div class="pedido-info"><i class="fa fa-map-marker-alt"></i> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + ' â€” ' + p.bairro + '</div>';
-        h += '<div class="pedido-info"><i class="fa fa-credit-card"></i> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco p/ " + p.troco + ")" : "") + ' &nbsp; <i class="fa fa-truck"></i> Frete: ' + (p.frete === 0 ? "GRÃTIS" : formatBRL(p.frete)) + '</div>';
+        h += '<div class="pedido-info"><i class="fa fa-map-marker-alt"></i> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + ' — ' + p.bairro + '</div>';
+        h += '<div class="pedido-info"><i class="fa fa-credit-card"></i> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco p/ " + p.troco + ")" : "") + ' &nbsp; <i class="fa fa-truck"></i> Frete: ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</div>';
         h += '<div class="pedido-itens">';
-        p.itens.forEach(function(i) { h += '<div>' + i.name + ' x' + i.qty + ' â€” ' + formatBRL(i.subtotal) + '</div>'; });
+        p.itens.forEach(function(i) { h += '<div>' + i.name + ' x' + i.qty + ' — ' + formatBRL(i.subtotal) + '</div>'; });
         h += '</div>';
         h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span class="pedido-total-linha">Total: ' + formatBRL(p.total) + '</span></div>';
         h += '<div class="pedido-acoes">';
         h += '<button class="btn-st b-confirmar" onclick="mudarStatus(\'' + p.id + '\',\'confirmado\')">Confirmar</button>';
-        h += '<button class="btn-st b-separar" onclick="mudarStatus(\'' + p.id + '\',\'separacao\')">Em separaÃ§Ã£o</button>';
+        h += '<button class="btn-st b-separar" onclick="mudarStatus(\'' + p.id + '\',\'separacao\')">Em separação</button>';
         h += '<button class="btn-st b-enviar" onclick="mudarStatus(\'' + p.id + '\',\'enviado\')">Enviado</button>';
         h += '<button class="btn-st b-entregar" onclick="mudarStatus(\'' + p.id + '\',\'entregue\')">Entregue</button>';
         h += '<button class="btn-st b-cancelar" onclick="mudarStatus(\'' + p.id + '\',\'cancelado\')">Cancelar</button>';
@@ -160,7 +160,7 @@ function mudarStatus(id, status) {
 function falarCliente(tel, id) {
     const p = getPedidos().find(x => x.id === id);
     if (!p) return;
-    let msg = "OlÃ¡ " + p.nome + "! Sobre seu pedido " + p.id + " (" + formatBRL(p.total) + "): ";
+    let msg = "Olá " + p.nome + "! Sobre seu pedido " + p.id + " (" + formatBRL(p.total) + "): ";
     window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
