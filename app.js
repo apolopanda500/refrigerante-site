@@ -60,11 +60,19 @@ addP("ch","Chopp Black 500ml","500ml","R$ 34,50","img/p29.jpg");
 addP("ch","Chopp Malzbier 500ml","500ml","R$ 33,30","img/p33.jpg");
 addP("ch","Chopp Vinho 500ml","500ml","R$ 35,80","img/p32.jpg");
 
-// ===== CHOPP PET - barris =====
-addP("ch","Chopp PET 20L","Barril 20L","R$ 300,00","img/p36.jpg");
-addP("ch","Chopp PET 30L","Barril 30L","R$ 400,00","img/p36.jpg");
-addP("ch","Chopp Vinho PET 20L","Barril 20L","R$ 318,87","img/p35.jpg");
-addP("ch","Chopp Vinho PET 30L","Barril 30L","R$ 438,11","img/p35.jpg");
+// ===== CHOPP RAVACHE - BARRIS 20L e 30L =====
+addP("ch","Chopp LEV Barril 20L","Barril 20L","R$ 170,00","img/p36.jpg");
+addP("ch","Chopp LEV Barril 30L","Barril 30L","R$ 260,00","img/p36.jpg");
+addP("ch","Chopp Pilsen Barril 20L","Barril 20L","R$ 310,00","img/p36.jpg");
+addP("ch","Chopp Pilsen Barril 30L","Barril 30L","R$ 425,00","img/p36.jpg");
+addP("ch","Chopp Vinho Barril 20L","Barril 20L","R$ 320,00","img/p35.jpg");
+addP("ch","Chopp Vinho Barril 30L","Barril 30L","R$ 440,00","img/p35.jpg");
+addP("ch","Chopp Gold Barril 20L","Barril 20L","R$ 330,00","img/p36.jpg");
+addP("ch","Chopp Gold Barril 30L","Barril 30L","R$ 455,00","img/p36.jpg");
+addP("ch","Chopp APA Barril 20L","Barril 20L","R$ 330,00","img/p36.jpg");
+addP("ch","Chopp APA Barril 30L","Barril 30L","R$ 455,00","img/p36.jpg");
+addP("ch","Chopp IPA Barril 20L","Barril 20L","R$ 330,00","img/p36.jpg");
+addP("ch","Chopp IPA Barril 30L","Barril 30L","R$ 455,00","img/p36.jpg");
 function rT(){var h="";for(var i=0;i<CT.length;i++){var c=CT[i],n=0;
 for(var j=0;j<PD.length;j++)if(PD[j].ct===c.id)n++;
 h+='<button class="ti'+(i===0?' on':'')+'" data-g="'+c.id+'" onclick="goG(\''+c.id+'\')"><i class="fa '+c.ic+'"></i> '+c.nm+' <span class="cn">'+n+'</span></button>'}
