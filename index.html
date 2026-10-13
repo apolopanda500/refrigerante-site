@@ -109,10 +109,72 @@ a{text-decoration:none;color:inherit}
 [data-theme="dark"] .qv{border-color:#353a5c !important;color:#e6e8f2 !important}
 [data-theme="dark"] .gc{background:#353a5c !important;color:#e6e8f2 !important}
 [data-theme="dark"] .pp{color:#ffb822 !important}
+/* ============================================
+   ABAS DE CATEGORIA - redesign
+   Maiores, sem borda, centralizadas, visuais
+   ============================================ */
+.tb{
+    background:#fff;
+    border-bottom:0;
+    box-shadow:0 3px 14px rgba(61,68,101,.10);
+    position:sticky;top:107px;z-index:98;
+    padding:14px 16px 16px;
+}
+.tr2{
+    display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+    gap:12px;max-width:1280px;margin:0 auto;
+}
+.ti{
+    display:inline-flex;align-items:center;gap:10px;
+    flex:0 0 auto;white-space:nowrap;
+    padding:13px 24px;border:0;border-radius:50px;
+    background:#f2f2f2;color:#646c9a;
+    font-family:'Segoe UI',Tahoma,sans-serif;
+    font-size:1rem;font-weight:700;line-height:1;
+    cursor:pointer;text-transform:none;letter-spacing:.2px;
+    box-shadow:0 2px 6px rgba(61,68,101,.08);
+    transition:transform .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease;
+}
+.ti i{font-size:1.05rem;color:#ffb822;transition:color .18s ease}
+.ti:hover{background:#3d4465;color:#fff;transform:translateY(-3px);
+    box-shadow:0 8px 18px rgba(61,68,101,.28)}
+.ti:hover i{color:#ffb822}
+.ti.on{
+    background:linear-gradient(135deg,#3d4465 0%,#646c9a 100%);
+    color:#fff;transform:translateY(-3px);
+    box-shadow:0 10px 22px rgba(61,68,101,.34);
+}
+.ti.on i{color:#ffb822}
+.ti .cn{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:26px;height:26px;padding:0 8px;border-radius:13px;
+    background:#fff;color:#3d4465;font-size:.78rem;font-weight:800;
+}
+.ti.on .cn{background:#ffb822;color:#3d4465}
+
+/* abas no tema escuro */
+[data-theme="dark"] .tb{background:#1c1f33 !important}
+[data-theme="dark"] .ti{background:#232742 !important;color:#a1a8c3 !important;box-shadow:none !important}
+[data-theme="dark"] .ti:hover{background:#353a5c !important;color:#fff !important}
+[data-theme="dark"] .ti.on{background:linear-gradient(135deg,#ffb822 0%,#ffc94d 100%) !important;color:#3d4465 !important}
+[data-theme="dark"] .ti .cn{background:#ffb822 !important;color:#3d4465 !important}
+[data-theme="dark"] .ti.on .cn{background:#3d4465 !important;color:#ffb822 !important}
+[data-theme="dark"] .ti i{color:#ffb822 !important}
+
+/* responsivo */
+@media(max-width:900px){
+    .tb{padding:12px 10px 14px}
+    .tr2{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;
+        scrollbar-width:none;-ms-overflow-style:none}
+    .tr2::-webkit-scrollbar{display:none}
+    .ti{padding:11px 18px;font-size:.92rem}
+}
+@media(max-width:768px){.tb{top:100px}}
 </style>
 </head>
 <body>
 <div class="ld" id="ldBox"><div class="ldb"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="ldt">Carregando<br><b>Convenção - Delivery</b></div></div>
+
 <header class="hd"><nav>
 <div class="lg"><i class="fa fa-bottle-water"></i> Convenção</div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
@@ -120,50 +182,22 @@ a{text-decoration:none;color:inherit}
 <div class="ha"><button class="bs" onclick="partilhar()"><i class="fa fa-share-alt"></i> Compartilhar</button>
 <div class="ci" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="cb" id="cBag">0</span></div></div>
 </nav></header>
+
 <div class="sw"><div class="si"><div class="sf"><i class="fa fa-search"></i><input type="text" placeholder="Buscar produto..." oninput="fs(this.value)"></div></div></div>
+
 <div class="tb"><div class="tr2" id="trRow"></div></div>
+
 <main class="pw" id="pwMain"></main>
-<footer class="ft"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p>
-<div id="operatingStatus" style="padding:8px;background:#e8f5e9;color:#2e7d32;border-radius:6;margin-top:4px;font-size:0.85rem"></div></footer>
+
 <button class="fb2" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
 
-<script>
-    // Mobile menu toggle
-    const menuBtn = document.querySelector('.mobile-menu-btn');
-    const nav = document.getElementById('mainNav');
-    
-    if (menuBtn && nav) {
-        menuBtn.addEventListener('click', () => {
-            menuBtn.classList.toggle('active');
-            nav.classList.toggle('active');
-        });
-        
-        // Close menu when clicking a link
-        nav.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                menuBtn.classList.remove('active');
-                nav.classList.remove('active');
-            });
-        });
-    }
-</script>
+<footer class="ft">
+<p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p>
+<p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Seg a sex 9h às 15h - Horário de São Paulo</p>
+<div id="operatingStatus"></div>
+</footer>
+
+<script src="theme.js"></script>
 <script src="app.js"></script>
-<footer class="ft"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p>
-<p style="font-size:0.7rem;color:#666;margin-top:4px">Atualizações: seg a sex, fechar sex 15h - Horário SP</p></footer>
+</body>
 </html>
-
-
-/* ===== ABAS DE CATEGORIA (barra que estava sem estilo) ===== */
-.tr2{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;-webkit-overflow-scrolling:touch}
-.tr2::-webkit-scrollbar{height:6px}
-.tr2::-webkit-scrollbar-thumb{background:#d9d9dc;border-radius:6px}
-.ti{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;flex:0 0 auto;
-    padding:9px 16px;border:1px solid #eeeef4;border-radius:23px;background:#fff;
-    color:#646c9a;font-size:.85rem;font-weight:600;cursor:pointer;
-    transition:background .2s,color .2s,border-color .2s}
-.ti:hover{border-color:#ffb822;color:#3d4465}
-.ti.on{background:#3d4465;border-color:#3d4465;color:#fff}
-.ti .cn{display:inline-flex;align-items:center;justify-content:center;
-    min-width:20px;height:20px;padding:0 6px;border-radius:10px;
-    background:#eeeef4;color:#646c9a;font-size:.72rem;font-weight:700}
-.ti.on .cn{background:#ffb822;color:#3d4465}
