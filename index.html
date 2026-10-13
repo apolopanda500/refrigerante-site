@@ -1,110 +1,349 @@
-﻿\uFEFF﻿
-<!DOCTYPE html>
-
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="description" content="Refrigerantes Convenção - Delivery Online. Pedidos pelo WhatsApp.">
-
-<title>Refrigerantes Convenção - Delivery Online</title>
-
-<link rel="stylesheet" href="style.css">
-
+<title>Convenção - Delivery OFICIAL</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#ECC400;--primary-dark:#c4a600;--dark:#1a1a2e;--text:#333;--light:#f5f5f5;--white:#fff;--red:#e53935;--green:#43a047;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:12px}
+body{font-family:'Poppins',sans-serif;color:var(--text);background:#f0f2f5;min-height:100vh;padding-bottom:80px}
+a{text-decoration:none;color:inherit}
 
-</head>
+/* LOADING */
+.loader-container{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
+.loader-container.hide{opacity:0;pointer-events:none}
+.loader{display:flex;gap:4px;margin-bottom:16px}
+.loader .bar{width:6px;height:40px;background:var(--primary);border-radius:3px;animation:barBounce .6s ease-in-out infinite alternate}
+.loader .bar:nth-child(2){animation-delay:.1s}.loader .bar:nth-child(3){animation-delay:.2s}
+.loader .bar:nth-child(4){animation-delay:.3s}.loader .bar:nth-child(5){animation-delay:.4s}.loader .bar:nth-child(6){animation-delay:.5s}
+@keyframes barBounce{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
+.loader-msg{color:#fff;font-size:.9rem;text-align:center;line-height:1.6}
 
-<body>
+/* HEADER */
+.main-header{background:var(--dark);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.main-header nav{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:12px 20px;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.3rem;font-weight:700;color:var(--primary)}
+.logo i{font-size:1.5rem}
+.nav-links{display:flex;gap:20px;list-style:none}
+.nav-links a{color:#ccc;font-size:.85rem;font-weight:500;transition:color .3s;display:flex;align-items:center;gap:5px}
+.nav-links a:hover{color:var(--primary)}
+.header-actions{display:flex;align-items:center;gap:14px}
+.share-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;background:var(--primary);color:var(--dark);border-radius:20px;font-weight:600;font-size:.8rem;cursor:pointer;border:none}
+.cart-icon{position:relative;cursor:pointer;font-size:1.4rem;color:#fff}
+.cart-count{position:absolute;top:-8px;right:-10px;background:var(--red);color:#fff;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
+/* SEARCH */
+.search-bar{background:#fff;padding:12px 20px;box-shadow:var(--shadow);position:sticky;top:56px;z-index:99}
+.search-bar .container{max-width:1200px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.search-input-wrap{flex:1;position:relative}
+.search-input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#999}
+.search-input{width:100%;padding:10px 14px 10px 40px;border:2px solid #e0e0e0;border-radius:25px;font-size:.9rem;font-family:inherit;outline:none}
+.search-input:focus{border-color:var(--primary)}
 
-<header class="main-header"><div class="container"><nav>
+/* TABS */
+.grupos-tabs{background:#fff;border-bottom:2px solid #eee;position:sticky;top:110px;z-index:98;overflow-x:auto;scrollbar-width:none}
+.grupos-tabs::-webkit-scrollbar{display:none}
+.tabs-inner{display:flex;max-width:1200px;margin:0 auto;padding:0 10px;min-width:max-content}
+.tab-item{padding:12px 18px;font-size:.82rem;font-weight:600;color:#666;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px}
+.tab-item:hover{background:#f8f8f8}
+.tab-item.active{color:var(--primary-dark);border-bottom-color:var(--primary);background:#fffde7}
 
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
+/* MAIN */
+.main-content{max-width:1200px;margin:0 auto;padding:16px 20px}
 
-<ul class="nav-links"><li><a href="#produtos"><i class="fa fa-box"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico de Pedidos</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
+/* ACCORDION */
+.grupo-section{margin-bottom:8px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.grupo-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;user-select:none}
+.grupo-header:hover{background:#fafafa}
+.grupo-header-left{display:flex;align-items:center;gap:12px}
+.grupo-header-left i{font-size:1.3rem;color:var(--primary-dark);width:32px;text-align:center}
+.grupo-nome{font-size:1.05rem;font-weight:700;color:var(--dark)}
+.grupo-count{font-size:.75rem;background:var(--primary);color:var(--dark);padding:2px 8px;border-radius:10px;font-weight:600}
+.grupo-chevron{font-size:.9rem;color:#999;transition:transform .3s}
+.grupo-section.open .grupo-chevron{transform:rotate(180deg)}
+.grupo-body{display:none;padding:0 16px 16px}
+.grupo-section.open .grupo-body{display:block}
 
-<div class="header-actions">
+/* GRID */
+.produtos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.produtos-grid{grid-template-columns:repeat(2,1fr)}}
+/* CARD PRODUTO */
+.produto-card{background:#fff;border:1px solid #eee;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .3s;display:flex;flex-direction:column}
+.produto-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.12);transform:translateY(-2px)}
+.produto-card-header{padding:10px 14px 6px;font-weight:600;font-size:.88rem;color:var(--dark);line-height:1.3}
+.produto-img-wrap{width:100%;aspect-ratio:1;background:#f8f8f8;display:flex;align-items:center;justify-content:center;padding:8px}
+.produto-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.produto-dados{padding:8px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.produto-desc{font-size:.78rem;color:#888;line-height:1.4}
+.produto-preco{font-size:1.1rem;font-weight:700;color:var(--green);margin-top:auto}
 
-<a class="share-btn" href="#" onclick="compartilharSite();return false;" title="Compartilhar este site"><i class="fa fa-share-alt"></i> Compartilhar</a>
+/* QUANTITY */
+.qtd-row{display:flex;align-items:center;gap:8px;padding:8px 14px 12px}
+.qtd-control{display:flex;align-items:center;border:2px solid #e0e0e0;border-radius:8px;overflow:hidden}
+.qtd-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border:none;font-size:1rem;cursor:pointer}
+.qtd-btn:hover{background:var(--primary);color:#fff}
+.qtd-valor{width:36px;text-align:center;font-weight:700;font-size:.95rem;height:34px;line-height:34px;border-left:2px solid #e0e0e0;border-right:2px solid #e0e0e0}
+.btn-add{flex:1;height:34px;background:var(--primary);color:var(--dark);border:none;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-add:hover{background:var(--primary-dark);color:#fff}
+.btn-add.added{background:var(--green);color:#fff}
 
-<div class="cart-icon" onclick="finalizarPedido()" title="Carrinho de compras"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
+/* FOOTER */
+.main-footer{background:var(--dark);color:#ccc;text-align:center;padding:20px;font-size:.85rem;margin-top:40px}
+.main-footer a{color:var(--primary);font-weight:600}
 
+/* FAB */
+.fab-cart{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:var(--primary);color:var(--dark);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,.3);cursor:pointer;z-index:200;border:none}
+.fab-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:.65rem;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* MODAL */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:500px;max-height:85vh;overflow-y:auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #eee;position:sticky;top:0;background:#fff;z-index:1}
+.modal-close{background:none;border:none;font-size:1.3rem;color:#999;cursor:pointer}
+.modal-body{padding:16px 20px}
+.modal-footer{padding:16px 20px;border-top:1px solid #eee;position:sticky;bottom:0;background:#fff}
+.btn-confirm{width:100%;padding:14px;background:var(--primary);color:var(--dark);border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer}
+.btn-confirm:hover{background:var(--primary-dark);color:#fff}
+.modal-produto-img{width:120px;height:120px;object-fit:contain;margin:0 auto 12px;display:block}
+.modal-produto-nome{font-weight:700;text-align:center;margin-bottom:4px}
+.modal-produto-preco{font-size:1.2rem;font-weight:700;color:var(--green);text-align:center;margin-bottom:16px}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .main-header nav{padding:10px 16px}
+  .search-bar{top:52px}
+  .grupos-tabs{top:104px}
+}
+<!-- LOADING -->
+<div class="loader-container" id="loader">
+  <div class="loader"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+  <div class="loader-msg">Carregando<br><b>Convenção - Delivery OFICIAL</b></div>
 </div>
 
-</nav></div></header>
+<!-- HEADER -->
+<header class="main-header">
+  <nav>
+    <div class="logo"><i class="fa fa-bottle-water"></i> <span>Convenção</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active"><i class="fa fa-store"></i> Produtos</a></li>
+      <li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li>
+      <li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li>
+      <li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li>
+    </ul>
+    <div class="header-actions">
+      <button class="share-btn" onclick="compartilharSite()"><i class="fa fa-share-alt"></i> <span>Compartilhar</span></button>
+      <div class="cart-icon" onclick="window.location.href='checkout.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
+    </div>
+  </nav>
+</header>
 
-<section class="products-section" id="produtos"><div class="container">
+<!-- SEARCH -->
+<div class="search-bar">
+  <div class="container">
+    <div class="search-input-wrap">
+      <i class="fa fa-search"></i>
+      <input type="text" class="search-input" id="iTextBuscar" placeholder="Buscar produto..." oninput="filtraProdutos(this.value)">
+    </div>
+  </div>
+</div>
 
-<p class="section-subtitle">Refrigerantes, refrescos, águas e chopp prontos para entrega rápida</p>
-<div class="products-grid"><div class="category"><h3 class="cat-title"><i class="fa fa-glass-whiskey"></i> Destaques</h3><div class="product-grid">
-<div class="product-item"><div class="product-image"><img src="img/chinotto.jpg" alt="Chinotto 269ml" loading="lazy"></div><h4 class="product-name">Chinotto 269ml - Pacote</h4><p class="product-price">R$ 25,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/msx.jpg" alt="MSX 269ml" loading="lazy"></div><h4 class="product-name">Energético MSX 269ml - Pacote</h4><p class="product-price">R$ 25,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/guaranazeroacucarlata.jpg" alt="Guarana Zero 269ml" loading="lazy"></div><h4 class="product-name">Guaraná Zero Açúcar 269ml - Pacote c/12</h4><p class="product-price">R$ 35,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/frutaina.jpg" alt="Frutaina 2L" loading="lazy"></div><h4 class="product-name">Frutaína 2L - Pacote c/6</h4><p class="product-price">R$ 27,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/msx2L.jpg" alt="MSX 2L" loading="lazy"></div><h4 class="product-name">MSX Energético 2L - Pacote c/6</h4><p class="product-price">R$ 40,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div></div><div class="category"><h3 class="cat-title"><i class="fa fa-glass-whiskey"></i> Refrigerantes 2L - Pacote 6 unidades</h3><div class="product-grid">
-<div class="product-item"><div class="product-image"><img src="img/guarana2L.jpg" alt="Guarana 2L" loading="lazy"></div><h4 class="product-name">Guaraná Convenção 2L - Pacote c/6</h4><p class="product-price">R$ 27,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/guaranazero2L.jpg" alt="Guarana Zero 2L" loading="lazy"></div><h4 class="product-name">Guaraná Zero Açúcar 2L - Pacote c/6</h4><p class="product-price">R$ 27,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/COLA.jpg" alt="Cola 2L" loading="lazy"></div><h4 class="product-name">Cola 2L - Pacote c/6</h4><p class="product-price">R$ 29,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/laranja.jpg" alt="Laranja 2L" loading="lazy"></div><h4 class="product-name">Laranja 2L - Pacote c/6</h4><p class="product-price">R$ 27,50</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/uva.jpg" alt="Uva 2L" loading="lazy"></div><h4 class="product-name">Uva 2L - Pacote c/6</h4><p class="product-price">R$ 27,50</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/laranja.jpg" alt="Limao 2L" loading="lazy"></div><h4 class="product-name">Limão 2L - Pacote c/6</h4><p class="product-price">R$ 27,50</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/abacaxi.jpg" alt="Abacaxi 2L" loading="lazy"></div><h4 class="product-name">Abacaxi 2L - Pacote c/6</h4><p class="product-price">R$ 27,50</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/vitts.jpg" alt="Vitts limao 2L" loading="lazy"></div><h4 class="product-name">Vitt's limão 2L - Pacote c/6</h4><p class="product-price">R$ 28,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/msx2L.jpg" alt="MSX 2L (r2l)" loading="lazy"></div><h4 class="product-name">MSX 2L - Pacote c/6</h4><p class="product-price">R$ 40,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div></div><div class="category"><h3 class="cat-title"><i class="fa fa-glass-whiskey"></i> Refrigerantes 600ml - Pacote 12 unidades</h3><div class="product-grid">
-<div class="product-item"><div class="product-image"><img src="img/guarana600ml.jpg" alt="Guarana 600ml" loading="lazy"></div><h4 class="product-name">Guaraná 600ml - Pacote c/12</h4><p class="product-price">R$ 5,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/COLA.jpg" alt="Cola 600ml" loading="lazy"></div><h4 class="product-name">Cola 600ml - Pacote c/12</h4><p class="product-price">R$ 5,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/O.svg" alt="Laranja 600ml" loading="lazy"></div><h4 class="product-name">Laranja 600ml - Pacote c/12</h4><p class="product-price">R$ 5,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/uva.jpg" alt="Uva 600ml" loading="lazy"></div><h4 class="product-name">Uva 600ml - Pacote c/12</h4><p class="product-price">R$ 5,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/abacaxi600ml.jpg" alt="Abacaxi 600ml" loading="lazy"></div><h4 class="product-name">Abacaxi 600ml - Pacote c/12</h4><p class="product-price">R$ 5,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/frutaina.jpg" alt="Frutaina 600ml" loading="lazy"></div><h4 class="product-name">Frutaína 600ml - Pacote c/12</h4><p class="product-price">R$ 5,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/vitts.jpg" alt="Vitts limao 600ml" loading="lazy"></div><h4 class="product-name">Vitt's limão 600ml - Pacote c/12</h4><p class="product-price">R$ 5,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/laranja.jpg" alt="Limao 600ml" loading="lazy"></div><h4 class="product-name">Limão 600ml - Pacote c/12</h4><p class="product-price">R$ 5,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div></div><div class="category"><h3 class="cat-title"><i class="fa fa-glass-whiskey"></i> Refrigerantes 350ml - Pacote 12 unidades</h3><div class="product-grid">
-<div class="product-item"><div class="product-image"><img src="img/350ML.jpg" alt="Guarana 350ml vidro" loading="lazy"></div><h4 class="product-name">Guaraná 350ml (vidro) - Pacote c/12</h4><p class="product-price">R$ 19,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/COLA.jpg" alt="Cola 350ml vidro" loading="lazy"></div><h4 class="product-name">Cola 350ml (vidro) - Pacote c/12</h4><p class="product-price">R$ 4,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/frutaina.jpg" alt="Frutaina 350ml vidro" loading="lazy"></div><h4 class="product-name">Frutaína 350ml (vidro) - Pacote c/12</h4><p class="product-price">R$ 4,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/uva.jpg" alt="Uva 350ml vidro" loading="lazy"></div><h4 class="product-name">Uva 350ml (vidro) - Pacote c/12</h4><p class="product-price">R$ 4,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div></div><div class="category"><h3 class="cat-title"><i class="fa fa-glass-martini-alt"></i> Refrescos e Chinotto - 269ml</h3><div class="product-grid">
-<div class="product-item"><div class="product-image"><img src="img/R.svg" alt="Refresco Lemon" loading="lazy"></div><h4 class="product-name">Refresco Lemon 269ml</h4><p class="product-price">R$ 3,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/uva.jpg" alt="Refresco Uva" loading="lazy"></div><h4 class="product-name">Refresco Uva 269ml</h4><p class="product-price">R$ 3,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/O.svg" alt="Refresco Laranja" loading="lazy"></div><h4 class="product-name">Refresco Laranja 269ml</h4><p class="product-price">R$ 3,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/R.svg" alt="Refresco Tonica" loading="lazy"></div><h4 class="product-name">Refresco Tônica 269ml</h4><p class="product-price">R$ 3,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/laranja.jpg" alt="Refresco Limao" loading="lazy"></div><h4 class="product-name">Refresco Limão 269ml</h4><p class="product-price">R$ 3,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/chinotto.jpg" alt="Chinotto 269ml" loading="lazy"></div><h4 class="product-name">Chinotto 269ml</h4><p class="product-price">R$ 25,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div></div><div class="category"><h3 class="cat-title"><i class="fa fa-bolt"></i> MSX Energético</h3><div class="product-grid">
-<div class="product-item"><div class="product-image"><img src="img/msx.jpg" alt="MSX Energia 500ml" loading="lazy"></div><h4 class="product-name">MSX Energia 500ml</h4><p class="product-price">R$ 7,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/msx2L.jpg" alt="MSX Caixa" loading="lazy"></div><h4 class="product-name">MSX Energia Caixa 6x500ml</h4><p class="product-price">R$ 44,99</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/msx.jpg" alt="MSX 269ml" loading="lazy"></div><h4 class="product-name">MSX 269ml</h4><p class="product-price">R$ 25,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div></div><div class="category"><h3 class="cat-title"><i class="fa fa-tint"></i> Água - Pacote 6 unidades</h3><div class="product-grid">
-<div class="product-item"><div class="product-image"><img src="img/W.svg" alt="Agua 1500ml" loading="lazy"></div><h4 class="product-name">Água Natural 1500ml - Pacote c/6</h4><p class="product-price">R$ 15,80</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/W.svg" alt="Agua 510ml" loading="lazy"></div><h4 class="product-name">Água Natural 510ml - Pacote c/6</h4><p class="product-price">R$ 14,70</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/W.svg" alt="Agua com gas 510ml" loading="lazy"></div><h4 class="product-name">Água com Gás 510ml - Pacote c/6</h4><p class="product-price">R$ 19,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/W.svg" alt="Agua com gas 1500ml" loading="lazy"></div><h4 class="product-name">Água com Gás 1500ml - Pacote c/6</h4><p class="product-price">R$ 22,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div></div><div class="category"><h3 class="cat-title"><i class="fa fa-beer"></i> Chopp Ravache e Lev - Pacote 6x 500ml</h3><div class="product-grid">
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Lev" loading="lazy"></div><h4 class="product-name">Chopp Lev 500ml - Pacote c/6</h4><p class="product-price">R$ 26,50</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache IPA" loading="lazy"></div><h4 class="product-name">Chopp Ravache IPA 500ml - Pacote c/6</h4><p class="product-price">R$ 30,40</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache Vinho" loading="lazy"></div><h4 class="product-name">Chopp Ravache Vinho 500ml - Pacote c/6</h4><p class="product-price">R$ 35,80</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache MalzBier" loading="lazy"></div><h4 class="product-name">Chopp Ravache MalzBier 500ml - Pacote c/6</h4><p class="product-price">R$ 33,30</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache Black" loading="lazy"></div><h4 class="product-name">Chopp Ravache Black 500ml - Pacote c/6</h4><p class="product-price">R$ 34,50</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache Pilsen" loading="lazy"></div><h4 class="product-name">Chopp Ravache Pilsen 500ml - Pacote c/6</h4><p class="product-price">R$ 28,40</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache Gold" loading="lazy"></div><h4 class="product-name">Chopp Ravache Gold 500ml - Pacote c/6</h4><p class="product-price">R$ 28,40</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div></div><div class="category"><h3 class="cat-title"><i class="fa fa-beer"></i> Chopp Ravache e Lev - Barril PET</h3><div class="product-grid">
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Lev PET 20L" loading="lazy"></div><h4 class="product-name">Chopp Lev PET 20L</h4><p class="product-price">R$ 170,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Lev PET 30L" loading="lazy"></div><h4 class="product-name">Chopp Lev PET 30L</h4><p class="product-price">R$ 255,00</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache APA Gold PET 20L" loading="lazy"></div><h4 class="product-name">Chopp Ravache APA Gold PET 20L</h4><p class="product-price">R$ 328,63</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache APA Gold PET 30L" loading="lazy"></div><h4 class="product-name">Chopp Ravache APA Gold PET 30L</h4><p class="product-price">R$ 452,75</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache APA IPA PET 20L" loading="lazy"></div><h4 class="product-name">Chopp Ravache APA IPA PET 20L</h4><p class="product-price">R$ 348,45</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache APA IPA PET 30L" loading="lazy"></div><h4 class="product-name">Chopp Ravache APA IPA PET 30L</h4><p class="product-price">R$ 422,69</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache APA Vinho PET 20L" loading="lazy"></div><h4 class="product-name">Chopp Ravache APA Vinho PET 20L</h4><p class="product-price">R$ 318,87</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div>
-<div class="product-item"><div class="product-image"><img src="img/B.svg" alt="Chopp Ravache APA Vinho PET 30L" loading="lazy"></div><h4 class="product-name">Chopp Ravache APA Vinho PET 30L</h4><p class="product-price">R$ 438,11</p><div class="qtd-control"><button type="button" class="qtd-btn" onclick="mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div></div></div></div>
-</section>
+<!-- TABS CATEGORIAS -->
+<div class="grupos-tabs" id="gruposTabs">
+  <div class="tabs-inner" id="tabsInner"></div>
+</div>
 
-<footer class="main-footer" id="contato"><div class="container">
+<!-- CONTEÚDO -->
+<main class="main-content" id="mainContent"></main>
 
-<p>Vendas: (21) 9-8315-8911 | rickjax1234@gmail.com</p>
-
-</div></footer>
-
+<!-- FOOTER -->
+<footer class="main-footer">
 <script src="script.js"></script>
+<script>
+// ===== CATEGORIAS =====
+var CATEGORIAS = [
+  {id:"destaque", nome:"Destaques", icon:"fa-star"},
+  {id:"refrig2l", nome:"Refrigerantes 2L", icon:"fa-bottle-water"},
+  {id:"refrig600", nome:"Refrigerantes 600ml", icon:"fa-glass-water"},
+  {id:"refrig350", nome:"Refrigerantes 350ml", icon:"fa-mug-hot"},
+  {id:"refrescos", nome:"Refrescos e Chinotto", icon:"fa-lemon"},
+  {id:"msx", nome:"MSX Energético", icon:"fa-bolt"},
+  {id:"agua", nome:"Água", icon:"fa-tint"},
+  {id:"chopp", nome:"Chopp Ravache", icon:"fa-beer-mug-empty"}
+];
 
-</body>
+// ===== PRODUTOS =====
+var PRODUTOS = [
+  {cat:"destaque",nome:"Chinotto 269ml - Pacote",desc:"Pacote com 12 unidades",preco:"R$ 25,00",img:"img/chinotto.jpg"},
+  {cat:"destaque",nome:"Energético MSX 269ml - Pacote",desc:"Pacote com 12 unidades",preco:"R$ 25,00",img:"img/msx.jpg"},
+  {cat:"destaque",nome:"Guaraná Zero Açúcar 269ml - Pacote c/12",desc:"Sem açúcar, sabor original",preco:"R$ 35,00",img:"img/guaranazeroacucarlata.jpg"},
+  {cat:"destaque",nome:"Frutaína 2L - Pacote c/6",desc:"Laranja, limão, uva, abacaxi, morango, pêssego",preco:"R$ 27,00",img:"img/frutaina.jpg"},
+  {cat:"refrig2l",nome:"Coca-Cola 2L",desc:"Garrafa 2 litros",preco:"R$ 12,00",img:"img/cola2L.jpg"},
+  {cat:"refrig2l",nome:"Guaraná Antarctica 2L",desc:"Garrafa 2 litros",preco:"R$ 10,00",img:"img/guarana2L.jpg"},
+  {cat:"refrig2l",nome:"Guaraná Zero 2L",desc:"Zero garrafa 2 litros",preco:"R$ 10,00",img:"img/guaranazero2L.jpg"},
+  {cat:"refrig2l",nome:"Fanta Laranja 2L",desc:"Garrafa 2 litros",preco:"R$ 10,00",img:"img/laranja.jpg"},
+  {cat:"refrig2l",nome:"Fanta Uva 2L",desc:"Garrafa 2 litros",preco:"R$ 10,00",img:"img/uva.jpg"},
+  {cat:"refrig2l",nome:"Sprite 2L",desc:"Limão garrafa 2 litros",preco:"R$ 10,00",img:"img/A.svg"},
+  {cat:"refrig2l",nome:"Guaraná Antarctica 2L - Pacote c/6",desc:"Pack 6 garrafas 2L",preco:"R$ 55,00",img:"img/guarana2L.jpg"},
+  {cat:"refrig600",nome:"Coca-Cola 600ml",desc:"Garrafa 600ml",preco:"R$ 7,00",img:"img/COLA.jpg"},
+  {cat:"refrig600",nome:"Guaraná Antarctica 600ml",desc:"Garrafa 600ml",preco:"R$ 6,00",img:"img/guarana600ml.jpg"},
+  {cat:"refrig600",nome:"Fanta Laranja 600ml",desc:"Garrafa 600ml",preco:"R$ 6,00",img:"img/laranja.jpg"},
+  {cat:"refrig600",nome:"Fanta Uva 600ml",desc:"Garrafa 600ml",preco:"R$ 6,00",img:"img/uva.jpg"},
+  {cat:"refrig600",nome:"Sprite 600ml",desc:"Limão garrafa 600ml",preco:"R$ 6,00",img:"img/A.svg"},
+  {cat:"refrig600",nome:"Coca-Cola Zero 600ml",desc:"Zero garrafa 600ml",preco:"R$ 7,00",img:"img/COLA.jpg"},
+  {cat:"refrig350",nome:"Coca-Cola Lata 350ml",desc:"Lata 350ml",preco:"R$ 5,00",img:"img/colo350ml.jpg"},
+  {cat:"refrig350",nome:"Guaraná Antarctica Lata 350ml",desc:"Lata 350ml",preco:"R$ 4,50",img:"img/350ML.jpg"},
+  {cat:"refrig350",nome:"Fanta Laranja Lata 350ml",desc:"Lata 350ml",preco:"R$ 4,50",img:"img/350ML.jpg"},
+  {cat:"refrig350",nome:"Sprite Lata 350ml",desc:"Lata 350ml",preco:"R$ 4,50",img:"img/350ML.jpg"},
+  {cat:"refrescos",nome:"Chinotto 269ml",desc:"Lata 269ml",preco:"R$ 5,00",img:"img/chinotto.jpg"},
+  {cat:"refrescos",nome:"Chinotto 269ml - Pacote c/12",desc:"Pack 12 latinhas",preco:"R$ 25,00",img:"img/chinotto.jpg"},
+  {cat:"refrescos",nome:"Frutaína 2L",desc:"Laranja, limão, uva, abacaxi, morango, pêssego",preco:"R$ 7,00",img:"img/frutaina.jpg"},
+  {cat:"refrescos",nome:"Abacaxi com Hortelã 2L",desc:"Sabor abacaxi com hortelã",preco:"R$ 7,00",img:"img/abacaxi.jpg"},
+  {cat:"refrescos",nome:"Abacaxi com Hortelã 600ml",desc:"Sabor abacaxi com hortelã",preco:"R$ 5,00",img:"img/abacaxi600ml.jpg"},
+  {cat:"msx",nome:"MSX Energético 269ml",desc:"Lata 269ml",preco:"R$ 5,00",img:"img/msx.jpg"},
+  {cat:"msx",nome:"MSX Energético 269ml - Pacote c/12",desc:"Pack 12 latinhas",preco:"R$ 25,00",img:"img/msx.jpg"},
+  {cat:"msx",nome:"MSX Energético 2L",desc:"Garrafa 2 litros",preco:"R$ 12,00",img:"img/msx2L.jpg"},
+  {cat:"agua",nome:"Água Mineral 510ml - Pacote c/12",desc:"Sem gás pack 12",preco:"R$ 12,00",img:"img/vitts.jpg"},
+  {cat:"agua",nome:"Água com Gás 510ml - Pacote c/12",desc:"Com gás pack 12",preco:"R$ 12,00",img:"img/vitts.jpg"},
+  {cat:"agua",nome:"Água Mineral 1500ml - Pacote c/06",desc:"Sem gás 1,5L pack 6",preco:"R$ 14,80",img:"img/vitts.jpg"},
+<script>
+function renderTabs() {
+  var h = "";
+  CATEGORIAS.forEach(function(c, i) {
+    var count = PRODUTOS.filter(function(p){return p.cat===c.id}).length;
+    h += '<div class="tab-item'+(i===0?' active':'')+'" data-grupo="'+c.id+'" onclick="scrollToGrupo(\''+c.id+'\')">';
+    h += '<i class="fa '+c.icon+'"></i> '+c.nome+' <span style="font-size:.7rem;background:#eee;padding:1px 6px;border-radius:8px">'+count+'</span></div>';
+  });
+  document.getElementById("tabsInner").innerHTML = h;
+}
 
-</html>
+function renderProdutos() {
+  var h = "";
+  CATEGORIAS.forEach(function(c) {
+    var prods = PRODUTOS.filter(function(p){return p.cat===c.id});
+    if (!prods.length) return;
+    h += '<div class="grupo-section open" id="grupo-'+c.id+'" data-grupo-id="'+c.id+'">';
+    h += '<div class="grupo-header" onclick="toggleGrupo(\''+c.id+'\')">';
+    h += '<div class="grupo-header-left"><i class="fa '+c.icon+'"></i><span class="grupo-nome">'+c.nome+'</span><span class="grupo-count">'+prods.length+'</span></div>';
+    h += '<i class="fa fa-chevron-down grupo-chevron"></i></div>';
+    h += '<div class="grupo-body"><div class="produtos-grid">';
+    prods.forEach(function(p, i) {
+      var pid = c.id+"_"+i;
+      h += '<div class="produto-card" data-item-desc="'+(p.nome+" "+p.desc).toLowerCase()+'" data-produto-id="'+pid+'">';
+      h += '<div class="produto-card-header">'+p.nome+'</div>';
+      h += '<div class="produto-img-wrap"><img class="produto-img" src="'+p.img+'" alt="'+p.nome+'" loading="lazy" onerror="this.style.display=\'none\'"></div>';
+      h += '<div class="produto-dados"><span class="produto-desc">'+p.desc+'</span><span class="produto-preco">'+p.preco+'</span></div>';
+      h += '<div class="qtd-row"><div class="qtd-control"><button type="button" class="qtd-btn" onclick="event.stopPropagation();mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="event.stopPropagation();mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="event.stopPropagation();adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div>';
+    });
+    h += '</div></div></div>';
+  });
+  document.getElementById("mainContent").innerHTML = h;
+}
+
+function toggleGrupo(id) {
+  var el = document.getElementById("grupo-"+id);
+  if (el) el.classList.toggle("open");
+}
+
+function scrollToGrupo(id) {
+  var el = document.getElementById("grupo-"+id);
+  if (el) {
+    window.scrollTo({top:el.getBoundingClientRect().top + window.pageYOffset - 170, behavior:"smooth"});
+    document.querySelectorAll(".tab-item").forEach(function(t){t.classList.remove("active")});
+    var tab = document.querySelector('.tab-item[data-grupo="'+id+'"]');
+    if (tab) { tab.classList.add("active"); tab.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"}); }
+  }
+}
+
+function filtraProdutos(txt) {
+  var busca = txt.toLowerCase().trim();
+  document.querySelectorAll(".produto-card").forEach(function(card) {
+    card.style.display = (!busca || (card.getAttribute("data-item-desc")||"").indexOf(busca)>=0) ? "" : "none";
+  });
+  document.querySelectorAll(".grupo-section").forEach(function(g) {
+    var ok = false;
+    g.querySelectorAll(".produto-card").forEach(function(c){if(c.style.display!=="none")ok=true});
+    g.style.display = ok ? "" : "none";
+    if (busca && ok) g.classList.add("open");
+  });
+}
+
+function mudarQtd(btn, delta) {
+  var span = btn.closest(".qtd-row").querySelector(".qtd-valor");
+  span.textContent = Math.max(0, (parseInt(span.textContent)||0) + delta);
+}
+
+function adicionarAoCarrinho(btn) {
+  var card = btn.closest(".produto-card");
+  var qtd = parseInt(card.querySelector(".qtd-valor").textContent)||0;
+  if (qtd<=0) { alert("Use os botões + e − para escolher a quantidade."); return; }
+  var parts = card.getAttribute("data-produto-id").split("_");
+  var prod = PRODUTOS.filter(function(p){return p.cat===parts[0]})[parseInt(parts[1])];
+  if (!prod) return;
+  if (typeof cart!=="undefined") {
+    cart.push({name:prod.nome,price:prod.preco,priceNum:parsePreco(prod.preco),qty:qtd});
+    if (typeof saveCart==="function") saveCart();
+  }
+  card.querySelector(".qtd-valor").textContent="0";
+  btn.classList.add("added"); btn.innerHTML='<i class="fa fa-check"></i> Adicionado!';
+  setTimeout(function(){btn.classList.remove("added");btn.innerHTML='<i class="fa fa-cart-plus"></i> Adicionar'},1500);
+  updateCartCount();
+}
+
+function updateCartCount() {
+  try {
+    var items = JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");
+    var t = items.reduce(function(s,i){return s+(i.qty||0)},0);
+    var e1=document.getElementById("cartCount"),e2=document.getElementById("fabBadge");
+    if(e1)e1.textContent=t; if(e2)e2.textContent=t;
+  } catch(e) {}
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  renderTabs(); renderProdutos(); updateCartCount();
+  setTimeout(function(){var l=document.getElementById("loader");if(l)l.classList.add("hide")},800);
+  window.addEventListener("scroll", function() {
+    var scroll = window.pageYOffset + 200;
+    document.querySelectorAll(".grupo-section").forEach(function(s) {
+      if (scroll>=s.offsetTop && scroll<s.offsetTop+s.offsetHeight) {
+        var gid=s.getAttribute("data-grupo-id");
+        document.querySelectorAll(".tab-item").forEach(function(t){t.classList.remove("active")});
+        var tab=document.querySelector('.tab-item[data-grupo="'+gid+'"]');
+        if(tab)tab.classList.add("active");
+      }
+    });
+  });
+});
+</script>
+
+  {cat:"agua",nome:"Água com Gás 1500ml - Pacote c/06",desc:"Com gás 1,5L pack 6",preco:"R$ 14,80",img:"img/vitts.jpg"},
+  {cat:"chopp",nome:"Chopp Ravache IPA 30L",desc:"PET 30 litros",preco:"R$ 400,00",img:"img/B.svg"},
+  {cat:"chopp",nome:"Chopp Ravache APA 30L",desc:"PET 30 litros",preco:"R$ 400,00",img:"img/B.svg"},
+  {cat:"chopp",nome:"Chopp Ravache IPA 20L",desc:"PET 20 litros",preco:"R$ 300,00",img:"img/B.svg"},
+  {cat:"chopp",nome:"Chopp Ravache APA 20L",desc:"PET 20 litros",preco:"R$ 300,00",img:"img/B.svg"},
+  {cat:"chopp",nome:"Chopp Ravache APA Gold PET 20L",desc:"APA Gold 20L",preco:"R$ 328,63",img:"img/B.svg"},
+  {cat:"chopp",nome:"Chopp Ravache APA Gold PET 30L",desc:"APA Gold 30L",preco:"R$ 452,75",img:"img/B.svg"},
+  {cat:"chopp",nome:"Chopp Ravache APA IPA PET 20L",desc:"APA IPA 20L",preco:"R$ 348,45",img:"img/B.svg"},
+  {cat:"chopp",nome:"Chopp Ravache APA IPA PET 30L",desc:"APA IPA 30L",preco:"R$ 422,69",img:"img/B.svg"},
+  {cat:"chopp",nome:"Chopp Ravache APA Vinho PET 20L",desc:"APA Vinho 20L",preco:"R$ 318,87",img:"img/B.svg"},
+  {cat:"chopp",nome:"Chopp Ravache APA Vinho PET 30L",desc:"APA Vinho 30L",preco:"R$ 438,11",img:"img/B.svg"}
+];
+</script>
+
+  <p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p>
+</footer>
+
+<!-- FAB CARRINHO -->
+<button class="fab-cart" onclick="window.location.href='checkout.html'" title="Ver carrinho">
+  <i class="fa fa-shopping-cart"></i>
+  <span class="fab-badge" id="fabBadge">0</span>
+</button>
+
+
+</style>
+</head>
+<body>
