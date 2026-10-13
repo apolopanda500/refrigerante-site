@@ -221,25 +221,38 @@ function mudarStatus(id, status) {
 function falarCliente(tel, id) {
     const p = getPedidos().find(x => x.id === id);
     if (!p) return;
-    let msg = "Olá " + p.nome + "! Sobre seu pedido " + p.id + " (" + formatBRL(p.total) + "): ";
+    const itens = p.itens.map(i => "• " + i.name + " x" + i.qty).join("\n");
+    let msg = "Olá " + p.nome + "! Sobre seu pedido " + p.id + "\n\n"
+        + "Produtos:\n" + itens + "\n\n"
+        + "Subtotal: " + formatBRL(p.subtotal) + "\n"
+        + "Frete: " + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + "\n"
+        + "Total: " + formatBRL(p.total) + "\n"
+        + "Pagamento: " + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + "\n"
+        + "Entrega: " + p.regiao + "\n"
+        + "Status: " + (p.status || "aguardando") + "\n\n"
+        + "Qualquer dúvida, respondo por aqui! 📦";
     window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
 }
 
 function falarMotorista(id) {
     const pedido = getPedidos().find(x => x.id === id);
-    const regiaoTexto = pedido ? pedido.regiao : "";
+    if (!pedido) return;
     var cam = null;
-    if (typeof CAMINHOES !== "undefined") {
-        CAMINHOES.forEach(function(c){
-            if (cam) return;
-            if (c.regioes && c.regioes.indexOf(regiaoTexto.toLowerCase()) >= 0) cam = c;
-        });
-        if (!cam) cam = CAMINHOES[0];
-    }
+    if (typeof CAMINHOES !== "undefined") CAMINHOES.forEach(function(c){ if(!cam && c.regioes && c.regioes.indexOf(pedido.regiao ? pedido.regiao.toLowerCase().replace(/ /g,'') : '') >=0) cam=c; });
+    if(!cam && typeof CAMINHOES !== "undefined") cam = CAMINHOES[0];
     const tel = cam ? cam.telefone : "";
     const placa = cam ? cam.placa : "";
-    const msg = "Olá " + (cam && cam.motorista ? cam.motorista : "motorista") + "! A rota para " 
-              + pedido.regiao + " (pedido " + id + ") está pronta. Placa " + placa + ".";
+    const mot = cam ? cam.motorista : "motorista";
+    const itens = pedido.itens.map(i => "• " + i.name + " x" + i.qty).join("\n");
+    let msg = "Olá " + mot + " (placa " + placa + ")!\n"
+        + "Entrega: " + pedido.regiao + " — pedido " + pedido.id + "\n\n"
+        + "Cliente: " + pedido.nome + "\n"
+        + "WhatsApp: " + pedido.tel + "\n"
+        + "Endereço: " + pedido.end + (pedido.comp ? " (" + pedido.comp + ")" : "") + " — " + pedido.bairro + "\n\n"
+        + "Produtos:\n" + itens + "\n\n"
+        + "Total: " + formatBRL(pedido.total) + "\n"
+        + "Pagamento: " + pedido.pagamento + "\n\n"
+        + "Favor preparar rota. Horário previsto: " + pedido.regiao + ". Boa entrega! 🚚";
     window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
 }
 sessionStorage.setItem("adminLogado","1"); if(true) mostrarPainel();
