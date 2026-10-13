@@ -354,6 +354,10 @@ function pintarHorario(){
     var status, motivo = "";
     if (t.aberto) {
         status = '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Aberto agora</div>';
+    } else if (typeof somentePedidos === "function" && somentePedidos(t.dia)) {
+        status = '<div class="wgt-status pedido"><i class="fa fa-clipboard-list"></i> Dia de montar pedidos</div>';
+        var proxPed = proximoDiaAtendente();
+        motivo = '<div class="wgt-linha"><span>Primeira entrega</span><b>' + NOMES_DIA_LONGOS[proxPed] + '</b></div>';
     } else if (t.regioes.length === 0) {
         status = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> Sem entrega hoje</div>';
         var prox = proximoDiaAtendente();
@@ -385,7 +389,11 @@ function pintarFaixaRegiao(){
     if (!el) return;
     var t = horarioDeHoje();
 
-    if (t.aberto) {
+    if (typeof somentePedidos === "function" && somentePedidos(t.dia)) {
+        el.innerHTML = '<i class="fa fa-clipboard-list"></i> <span><b>Segunda é dia de montar pedidos.</b> '
+            + 'Você pode deixar seu pedido agendado e a entrega começa na '
+            + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '.</span>';
+    } else if (t.aberto) {
         el.innerHTML = '<i class="fa fa-truck"></i> <span>Pedidos abertos agora para <b>'
             + t.regioes.map(function (r) { return r.nome; }).join(", ")
             + '</b> &middot; entrega até 15:00. Você confirma tudo aqui no site.</span>';
@@ -454,13 +462,20 @@ function pintarCaminhoes(){
     var el = document.getElementById("sideCaminhoes");
     if (!el) return;
     var h = "";
-    CAMINHOES.forEach(function(c){
-        h += '<div class="cam ' + c.cor + '">'
+    CAMINHOES.forEach(function (c) {
+        var foto = c.imagem
+            ? '<img class="cam-foto" src="' + c.imagem + '" alt="Caminhao ' + c.corNome + '" loading="lazy">'
+              + '<span class="cam-selo">' + c.modeloCurto + '</span>'
+            : '';
+        h += '<div class="cam ' + c.cor + (foto ? ' com-foto' : '') + '">'
+           + foto
+           + '<div class="cam-corpo">'
            + '<span class="cam-cam"><i class="fa fa-truck"></i></span>'
            + '<span class="cam-tx"><b>' + c.corNome + ' - ' + c.modelo + '</b>'
            + '<small>' + (c.motorista === "A INFORMAR" ? "Motorista a informar" : c.motorista) + '</small>'
            + '<small>' + (c.telefone === "A INFORMAR" ? "Telefone a informar" : c.telefone) + '</small></span>'
-           + '<span class="cam-placa">' + c.placa + '</span></div>';
+           + '<span class="cam-placa">' + c.placa + '</span>'
+           + '</div></div>';
     });
     el.innerHTML = '<h3><i class="fa fa-truck"></i> Nossa frota</h3>' + h;
 }

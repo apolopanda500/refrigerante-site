@@ -223,14 +223,18 @@ function pintarContaVendedor(){
     var d = new Date().getDay();
     var dias = "";
 
-    for (var i = 1; i <= 6; i++) {
+    for (var i = 0; i <= 6; i++) {
         var rs = regioesDoDia(i);
-        var chips = rs.length
-            ? rs.map(function (r) {
-                var cls = (i === d) ? "chip on" : "chip";
-                return '<span class="' + cls + '">' + r.nome + '</span>';
-              }).join("")
-            : '<span class="chip">Sem entrega</span>';
+        var chips;
+        if (rs.length) {
+            chips = rs.map(function (r) {
+                return '<span class="chip' + (i === d ? ' on' : '') + '">' + r.nome + '</span>';
+            }).join("");
+        } else if (typeof somentePedidos === "function" && somentePedidos(i)) {
+            chips = '<span class="chip pedidos">So para montar pedidos</span>';
+        } else {
+            chips = '<span class="chip">Sem entrega</span>';
+        }
         dias += '<div class="vend-dia"><span class="dia-nome">' + NOMES_DIA[i] + '</span>'
               + '<span class="regioes">' + chips + '</span></div>';
     }

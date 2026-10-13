@@ -253,14 +253,19 @@ function atualizarRegiao(){
 
     var dia = new Date().getDay();
     var atende = r.dias.indexOf(dia) >= 0;
+    var soPedidos = (typeof somentePedidos === "function") && somentePedidos(dia);
     var prox = proximoDia(r.id);
     var cam = caminhaoDaRegiao(r.id);
 
-    if (atende) {
+    if (soPedidos) {
+        aviso.className = "aviso-regiao pedido";
+        aviso.innerHTML = '<i class="fa fa-clipboard-list"></i><span><b>Segunda-feira</b> nao temos entrega. '
+            + 'Voce pode deixar o pedido agendado e a entrega acontece em <b>' + NOMES_DIA_LONGOS[prox] + '</b>.</span>';
+    } else if (atende) {
         aviso.className = "aviso-regiao ok";
         aviso.innerHTML = '<i class="fa fa-check-circle"></i><span><b>' + r.nome
             + '</b> - entregamos hoje (' + r.diasTexto + '), das ' + r.horario
-            + '.<br>Caminhao ' + cam.corNome + ' placa ' + cam.placa + '.</span>';
+            + '.<br>Caminhao ' + cam.corNome + ' (' + cam.modeloCurto + ') placa ' + cam.placa + '.</span>';
     } else {
         aviso.className = "aviso-regiao aviso";
         aviso.innerHTML = '<i class="fa fa-calendar-alt"></i><span><b>' + r.nome

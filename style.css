@@ -1357,3 +1357,60 @@ button.bnr{
     cursor:pointer;display:flex;align-items:center;gap:14px;
 }
 button.bnr:hover{color:#fff}
+
+/* ===== CAMINHAO COM FOTO ===== */
+.cam-foto{
+    display:block;width:100%;height:120px;object-fit:cover;
+    border-radius:9px 9px 0 0;background:#e8ebf2;
+    border:1px solid var(--borda);border-bottom:none;
+}
+.cam-selo{
+    position:absolute;top:8px;left:8px;
+    padding:3px 9px;border-radius:10px;font-size:.7rem;font-weight:800;
+    background:rgba(0,0,0,.62);color:#fff;letter-spacing:.3px;
+}
+.cam{
+    position:relative;
+    display:block;padding:11px 12px;border-radius:11px;margin-bottom:9px;
+    background:var(--bg-alt);border-left:4px solid var(--accent-color);
+}
+.cam.com-foto{padding:0;overflow:hidden;background:var(--white);border-left-width:4px}
+.cam.azul{border-left-color:#2f6fb5}
+.cam .cam-cam{
+    width:42px;height:42px;flex:0 0 42px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.25rem;color:#fff;background:#0f9d58;
+}
+.cam.azul .cam-cam{background:#2f6fb5}
+.cam .cam-corpo{display:flex;gap:12px;align-items:center;padding:11px 12px 12px}
+.cam .cam-tx{min-width:0;line-height:1.4;flex:1}
+.cam .cam-tx b{display:block;font-size:.88rem;color:var(--primary-color)}
+.cam .cam-tx small{display:block;font-size:.77rem;color:var(--text-muted)}
+.cam .cam-placa{
+    font-family:'Courier New',monospace;font-weight:800;
+    font-size:.78rem;padding:4px 8px;border-radius:6px;
+    background:var(--white);border:1px solid var(--borda);color:var(--primary-color);
+    letter-spacing:.5px;white-space:nowrap;
+}
+.cam.com-foto .cam-placa{background:var(--bg-alt)}
+
+/* ===== SEGUNDA: DIA DE PEDIDOS ===== */
+.aviso-pedidos{
+    display:flex;align-items:flex-start;gap:10px;
+    padding:12px 14px;border-radius:11px;margin-bottom:12px;
+    background:#fff8e1;border-left:4px solid #ffb822;
+    color:#8a6100;font-size:.9rem;font-weight:600;line-height:1.45;
+}
+.aviso-pedidos i{flex:0 0 auto;margin-top:2px;color:#f0a500}
+[data-theme="dark"] .aviso-pedidos{background:#3a3319;color:#ffd97a}
+[data-theme="dark"] .aviso-pedidos i{color:#ffb822}
+[data-theme="dark"] .cam{background:#232742}
+[data-theme="dark"] .cam.com-foto{background:#1c1f33}
+[data-theme="dark"] .cam-foto{background:#232742}
+[data-theme="dark"] .cam .cam-tx b{color:#e6e8f2}
+[data-theme="dark"] .cam .cam-tx small{color:#a1a8c3}
+[data-theme="dark"] .cam .cam-placa{background:#232742;border-color:#454b70;color:#ffb822}
+
+.chip.pedidos{background:#eef2ff;color:#2d3a8c;border-color:#c9d2f7}
+[data-theme="dark"] .chip.pedidos{background:#1e2547;color:#a8b6f5;border-color:#3a4590}
+[data-theme="dark"] .aviso-regiao.pedido{background:#1e2547;color:#a8b6f5}
