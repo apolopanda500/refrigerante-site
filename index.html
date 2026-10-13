@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -9,315 +9,225 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#ECC400;--primary-dark:#c4a600;--dark:#1a1a2e;--text:#333;--light:#f5f5f5;--white:#fff;--red:#e53935;--green:#43a047;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:12px}
-body{font-family:'Poppins',sans-serif;color:var(--text);background:#f0f2f5;min-height:100vh;padding-bottom:80px}
-a{text-decoration:none;color:inherit}
+:root{--pri:#ECC400;--dk:#1a1a2e;--tx:#333;--rd:#e53935;--gr:#43a047;--sh:0 2px 12px rgba(0,0,0,.08)}
+body{font-family:'Poppins',sans-serif;color:var(--tx);background:#f0f2f5;min-height:100vh;padding-bottom:80px}
+<style>
+.ld{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--dk);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}.ld.off{opacity:0;pointer-events:none}
+.ldb{display:flex;gap:4px;margin-bottom:16px}.ldb span{width:6px;height:40px;background:var(--pri);border-radius:3px;animation:lb .6s ease-in-out infinite alternate}
+.ldb span:nth-child(2){animation-delay:.1s}.ldb span:nth-child(3){animation-delay:.2s}.ldb span:nth-child(4){animation-delay:.3s}.ldb span:nth-child(5){animation-delay:.4s}.ldb span:nth-child(6){animation-delay:.5s}
+@keyframes lb{from{transform:scaleY(.3)}to{transform:scaleY(1)}}.ldt{color:#fff;font-size:.9rem;text-align:center;line-height:1.6}
+.hd{background:var(--dk);position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.hd nav{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:12px 20px;gap:16px}
+.lg{display:flex;align-items:center;gap:10px;font-size:1.3rem;font-weight:700;color:var(--pri)}.lg i{font-size:1.5rem}
+.nl{display:flex;gap:20px;list-style:none}.nl a{color:#ccc;font-size:.85rem;font-weight:500;display:flex;align-items:center;gap:5px;transition:color .3s}.nl a:hover{color:var(--pri)}
+.ha{display:flex;align-items:center;gap:14px}
+.bs{display:flex;align-items:center;gap:6px;padding:7px 16px;background:var(--pri);color:var(--dk);border-radius:20px;font-weight:600;font-size:.8rem;cursor:pointer;border:none;font-family:inherit}
+.ci{position:relative;cursor:pointer;font-size:1.4rem;color:#fff}
+.cb{position:absolute;top:-8px;right:-10px;background:var(--rd);color:#fff;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
+.sw{background:#fff;padding:12px 20px;box-shadow:var(--sh);position:sticky;top:56px;z-index:99}
+.si{max-width:1200px;margin:0 auto;display:flex;gap:10px;align-items:center}
+<style>
+.tb{background:#fff;border-bottom:2px solid #eee;position:sticky;top:110px;z-index:98;overflow-x:auto;scrollbar-width:none}.tb::-webkit-scrollbar{display:none}
+.tr2{display:flex;max-width:1200px;margin:0 auto;padding:0 10px;min-width:max-content}
+.ti{padding:12px 18px;font-size:.82rem;font-weight:600;color:#666;cursor:pointer;white-space:nowrap;border:none;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px;background:none;font-family:inherit}.ti:hover{background:#f8f8f8}.ti.on{color:#c4a600;border-bottom-color:var(--pri);background:#fffde7}
+.ti .cn{font-size:.7rem;background:#eee;padding:1px 6px;border-radius:8px}
+.pw{max-width:1200px;margin:0 auto;padding:16px 20px}
+.gb{margin-bottom:8px;background:#fff;border-radius:12px;box-shadow:var(--sh);overflow:hidden}
+.gh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;user-select:none}.gh:hover{background:#fafafa}
+.gl{display:flex;align-items:center;gap:12px}.gl .gi{font-size:1.3rem;color:#c4a600;width:32px;text-align:center}
+.gn{font-size:1.05rem;font-weight:700}.gc{font-size:.75rem;background:var(--pri);color:var(--dk);padding:2px 8px;border-radius:10px;font-weight:600}
+.gv{font-size:.9rem;color:#999;transition:transform .3s}.gb.op .gv{transform:rotate(180deg)}
+.gbd{display:none;padding:0 16px 16px}.gb.op .gbd{display:block}
+<style>
+.pc{background:#fff;border:1px solid #eee;border-radius:10px;overflow:hidden;transition:all .3s;display:flex;flex-direction:column}.pc:hover{box-shadow:0 6px 20px rgba(0,0,0,.12);transform:translateY(-2px)}
+.pch{padding:10px 14px 6px;font-weight:600;font-size:.88rem;line-height:1.3}
+.pib{width:100%;aspect-ratio:1;background:#f8f8f8;display:flex;align-items:center;justify-content:center;padding:8px}
+.pi{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.pd{padding:8px 14px;display:flex;flex-direction:column;gap:4px;flex:1}.pds{font-size:.78rem;color:#888;line-height:1.4}.pp{font-size:1.1rem;font-weight:700;color:var(--gr);margin-top:auto}
+.qr{display:flex;align-items:center;gap:8px;padding:8px 14px 12px}
+.qc{display:flex;border:2px solid #e0e0e0;border-radius:8px;overflow:hidden}
+.qb{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border:none;font-size:1rem;cursor:pointer}.qb:hover{background:var(--pri);color:#fff}
+.qv{width:36px;text-align:center;font-weight:700;height:34px;line-height:34px;border-left:2px solid #e0e0e0;border-right:2px solid #e0e0e0}
+.qa{flex:1;height:34px;background:var(--pri);color:var(--dk);border:none;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-family:inherit}.qa:hover{background:#c4a600;color:#fff}.qa.ok{background:var(--gr);color:#fff}
+.ft{background:var(--dk);color:#ccc;text-align:center;padding:20px;font-size:.85rem;margin-top:40px}.ft a{color:var(--pri);font-weight:600}
+.fb2{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:var(--pri);color:var(--dk);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,.3);cursor:pointer;z-index:200;border:none}
+.fbb{position:absolute;top:-4px;right:-4px;background:var(--rd);color:#fff;font-size:.65rem;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+@media(max-width:768px){.nl{display:none}.sw{top:52px}.tb{top:104px}}
+</style>
+</head>
+<body>
 
-/* LOADING */
-.loader-container{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
-.loader-container.hide{opacity:0;pointer-events:none}
-.loader{display:flex;gap:4px;margin-bottom:16px}
-.loader .bar{width:6px;height:40px;background:var(--primary);border-radius:3px;animation:barBounce .6s ease-in-out infinite alternate}
-.loader .bar:nth-child(2){animation-delay:.1s}.loader .bar:nth-child(3){animation-delay:.2s}
-.loader .bar:nth-child(4){animation-delay:.3s}.loader .bar:nth-child(5){animation-delay:.4s}.loader .bar:nth-child(6){animation-delay:.5s}
-@keyframes barBounce{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
-.loader-msg{color:#fff;font-size:.9rem;text-align:center;line-height:1.6}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.pg{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.pg{grid-template-columns:1fr}}
+</style>
 
-/* HEADER */
-.main-header{background:var(--dark);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.3)}
-.main-header nav{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:12px 20px;gap:16px}
-.logo{display:flex;align-items:center;gap:10px;font-size:1.3rem;font-weight:700;color:var(--primary)}
-.logo i{font-size:1.5rem}
-.nav-links{display:flex;gap:20px;list-style:none}
-.nav-links a{color:#ccc;font-size:.85rem;font-weight:500;transition:color .3s;display:flex;align-items:center;gap:5px}
-.nav-links a:hover{color:var(--primary)}
-.header-actions{display:flex;align-items:center;gap:14px}
-.share-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;background:var(--primary);color:var(--dark);border-radius:20px;font-weight:600;font-size:.8rem;cursor:pointer;border:none}
-.cart-icon{position:relative;cursor:pointer;font-size:1.4rem;color:#fff}
-.cart-count{position:absolute;top:-8px;right:-10px;background:var(--red);color:#fff;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
-/* SEARCH */
-.search-bar{background:#fff;padding:12px 20px;box-shadow:var(--shadow);position:sticky;top:56px;z-index:99}
-.search-bar .container{max-width:1200px;margin:0 auto;display:flex;gap:10px;align-items:center}
-.search-input-wrap{flex:1;position:relative}
-.search-input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#999}
-.search-input{width:100%;padding:10px 14px 10px 40px;border:2px solid #e0e0e0;border-radius:25px;font-size:.9rem;font-family:inherit;outline:none}
-.search-input:focus{border-color:var(--primary)}
+.sf{flex:1;position:relative}.sf i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#999}
+.sf input{width:100%;padding:10px 14px 10px 40px;border:2px solid #e0e0e0;border-radius:25px;font-size:.9rem;font-family:inherit;outline:none;transition:border-color .3s}.sf input:focus{border-color:var(--pri)}
+</style>
 
-/* TABS */
-.grupos-tabs{background:#fff;border-bottom:2px solid #eee;position:sticky;top:110px;z-index:98;overflow-x:auto;scrollbar-width:none}
-.grupos-tabs::-webkit-scrollbar{display:none}
-.tabs-inner{display:flex;max-width:1200px;margin:0 auto;padding:0 10px;min-width:max-content}
-.tab-item{padding:12px 18px;font-size:.82rem;font-weight:600;color:#666;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px}
-.tab-item:hover{background:#f8f8f8}
-.tab-item.active{color:var(--primary-dark);border-bottom-color:var(--primary);background:#fffde7}
-
-/* MAIN */
-.main-content{max-width:1200px;margin:0 auto;padding:16px 20px}
-
-/* ACCORDION */
-.grupo-section{margin-bottom:8px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.grupo-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;user-select:none}
-.grupo-header:hover{background:#fafafa}
-.grupo-header-left{display:flex;align-items:center;gap:12px}
-.grupo-header-left i{font-size:1.3rem;color:var(--primary-dark);width:32px;text-align:center}
-.grupo-nome{font-size:1.05rem;font-weight:700;color:var(--dark)}
-.grupo-count{font-size:.75rem;background:var(--primary);color:var(--dark);padding:2px 8px;border-radius:10px;font-weight:600}
-.grupo-chevron{font-size:.9rem;color:#999;transition:transform .3s}
-.grupo-section.open .grupo-chevron{transform:rotate(180deg)}
-.grupo-body{display:none;padding:0 16px 16px}
-.grupo-section.open .grupo-body{display:block}
-
-/* GRID */
-.produtos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:900px){.produtos-grid{grid-template-columns:repeat(2,1fr)}}
-/* CARD PRODUTO */
-.produto-card{background:#fff;border:1px solid #eee;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .3s;display:flex;flex-direction:column}
-.produto-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.12);transform:translateY(-2px)}
-.produto-card-header{padding:10px 14px 6px;font-weight:600;font-size:.88rem;color:var(--dark);line-height:1.3}
-.produto-img-wrap{width:100%;aspect-ratio:1;background:#f8f8f8;display:flex;align-items:center;justify-content:center;padding:8px}
-.produto-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
-.produto-dados{padding:8px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
-.produto-desc{font-size:.78rem;color:#888;line-height:1.4}
-.produto-preco{font-size:1.1rem;font-weight:700;color:var(--green);margin-top:auto}
-
-/* QUANTITY */
-.qtd-row{display:flex;align-items:center;gap:8px;padding:8px 14px 12px}
-.qtd-control{display:flex;align-items:center;border:2px solid #e0e0e0;border-radius:8px;overflow:hidden}
-.qtd-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border:none;font-size:1rem;cursor:pointer}
-.qtd-btn:hover{background:var(--primary);color:#fff}
-.qtd-valor{width:36px;text-align:center;font-weight:700;font-size:.95rem;height:34px;line-height:34px;border-left:2px solid #e0e0e0;border-right:2px solid #e0e0e0}
-.btn-add{flex:1;height:34px;background:var(--primary);color:var(--dark);border:none;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
-.btn-add:hover{background:var(--primary-dark);color:#fff}
-.btn-add.added{background:var(--green);color:#fff}
-
-/* FOOTER */
-.main-footer{background:var(--dark);color:#ccc;text-align:center;padding:20px;font-size:.85rem;margin-top:40px}
-.main-footer a{color:var(--primary);font-weight:600}
-
-/* FAB */
-.fab-cart{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:var(--primary);color:var(--dark);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,.3);cursor:pointer;z-index:200;border:none}
-.fab-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:.65rem;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-
-/* MODAL */
-.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:flex-end;justify-content:center}
-.modal-overlay.show{display:flex}
-.modal-box{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:500px;max-height:85vh;overflow-y:auto;animation:slideUp .3s ease}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #eee;position:sticky;top:0;background:#fff;z-index:1}
-.modal-close{background:none;border:none;font-size:1.3rem;color:#999;cursor:pointer}
-.modal-body{padding:16px 20px}
-.modal-footer{padding:16px 20px;border-top:1px solid #eee;position:sticky;bottom:0;background:#fff}
-.btn-confirm{width:100%;padding:14px;background:var(--primary);color:var(--dark);border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer}
-.btn-confirm:hover{background:var(--primary-dark);color:#fff}
-.modal-produto-img{width:120px;height:120px;object-fit:contain;margin:0 auto 12px;display:block}
-.modal-produto-nome{font-weight:700;text-align:center;margin-bottom:4px}
-.modal-produto-preco{font-size:1.2rem;font-weight:700;color:var(--green);text-align:center;margin-bottom:16px}
-
-@media(max-width:768px){
-  .nav-links{display:none}
-  .main-header nav{padding:10px 16px}
-  .search-bar{top:52px}
-  .grupos-tabs{top:104px}
-}
-<!-- LOADING -->
-<div class="loader-container" id="loader">
-  <div class="loader"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
-  <div class="loader-msg">Carregando<br><b>Convenção - Delivery OFICIAL</b></div>
-</div>
+<!-- LOADER -->
+<div class="ld" id="ldBox"><div class="ldb"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="ldt">Carregando<br><b>Convenção - Delivery</b></div></div>
 
 <!-- HEADER -->
-<header class="main-header">
-  <nav>
-    <div class="logo"><i class="fa fa-bottle-water"></i> <span>Convenção</span></div>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active"><i class="fa fa-store"></i> Produtos</a></li>
-      <li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li>
-      <li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li>
-      <li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li>
-    </ul>
-    <div class="header-actions">
-      <button class="share-btn" onclick="compartilharSite()"><i class="fa fa-share-alt"></i> <span>Compartilhar</span></button>
-      <div class="cart-icon" onclick="window.location.href='checkout.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
-    </div>
-  </nav>
-</header>
+<header class="hd"><nav>
+<div class="lg"><i class="fa fa-bottle-water"></i> Convenção</div>
+<ul class="nl"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
+<div class="ha">
+<button class="bs" onclick="partilhar()"><i class="fa fa-share-alt"></i> <span>Compartilhar</span></button>
+<div class="ci" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="cb" id="cBag">0</span></div>
+</div>
+</nav></header>
 
 <!-- SEARCH -->
-<div class="search-bar">
-  <div class="container">
-    <div class="search-input-wrap">
-      <i class="fa fa-search"></i>
-      <input type="text" class="search-input" id="iTextBuscar" placeholder="Buscar produto..." oninput="filtraProdutos(this.value)">
-    </div>
-  </div>
-</div>
+<div class="sw"><div class="si"><div class="sf"><i class="fa fa-search"></i><input type="text" id="sIn" placeholder="Buscar produto..." oninput="fs(this.value)"></div></div></div>
 
-<!-- TABS CATEGORIAS -->
-<div class="grupos-tabs" id="gruposTabs">
-  <div class="tabs-inner" id="tabsInner"></div>
-</div>
+<!-- TABS -->
+<div class="tb"><div class="tr2" id="trRow"></div></div>
 
-<!-- CONTEÚDO -->
-<main class="main-content" id="mainContent"></main>
+<!-- MAIN -->
+<main class="pw" id="pwMain"></main>
 
 <!-- FOOTER -->
-<footer class="main-footer">
+<footer class="ftr"><p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p></footer>
+
+<!-- FAB -->
+<button class="fb2" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
+
+
+a{text-decoration:none;color:inherit}
+<script>
+var CT=[
+{id:"de",nm:"Destaques",ic:"fa-star"},
+{id:"2l",nm:"Refrigerantes 2L",ic:"fa-bottle-water"},
+{id:"60",nm:"Refrigerantes 600ml",ic:"fa-glass-water"},
+{id:"35",nm:"Refrigerantes 350ml",ic:"fa-mug-hot"},
+{id:"re",nm:"Refrescos e Chinotto",ic:"fa-lemon"},
+{id:"mx",nm:"MSX Energético",ic:"fa-bolt"},
+{id:"ag",nm:"Água",ic:"fa-tint"},
+{id:"ch",nm:"Chopp Ravache",ic:"fa-beer-mug-empty"}];
+
+var PD=[
+{ct:"de",nm:"Chinotto Convenção 269ml - Pacote c/12",ds:"Pack 12 latinhas",pr:"R$ 25,00",im:"img/Chinotto 269ml.jpg"},
+{ct:"de",nm:"Energético MSX Convenção 269ml - Pacote c/12",ds:"Pack 12 latinhas",pr:"R$ 25,00",im:"img/Energético MSX 269 ml .jpg"},
+{ct:"de",nm:"Guaraná Convenção Zero Açúcar 269ml - Pacote c/12",ds:"Sem açúcar",pr:"R$ 35,00",im:"img/Guaraná Convenção Zero Açúcar Lata 269ml.jpg"},
+{ct:"de",nm:"Frutaína Convenção 2L - Pacote c/6",ds:"Laranja, limão, uva, abacaxi",pr:"R$ 27,00",im:"img/Frutaína Convenção 2L.jpg"},
+{ct:"2l",nm:"Cola Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 12,00",im:"img/cola2L.jpg"},
+{ct:"2l",nm:"Guaraná Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/guarana2L.jpg"},
+{ct:"2l",nm:"Guaraná Convenção Zero 2L",ds:"Zero 2 litros",pr:"R$ 10,00",im:"img/guaranaZERO2L.jpg"},
+{ct:"2l",nm:"Laranja Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/laranja2L.jpg"},
+{ct:"2l",nm:"Uva Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/uva2L.jpg"},
+{ct:"2l",nm:"Limão Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/limao2L.jpg"},
+{ct:"2l",nm:"Abacaxi Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 10,00",im:"img/abacaxi2L.jpg"},
+{ct:"2l",nm:"Guaraná Convenção 2L - Pacote c/6",ds:"Pack 6 garrafas",pr:"R$ 55,00",im:"img/guarana2L.jpg"},
+{ct:"60",nm:"Guaraná Convenção 600ml",ds:"Garrafa 600ml",pr:"R$ 6,00",im:"img/Guaraná 600ml.jpg"},
+{ct:"60",nm:"Laranja Convenção 600ml",ds:"Garrafa 600ml",pr:"R$ 6,00",im:"img/Laranja 600ml.jpg"},
+{ct:"60",nm:"Uva Convenção 600ml",ds:"Garrafa 600ml",pr:"R$ 6,00",im:"img/Uva 600ml.jpg"},
+{ct:"60",nm:"Abacaxi Convenção 600ml",ds:"Garrafa 600ml",pr:"R$ 6,00",im:"img/Abacaxi 600ml.jpg"},
+{ct:"35",nm:"Cola Convenção 350ml",ds:"Lata 350ml",pr:"R$ 5,00",im:"img/Cola Convenção 350ml.jpg"},
+{ct:"35",nm:"Guaraná Convenção 350ml",ds:"Lata 350ml",pr:"R$ 4,50",im:"img/Guaraná 350ml.jpg"},
+{ct:"35",nm:"Laranja Convenção 350ml",ds:"Lata 350ml",pr:"R$ 4,50",im:"img/Laranja 350ml.jpg"},
+{ct:"35",nm:"Uva Convenção 350ml",ds:"Lata 350ml",pr:"R$ 4,50",im:"img/Uva 350ml.jpg"},
+{ct:"35",nm:"Abacaxi Convenção 350ml",ds:"Lata 350ml",pr:"R$ 4,50",im:"img/Abacaxi 350ml.jpg"},
+{ct:"re",nm:"Chinotto Convenção 269ml",ds:"Lata 269ml",pr:"R$ 5,00",im:"img/Chinotto 269ml.jpg"},
+{ct:"re",nm:"Chinotto Convenção 269ml - Pacote c/12",ds:"Pack 12 latinhas",pr:"R$ 25,00",im:"img/Chinotto 269ml.jpg"},
+{ct:"re",nm:"Frutaína Convenção 2L",ds:"Laranja, limão, uva, abacaxi",pr:"R$ 7,00",im:"img/Frutaína Convenção 2L.jpg"},
+{ct:"mx",nm:"Energético MSX Convenção 269ml",ds:"Lata 269ml",pr:"R$ 5,00",im:"img/Energético MSX 269 ml .jpg"},
+{ct:"mx",nm:"Energético MSX Convenção 269ml - Pacote c/12",ds:"Pack 12 latinhas",pr:"R$ 25,00",im:"img/Energético MSX 269 ml .jpg"},
+<script>
+var CHP=[
+{c:"ch",n:"Chopp Ravache IPA 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE IPA 500ML.jpg"},
+{c:"ch",n:"Chopp Ravache Black 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE BLACK 500ML.jpg"},
+{c:"ch",n:"Chopp Ravache Gold 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE GOLD PET 500ML.jpg"},
+{c:"ch",n:"Chopp Ravache Pilsen 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE PILSEN PET 500ML.jpg"},
+{c:"ch",n:"Chopp Ravache Vinho 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE VINHO 500ML.jpg"},
+{c:"ch",n:"Chopp Ravache Malzbier 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP RAVACHE MALZBIER 500ML.jpg"},
+{c:"ch",n:"Chopp LEV 500ml",d:"Garrafa 500ml",p:"R$ 15,00",i:"img/CHOPP LEV 500ML.jpg"},
+{c:"ch",n:"Chopp Ravache Vinho PET 20L",d:"Barril PET 20 litros",p:"R$ 318,87",i:"img/CHOPP RAVACHE VINHO PET 20L, 30L.jpg"},
+{c:"ch",n:"Chopp Ravache Vinho PET 30L",d:"Barril PET 30 litros",p:"R$ 438,11",i:"img/CHOPP RAVACHE VINHO PET 20L, 30L.jpg"},
+{c:"ch",n:"Chopp Ravache PET 20L",d:"IPA, Gold, Pilsen, APA, LEV",p:"R$ 300,00",i:"img/CHOPP, RAVACHE, APA,GOLD,PILSEN,IPA,LEV, 20L,30L.jpg"},
+{c:"ch",n:"Chopp Ravache PET 30L",d:"IPA, Gold, Pilsen, APA, LEV",p:"R$ 400,00",i:"img/CHOPP, RAVACHE, APA,GOLD,PILSEN,IPA,LEV, 20L,30L.jpg"}];
+CHP.forEach(function(x){PD.push({ct:x.c,nm:x.n,ds:x.d,pr:x.p,im:x.i})});
+<script>
+function rTabs(){
+  var h="";
+  for(var i=0;i<CT.length;i++){var c=CT[i];
+  var n=0;for(var j=0;j<PD.length;j++){if(PD[j].ct===c.id)n++}
+  h+='<button class="ti'+(i===0?' on':'')+'" data-g="'+c.id+'" onclick="goG(\''+c.id+'\')"><i class="fa '+c.ic+'"></i> '+c.nm+' <span class="cn">'+n+'</span></button>'}
+  document.getElementById("trRow").innerHTML=h;
+}
+function rProds(){
+  var h="";
+  for(var k=0;k<CT.length;k++){var c=CT[k];
+  var ps=[];for(var j=0;j<PD.length;j++){if(PD[j].ct===c.id)ps.push({o:PD[j],x:j})}
+  if(!ps.length)continue;
+  h+='<div class="gb op" id="g-'+c.id+'" data-gid="'+c.id+'">';
+  h+='<div class="gh" onclick="tgG(\''+c.id+'\')"><div class="gl"><i class="fa '+c.ic+' gi"></i><span class="gn">'+c.nm+'</span><span class="gc">'+ps.length+'</span></div><i class="fa fa-chevron-down gv"></i></div>';
+  h+='<div class="gbd"><div class="pg">';
+  for(var m=0;m<ps.length;m++){var p=ps[m].o,gid=c.id+"_"+ps[m].x;
+  h+='<div class="pc" data-d="'+(p.nm+" "+p.ds).toLowerCase()+'" data-pid="'+gid+'">';
+  h+='<div class="pch">'+p.nm+'</div>';
+  h+='<div class="pib"><img class="pi" src="'+p.im+'" alt="'+p.nm+'" loading="lazy" onerror="this.style.display=\'none\'"></div>';
+  h+='<div class="pd"><span class="pds">'+p.ds+'</span><span class="pp">'+p.pr+'</span></div>';
+  h+='<div class="qr"><div class="qc"><button type="button" class="qb" onclick="mQ(this,-1)">−</button><span class="qv">0</span><button type="button" class="qb" onclick="mQ(this,1)">+</button></div><button class="qa" onclick="aC(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div>'}
 <script src="script.js"></script>
 <script>
-// ===== CATEGORIAS =====
-var CATEGORIAS = [
-  {id:"destaque", nome:"Destaques", icon:"fa-star"},
-  {id:"refrig2l", nome:"Refrigerantes 2L", icon:"fa-bottle-water"},
-  {id:"refrig600", nome:"Refrigerantes 600ml", icon:"fa-glass-water"},
-  {id:"refrig350", nome:"Refrigerantes 350ml", icon:"fa-mug-hot"},
-  {id:"refrescos", nome:"Refrescos e Chinotto", icon:"fa-lemon"},
-  {id:"msx", nome:"MSX Energético", icon:"fa-bolt"},
-  {id:"agua", nome:"Água", icon:"fa-tint"},
-  {id:"chopp", nome:"Chopp Ravache", icon:"fa-beer-mug-empty"}
-];
-
-// ===== PRODUTOS =====
-var PRODUTOS = [
-  {cat:"destaque",nome:"Chinotto 269ml - Pacote",desc:"Pacote com 12 unidades",preco:"R$ 25,00",img:"img/chinotto.jpg"},
-  {cat:"destaque",nome:"Energético MSX 269ml - Pacote",desc:"Pacote com 12 unidades",preco:"R$ 25,00",img:"img/msx.jpg"},
-  {cat:"destaque",nome:"Guaraná Zero Açúcar 269ml - Pacote c/12",desc:"Sem açúcar, sabor original",preco:"R$ 35,00",img:"img/guaranazeroacucarlata.jpg"},
-  {cat:"destaque",nome:"Frutaína 2L - Pacote c/6",desc:"Laranja, limão, uva, abacaxi, morango, pêssego",preco:"R$ 27,00",img:"img/frutaina.jpg"},
-  {cat:"refrig2l",nome:"Coca-Cola 2L",desc:"Garrafa 2 litros",preco:"R$ 12,00",img:"img/cola2L.jpg"},
-  {cat:"refrig2l",nome:"Guaraná Antarctica 2L",desc:"Garrafa 2 litros",preco:"R$ 10,00",img:"img/guarana2L.jpg"},
-  {cat:"refrig2l",nome:"Guaraná Zero 2L",desc:"Zero garrafa 2 litros",preco:"R$ 10,00",img:"img/guaranazero2L.jpg"},
-  {cat:"refrig2l",nome:"Fanta Laranja 2L",desc:"Garrafa 2 litros",preco:"R$ 10,00",img:"img/laranja.jpg"},
-  {cat:"refrig2l",nome:"Fanta Uva 2L",desc:"Garrafa 2 litros",preco:"R$ 10,00",img:"img/uva.jpg"},
-  {cat:"refrig2l",nome:"Sprite 2L",desc:"Limão garrafa 2 litros",preco:"R$ 10,00",img:"img/A.svg"},
-  {cat:"refrig2l",nome:"Guaraná Antarctica 2L - Pacote c/6",desc:"Pack 6 garrafas 2L",preco:"R$ 55,00",img:"img/guarana2L.jpg"},
-  {cat:"refrig600",nome:"Coca-Cola 600ml",desc:"Garrafa 600ml",preco:"R$ 7,00",img:"img/COLA.jpg"},
-  {cat:"refrig600",nome:"Guaraná Antarctica 600ml",desc:"Garrafa 600ml",preco:"R$ 6,00",img:"img/guarana600ml.jpg"},
-  {cat:"refrig600",nome:"Fanta Laranja 600ml",desc:"Garrafa 600ml",preco:"R$ 6,00",img:"img/laranja.jpg"},
-  {cat:"refrig600",nome:"Fanta Uva 600ml",desc:"Garrafa 600ml",preco:"R$ 6,00",img:"img/uva.jpg"},
-  {cat:"refrig600",nome:"Sprite 600ml",desc:"Limão garrafa 600ml",preco:"R$ 6,00",img:"img/A.svg"},
-  {cat:"refrig600",nome:"Coca-Cola Zero 600ml",desc:"Zero garrafa 600ml",preco:"R$ 7,00",img:"img/COLA.jpg"},
-  {cat:"refrig350",nome:"Coca-Cola Lata 350ml",desc:"Lata 350ml",preco:"R$ 5,00",img:"img/colo350ml.jpg"},
-  {cat:"refrig350",nome:"Guaraná Antarctica Lata 350ml",desc:"Lata 350ml",preco:"R$ 4,50",img:"img/350ML.jpg"},
-  {cat:"refrig350",nome:"Fanta Laranja Lata 350ml",desc:"Lata 350ml",preco:"R$ 4,50",img:"img/350ML.jpg"},
-  {cat:"refrig350",nome:"Sprite Lata 350ml",desc:"Lata 350ml",preco:"R$ 4,50",img:"img/350ML.jpg"},
-  {cat:"refrescos",nome:"Chinotto 269ml",desc:"Lata 269ml",preco:"R$ 5,00",img:"img/chinotto.jpg"},
-  {cat:"refrescos",nome:"Chinotto 269ml - Pacote c/12",desc:"Pack 12 latinhas",preco:"R$ 25,00",img:"img/chinotto.jpg"},
-  {cat:"refrescos",nome:"Frutaína 2L",desc:"Laranja, limão, uva, abacaxi, morango, pêssego",preco:"R$ 7,00",img:"img/frutaina.jpg"},
-  {cat:"refrescos",nome:"Abacaxi com Hortelã 2L",desc:"Sabor abacaxi com hortelã",preco:"R$ 7,00",img:"img/abacaxi.jpg"},
-  {cat:"refrescos",nome:"Abacaxi com Hortelã 600ml",desc:"Sabor abacaxi com hortelã",preco:"R$ 5,00",img:"img/abacaxi600ml.jpg"},
-  {cat:"msx",nome:"MSX Energético 269ml",desc:"Lata 269ml",preco:"R$ 5,00",img:"img/msx.jpg"},
-  {cat:"msx",nome:"MSX Energético 269ml - Pacote c/12",desc:"Pack 12 latinhas",preco:"R$ 25,00",img:"img/msx.jpg"},
-  {cat:"msx",nome:"MSX Energético 2L",desc:"Garrafa 2 litros",preco:"R$ 12,00",img:"img/msx2L.jpg"},
-  {cat:"agua",nome:"Água Mineral 510ml - Pacote c/12",desc:"Sem gás pack 12",preco:"R$ 12,00",img:"img/vitts.jpg"},
-  {cat:"agua",nome:"Água com Gás 510ml - Pacote c/12",desc:"Com gás pack 12",preco:"R$ 12,00",img:"img/vitts.jpg"},
-  {cat:"agua",nome:"Água Mineral 1500ml - Pacote c/06",desc:"Sem gás 1,5L pack 6",preco:"R$ 14,80",img:"img/vitts.jpg"},
-<script>
-function renderTabs() {
-  var h = "";
-  CATEGORIAS.forEach(function(c, i) {
-    var count = PRODUTOS.filter(function(p){return p.cat===c.id}).length;
-    h += '<div class="tab-item'+(i===0?' active':'')+'" data-grupo="'+c.id+'" onclick="scrollToGrupo(\''+c.id+'\')">';
-    h += '<i class="fa '+c.icon+'"></i> '+c.nome+' <span style="font-size:.7rem;background:#eee;padding:1px 6px;border-radius:8px">'+count+'</span></div>';
-  });
-  document.getElementById("tabsInner").innerHTML = h;
-}
-
-function renderProdutos() {
-  var h = "";
-  CATEGORIAS.forEach(function(c) {
-    var prods = PRODUTOS.filter(function(p){return p.cat===c.id});
-    if (!prods.length) return;
-    h += '<div class="grupo-section open" id="grupo-'+c.id+'" data-grupo-id="'+c.id+'">';
-    h += '<div class="grupo-header" onclick="toggleGrupo(\''+c.id+'\')">';
-    h += '<div class="grupo-header-left"><i class="fa '+c.icon+'"></i><span class="grupo-nome">'+c.nome+'</span><span class="grupo-count">'+prods.length+'</span></div>';
-    h += '<i class="fa fa-chevron-down grupo-chevron"></i></div>';
-    h += '<div class="grupo-body"><div class="produtos-grid">';
-    prods.forEach(function(p, i) {
-      var pid = c.id+"_"+i;
-      h += '<div class="produto-card" data-item-desc="'+(p.nome+" "+p.desc).toLowerCase()+'" data-produto-id="'+pid+'">';
-      h += '<div class="produto-card-header">'+p.nome+'</div>';
-      h += '<div class="produto-img-wrap"><img class="produto-img" src="'+p.img+'" alt="'+p.nome+'" loading="lazy" onerror="this.style.display=\'none\'"></div>';
-      h += '<div class="produto-dados"><span class="produto-desc">'+p.desc+'</span><span class="produto-preco">'+p.preco+'</span></div>';
-      h += '<div class="qtd-row"><div class="qtd-control"><button type="button" class="qtd-btn" onclick="event.stopPropagation();mudarQtd(this,-1)">&minus;</button><span class="qtd-valor">0</span><button type="button" class="qtd-btn" onclick="event.stopPropagation();mudarQtd(this,1)">+</button></div><button class="btn-add" onclick="event.stopPropagation();adicionarAoCarrinho(this)"><i class="fa fa-cart-plus"></i> Adicionar</button></div></div>';
-    });
-    h += '</div></div></div>';
-  });
-  document.getElementById("mainContent").innerHTML = h;
-}
-
-function toggleGrupo(id) {
-  var el = document.getElementById("grupo-"+id);
-  if (el) el.classList.toggle("open");
-}
-
-function scrollToGrupo(id) {
-  var el = document.getElementById("grupo-"+id);
-  if (el) {
-    window.scrollTo({top:el.getBoundingClientRect().top + window.pageYOffset - 170, behavior:"smooth"});
-    document.querySelectorAll(".tab-item").forEach(function(t){t.classList.remove("active")});
-    var tab = document.querySelector('.tab-item[data-grupo="'+id+'"]');
-    if (tab) { tab.classList.add("active"); tab.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"}); }
-  }
-}
-
-function filtraProdutos(txt) {
-  var busca = txt.toLowerCase().trim();
-  document.querySelectorAll(".produto-card").forEach(function(card) {
-    card.style.display = (!busca || (card.getAttribute("data-item-desc")||"").indexOf(busca)>=0) ? "" : "none";
-  });
-  document.querySelectorAll(".grupo-section").forEach(function(g) {
-    var ok = false;
-    g.querySelectorAll(".produto-card").forEach(function(c){if(c.style.display!=="none")ok=true});
-    g.style.display = ok ? "" : "none";
-    if (busca && ok) g.classList.add("open");
-  });
-}
-
-function mudarQtd(btn, delta) {
-  var span = btn.closest(".qtd-row").querySelector(".qtd-valor");
-  span.textContent = Math.max(0, (parseInt(span.textContent)||0) + delta);
-}
-
-function adicionarAoCarrinho(btn) {
-  var card = btn.closest(".produto-card");
-  var qtd = parseInt(card.querySelector(".qtd-valor").textContent)||0;
-  if (qtd<=0) { alert("Use os botões + e − para escolher a quantidade."); return; }
-  var parts = card.getAttribute("data-produto-id").split("_");
-  var prod = PRODUTOS.filter(function(p){return p.cat===parts[0]})[parseInt(parts[1])];
-  if (!prod) return;
-  if (typeof cart!=="undefined") {
-    cart.push({name:prod.nome,price:prod.preco,priceNum:parsePreco(prod.preco),qty:qtd});
-    if (typeof saveCart==="function") saveCart();
-  }
-  card.querySelector(".qtd-valor").textContent="0";
-  btn.classList.add("added"); btn.innerHTML='<i class="fa fa-check"></i> Adicionado!';
-  setTimeout(function(){btn.classList.remove("added");btn.innerHTML='<i class="fa fa-cart-plus"></i> Adicionar'},1500);
-  updateCartCount();
-}
-
-function updateCartCount() {
-  try {
-    var items = JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");
-    var t = items.reduce(function(s,i){return s+(i.qty||0)},0);
-    var e1=document.getElementById("cartCount"),e2=document.getElementById("fabBadge");
-    if(e1)e1.textContent=t; if(e2)e2.textContent=t;
-  } catch(e) {}
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-  renderTabs(); renderProdutos(); updateCartCount();
-  setTimeout(function(){var l=document.getElementById("loader");if(l)l.classList.add("hide")},800);
-  window.addEventListener("scroll", function() {
-    var scroll = window.pageYOffset + 200;
-    document.querySelectorAll(".grupo-section").forEach(function(s) {
-      if (scroll>=s.offsetTop && scroll<s.offsetTop+s.offsetHeight) {
-        var gid=s.getAttribute("data-grupo-id");
-        document.querySelectorAll(".tab-item").forEach(function(t){t.classList.remove("active")});
-        var tab=document.querySelector('.tab-item[data-grupo="'+gid+'"]');
-        if(tab)tab.classList.add("active");
-      }
-    });
-  });
-});
+function tgG(id){var e=document.getElementById("g-"+id);if(e)e.classList.toggle("op")}
+function goG(id){var e=document.getElementById("g-"+id);if(!e)return;
+var t=e.getBoundingClientRect().top+window.pageYOffset-170;window.scrollTo({top:t,behavior:"smooth"});
+var ts=document.querySelectorAll(".ti");for(var i=0;i<ts.length;i++)ts[i].classList.remove("on");
+var tb=document.querySelector('.ti[data-g="'+id+'"]');if(tb){tb.classList.add("on");tb.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"})}}
+function fs(tx){var b=(tx||"").toLowerCase().trim();
+var cs=document.querySelectorAll(".pc");for(var i=0;i<cs.length;i++){var c=cs[i];var d=c.getAttribute("data-d")||"";c.style.display=(!b||d.indexOf(b)>=0)?"":"none"}
+var gs=document.querySelectorAll(".gb");for(var j=0;j<gs.length;j++){var g=gs[j];var ok=false;
+var ps=g.querySelectorAll(".pc");for(var k=0;k<ps.length;k++){if(ps[k].style.display!=="none")ok=true}
+g.style.display=ok?"":"none";if(b&&ok)g.classList.add("op")}}
+function mQ(bt,dl){var s=bt.parentNode.querySelector(".qv");s.textContent=Math.max(0,(parseInt(s.textContent)||0)+dl)}
+function pNum(st){if(st==null)return 0;var m=String(st).match(/[\d.,]+/);if(!m)return 0;return parseFloat(m[0].replace(/\./g,"").replace(",","."))}
+function aC(bt){var cd=bt.parentNode.parentNode;var q=parseInt(cd.querySelector(".qv").textContent)||0;
+if(q<=0){alert("Use os botões + e − para escolher a quantidade.");return}
+var pid=cd.getAttribute("data-pid").split("_");var pr=null;
+for(var i=0;i<PD.length;i++){if(PD[i].ct===pid[0]){var c=PD[i];var m=0;for(var j=0;j<=i;j++){if(PD[j].ct===pid[0])m++}
+if(String(m-1)===pid[1]||true){var arr=[];for(var k=0;k<PD.length;k++){if(PD[k].ct===pid[0])arr.push(PD[k])}pr=arr[parseInt(pid[1])];break}}}
+if(!pr)return;
+try{var ct=JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");ct.push({name:pr.nm,price:pr.pr,priceNum:pNum(pr.pr),qty:q});localStorage.setItem("refrigeranteCart",JSON.stringify(ct))}catch(e){}
+cd.querySelector(".qv").textContent="0";bt.classList.add("ok");bt.innerHTML='<i class="fa fa-check"></i> OK!';
+setTimeout(function(){bt.classList.remove("ok");bt.innerHTML='<i class="fa fa-cart-plus"></i> Adicionar'},1500);uC()}
+function uC(){try{var it=JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");var t=0;for(var i=0;i<it.length;i++)t+=(it[i].qty||0);
+var a=document.getElementById("cBag"),b=document.getElementById("fBag");if(a)a.textContent=t;if(b)b.textContent=t}catch(e){}}
+function partilhar(){var u=location.href.split("#")[0];
+if(navigator.share){navigator.share({title:"Refrigerantes Convenção",text:"Confira nosso catálogo!",url:u}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(u);alert("Link copiado!")}}
+document.addEventListener("DOMContentLoaded",function(){
+rTabs();rProds();uC();
+setTimeout(function(){var l=document.getElementById("ldBox");if(l)l.classList.add("off")},700);
+window.addEventListener("scroll",function(){
+var s=window.pageYOffset+200;
+var gs=document.querySelectorAll(".gb");
+for(var i=0;i<gs.length;i++){var g=gs[i];
+if(s>=g.offsetTop&&s<g.offsetTop+g.offsetHeight){
+var gid=g.getAttribute("data-gid");
+var ts=document.querySelectorAll(".ti");for(var j=0;j<ts.length;j++)ts[j].classList.remove("on");
+var tb=document.querySelector('.ti[data-g="'+gid+'"]');if(tb)tb.classList.add("on")}}})});
 </script>
 </body>
 </html>
+
+  h+='</div></div></div>'}
+  document.getElementById("pwMain").innerHTML=h;
+}
+</script>
+
+</script>
+
+{ct:"mx",nm:"Energético MSX Convenção 2L",ds:"Garrafa 2 litros",pr:"R$ 12,00",im:"img/MSX Convenção 2L.jpg"},
+{ct:"ag",nm:"Água Mineral Convenção 510ml - Pacote c/12",ds:"Sem gás",pr:"R$ 12,00",im:"img/Água 510ml.jpg"},
+{ct:"ag",nm:"Água Convenção com Gás 510ml - Pacote c/12",ds:"Com gás",pr:"R$ 12,00",im:"img/Água 510ml com gás.jpg"},
+{ct:"ag",nm:"Água Mineral Convenção 1500ml - Pacote c/06",ds:"Sem gás 1,5L",pr:"R$ 14,80",im:"img/Água 1500ml.jpg"},
+{ct:"ag",nm:"Água Convenção com Gás 1500ml - Pacote c/06",ds:"Com gás 1,5L",pr:"R$ 14,80",im:"img/AGUA Com GAS 1,5L.jpg"},
+{ct:"ag",nm:"Vitt's Limão Convenção 350ml",ds:"Refrigerante de limão",pr:"R$ 4,00",im:"img/Vitt s limão 350ml.jpg"},
+{ct:"ag",nm:"Vitt's Limão Convenção 2L",ds:"Refrigerante de limão 2L",pr:"R$ 10,00",im:"img/vittslimao2L.jpg"}
+];
+</script>
+
+</style>
+</head>
+<body>
