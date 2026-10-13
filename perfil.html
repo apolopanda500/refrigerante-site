@@ -107,7 +107,7 @@
     <div class="form-group"><label>Nome completo</label><input type="text" id="pNome" data-conta="nome" placeholder="Seu nome"></div>
     <div class="form-group"><label>WhatsApp</label><input type="tel" id="pTel" data-conta="tel" placeholder="(21) 99999-9999"></div>
   </div>
-  <div class="form-group"><label>E-mail (opcional)</label><input type="email" id="pEmail" data-conta="email" placeholder="seu@email.com"></div>
+  <div class="form-group"><label>CPF</label><input type="text" id="pCpf" data-conta="cpf" placeholder="000.000.000-00"></div>
   <div class="form-group"><label>Endereço padrão</label><input type="text" id="pEndereco" data-conta="endereco" placeholder="Rua, número"></div>
   <div class="form-row">
     <div class="form-group"><label>Bairro</label><input type="text" id="pBairro" data-conta="bairro" placeholder="Seu bairro"></div>
@@ -181,12 +181,18 @@
     document.getElementById("statGasto").textContent = "R$ " + tg.toFixed(2).replace(".", ",");
 })();
 function salvarPerfil() {
+    var cpfVal = (document.getElementById("pCpf") || {}).value || "";
+    cpfVal = cpfVal.replace(/\D/g, "");
+    if (cpfVal && (cpfVal.length !== 11 || new Set(cpfVal).size === 1)) {
+        alert("CPF inválido.");
+        return;
+    }
     var f = function (id) { var e = document.getElementById(id); return e ? e.value.trim() : ""; };
 
     var dados = {
         nome: f("pNome"), tel: f("pTel"), email: f("pEmail"),
         endereco: f("pEndereco"), bairro: f("pBairro"), complemento: f("pComplemento"),
-        numero: f("pNumero"), rua: f("pRua"), cep: f("pCep"), observacao: f("pObs")
+        numero: f("pNumero"), rua: f("pRua"), cep: f("pCep"), observacao: f("pObs"), cpf: f("pCpf")
     };
 
     if (!dados.nome) { alert("Preencha o nome completo."); document.getElementById("pNome").focus(); return; }

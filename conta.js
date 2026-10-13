@@ -37,6 +37,7 @@ var Conta = (function () {
             rua: perfil.rua || "",
             numero: perfil.numero || "",
             complemento: perfil.complemento || "",
+            cpf: perfil.cpf || "",
             observacao: perfil.observacao || "",
             cep: perfil.cep || "",
             temNome: !!nome,
@@ -63,7 +64,7 @@ var Conta = (function () {
             conta.tel = String(novo.tel || "").trim();
             perfil.tel = conta.tel;
         }
-        ['email', 'endereco', 'bairro', 'rua', 'numero', 'complemento', 'observacao', 'cep'].forEach(function (k) {
+        ['email', 'endereco', 'bairro', 'rua', 'numero', 'complemento', 'observacao', 'cep', 'cpf'].forEach(function (k) {
             if (novo[k] !== undefined) perfil[k] = String(novo[k] || "").trim();
         });
 
