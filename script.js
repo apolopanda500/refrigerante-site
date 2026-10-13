@@ -272,7 +272,7 @@ function dataHora(ts) {
 }
 function statusBadge(status) {
     const cores = {
-        aguardando: "#FF9800", confirmado: "#2196F3", separacao: "#9C27B0",
+        aguardando: "#FF9800", confirmado: "#2e7d32", separacao: "#9C27B0",
         enviado: "#00BCD4", entregue: "#4CAF50", cancelado: "#f44336"
     };
     const cor = cores[status] || "#777";
