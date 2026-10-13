@@ -358,6 +358,24 @@ function toggleDiaRegiao(rid,ix,cb){
 if (document.readyState==="loading") document.addEventListener("DOMContentLoaded",pintarDiasEdit); else pintarDiasEdit();
 
 
+
+
+function resumoBairroHtml() {
+    var resumo = {};
+    (typeof pedidos !== "undefined" ? pedidos : getPedidos()).forEach(function(p){
+        var b = p.bairro || p.regiao || "Sem bairro";
+        if (!resumo[b]) resumo[b] = { q:0, v:0 };
+        resumo[b].q++;
+        resumo[b].v += (p.total || 0);
+    });
+    var html = "<div style=\"clear:both;padding:6px 0\"><h4 style=\"margin:6px 0;color:#ffb822;font-size:1rem\">Vendas por bairro</h4>";
+    Object.keys(resumo).sort().forEach(function(b){
+        html += "<div style=\"display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #ddd\"><span>" + b + " (" + resumo[b].q + " pedido" + (resumo[b].q===1?"":"s") + ")</span><b style=\"color:#3d4465\">" + formatBRL(resumo[b].v) + "</b></div>";
+    });
+    html += "</div>";
+    box.innerHTML = box.innerHTML + html;
+}
+
 </script>
 </body>
 </html><style>.pedido-card{padding:6px 8px!important;margin-bottom:6px!important;font-size:.92rem!important} .pedido-lista .pedido-card{margin:0 0 4px 0!important} .pedido-topo{gap:4px!important;margin-bottom:4px!important} .pedido-itens{padding:4px 6px!important;margin:4px 0!important} .pedido-itens div{padding:0!important} .pedido-acoes{margin-top:4px!important;gap:4px!important} .vend-dia{padding:2px 0!important}</style>
