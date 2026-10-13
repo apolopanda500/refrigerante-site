@@ -203,12 +203,12 @@
       <small>Usado no perfil e nas suas compras</small>
     </div>
     <div class="conta-box">
-      <button class="avatar-btn" id="avatarPreview" onclick="document.getElementById('inputFoto').click()" title="Trocar foto">
+      <button class="avatar-btn" id="avatarPreview" data-conta-foto onclick="document.getElementById('inputFoto').click()" title="Trocar foto">
         <img id="avatarImg" alt="" />
         <span class="avatar-lapis"><i class="fa fa-camera"></i></span>
       </button>
       <div class="conta-info">
-        <input id="cfgNomeUsuario" type="text" placeholder="Seu nome de exibição" maxlength="40">
+        <input id="cfgNomeUsuario" data-conta="nome" type="text" placeholder="Seu nome de exibição" maxlength="40">
         <input type="file" id="inputFoto" accept="image/*" hidden>
         <div class="conta-acoes">
           <button class="btn-mini" onclick="salvarConta()"><i class="fa fa-check"></i> Salvar</button>
@@ -235,6 +235,55 @@
   </div>
 </div>
 
+
+<div class="config-card">
+  <h2><i class="fa fa-sliders-h"></i> Entrega e pagamento</h2>
+  <div class="config-row config-col">
+    <div class="config-label">Quando prefere receber
+      <small>Usamos para organizar a rota do caminhão</small>
+    </div>
+    <div class="opcoes" id="cfgHorarioEntrega">
+      <button class="op-btn" data-v="manha" onclick="setOpcao('cfgHorarioEntrega',this)">Manhã</button>
+      <button class="op-btn" data-v="tarde" onclick="setOpcao('cfgHorarioEntrega',this)">Tarde</button>
+    </div>
+  </div>
+  <div class="config-row config-col">
+    <div class="config-label">Forma de pagamento preferida
+      <small>Já deixamos marcado no checkout</small>
+    </div>
+    <div class="opcoes" id="cfgPagamento">
+      <button class="op-btn" data-v="Pix" onclick="setOpcao('cfgPagamento',this)">Pix</button>
+      <button class="op-btn" data-v="Dinheiro" onclick="setOpcao('cfgPagamento',this)">Dinheiro</button>
+      <button class="op-btn" data-v="Cartão" onclick="setOpcao('cfgPagamento',this)">Cartão</button>
+    </div>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Confirmar entrega por WhatsApp<small>Enviamos o status do pedido</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgZapConfirmacao" checked><span class="slider"></span></label>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Avisar sobre pedidos na região<small>Só os dias do seu bairro</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgAvisoRegiao" checked><span class="slider"></span></label>
+  </div>
+</div>
+
+<div class="config-card">
+  <h2><i class="fa fa-comments"></i> Fale com a gente</h2>
+  <div class="config-row config-col">
+    <div class="config-label">Canais de atendimento
+      <small>Escolha o que preferir. Respondemos rápido.</small>
+    </div>
+    <div class="conta-box">
+      <a class="btn-mini" href="https://wa.me/5521983158911" target="_blank" rel="noopener" style="background:#25D366">
+        <i class="fa fa-whatsapp"></i> WhatsApp da loja
+      </a>
+      <a class="btn-mini" href="https://t.me/convencao_rj" target="_blank" rel="noopener" style="background:#229ED9">
+        <i class="fa fa-paper-plane"></i> Telegram
+      </a>
+    </div>
+  </div>
+</div>
+
 <div class="config-card">
   <h2><i class="fa fa-trash"></i> Dados</h2>
   <div class="config-row">
@@ -253,6 +302,7 @@
 </div>
 </div></section>
 
+<script src="conta.js"></script>
 <script src="loja.js"></script>
 <script src="script.js"></script>
 <script>
@@ -279,7 +329,7 @@
 (function() {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
-    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgModoEscuro","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco"];
+    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgModoEscuro","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco","cfgZapConfirmacao","cfgAvisoRegiao"];
     ids.forEach(function(id) {
         var el = document.getElementById(id);
         if (!el) return;
@@ -342,75 +392,24 @@ function salvarPrefs(p){
     try { localStorage.setItem("refrigerantePrefs", JSON.stringify(p)); } catch(e){}
 }
 
-/* ===== conta: foto e nome ===== */
-var FOTO_KEY = "refrigeranteFoto";
-var NOME_KEY = "convencao_usuario";
-
+/* ===== conta: usa o modulo Conta (mesmo do Perfil) ===== */
 function carregarConta(){
-    var nome = "";
-    try { nome = (JSON.parse(localStorage.getItem(NOME_KEY) || "{}").nome) || ""; } catch(e){}
+    var d = Conta.dados();
     var inp = document.getElementById("cfgNomeUsuario");
-    if (inp) inp.value = nome;
-
-    var foto = "";
-    try { foto = localStorage.getItem(FOTO_KEY) || ""; } catch(e){}
-    mostrarAvatar(foto, nome);
+    if (inp && document.activeElement !== inp) inp.value = d.nome;
+    Conta.aplicarEmTodos();
 }
-
-function mostrarAvatar(src, nome){
-    var img = document.getElementById("avatarImg");
-    var txt = document.querySelector("#avatarPreview .avatar-texto");
-    if (img) {
-        if (src) { img.src = src; img.style.display = "block"; }
-        else { img.removeAttribute("src"); img.style.display = "none"; }
-    }
-    if (txt) {
-        var inicial = (nome && nome.trim()) ? nome.trim().charAt(0).toUpperCase() : "";
-        txt.textContent = inicial;
-        txt.style.display = src ? "none" : "flex";
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function(){
-    carregarConta();
-    // marca o botao da opcao salva
-    var p = carregarPrefs();
-    var tam = p.cfgFonteTamanho || "normal";
-    document.querySelectorAll('#cfgFonteTamanho .op-btn').forEach(function(b){
-        b.classList.toggle("ativo", b.dataset.v === tam);
-    });
-
-    var foto = document.getElementById("inputFoto");
-    if (foto) foto.addEventListener("change", function(){
-        var arq = this.files && this.files[0];
-        if (!arq) return;
-        if (arq.size > 1.6 * 1024 * 1024) { alert("Foto muito grande. Use uma imagem de até 1,5 MB."); this.value = ""; return; }
-        var leitor = new FileReader();
-        leitor.onload = function(e){
-            try { localStorage.setItem(FOTO_KEY, e.target.result); } catch(err){ alert("Nao foi possivel salvar a foto."); return; }
-            var nome = (document.getElementById("cfgNomeUsuario") || {}).value || "";
-            mostrarAvatar(e.target.result, nome);
-            aviso("Foto atualizada com sucesso!");
-        };
-        leitor.readAsDataURL(arq);
-    });
-});
 
 function salvarConta(){
-    var nome = (document.getElementById("cfgNomeUsuario") || {}).value.trim() || "";
-    var u = {};
-    try { u = JSON.parse(localStorage.getItem(NOME_KEY) || "{}"); } catch(e){}
-    u.nome = nome;
-    try { localStorage.setItem(NOME_KEY, JSON.stringify(u)); } catch(e){}
-    mostrarAvatar(localStorage.getItem(FOTO_KEY) || "", nome);
-    aviso(nome ? "Nome salvo: " + nome : "Nome salvo");
+    var nome = (document.getElementById("cfgNomeUsuario") || {}).value || "";
+    Conta.salvar({ nome: nome });
+    aviso(nome ? ("Nome salvo: " + nome) : "Nome salvo");
 }
 
 function limparFoto(){
     if (!confirm("Remover a foto do perfil?")) return;
-    try { localStorage.removeItem(FOTO_KEY); } catch(e){}
-    var nome = (document.getElementById("cfgNomeUsuario") || {}).value || "";
-    mostrarAvatar("", nome);
+    Conta.limparFoto();
+    Conta.aplicarEmTodos();
     aviso("Foto removida");
 }
 
@@ -419,9 +418,20 @@ function aviso(msg){
     if (!box) { alert(msg); return; }
     box.innerHTML = '<i class="fa fa-check-circle"></i> ' + msg;
     box.style.display = "block";
-    setTimeout(function(){ box.style.display = "none"; }, 3000);
+    setTimeout(function () { box.style.display = "none"; }, 3000);
 }
 
+document.addEventListener("DOMContentLoaded", function(){
+    carregarConta();
+    var foto = document.getElementById("inputFoto");
+    if (foto) foto.addEventListener("change", function(){
+        var self = this;
+        Conta.escolherArquivo(self, function () {
+            Conta.aplicarEmTodos();
+            aviso("Foto atualizada em todas as telas!");
+        });
+    });
+});
 </script>
 <script>
 /* ===== seletor de tema ===== */
@@ -444,6 +454,20 @@ function marcarTemaAtivo(){
 }
 document.addEventListener("DOMContentLoaded", function(){
     setTimeout(marcarTemaAtivo, 60);
+});
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(function(){
+        var p = carregarPrefs();
+        ["cfgFonteTamanho","cfgHorarioEntrega","cfgPagamento"].forEach(function(id){
+            var v = p[id] || "normal";
+            document.querySelectorAll("#" + id + " .op-btn").forEach(function(b){
+                b.classList.toggle("ativo", b.dataset.v === v);
+            });
+        });
+    }, 80);
 });
 
 </script>

@@ -1235,3 +1235,72 @@ body{font-size:16.5px}
 [data-theme="dark"] .faixa-regiao{background:#232742;border-left-color:#ffb822}
 [data-theme="dark"] .faixa-regiao b{color:#ffb822}
 [data-theme="dark"] .faixa-regiao i{color:#ffb822}
+
+/* ===== ALVO DE TOQUE MINIMO 44px (celular) ===== */
+.qb,.qa,.btn-mini,.op-btn,.filtro,.btn,.btn-primario,.btn-secundario,.btn-enviar,
+.btn-salvar,.btn-buscar,.btn-detalhe,.btn-sair,.btn-limpar{
+    min-height:44px;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+}
+
+/* ===== quantidade: maior e facil de apertar ===== */
+.qc{display:flex;border:2px solid #e0e0e0;border-radius:9px;overflow:hidden;flex:1;max-width:150px}
+.qb{width:42px;height:42px;min-height:42px;font-size:1.25rem;line-height:1;
+    display:flex;align-items:center;justify-content:center}
+.qv{width:44px;min-height:42px;line-height:42px;font-size:1.1rem;text-align:center}
+.qa{flex:1;min-height:42px;font-size:.88rem;font-weight:800;letter-spacing:.2px}
+
+/* ===== no celular: quantidade e adicionar lado a lado, maiores ===== */
+@media(max-width:560px){
+    .qr{flex-wrap:wrap;gap:10px;padding:10px 12px 14px}
+    .qc{flex:1 1 100%;max-width:none;height:50px}
+    .qb{height:50px;width:50px;min-height:50px;font-size:1.4rem}
+    .qv{flex:1;min-height:50px;line-height:50px;font-size:1.2rem;width:auto}
+    .qa{flex:1 1 100%;min-height:50px;font-size:.95rem}
+    .filtro{min-height:44px;padding:11px 18px;font-size:.92rem}
+    .op-btn{min-height:46px;font-size:.9rem;padding:12px 10px}
+    .btn-detalhe{min-height:44px;padding:11px 14px}
+}
+
+/* ===== item do carrinho no celular ===== */
+@media(max-width:560px){
+    .cart-item{gap:11px;padding:14px 0}
+    .cart-item img{width:54px;height:54px;flex:0 0 54px}
+    .ci-info{flex:1 1 100%;min-width:0}
+    .ci-name{font-size:.98rem;line-height:1.35}
+    .ci-price{font-size:.86rem}
+    .ci-subtotal{min-width:auto;font-size:1.1rem;order:3}
+    .ci-remove{width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+}
+
+/* ===== barra de acoes fixa no celular ===== */
+@media(max-width:560px){
+    .acoes{position:fixed;left:0;right:0;bottom:0;z-index:150;
+        padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+        background:#fff;border-top:1px solid #eee;
+        box-shadow:0 -4px 16px rgba(0,0,0,.1);gap:8px;margin:0}
+    .acoes .btn{min-width:0;flex:1;padding:13px 10px;font-size:.9rem;border-radius:12px}
+    .page{padding-bottom:96px !important}
+    .btn-limpar-mobile{display:block !important}
+}
+.btn-limpar-mobile{display:none}
+
+/* ===== limpar carrinho: botao visivel dentro do carrinho ===== */
+.caixa-limpar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    margin-top:18px;padding:14px 16px;border-radius:12px;
+    background:#fff8f8;border:1px solid #ffd6d6;
+}
+.caixa-limpar .cl-tx{font-size:.9rem;color:#8a3a3a;line-height:1.4}
+.caixa-limpar .cl-tx b{display:block;color:#c62828;font-size:.95rem;margin-bottom:2px}
+.btn-limpar-forte{
+    padding:12px 22px;min-height:44px;
+    background:#c62828;color:#fff;border:none;border-radius:10px;
+    font-weight:700;font-size:.92rem;cursor:pointer;font-family:inherit;
+    display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.btn-limpar-forte:hover{background:#ad1f1f}
+[data-theme="dark"] .caixa-limpar{background:#2a1a1c;border-color:#5a2a2e}
+[data-theme="dark"] .caixa-limpar .cl-tx{color:#e6a3a3}
+[data-theme="dark"] .caixa-limpar .cl-tx b{color:#ff8a8a}

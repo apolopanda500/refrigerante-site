@@ -141,6 +141,7 @@
 <div id="listaPedidos"></div>
 </div></section>
 
+<script src="conta.js"></script>
 <script src="loja.js"></script>
 <script src="script.js"></script>
 <script>
@@ -185,7 +186,9 @@ function sair(){
 /* ===== SEMPRE mostra os pedidos, sem pedir numero nem nome ===== */
 function mostrarPedidos(){
   var todos = getPedidos();
-  var sessao = carregarSessao();
+  var sessao = Conta && !Conta.estaVazia()
+        ? { nome: Conta.dados().nome, tel: Conta.dados().tel }
+        : null;
   var lista = todos;
 
   if (sessao && sessao.tel) {

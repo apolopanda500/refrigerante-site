@@ -106,6 +106,7 @@
 </div>
 </div></section>
 
+<script src="conta.js"></script>
 <script src="loja.js"></script>
 <script src="script.js"></script>
 <script>
@@ -215,7 +216,7 @@ function enviarPedido() {
         itens: itens, subtotal: c.subtotal, total: c.total
     });
     localStorage.setItem("ultimoPedido", pedido.id);
-    try { localStorage.setItem("convencao_usuario", JSON.stringify({ nome: nome, tel: tel })); } catch(e) {}
+    if (typeof Conta !== "undefined") Conta.salvar({ nome: nome, tel: tel, endereco: end, bairro: bairro, complemento: comp });
     limparCarrinho();
     window.location.href = "pedido-sucesso.html";
 }
@@ -269,6 +270,31 @@ function atualizarRegiao(){
 }
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", montarRegioes); else montarRegioes();
+</script>
+<script>
+/* ===== completa os dados com o que ja esta salvo no Perfil ===== */
+function preencherComConta(){
+    if (!Conta) return;
+    var d = Conta.dados();
+    var cfg = {};
+    try { cfg = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
+    if (cfg.cfgSalvarEndereco === false) return;
+
+    var mapa = { fNome:"nome", fTel:"tel", fEnd:"endereco", fBairro:"bairro", fComp:"complemento" };
+    for (var id in mapa) {
+        var el = document.getElementById(id);
+        if (!el) continue;
+        var v = d[mapa[id]] || "";
+        if (v && !el.value) el.value = v;
+        if (v && !el.placeholder) el.placeholder = v;
+    }
+    var em = document.getElementById("fEmail");
+    if (em && d.email && !em.value) em.value = d.email;
+    Conta.aplicarEmTodos();
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", preencherComConta);
+else preencherComConta();
+
 </script>
 </body>
 </html>

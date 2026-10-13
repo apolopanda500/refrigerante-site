@@ -331,3 +331,21 @@ function ligarConfianca(){
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", ligarConfianca);
 } else { ligarConfianca(); }
+
+/* ============================================
+   CLAREZA: quem somos, como funciona, garantia
+   ============================================ */
+function pintarSobre(){
+    var el = document.getElementById("sideSobre");
+    if (!el) return;
+    el.innerHTML = '<h3><i class="fa fa-info-circle"></i> Como funciona</h3>'
+      + '<div class="selo-conf"><i class="fa fa-1"></i> <span>Voce escolhe os <b>pacotes</b> e o quantidade</span></div>'
+      + '<div class="selo-conf"><i class="fa fa-2"></i> <span>Informa <b>nome e WhatsApp</b> (fica salvo)</span></div>'
+      + '<div class="selo-conf"><i class="fa fa-3"></i> <span>Escolhe a <b>regiao</b> e o dia da entrega</span></div>'
+      + '<div class="selo-conf"><i class="fa fa-4"></i> <span>Confirma o pedido e <b>paga no Pix</b> ou na entrega</span></div>'
+      + '<div class="selo-conf"><i class="fa fa-5"></i> <span>Acompanhe ate o <b>caminhao chegar</b></span></div>'
+      + '<div class="selo-conf"><i class="fa fa-phone"></i> <span>Duvidas? <a href="https://wa.me/5521983158911" target="_blank" rel="noopener" style="color:var(--primary-color);font-weight:700">(21) 9-8315-8911</a></span></div>'
+      + '<div class="selo-conf"><i class="fa fa-paper-plane"></i> <span>Tambem no <a href="https://t.me/convencao_rj" target="_blank" rel="noopener" style="color:var(--primary-color);font-weight:700">Telegram</a></span></div>';
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintarSobre);
+else pintarSobre();

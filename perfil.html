@@ -75,14 +75,14 @@
   <h1><i class="fa fa-user"></i> Meu Perfil</h1>
 
 <div class="perfil-avatar-wrap">
-  <button class="perfil-avatar" id="perfilAvatar" onclick="document.getElementById('fotoPerfil').click()" title="Trocar foto">
+  <button class="perfil-avatar" id="perfilAvatar" data-conta-foto onclick="document.getElementById('fotoPerfil').click()" title="Trocar foto">
     <img id="fotoImg" alt="" />
-    <span class="pa-texto" id="fotoInicial">C</span>
+    <span class="pa-texto" id="fotoInicial" class="pa-texto">C</span>
     <span class="pa-lapis"><i class="fa fa-camera"></i></span>
   </button>
   <div class="perfil-dados">
-    <b id="nomeDestaque">Cliente</b>
-    <small id="telDestaque">WhatsApp não informado</small>
+    <b id="nomeDestaque" data-conta="nome-mostrar">Cliente</b>
+    <small id="telDestaque" data-conta="tel-mostrar">WhatsApp não informado</small>
     <small><i class="fa fa-lock"></i> Guardado só neste dispositivo</small>
   </div>
   <input type="file" id="fotoPerfil" accept="image/*" hidden>
@@ -109,14 +109,14 @@
   <h2><i class="fa fa-id-card"></i> Dados Pessoais</h2>
   <div class="status-msg ok" id="msgSalvo"><i class="fa fa-check-circle"></i> Dados salvos com sucesso!</div>
   <div class="form-row">
-    <div class="form-group"><label>Nome completo</label><input type="text" id="pNome" placeholder="Seu nome"></div>
-    <div class="form-group"><label>WhatsApp</label><input type="tel" id="pTel" placeholder="(21) 99999-9999"></div>
+    <div class="form-group"><label>Nome completo</label><input type="text" id="pNome" data-conta="nome" placeholder="Seu nome"></div>
+    <div class="form-group"><label>WhatsApp</label><input type="tel" id="pTel" data-conta="tel" placeholder="(21) 99999-9999"></div>
   </div>
-  <div class="form-group"><label>E-mail (opcional)</label><input type="email" id="pEmail" placeholder="seu@email.com"></div>
-  <div class="form-group"><label>Endereço padrão</label><input type="text" id="pEndereco" placeholder="Rua, número"></div>
+  <div class="form-group"><label>E-mail (opcional)</label><input type="email" id="pEmail" data-conta="email" placeholder="seu@email.com"></div>
+  <div class="form-group"><label>Endereço padrão</label><input type="text" id="pEndereco" data-conta="endereco" placeholder="Rua, número"></div>
   <div class="form-row">
-    <div class="form-group"><label>Bairro</label><input type="text" id="pBairro" placeholder="Seu bairro"></div>
-    <div class="form-group"><label>Complemento</label><input type="text" id="pComplemento" placeholder="Apto, bloco, etc."></div>
+    <div class="form-group"><label>Bairro</label><input type="text" id="pBairro" data-conta="bairro" placeholder="Seu bairro"></div>
+    <div class="form-group"><label>Complemento</label><input type="text" id="pComplemento" data-conta="complemento" placeholder="Apto, bloco, etc."></div>
   </div>
   <button class="btn-salvar" onclick="salvarPerfil()"><i class="fa fa-save"></i> Salvar alterações</button>
 </div>
@@ -131,6 +131,7 @@
 </div></section>
 
 
+<script src="conta.js"></script>
 <script src="loja.js"></script>
 <script src="script.js"></script>
 <script>
@@ -177,80 +178,55 @@
     document.getElementById("statGasto").textContent = "R$ " + tg.toFixed(2).replace(".", ",");
 })();
 function salvarPerfil() {
-    var perfil = {
-        nome: document.getElementById("pNome").value.trim(),
-        tel: document.getElementById("pTel").value.trim(),
-        email: document.getElementById("pEmail").value.trim(),
-        endereco: document.getElementById("pEndereco").value.trim(),
-        bairro: document.getElementById("pBairro").value.trim(),
-        complemento: document.getElementById("pComplemento").value.trim()
+    var f = function (id) { var e = document.getElementById(id); return e ? e.value.trim() : ""; };
+
+    var dados = {
+        nome: f("pNome"), tel: f("pTel"), email: f("pEmail"),
+        endereco: f("pEndereco"), bairro: f("pBairro"), complemento: f("pComplemento")
     };
 
-    if (!perfil.nome) { alert("Preencha o nome completo."); document.getElementById("pNome").focus(); return; }
-    if (!perfil.tel) { alert("Preencha o WhatsApp."); document.getElementById("pTel").focus(); return; }
+    if (!dados.nome) { alert("Preencha o nome completo."); document.getElementById("pNome").focus(); return; }
+    if (!dados.tel)  { alert("Preencha o WhatsApp."); document.getElementById("pTel").focus(); return; }
 
-    var resumo = "Nome: " + perfil.nome + "\n"
-               + "WhatsApp: " + perfil.tel + "\n"
-               + (perfil.email ? "E-mail: " + perfil.email + "\n" : "")
-               + (perfil.endereco ? "Endereço: " + perfil.endereco + "\n" : "")
-               + (perfil.bairro ? "Bairro: " + perfil.bairro : "");
+    var resumo = "Nome: " + dados.nome + "\n"
+               + "WhatsApp: " + dados.tel + "\n"
+               + (dados.email ? "E-mail: " + dados.email + "\n" : "")
+               + (dados.endereco ? "Endereço: " + dados.endereco + "\n" : "")
+               + (dados.bairro ? "Bairro: " + dados.bairro : "");
 
-    if (!confirm("Confirmar as alterações?\n\n" + resumo + "\n\nOs dados serão salvos neste dispositivo.")) return;
+    if (!confirm("Confirmar as alterações?\n\n" + resumo + "\n\nOs dados ficam salvos neste aparelho.")) return;
 
-    try { localStorage.setItem("refrigerantePerfil", JSON.stringify(perfil)); } catch(e) {}
-
-    if (perfil.nome) document.getElementById("avatarNome").textContent = perfil.nome;
-    if (perfil.tel) document.getElementById("avatarTel").textContent = perfil.tel;
-
-    try { localStorage.setItem("convencao_usuario", JSON.stringify({ nome: perfil.nome, tel: perfil.tel })); } catch(e) {}
+    Conta.salvar(dados);
 
     var msg = document.getElementById("msgSalvo");
-    msg.innerHTML = '<i class="fa fa-check-circle"></i> Alterações salvas com sucesso!';
-    msg.style.display = "block";
-    setTimeout(function() { msg.style.display = "none"; }, 4000);
+    if (msg) {
+        msg.innerHTML = '<i class="fa fa-check-circle"></i> Alterações salvas em todas as telas!';
+        msg.style.display = "block";
+        setTimeout(function () { msg.style.display = "none"; }, 4000);
+    }
+    var av = document.getElementById("avatarNome");
+    if (av) av.textContent = dados.nome || "Cliente";
+    var at = document.getElementById("avatarTel");
+    if (at) at.textContent = dados.tel || "WhatsApp não informado";
+    Conta.aplicarEmTodos();
 }
 </script>
 <script>
 /* ===== foto do perfil ===== */
-var FOTO_KEY = "refrigeranteFoto";
-function mostrarFotoPerfil(){
-  var img = document.getElementById("fotoImg");
-  var txt = document.getElementById("fotoInicial");
-  if (!img || !txt) return;
-  var foto = "";
-  try { foto = localStorage.getItem(FOTO_KEY) || ""; } catch(e){}
-  var nome = (document.getElementById("pNome") || {}).value || "";
-  var inicial = (nome.trim()) ? nome.trim().charAt(0).toUpperCase() : "C";
-  txt.textContent = inicial;
-  if (foto) { img.src = foto; img.style.display = "block"; txt.style.display = "none"; }
-  else { img.removeAttribute("src"); img.style.display = "none"; txt.style.display = "flex"; }
-}
 document.addEventListener("DOMContentLoaded", function(){
-  mostrarFotoPerfil();
-  var arq = document.getElementById("fotoPerfil");
-  if (arq) arq.addEventListener("change", function(){
-    var f = this.files && this.files[0];
-    if (!f) return;
-    if (f.size > 1.6 * 1024 * 1024) { alert("Foto muito grande. Use uma imagem de até 1,5 MB."); this.value = ""; return; }
-    var fr = new FileReader();
-    fr.onload = function(e){
-      try { localStorage.setItem(FOTO_KEY, e.target.result); } catch(err){ alert("Não foi possível salvar a foto."); return; }
-      mostrarFotoPerfil();
-      var msg = document.getElementById("msgSalvo");
-      if (msg) {
-        msg.innerHTML = '<i class="fa fa-check-circle"></i> Foto atualizada com sucesso!';
-        msg.style.display = "block";
-        setTimeout(function(){ msg.style.display = "none"; }, 3000);
-      }
-    };
-    fr.readAsDataURL(f);
-  });
-  var inp = document.getElementById("pNome");
-  if (inp) inp.addEventListener("input", function(){
-    var nd = document.getElementById("nomeDestaque");
-    if (nd) nd.textContent = this.value.trim() || "Cliente";
-    mostrarFotoPerfil();
-  });
+    var arq = document.getElementById("fotoPerfil");
+    if (arq) arq.addEventListener("change", function () {
+        Conta.escolherArquivo(this, function () {
+            Conta.aplicarEmTodos();
+            var msg = document.getElementById("msgSalvo");
+            if (msg) {
+                msg.innerHTML = '<i class="fa fa-check-circle"></i> Foto atualizada em todas as telas!';
+                msg.style.display = "block";
+                setTimeout(function () { msg.style.display = "none"; }, 3000);
+            }
+        });
+    });
+    Conta.aplicarEmTodos();
 });
 
 </script>
