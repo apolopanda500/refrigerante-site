@@ -10,49 +10,61 @@ var CT=[
 {id:"ch",nm:"Chopp Ravache",ic:"fa-beer-mug-empty"}];
 var PD=[];
 function addP(c,n,d,p,i){PD.push({ct:c,nm:n,ds:d,pr:p,im:i})}
-// Destaques (sem repetir produtos que ja tem categoria propria)
-addP("de","Guarana Zero 269ml Pct c12","Sem acucar","R$ 35,00","img/p03.jpg");
-// Refrigerantes 2L - somente pacotes c6
+// ===== DESTAQUES =====
+addP("de","Chinotto 269ml Pct c12","Pack 12 latinhas","R$ 25,00","img/p01.jpg");
+addP("de","Guarana Zero 269ml Pct c12","Sem acucar - Pack 12","R$ 33,40","img/p03.jpg");
+
+// ===== REFRIGERANTES 2L - pacotes c6 =====
 addP("2l","Guarana 2L Pct c6","Pack 6 garrafas","R$ 27,00","img/p06.jpg");
 addP("2l","Guarana Zero 2L Pct c6","Zero - Pack 6","R$ 27,00","img/p07.jpg");
-addP("2l","Frutaina 2L Pct c6","4 sabores - Pack 6","R$ 27,50","img/p04.jpg");
 addP("2l","Laranja 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p08.jpg");
 addP("2l","Uva 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p09.jpg");
 addP("2l","Limao 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p10.jpg");
 addP("2l","Abacaxi 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p11.jpg");
 addP("2l","Vitts Limao 2L Pct c6","Pack 6 garrafas","R$ 28,00","img/p27.jpg");
 addP("2l","Cola 2L Pct c6","Pack 6 garrafas","R$ 29,00","img/p05.jpg");
-addP("60","Guarana 600ml","Garrafa 600ml","R$ 6,00","img/p12.jpg");
-addP("60","Laranja 600ml","Garrafa 600ml","R$ 6,00","img/p13.jpg");
-addP("60","Uva 600ml","Garrafa 600ml","R$ 6,00","img/p14.jpg");
-addP("60","Abacaxi 600ml","Garrafa 600ml","R$ 6,00","img/p15.jpg");
-addP("35","Cola 350ml","Lata 350ml","R$ 5,00","img/p16.jpg");
-addP("35","Guarana 350ml","Lata 350ml","R$ 4,50","img/p17.jpg");
-addP("35","Laranja 350ml","Lata 350ml","R$ 4,50","img/p18.jpg");
-addP("35","Uva 350ml","Lata 350ml","R$ 4,50","img/p19.jpg");
-addP("35","Abacaxi 350ml","Lata 350ml","R$ 4,50","img/p20.jpg");
-addP("re","Chinotto 269ml","Lata 269ml","R$ 5,00","img/p01.jpg");
-addP("re","Chinotto 269ml Pct c12","Pack 12","R$ 25,00","img/p01.jpg");
-addP("re","Frutaina 2L","4 sabores","R$ 7,00","img/p04.jpg");
-addP("mx","MSX 269ml","Lata 269ml","R$ 5,00","img/p02.jpg");
-addP("mx","MSX 269ml Pct c12","Pack 12","R$ 25,00","img/p02.jpg");
-addP("mx","MSX 2L","Garrafa 2L","R$ 12,00","img/p21.jpg");
-addP("ag","Agua 510ml Pct c12","Sem gas","R$ 12,00","img/p22.jpg");
-addP("ag","Agua Gas 510ml Pct c12","Com gas","R$ 12,00","img/p23.jpg");
-addP("ag","Agua 1500ml Pct c06","Sem gas","R$ 14,80","img/p24.jpg");
-addP("ag","Agua Gas 1500ml Pct c06","Com gas","R$ 14,80","img/p25.jpg");
-addP("35","Vitts Limao 350ml","Limao - Lata 350ml","R$ 4,00","img/p26.jpg");
-addP("ch","Chopp IPA 500ml","500ml","R$ 15,00","img/p28.jpg");
-addP("ch","Chopp Black 500ml","500ml","R$ 15,00","img/p29.jpg");
-addP("ch","Chopp Gold 500ml","500ml","R$ 15,00","img/p30.jpg");
-addP("ch","Chopp Pilsen 500ml","500ml","R$ 15,00","img/p31.jpg");
-addP("ch","Chopp Vinho 500ml","500ml","R$ 15,00","img/p32.jpg");
-addP("ch","Chopp Malzbier 500ml","500ml","R$ 15,00","img/p33.jpg");
-addP("ch","Chopp LEV 500ml","500ml","R$ 15,00","img/p34.jpg");
+addP("2l","MSX 2L Pct c6","Pack 6 garrafas","R$ 40,00","img/p21.jpg");
+
+// ===== REFRIGERANTES 600ml - pacotes c12 =====
+addP("60","Guarana 600ml Pct c12","Pack 12 garrafas","R$ 21,00","img/p12.jpg");
+addP("60","Laranja 600ml Pct c12","Pack 12 garrafas","R$ 21,00","img/p13.jpg");
+addP("60","Uva 600ml Pct c12","Pack 12 garrafas","R$ 21,00","img/p14.jpg");
+addP("60","Abacaxi 600ml Pct c12","Pack 12 garrafas","R$ 21,00","img/p15.jpg");
+
+// ===== REFRIGERANTES 350ml - pacotes c6 =====
+addP("35","Cola 350ml Pct c6","Pack 6 latas","R$ 19,00","img/p16.jpg");
+addP("35","Guarana 350ml Pct c6","Pack 6 latas","R$ 19,00","img/p17.jpg");
+addP("35","Laranja 350ml Pct c6","Pack 6 latas","R$ 19,00","img/p18.jpg");
+addP("35","Uva 350ml Pct c6","Pack 6 latas","R$ 19,00","img/p19.jpg");
+addP("35","Abacaxi 350ml Pct c6","Pack 6 latas","R$ 19,00","img/p20.jpg");
+addP("35","Vitts Limao 350ml Pct c6","Limao - Pack 6","R$ 19,00","img/p26.jpg");
+
+// ===== REFRESCOS E CHINOTTO =====
+addP("re","Frutaina 2L Pct c6","4 sabores - Pack 6","R$ 27,50","img/p04.jpg");
+
+// ===== MSX ENERGETICO =====
+addP("mx","MSX 269ml Pct c12","Pack 12 latinhas","R$ 25,00","img/p02.jpg");
+
+// ===== AGUA =====
+addP("ag","Agua 510ml Pct c12","Sem gas - Pack 12","R$ 14,70","img/p22.jpg");
+addP("ag","Agua Gas 510ml Pct c12","Com gas - Pack 12","R$ 19,00","img/p23.jpg");
+addP("ag","Agua 1500ml Pct c06","Sem gas - Pack 6","R$ 15,80","img/p24.jpg");
+addP("ag","Agua Gas 1500ml Pct c06","Com gas - Pack 6","R$ 22,50","img/p25.jpg");
+
+// ===== CHOPP RAVACHE 500ml =====
+addP("ch","Chopp IPA 500ml","500ml","R$ 29,50","img/p28.jpg");
+addP("ch","Chopp Gold 500ml","500ml","R$ 29,50","img/p30.jpg");
+addP("ch","Chopp Pilsen 500ml","500ml","R$ 29,50","img/p31.jpg");
+addP("ch","Chopp LEV 500ml","500ml","R$ 29,50","img/p34.jpg");
+addP("ch","Chopp Black 500ml","500ml","R$ 34,50","img/p29.jpg");
+addP("ch","Chopp Malzbier 500ml","500ml","R$ 33,30","img/p33.jpg");
+addP("ch","Chopp Vinho 500ml","500ml","R$ 35,80","img/p32.jpg");
+
+// ===== CHOPP PET - barris =====
+addP("ch","Chopp PET 20L","Barril 20L","R$ 300,00","img/p36.jpg");
+addP("ch","Chopp PET 30L","Barril 30L","R$ 400,00","img/p36.jpg");
 addP("ch","Chopp Vinho PET 20L","Barril 20L","R$ 318,87","img/p35.jpg");
 addP("ch","Chopp Vinho PET 30L","Barril 30L","R$ 438,11","img/p35.jpg");
-addP("ch","Chopp PET 20L","Variados","R$ 300,00","img/p36.jpg");
-addP("ch","Chopp PET 30L","Variados","R$ 400,00","img/p36.jpg");
 function rT(){var h="";for(var i=0;i<CT.length;i++){var c=CT[i],n=0;
 for(var j=0;j<PD.length;j++)if(PD[j].ct===c.id)n++;
 h+='<button class="ti'+(i===0?' on':'')+'" data-g="'+c.id+'" onclick="goG(\''+c.id+'\')"><i class="fa '+c.ic+'"></i> '+c.nm+' <span class="cn">'+n+'</span></button>'}
