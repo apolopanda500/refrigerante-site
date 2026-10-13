@@ -197,7 +197,10 @@ function renderAdmin() {
         h += '<button class="btn-st b-enviar" onclick="mudarStatus(\'' + p.id + '\',\'enviado\')">Enviado</button>';
         h += '<button class="btn-st b-entregar" onclick="mudarStatus(\'' + p.id + '\',\'entregue\')">Entregue</button>';
         h += '<button class="btn-st b-cancelar" onclick="mudarStatus(\'' + p.id + '\',\'cancelado\')">Cancelar</button>';
-        h += '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> Falar c/ cliente</a>';
+        h += '<div style="display:inline-flex;gap:8px;margin-left:auto">';
+        h += '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> Cliente</a>';
+        h += '<a class="btn-zap" href="#" style="background:#1565c0" onclick="falarMotorista(\'' + p.id + '\');return false;"><i class="fa fa-truck"></i> Motorista</a>';
+        h += '</div>';
         h += '</div></div>';
     });
     box.innerHTML = h;
@@ -210,6 +213,24 @@ function falarCliente(tel, id) {
     const p = getPedidos().find(x => x.id === id);
     if (!p) return;
     let msg = "Olá " + p.nome + "! Sobre seu pedido " + p.id + " (" + formatBRL(p.total) + "): ";
+    window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
+}
+
+function falarMotorista(id) {
+    const pedido = getPedidos().find(x => x.id === id);
+    const regiaoTexto = pedido ? pedido.regiao : "";
+    var cam = null;
+    if (typeof CAMINHOES !== "undefined") {
+        CAMINHOES.forEach(function(c){
+            if (cam) return;
+            if (c.regioes && c.regioes.indexOf(regiaoTexto.toLowerCase()) >= 0) cam = c;
+        });
+        if (!cam) cam = CAMINHOES[0];
+    }
+    const tel = cam ? cam.telefone : "";
+    const placa = cam ? cam.placa : "";
+    const msg = "Olá " + (cam && cam.motorista ? cam.motorista : "motorista") + "! A rota para " 
+              + pedido.regiao + " (pedido " + id + ") está pronta. Placa " + placa + ".";
     window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
