@@ -257,8 +257,8 @@ function notificarTelegramPedido(p) {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
     var token = prefs.cfgTelegramToken || localStorage.getItem("telegramBotToken") || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
-    var chat = prefs.cfgTelegramChatId || localStorage.getItem("telegramChatId");
-    if (!prefs.cfgTelegram || !token || !chat) return;
+    var chat = prefs.cfgTelegramChatId || localStorage.getItem("telegramChatId") || "1810807613";
+    var habilitado = (prefs.cfgTelegram !== false); if (!habilitado || !token || !chat) return;
     var msg = "Novo pedido!\n\nID: " + p.id
         + "\nCliente: " + p.nome + " (" + p.tel + ")"
         + "\nEndereço: " + p.end + (p.comp ? " (" + p.comp + ")" : "") + " - " + p.bairro
