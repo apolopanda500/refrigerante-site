@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Carrinho - Refrigerantes ConvenÃ§Ã£o</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
+.page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+.page-head h1 { color: var(--primary-color); font-size:1.8rem; display:flex; align-items:center; gap:10px; }
+.link-voltar { color:#666; font-size:0.95rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+.link-voltar:hover { color: var(--primary-color); }
+.cart-box { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px; }
+.cart-item { display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid #eee; flex-wrap:wrap; }
+.cart-item:last-child { border-bottom:none; }
+.cart-item img { width:64px; height:64px; object-fit:cover; border-radius:10px; background:#fafafa; }
+.ci-info { flex:1; min-width:160px; }
+.ci-name { font-weight:700; color:var(--text-color); display:block; }
+.ci-price { color:#777; font-size:0.9rem; }
+.ci-qtd { display:inline-flex; align-items:center; gap:6px; border:1px solid #ddd; border-radius:18px; padding:3px 6px; background:#fafafa; }
+.ci-qtd button { width:26px; height:26px; border:none; border-radius:50%; background:var(--primary-color); color:#fff; font-size:1rem; font-weight:bold; cursor:pointer; }
+.ci-qtd span { min-width:22px; text-align:center; font-weight:bold; }
+.ci-subtotal { font-weight:bold; color:var(--primary-color); min-width:90px; text-align:right; }
+.ci-remove { background:none; border:none; color:#c62828; font-size:1.1rem; cursor:pointer; padding:6px; }
+.cart-vazio { text-align:center; padding:50px 20px; color:#888; }
+.cart-vazio i { font-size:3rem; color:#ddd; margin-bottom:14px; }
+.resumo { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px; margin-top:20px; }
+.resumo-row { display:flex; justify-content:space-between; padding:8px 0; font-size:1rem; }
+.resumo-row.total { border-top:2px solid #eee; margin-top:8px; padding-top:14px; font-size:1.3rem; font-weight:bold; color:var(--primary-color); }
+.acoes { display:flex; gap:12px; margin-top:20px; flex-wrap:wrap; }
+.btn { flex:1; min-width:180px; text-align:center; padding:14px 20px; border:none; border-radius:26px; font-weight:bold; font-size:1rem; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+.btn-primario { background:var(--primary-color); color:#fff; }
+.btn-primario:hover { background:#c62828; }
+.btn-secundario { background:#fff; color:var(--primary-color); border:2px solid var(--primary-color); }
+.btn-secundario:hover { background:#fff3f3; }
+.btn-limpar { background:none; color:#c62828; border:none; cursor:pointer; font-size:0.9rem; text-decoration:underline; padding:8px; }
+</style>
+</head>
+<body>
+<header class="main-header"><div class="container"><nav>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
+<ul class="nav-links"><li><a href="index.html"><i class="fa fa-box"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico de Pedidos</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
+<div class="header-actions">
+<a class="share-btn" href="#" onclick="compartilharSite();return false;" title="Compartilhar"><i class="fa fa-share-alt"></i> Compartilhar</a>
+<div class="cart-icon" title="Itens no carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
+</div>
+</nav></div></header>
+
+<section class="page"><div class="container">
+<div class="page-head">
+  <h1><i class="fa fa-shopping-cart"></i> Meu Carrinho</h1>
+  <a class="link-voltar" href="index.html"><i class="fa fa-arrow-left"></i> Continuar comprando</a>
+</div>
+<div class="cart-box" id="cartBox"></div>
+<div class="resumo" id="resumoBox"></div>
+<div class="acoes">
+  <a class="btn btn-secundario" href="index.html"><i class="fa fa-arrow-left"></i> Voltar ao catÃ¡logo</a>
+  <a class="btn btn-primario" href="checkout.html" id="btnCheckout"><i class="fa fa-credit-card"></i> Entrega e Pagamento</a>
+</div>
+<div style="text-align:center"><button class="btn-limpar" onclick="limparCarrinho()">Limpar carrinho</button></div>
+</div></section>
+
+<script src="script.js"></script>
+<script>
+cart = getCart();
+
+function renderCarrinho() {
+    const box = document.getElementById("cartBox");
+    const res = document.getElementById("resumoBox");
+    const btn = document.getElementById("btnCheckout");
+    updateCartCount();
+
+    if (cart.length === 0) {
+        box.innerHTML = '<div class="cart-vazio"><i class="fa fa-shopping-cart"></i><p>Seu carrinho estÃ¡ vazio.</p><a class="link-voltar" href="index.html">Ver produtos</a></div>';
+        res.innerHTML = "";
+        btn.style.display = "none";
+        return;
+    }
+    btn.style.display = "";
+
+    let html = "";
+    cart.forEach(function(item, idx) {
+        const sub = item.priceNum * item.qty;
+        html += '<div class="cart-item">'
+            + '<img src="' + (item.img || "img/G.svg") + '" alt="">'
+            + '<div class="ci-info"><span class="ci-name">' + item.name + '</span>'
+            + '<span class="ci-price">' + formatBRL(item.priceNum) + ' / un</span></div>'
+            + '<div class="ci-qtd"><button onclick="mudarQtdCarrinho(' + idx + ',-1)">&minus;</button>'
+            + '<span>' + item.qty + '</span>'
+            + '<button onclick="mudarQtdCarrinho(' + idx + ',1)">+</button></div>'
+            + '<span class="ci-subtotal">' + formatBRL(sub) + '</span>'
+            + '<button class="ci-remove" onclick="removerItem(' + idx + ')" title="Remover"><i class="fa fa-trash"></i></button>'
+            + '</div>';
+    });
+    box.innerHTML = html;
+
+    const subtotal = calcSubtotal();
+    res.innerHTML = '<div class="resumo-row"><span>Subtotal (' + calcTotalItens() + ' itens)</span><span>' + formatBRL(subtotal) + '</span></div>'
+        + '<div class="resumo-row total"><span>Total</span><span>' + formatBRL(subtotal) + '</span></div>';
+}
+
+function mudarQtdCarrinho(idx, delta) {
+    cart[idx].qty += delta;
+    if (cart[idx].qty < 1) { cart.splice(idx, 1); }
+    saveCart();
+    renderCarrinho();
+}
+function removerItem(idx) {
+    cart.splice(idx, 1);
+    saveCart();
+    renderCarrinho();
+}
+
+renderCarrinho();
+</script>
+</body>
+</html>
+
+

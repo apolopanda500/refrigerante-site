@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel do Vendedor - Refrigerantes Convenção</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
+.page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
+.page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }
+.login-card { max-width:400px; margin:60px auto; background:#fff; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); padding:36px 30px; text-align:center; }
+.login-card .icone { width:70px; height:70px; border-radius:50%; background:var(--primary-color); color:#fff; font-size:1.8rem; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+.login-card input { width:100%; padding:13px; border:1px solid #ddd; border-radius:10px; font-size:1rem; margin:14px 0; text-align:center; }
+.login-card input:focus { outline:none; border-color:var(--primary-color); }
+.login-card button { width:100%; padding:13px; background:var(--primary-color); color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:1rem; cursor:pointer; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:22px; }
+.stat { background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06); padding:16px; text-align:center; }
+.stat .num { font-size:1.8rem; font-weight:bold; color:var(--primary-color); }
+.stat .lbl { font-size:0.82rem; color:#777; margin-top:2px; }
+.stat.verde .num { color:#2e7d32; }
+.stat.azul .num { color:#1565c0; }
+.filtros { display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+.filtro { padding:7px 15px; border:1px solid #ddd; background:#fff; border-radius:18px; cursor:pointer; font-size:0.85rem; font-weight:600; color:#666; }
+.filtro.ativo { background:var(--primary-color); color:#fff; border-color:var(--primary-color); }
+.pedido-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px 20px; margin-bottom:16px; }
+.pedido-topo { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+.pedido-topo b { font-size:1.1rem; }
+.pedido-meta { font-size:0.85rem; color:#888; }
+.pedido-info { font-size:0.9rem; color:#555; margin:6px 0; }
+.pedido-info i { color:var(--primary-color); width:18px; }
+.pedido-itens { font-size:0.88rem; color:#555; background:#fafafa; border-radius:8px; padding:10px 12px; margin:8px 0; }
+.pedido-itens div { padding:2px 0; }
+.pedido-acoes { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center; }
+.btn-st { padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; color:#fff; }
+.b-confirmar{background:#2196F3}.b-separar{background:#9C27B0}.b-enviar{background:#00BCD4}.b-entregar{background:#4CAF50}.b-cancelar{background:#f44336}
+.btn-zap { background:#25D366; color:#fff; padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+.pedido-total-linha { font-size:1.15rem; font-weight:bold; color:var(--primary-color); }
+.vazio { text-align:center; padding:50px; color:#888; }
+.btn-sair { background:none; border:none; color:#c62828; cursor:pointer; font-size:0.9rem; }
+</style>
+</head>
+<body>
+<header class="main-header"><div class="container"><nav>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
+<ul class="nav-links"><li><a href="index.html">Ver loja</a></li></ul>
+<div class="header-actions"><button class="btn-sair" id="btnSair" onclick="sair()" style="display:none">Sair</button></div>
+</nav></div></header>
+
+<section class="page"><div class="container">
+
+<div id="loginTela">
+  <div class="login-card">
+    <div class="icone"><i class="fa fa-lock"></i></div>
+    <h2 style="color:var(--primary-color)">Painel do Vendedor</h2>
+    <p style="color:#777;font-size:0.9rem">Acesso restrito</p>
+    <input id="fSenha" type="password" placeholder="Senha de acesso">
+    <button onclick="entrar()"><i class="fa fa-sign-in-alt"></i> Entrar</button>
+  </div>
+</div>
+
+<div id="painelTela" style="display:none">
+  <div class="page-head">
+    <h1><i class="fa fa-tachometer-alt"></i> Pedidos</h1>
+    <span style="color:#888;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="filtros" id="filtros">
+    <button class="filtro ativo" data-f="todos" onclick="filtrarAdmin('todos',this)">Todos</button>
+    <button class="filtro" data-f="aguardando" onclick="filtrarAdmin('aguardando',this)">Aguardando</button>
+    <button class="filtro" data-f="confirmado" onclick="filtrarAdmin('confirmado',this)">Confirmados</button>
+    <button class="filtro" data-f="enviado" onclick="filtrarAdmin('enviado',this)">Enviados</button>
+    <button class="filtro" data-f="entregue" onclick="filtrarAdmin('entregue',this)">Entregues</button>
+  </div>
+  <div id="listaPedidos"></div>
+</div>
+
+</div></section>
+
+<script src="script.js"></script>
+<script>
+let filtroAdminAtual = "todos";
+
+function entrar() {
+    const s = document.getElementById("fSenha").value;
+    if (s === ADMIN_SENHA) {
+        sessionStorage.setItem("adminLogado", "1");
+        mostrarPainel();
+    } else {
+        alert("Senha incorreta!");
+    }
+}
+function sair() {
+    sessionStorage.removeItem("adminLogado");
+    document.getElementById("painelTela").style.display = "none";
+    document.getElementById("loginTela").style.display = "block";
+    document.getElementById("btnSair").style.display = "none";
+}
+function mostrarPainel() {
+    document.getElementById("loginTela").style.display = "none";
+    document.getElementById("painelTela").style.display = "block";
+    document.getElementById("btnSair").style.display = "inline";
+    renderAdmin();
+}
+function filtrarAdmin(f, btn) {
+    filtroAdminAtual = f;
+    document.querySelectorAll(".filtro").forEach(b => b.classList.remove("ativo"));
+    btn.classList.add("ativo");
+    renderAdmin();
+}
+function renderAdmin() {
+    const pedidos = getPedidos();
+    // Stats
+    const total = pedidos.length;
+    const aguardando = pedidos.filter(p => p.status === "aguardando").length;
+    const andamento = pedidos.filter(p => ["confirmado","separacao","enviado"].includes(p.status)).length;
+    const faturamento = pedidos.filter(p => p.status !== "cancelado").reduce((t, p) => t + p.total, 0);
+    document.getElementById("stats").innerHTML =
+        '<div class="stat"><div class="num">' + total + '</div><div class="lbl">Total de pedidos</div></div>' +
+        '<div class="stat"><div class="num" style="color:#FF9800">' + aguardando + '</div><div class="lbl">Aguardando</div></div>' +
+        '<div class="stat azul"><div class="num">' + andamento + '</div><div class="lbl">Em andamento</div></div>' +
+        '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>';
+
+    let lista = pedidos;
+    if (filtroAdminAtual !== "todos") lista = pedidos.filter(p => p.status === filtroAdminAtual);
+
+    const box = document.getElementById("listaPedidos");
+    if (lista.length === 0) {
+        box.innerHTML = '<div class="vazio"><i class="fa fa-inbox"></i><p>Nenhum pedido encontrado.</p></div>';
+        return;
+    }
+    let h = "";
+    lista.forEach(function(p) {
+        h += '<div class="pedido-card">';
+        h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta">' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
+        h += '<div class="pedido-info"><i class="fa fa-user"></i> ' + p.nome + ' &nbsp; <i class="fa fa-phone"></i> ' + p.tel + '</div>';
+        h += '<div class="pedido-info"><i class="fa fa-map-marker-alt"></i> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + ' — ' + p.bairro + '</div>';
+        h += '<div class="pedido-info"><i class="fa fa-credit-card"></i> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco p/ " + p.troco + ")" : "") + ' &nbsp; <i class="fa fa-truck"></i> Frete: ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</div>';
+        h += '<div class="pedido-itens">';
+        p.itens.forEach(function(i) { h += '<div>' + i.name + ' x' + i.qty + ' — ' + formatBRL(i.subtotal) + '</div>'; });
+        h += '</div>';
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span class="pedido-total-linha">Total: ' + formatBRL(p.total) + '</span></div>';
+        h += '<div class="pedido-acoes">';
+        h += '<button class="btn-st b-confirmar" onclick="mudarStatus(\'' + p.id + '\',\'confirmado\')">Confirmar</button>';
+        h += '<button class="btn-st b-separar" onclick="mudarStatus(\'' + p.id + '\',\'separacao\')">Em separação</button>';
+        h += '<button class="btn-st b-enviar" onclick="mudarStatus(\'' + p.id + '\',\'enviado\')">Enviado</button>';
+        h += '<button class="btn-st b-entregar" onclick="mudarStatus(\'' + p.id + '\',\'entregue\')">Entregue</button>';
+        h += '<button class="btn-st b-cancelar" onclick="mudarStatus(\'' + p.id + '\',\'cancelado\')">Cancelar</button>';
+        h += '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> Falar c/ cliente</a>';
+        h += '</div></div>';
+    });
+    box.innerHTML = h;
+}
+function mudarStatus(id, status) {
+    atualizarStatus(id, status);
+    renderAdmin();
+}
+function falarCliente(tel, id) {
+    const p = getPedidos().find(x => x.id === id);
+    if (!p) return;
+    let msg = "Olá " + p.nome + "! Sobre seu pedido " + p.id + " (" + formatBRL(p.total) + "): ";
+    window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
+}
+if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
+</script>
+</body>
+</html>
+

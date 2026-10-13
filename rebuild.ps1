@@ -1,0 +1,19 @@
+$IMG = @{
+  G="img/guarana2L.jpg";
+  C="img/COLA.jpg";
+  L="img/L.svg";
+  O="img/O.svg";
+  U="img/U.svg";
+  A="img/abacaxi.jpg";
+  T="img/frutaina.jpg";
+  V="img/V.svg";
+  M="img/E.svg";
+  N="img/H.svg";
+  R="img/R.svg";
+  W="img/W.svg";
+  B="img/B.svg";
+  F="img/O.svg";
+  H="img/350ML.jpg";
+  J="img/guaranazero2L.jpg";
+  K="img/guaranazeroacucarlata.jpg"
+}

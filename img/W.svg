@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#E1F5FE"/>
+  <rect x="0" y="330" width="400" height="70" fill="#eeeeee"/>
+  <text x="200" y="358" font-family="Segoe UI,Arial" font-size="26" font-weight="bold" fill="#333" text-anchor="middle">Agua</text>
+  <text x="200" y="384" font-family="Segoe UI,Arial" font-size="16" fill="#777" text-anchor="middle">Convencao</text>
+  <rect x="182" y="60" width="36" height="30" rx="4" fill="#c62828"/>
+  <rect x="176" y="86" width="48" height="16" fill="#b71c1c"/>
+  <path d="M160 105 Q160 130 150 145 L150 300 Q150 315 165 315 L235 315 Q250 315 250 300 L250 145 Q240 130 240 105 Z" fill="#29B6F6" stroke="rgba(0,0,0,0.15)" stroke-width="2"/>
+  <rect x="158" y="180" width="84" height="90" rx="6" fill="#0288D1"/>
+  <rect x="166" y="196" width="68" height="8" rx="4" fill="rgba(255,255,255,0.85)"/>
+  <rect x="166" y="212" width="52" height="6" rx="3" fill="rgba(255,255,255,0.7)"/>
+  <rect x="166" y="226" width="60" height="6" rx="3" fill="rgba(255,255,255,0.7)"/>
+  <circle cx="200" cy="252" r="10" fill="rgba(255,255,255,0.9)"/>
+  <path d="M188 250 L196 258 L214 242" stroke="#0288D1" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

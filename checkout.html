@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finalizar Pedido - Refrigerantes ConvenÃ§Ã£o</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
+.page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; margin-bottom:24px; }
+.checkout-grid { display:grid; grid-template-columns: 1.4fr 1fr; gap:24px; align-items:start; }
+.card-section { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:22px; margin-bottom:20px; }
+.card-section h2 { color:var(--primary-color); font-size:1.15rem; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.campo { margin-bottom:14px; }
+.campo label { display:block; font-size:0.9rem; font-weight:600; color:#444; margin-bottom:5px; }
+.campo input, .campo select, .campo textarea { width:100%; padding:11px 12px; border:1px solid #ddd; border-radius:9px; font-size:0.95rem; font-family:inherit; }
+.campo input:focus, .campo select:focus { outline:none; border-color:var(--primary-color); }
+.linha2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.pag-opcao { display:flex; align-items:center; gap:10px; border:2px solid #eee; border-radius:11px; padding:13px 14px; margin-bottom:10px; cursor:pointer; transition:border-color .2s, background .2s; }
+.pag-opcao:hover { border-color:#ffcdd2; }
+.pag-opcao.ativa { border-color:var(--primary-color); background:#fff3f3; }
+.pag-opcao input { width:auto; }
+.pag-opcao i { font-size:1.3rem; color:var(--primary-color); width:26px; text-align:center; }
+.pag-opcao span { font-weight:600; }
+.troco-box { display:none; margin-top:8px; }
+.resumo-lateral { position:sticky; top:100px; }
+.resumo-item { display:flex; justify-content:space-between; font-size:0.9rem; padding:5px 0; color:#555; }
+.resumo-row { display:flex; justify-content:space-between; padding:9px 0; font-size:1rem; }
+.resumo-row.gratis { color:#2e7d32; font-weight:bold; }
+.resumo-row.total { border-top:2px solid #eee; margin-top:8px; padding-top:14px; font-size:1.35rem; font-weight:bold; color:var(--primary-color); }
+.btn-enviar { width:100%; padding:15px; background:#25D366; color:#fff; border:none; border-radius:26px; font-weight:bold; font-size:1.05rem; cursor:pointer; margin-top:14px; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+.btn-enviar:hover { background:#1da851; }
+.aviso { font-size:0.82rem; color:#888; margin-top:10px; text-align:center; }
+@media (max-width: 768px){ .checkout-grid{grid-template-columns:1fr;} .resumo-lateral{position:static;} .linha2{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<header class="main-header"><div class="container"><nav>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
+<ul class="nav-links"><li><a href="index.html"><i class="fa fa-box"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico de Pedidos</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
+<div class="header-actions">
+<div class="cart-icon" title="Itens"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
+</div>
+</nav></div></header>
+
+<section class="page"><div class="container">
+<div class="page-head"><h1><i class="fa fa-credit-card"></i> Finalizar Pedido</h1></div>
+<div class="checkout-grid">
+<div>
+  <div class="card-section">
+    <h2><i class="fa fa-map-marker-alt"></i> Dados de Entrega</h2>
+    <div class="linha2">
+      <div class="campo"><label>Nome completo *</label><input id="fNome" type="text" placeholder="Seu nome"></div>
+      <div class="campo"><label>WhatsApp *</label><input id="fTel" type="text" placeholder="(21) 99999-9999"></div>
+    </div>
+    <div class="campo"><label>EndereÃ§o (rua, nÃºmero) *</label><input id="fEnd" type="text" placeholder="Rua, nÃºmero"></div>
+    <div class="linha2">
+      <div class="campo"><label>Bairro *</label><input id="fBairro" type="text" placeholder="Bairro"></div>
+      <div class="campo"><label>Complemento</label><input id="fComp" type="text" placeholder="Apto, referÃªncia..."></div>
+    </div>
+  </div>
+
+  <div class="card-section">
+    <h2><i class="fa fa-truck"></i> RegiÃ£o de Entrega (Frete)</h2>
+    <div class="campo">
+      <label>Selecione a regiÃ£o *</label>
+      <select id="fRegiao" onchange="calcular()">
+        <option value="8">Centro e bairros prÃ³ximos â€” R$ 8,00</option>
+        <option value="12">Zona Norte / Zona Sul â€” R$ 12,00</option>
+        <option value="15">Zona Oeste â€” R$ 15,00</option>
+        <option value="20">Baixada / RegiÃµes afastadas â€” R$ 20,00</option>
+      </select>
+    </div>
+    <div class="aviso" style="text-align:left"><i class="fa fa-info-circle"></i> Frete grÃ¡tis para pedidos acima de R$ 150,00.</div>
+  </div>
+
+  <div class="card-section">
+    <h2><i class="fa fa-money-bill-wave"></i> Forma de Pagamento</h2>
+    <label class="pag-opcao ativa"><input type="radio" name="pag" value="Pix" checked onchange="selPag(this)"><i class="fa fa-qrcode"></i><span>Pix</span></label>
+    <label class="pag-opcao"><input type="radio" name="pag" value="Dinheiro" onchange="selPag(this)"><i class="fa fa-money-bill-wave"></i><span>Dinheiro</span></label>
+    <div class="troco-box" id="trocoBox"><div class="campo"><label>Troco para quanto?</label><input id="fTroco" type="text" placeholder="Ex: 100,00" oninput="calcular()"></div></div>
+    <label class="pag-opcao"><input type="radio" name="pag" value="CartÃ£o" onchange="selPag(this)"><i class="fa fa-credit-card"></i><span>CartÃ£o (na entrega)</span></label>
+  </div>
+</div>
+
+<div class="resumo-lateral">
+  <div class="card-section">
+    <h2><i class="fa fa-receipt"></i> Resumo do Pedido</h2>
+    <div id="resumoItens"></div>
+    <div class="resumo-row"><span>Subtotal</span><span id="rSub">R$ 0,00</span></div>
+    <div class="resumo-row" id="rFreteRow"><span>Frete</span><span id="rFrete">R$ 0,00</span></div>
+    <div class="resumo-row total"><span>Total</span><span id="rTotal">R$ 0,00</span></div>
+    <button class="btn-enviar" id="btnEnviar" onclick="enviarPedido()"><i class="fa fa-check-circle"></i> Finalizar Pedido</button>
+    <div class="aviso">Acompanhe o status do seu pedido na pÃ¡gina "Meus Pedidos".</div>
+  </div>
+</div>
+</div>
+</div></section>
+
+<script src="script.js"></script>
+
+<script>
+cart = getCart();
+updateCartCount();
+
+if (cart.length === 0) {
+    window.location.href = "carrinho.html";
+}
+
+let pagSelecionado = "Pix";
+
+function renderItens() {
+    let h = "";
+    cart.forEach(function(i) {
+        h += '<div class="resumo-item"><span>' + i.name + ' x' + i.qty + '</span><span>' + formatBRL(i.priceNum * i.qty) + '</span></div>';
+    });
+    document.getElementById("resumoItens").innerHTML = h;
+}
+
+function selPag(radio) {
+    pagSelecionado = radio.value;
+    document.querySelectorAll(".pag-opcao").forEach(function(el) { el.classList.remove("ativa"); });
+    radio.closest(".pag-opcao").classList.add("ativa");
+    document.getElementById("trocoBox").style.display = (radio.value === "Dinheiro") ? "block" : "none";
+    calcular();
+}
+
+function calcular() {
+    const subtotal = calcSubtotal();
+    const regiao = parseFloat(document.getElementById("fRegiao").value) || 0;
+    const frete = (subtotal >= 150) ? 0 : regiao;
+    const total = subtotal + frete;
+
+    document.getElementById("rSub").innerText = formatBRL(subtotal);
+    const fr = document.getElementById("rFrete");
+    const frRow = document.getElementById("rFreteRow");
+    if (frete === 0) {
+        frRow.classList.add("gratis");
+        fr.innerText = "GRÃTIS";
+    } else {
+        frRow.classList.remove("gratis");
+        fr.innerText = formatBRL(frete);
+    }
+    document.getElementById("rTotal").innerText = formatBRL(total);
+    return { subtotal: subtotal, frete: frete, total: total };
+}
+
+function enviarPedido() {
+    const nome = document.getElementById("fNome").value.trim();
+    const tel = document.getElementById("fTel").value.trim();
+    const end = document.getElementById("fEnd").value.trim();
+    const bairro = document.getElementById("fBairro").value.trim();
+    const comp = document.getElementById("fComp").value.trim();
+
+    if (!nome || !tel || !end || !bairro) {
+        alert("Preencha os campos obrigatÃ³rios: Nome, WhatsApp, EndereÃ§o e Bairro.");
+        return;
+    }
+
+    const c = calcular();
+    const regiaoSel = document.getElementById("fRegiao");
+    const regiaoTexto = regiaoSel.options[regiaoSel.selectedIndex].text;
+    const trocoVal = document.getElementById("fTroco").value.trim();
+    const itens = cart.map(function(i) { return { name: i.name, qty: i.qty, priceNum: i.priceNum, subtotal: i.priceNum * i.qty }; });
+
+    const pedido = criarPedido({
+        nome: nome, tel: tel, end: end, bairro: bairro, comp: comp,
+        regiao: regiaoTexto, frete: c.frete, pagamento: pagSelecionado, troco: trocoVal,
+        itens: itens, subtotal: c.subtotal, total: c.total
+    });
+    localStorage.setItem("ultimoPedido", pedido.id);
+    limparCarrinho();
+    window.location.href = "pedido-sucesso.html";
+}
+
+renderItens();
+calcular();
+</script>
+</body>
+</html>
+
+
