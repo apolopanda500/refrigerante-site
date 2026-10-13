@@ -180,7 +180,10 @@ if(q<=0){alert("Use os botões + e - para escolher a quantidade.");return}
 var pid=cd.getAttribute("data-pid").split(".");var pr=PD[parseInt(pid[1])];if(!pr)return;
 var pv=0;var mm=String(pr.pr).match(/[\d.,]+/);if(mm)pv=parseFloat(mm[0].replace(/\./g,"").replace(",","."));
 var ct=JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");
-ct.push({name:pr.nm,price:pr.pr,priceNum:pv,qty:q});localStorage.setItem("refrigeranteCart",JSON.stringify(ct));
+var achou=null;for(var k=0;k<ct.length;k++){if(ct[k].name===pr.nm)achou=ct[k];}
+if(achou){achou.qty=(achou.qty||0)+q;}
+else{ct.push({name:pr.nm,price:pr.pr,priceNum:Math.round((pv+Number.EPSILON)*100)/100,qty:q,img:pr.im});}
+localStorage.setItem("refrigeranteCart",JSON.stringify(ct));
  cd.querySelector(".qv").textContent="0";bt.classList.add("ok");bt.textContent="Adicionado!";
  setTimeout(function(){bt.classList.remove("ok");bt.textContent="Adicionar"},1500);uC()}catch(e){}}
 function partilhar(){try{var u=location.href.split("#")[0];
@@ -188,3 +191,63 @@ if(navigator.share){navigator.share({title:"Convencao",text:"Confira!",url:u}).c
 else if(navigator.clipboard){navigator.clipboard.writeText(u);alert("Link copiado!")}}catch(e){}}
 if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){try{rT()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"})}else{try{rT()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"}
 setTimeout(function(){var l=document.getElementById("ldBox");if(l)l.style.display="none"},3000);
+
+/* ============================================
+   WIDGETS DA BARRA LATERAL
+   ============================================ */
+function horaBrasil(){
+    // horario de Sao Paulo: UTC-3
+    var d = new Date();
+    var utc = d.getTime() + d.getTimezoneOffset() * 60000;
+    return new Date(utc - 3 * 3600000);
+}
+
+function pintarHorario(){
+    var h = horaBrasil();
+    var dia = h.getDay();
+    var hh = h.getHours();
+    var mm = h.getMinutes();
+    var dias = ["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
+    var hhmm = (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+
+    var aberto = (dia >= 1 && dia <= 4) || (dia === 5 && hh < 15);
+    var status = aberto
+        ? '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Aberto agora</div>'
+        : '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Fechado agora</div>';
+
+    var el = document.getElementById("sideHorario");
+    if (el) {
+        el.innerHTML = '<h3><i class="fa fa-clock"></i> Horário</h3>' + status
+            + '<div class="wgt-linha"><span>Hoje</span><b>' + dias[dia] + '</b></div>'
+            + '<div class="wgt-linha"><span>Agora</span><b>' + hhmm + '</b></div>'
+            + '<div class="wgt-linha"><span>Seg a Qui</span><b>9h às 15h</b></div>'
+            + '<div class="wgt-linha"><span>Sexta</span><b>9h às 15h</b></div>'
+            + '<div class="wgt-linha"><span>Sáb e Dom</span><b>Fechado</b></div>';
+    }
+}
+
+function pintarLateral(){
+    // whatsapp em destaque
+    var z = document.getElementById("sideZap");
+    if (z) {
+        z.innerHTML = '<a class="wgt-zap" href="https://wa.me/5521983158911" target="_blank" rel="noopener">'
+            + '<i class="fa fa-whatsapp"></i>'
+            + '<span><b>Pedir pelo WhatsApp</b><small>(21) 9-8315-8911</small></span></a>';
+    }
+    // banners na lateral
+    var b = document.getElementById("sideBanners");
+    if (b) b.innerHTML = '<h3><i class="fa fa-bullhorn"></i> Ofertas</h3>' + renderBanners("topo");
+    pintarHorario();
+}
+
+function ligarLateral(){
+    pintarLateral();
+    setInterval(function(){
+        var h = horaBrasil();
+        pintarHorario();
+    }, 60000);
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ligarLateral);
+} else { ligarLateral(); }

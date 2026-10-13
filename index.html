@@ -32,7 +32,7 @@ a{text-decoration:none;color:inherit}
 .sw{background:#fff;padding:12px 20px;box-shadow:0 2px 12px rgba(0,0,0,.08);position:sticky;top:53px;z-index:99}
 .si{max-width:1200px;margin:0 auto}
 .sf{position:relative}
-.sf i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#999}
+.sf i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#6b7280}
 .sf input{width:100%;padding:10px 14px 10px 40px;border:2px solid #e0e0e0;border-radius:25px;font-size:.9rem;outline:none}
 .sf input:focus{border-color:#ECC400}
 .tb{background:#fff;border-bottom:2px solid #eee;position:sticky;top:107px;z-index:98;overflow-x:auto}
@@ -44,7 +44,7 @@ a{text-decoration:none;color:inherit}
 .gi{font-size:1.3rem;color:#c4a600;width:32px;text-align:center}
 .gn{font-size:1.05rem;font-weight:700}
 .gc{font-size:.75rem;background:#ECC400;color:#1a1a2e;padding:2px 8px;border-radius:10px;font-weight:600}
-.gv{font-size:.9rem;color:#999;transition:transform .3s}
+.gv{font-size:.9rem;color:#6b7280;transition:transform .3s}
 .gb.op .gv{transform:rotate(180deg)}
 .gbd{display:none;padding:0 16px 16px}
 .gb.op .gbd{display:block}
@@ -57,7 +57,7 @@ a{text-decoration:none;color:inherit}
 .pib{width:100%;aspect-ratio:1;background:#f8f8f8;display:flex;align-items:center;justify-content:center;padding:8px}
 .pi{max-width:100%;max-height:100%;object-fit:contain}
 .pdd{padding:8px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
-.pds{font-size:.78rem;color:#888}
+.pds{font-size:.78rem;color:#6b7280}
 .pp{font-size:1.1rem;font-weight:700;color:#43a047;margin-top:auto}
 .qr{display:flex;align-items:center;gap:8px;padding:8px 14px 12px}
 .qc{display:flex;border:2px solid #e0e0e0;border-radius:8px;overflow:hidden}
@@ -206,6 +206,101 @@ a{text-decoration:none;color:inherit}
     .bnr-go{display:none}
 }
 [data-theme="dark"] .bnr{box-shadow:0 4px 14px rgba(0,0,0,.4)}
+
+/* ============================================
+   BANNERS E WIDGETS LATERAIS
+   Preenchem o espaco vazio ao lado dos produtos
+   ============================================ */
+.pw-layout{
+    display:grid;grid-template-columns:1fr 320px;
+    gap:24px;align-items:start;max-width:1280px;margin:0 auto;padding:16px 20px;
+}
+.pw-main{min-width:0}
+.pw-side{position:sticky;top:172px;display:flex;flex-direction:column;gap:16px}
+
+/* banner ja existente, ajustado para o espaco estreito */
+.pw-side .bnr{margin:0;padding:14px 16px;flex-direction:column;align-items:flex-start;gap:10px}
+.pw-side .bnr-ic{width:44px;height:44px;flex:0 0 44px;font-size:1.2rem}
+.pw-side .bnr-tx b{font-size:.98rem}
+.pw-side .bnr-tx small{font-size:.8rem}
+.pw-side .bnr-go{display:none}
+
+/* widget: horario */
+.wgt{
+    background:#fff;border-radius:14px;padding:16px 18px;
+    box-shadow:0 0 13px 0 rgba(82,63,105,.05);border:1px solid #eeeef4;
+}
+.wgt h3{
+    display:flex;align-items:center;gap:9px;
+    font-size:.95rem;font-weight:800;color:#3d4465;
+    margin:0 0 12px;text-transform:uppercase;letter-spacing:.4px;
+}
+.wgt h3 i{color:#ffb822}
+.wgt-linha{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:8px 0;font-size:.9rem;color:#6b7280;
+    border-bottom:1px dashed #eeeef4;
+}
+.wgt-linha:last-child{border-bottom:0}
+.wgt-linha b{color:#3d4465;font-weight:700}
+.wgt-status{
+    display:flex;align-items:center;gap:9px;
+    padding:10px 12px;border-radius:10px;margin-bottom:12px;
+    font-size:.88rem;font-weight:700;line-height:1.35;
+}
+.wgt-status.aberto{background:#e8f5e9;color:#1b5e20}
+.wgt-status.fechado{background:#ffebee;color:#b71c1c}
+.wgt-status i{font-size:1rem}
+
+/* widget: contato */
+.wgt-contato a{
+    display:flex;align-items:center;gap:11px;
+    padding:11px 12px;border-radius:10px;margin-bottom:8px;
+    background:#f7f7f7;color:#3d4465;text-decoration:none;
+    font-size:.9rem;font-weight:600;transition:background .18s ease;
+}
+.wgt-contato a:hover{background:#ffb822;color:#3d4465}
+.wgt-contato a i{color:#43a047;font-size:1.05rem;width:20px;text-align:center}
+.wgt-contato a:hover i{color:#3d4465}
+
+/* widget: whatsapp destaque */
+.wgt-zap{
+    display:flex;align-items:center;gap:12px;text-decoration:none;
+    background:#25D366;color:#fff;padding:16px 18px;border-radius:14px;
+    box-shadow:0 6px 18px rgba(37,211,102,.3);transition:transform .18s ease;
+}
+.wgt-zap:hover{transform:translateY(-2px);color:#fff}
+.wgt-zap i{font-size:1.7rem}
+.wgt-zap span{display:flex;flex-direction:column;line-height:1.3}
+.wgt-zap b{font-size:.98rem}
+.wgt-zap small{font-size:.78rem;opacity:.92}
+
+/* widget: selos */
+.wgt-selos{display:flex;flex-wrap:wrap;gap:8px}
+.selo{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 11px;border-radius:20px;background:#f7f7f7;
+    color:#646c9a;font-size:.8rem;font-weight:700;
+}
+.selo i{color:#1dc9b7;font-size:.82rem}
+
+/* tema escuro dos widgets */
+[data-theme="dark"] .wgt{background:#1c1f33 !important;border-color:#353a5c !important}
+[data-theme="dark"] .wgt h3{color:#ffb822 !important}
+[data-theme="dark"] .wgt-linha{color:#a1a8c3 !important;border-bottom-color:#353a5c !important}
+[data-theme="dark"] .wgt-linha b{color:#e6e8f2 !important}
+[data-theme="dark"] .wgt-contato a{background:#232742 !important;color:#e6e8f2 !important}
+[data-theme="dark"] .wgt-contato a:hover{background:#ffb822 !important;color:#3d4465 !important}
+[data-theme="dark"] .selo{background:#232742 !important;color:#cdd2e6 !important}
+[data-theme="dark"] .wgt-status.aberto{background:#14331f !important;color:#8fe0a8 !important}
+[data-theme="dark"] .wgt-status.fechado{background:#3a1a1d !important;color:#ff9d9d !important}
+[data-theme="dark"] .pw-side .bnr{box-shadow:0 4px 14px rgba(0,0,0,.4)}
+
+/* responsivo: lateral some no celular */
+@media(max-width:1024px){
+    .pw-layout{grid-template-columns:1fr;padding:12px 14px}
+    .pw-side{position:static;display:none}
+}
 </style>
 </head>
 <body>
@@ -225,7 +320,31 @@ a{text-decoration:none;color:inherit}
 <div class="tb"><div class="tr2" id="trRow"></div></div>
 
 <div class="pw" id="bnrTopo"></div>
-<main class="pw" id="pwMain"></main>
+<div class="pw-layout">
+  <main class="pw-main"><div id="pwMain"></div></main>
+  <aside class="pw-side">
+    <div id="sideZap"></div>
+    <div class="wgt" id="sideHorario"></div>
+    <div class="wgt" id="sideBanners"></div>
+    <div class="wgt">
+      <h3><i class="fa fa-headset"></i> Fale conosco</h3>
+      <div class="wgt-contato">
+        <a href="https://wa.me/5521983158911" target="_blank" rel="noopener"><i class="fa fa-whatsapp"></i> WhatsApp</a>
+        <a href="tel:+5521983158911"><i class="fa fa-phone"></i> (21) 9-8315-8911</a>
+        <a href="mailto:rickjax1234@gmail.com"><i class="fa fa-envelope"></i> Enviar e-mail</a>
+      </div>
+    </div>
+    <div class="wgt">
+      <h3><i class="fa fa-shield-alt"></i> Nossa garantia</h3>
+      <div class="wgt-selos">
+        <span class="selo"><i class="fa fa-box"></i> Pacotes</span>
+        <span class="selo"><i class="fa fa-truck"></i> Entrega</span>
+        <span class="selo"><i class="fa fa-receipt"></i> Nota fiscal</span>
+        <span class="selo"><i class="fa fa-credit-card"></i> Pix</span>
+      </div>
+    </div>
+  </aside>
+</div>
 <div class="pw" id="bnrFim"></div>
 
 <button class="fb2" onclick="location.href='checkout.html'" aria-label="Carrinho"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>

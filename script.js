@@ -23,6 +23,26 @@ function formatBRL(n) {
     if (isNaN(v) || !isFinite(v)) return "R$ 0,00";
     return "R$ " + v.toFixed(2).replace(".", ",");
 }
+// ---------- DINHEIRO: arredonda sempre para centavos ----------
+// Sem isso, 10.10 + 20.20 = 30.299999999999997 e o pedido grava valor errado.
+function arredonda(v) {
+    var n = parseFloat(v);
+    if (isNaN(n) || !isFinite(n)) return 0;
+    return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+// centavos(): soma em inteiros para evitar qualquer deriva
+function somaCentavos(itens, campoPreco, campoQtd) {
+    var total = 0;
+    for (var i = 0; i < itens.length; i++) {
+        var p = itens[i][campoPreco];
+        var q = itens[i][campoQtd];
+        if (typeof p !== "number" || isNaN(p)) p = 0;
+        if (typeof q !== "number" || isNaN(q) || q <= 0) q = 1;
+        total += Math.round(p * 100) * Math.round(q);
+    }
+    return total / 100;
+}
+
 // getCart: lê localStorage e normaliza itens (trata dados legados / campos ausentes)
 function getCart() {
     var s = localStorage.getItem("refrigeranteCart");
@@ -50,11 +70,7 @@ function saveCart() {
     try { localStorage.setItem("refrigeranteCart", JSON.stringify(cart)); } catch(e) {}
 }
 function calcSubtotal() {
-    return cart.reduce(function(t, i) {
-        var price = (typeof i.priceNum === 'number' && !isNaN(i.priceNum)) ? i.priceNum : 0;
-        var qty = (typeof i.qty === 'number' && i.qty > 0) ? i.qty : 1;
-        return t + price * qty;
-    }, 0);
+    return somaCentavos(cart, "priceNum", "qty");
 }
 function calcTotalItens() {
     return cart.reduce((t, i) => t + (typeof i.qty === 'number' ? i.qty : 0), 0);

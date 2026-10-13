@@ -32,7 +32,7 @@
 .resumo-row.total { border-top:2px solid #eee; margin-top:8px; padding-top:14px; font-size:1.35rem; font-weight:bold; color:var(--primary-color); }
 .btn-enviar { width:100%; padding:15px; background:#25D366; color:#fff; border:none; border-radius:26px; font-weight:bold; font-size:1.05rem; cursor:pointer; margin-top:14px; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
 .btn-enviar:hover { background:#1da851; }
-.aviso { font-size:0.82rem; color:#888; margin-top:10px; text-align:center; }
+.aviso { font-size:0.82rem; color:#6b7280; margin-top:10px; text-align:center; }
 @media (max-width: 768px){ .checkout-grid{grid-template-columns:1fr;} .resumo-lateral{position:static;} .linha2{grid-template-columns:1fr;} }
 </style>
 </head>
@@ -149,10 +149,11 @@ function selPag(radio) {
 }
 
 function calcular() {
-    const subtotal = calcSubtotal();
-    const regiao = parseFloat(document.getElementById("fRegiao").value) || 0;
-    const frete = (subtotal >= 150) ? 0 : regiao;
-    const total = subtotal + frete;
+    const regiao = arredonda(parseFloat(document.getElementById("fRegiao").value) || 0);
+    const subtotal = arredonda(calcSubtotal());
+    // frete gratis a partir de R$ 150,00 - carrinho vazio nunca paga frete
+    const frete = (subtotal <= 0) ? 0 : ((subtotal >= 150) ? 0 : regiao);
+    const total = arredonda(subtotal + frete);
 
     document.getElementById("rSub").innerText = formatBRL(subtotal);
     const fr = document.getElementById("rFrete");

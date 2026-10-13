@@ -23,7 +23,7 @@
 .pedido-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px 20px; margin-bottom:16px; }
 .pedido-topo { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
 .pedido-topo b { color:var(--text-color); font-size:1.05rem; }
-.pedido-meta { font-size:0.85rem; color:#888; }
+.pedido-meta { font-size:0.85rem; color:#6b7280; }
 .pedido-itens { font-size:0.9rem; color:#555; }
 .pedido-itens div { padding:3px 0; }
 .pedido-total { display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:12px; border-top:1px solid #eee; }
@@ -34,7 +34,7 @@
 .timeline { margin-top:10px; }
 .timeline-item { display:flex; align-items:center; gap:8px; padding:4px 0; font-size:0.85rem; color:#666; }
 .timeline-item i { color:var(--primary-color); }
-.vazio { text-align:center; padding:50px 20px; color:#888; }
+.vazio { text-align:center; padding:50px 20px; color:#6b7280; }
 .vazio i { font-size:3rem; color:#ddd; margin-bottom:12px; }
 .aviso-info { background:#e3f2fd; border-left:4px solid var(--secondary-color); padding:12px 16px; border-radius:8px; font-size:0.88rem; color:#1565c0; margin-bottom:18px; }
 
@@ -75,6 +75,35 @@
 [data-theme="dark"] .sessao-bar b{color:#ffb822 !important}
 [data-theme="dark"] .btn-sair{border-color:#ff6b6b !important;color:#ff8a8a !important}
 [data-theme="dark"] .btn-sair:hover{background:#ff6b6b !important;color:#fff !important}
+
+/* ===== BOLETIM DE PEDIDOS: letras maiores e legiveis ===== */
+.pedido-card{padding:22px 24px !important;margin-bottom:20px !important}
+.pedido-topo b{font-size:1.22rem !important}
+.pedido-meta{font-size:1rem !important;color:#6b7280 !important;margin-top:4px}
+.pedido-meta i{margin-right:5px}
+.pedido-itens{font-size:1.04rem !important;color:#3d4465 !important;line-height:1.75}
+.pedido-itens b{color:#3d4465}
+.pedido-total{margin-top:16px !important;padding-top:14px !important}
+.pedido-total .val{font-size:1.5rem !important}
+.btn-detalhe{font-size:1rem !important;padding:9px 12px !important}
+.detalhe-extra{font-size:1.02rem !important;padding:18px !important;line-height:1.85}
+.detalhe-extra div{padding:5px 0 !important}
+.detalhe-extra b{color:#3d4465 !important}
+.timeline-item{font-size:.98rem !important;padding:7px 0 !important;color:#3d4465 !important}
+.timeline-item i{font-size:.62rem !important}
+.filtro{padding:11px 20px !important;font-size:1rem !important}
+.filtro .cn,.ti .cn{font-size:.82rem !important}
+.vazio p{font-size:1.08rem !important}
+.vazio i{font-size:3.4rem !important}
+.page-head h1{font-size:1.9rem !important}
+
+/* versao escura do boletim */
+[data-theme="dark"] .pedido-meta{color:#a1a8c3 !important}
+[data-theme="dark"] .pedido-itens,
+[data-theme="dark"] .pedido-itens b,
+[data-theme="dark"] .timeline-item{color:#cdd2e6 !important}
+[data-theme="dark"] .detalhe-extra b{color:#ffb822 !important}
+[data-theme="dark"] .filtro{font-size:1rem !important}
 </style>
 </head>
 <body>
