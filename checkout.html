@@ -275,8 +275,17 @@ function montarRegioes(){
         o.text = r.nome + " (" + r.diasTexto + ")";
         sel.appendChild(o);
     });
-    if (atual && document.querySelector('#fRegiao option[value="' + atual + '"]')) sel.value = atual;
-    else sel.value = REGIOES[0].id;
+    var d = (typeof Conta !== "undefined") ? Conta.dados() : {};
+    var bairro = String(d.bairro || "").toLowerCase();
+    var encontrou = false;
+    if (bairro) {
+        for (var i=0;i<REGIOES.length;i++){
+            if (REGIOES[i].nome.toLowerCase().indexOf(bairro)>=0 || bairro.indexOf(REGIOES[i].nome.toLowerCase())>=0) {
+                sel.value = REGIOES[i].id; encontrou=true; break;
+            }
+        }
+    }
+    if (!encontrou) sel.value = REGIOES[0].id;
     sel.onchange = function () { atualizarRegiao(); if (typeof pintarJanelaEntrega === "function") pintarJanelaEntrega(); };
     atualizarRegiao();
     if (typeof pintarJanelaEntrega === "function") pintarJanelaEntrega();
