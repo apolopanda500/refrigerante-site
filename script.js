@@ -268,7 +268,7 @@ function atualizarStatus(id, novoStatus) {
 }
 function dataHora(ts) {
     const d = new Date(ts);
-    return d.toLocaleDateString("pt-BR") + " �s " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleDateString("pt-BR") + " às " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 function statusBadge(status) {
     const cores = {
