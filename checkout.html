@@ -222,7 +222,8 @@ function enviarPedido() {
     }
 
     if (!nome || !tel || (!end && !rua) || !bairro) {
-        alert("Preencha nome, WhatsApp, endereço (rua/endereço) e bairro no Perfil.");
+        const continuarFallback = confirm("Não encontramos cadastro, ou está incompleto. Deseja entrar agora no perfil para preencher?");
+        location.href = "perfil.html";
         return;
     }
 
