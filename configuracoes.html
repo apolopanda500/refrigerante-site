@@ -258,15 +258,9 @@
     </div>
   </div>
   <div class="config-row">
-    <div class="config-label">Confirmar entrega por WhatsApp<small>Enviamos o status do pedido</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgZapConfirmacao" checked><span class="slider"></span></label>
+    <div class="config-label">Acompanhamento automatico<small>O pedido avança sozinho, sem precisar falar com ninguem</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgAutoStatus" checked><span class="slider"></span></label>
   </div>
-  <div class="config-row">
-    <div class="config-label">Avisar sobre pedidos na região<small>Só os dias do seu bairro</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgAvisoRegiao" checked><span class="slider"></span></label>
-  </div>
-</div>
-
 <div class="config-card">
   <h2><i class="fa fa-comments"></i> Fale com a gente</h2>
   <div class="config-row config-col">
@@ -329,7 +323,7 @@
 (function() {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
-    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgModoEscuro","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco","cfgZapConfirmacao","cfgAvisoRegiao"];
+    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgModoEscuro","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco","cfgAutoStatus","cfgAvisoRegiao"];
     ids.forEach(function(id) {
         var el = document.getElementById(id);
         if (!el) return;

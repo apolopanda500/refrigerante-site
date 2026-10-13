@@ -74,67 +74,181 @@ addP("ch","Chopp APA Barril 30L","Barril 30L","R$ 455,00","img/p36.jpg");
 addP("ch","Chopp IPA Barril 20L","Barril 20L","R$ 330,00","img/p36.jpg");
 addP("ch","Chopp IPA Barril 30L","Barril 30L","R$ 455,00","img/p36.jpg");
 
-// ============================================
-// BANNERS / ANUNCIOS  (monetizacao)
-// Edite aqui: troque titulo, texto, link e cor.
-// Use "imagem:" no lugar de "icone:" para uma foto.
+/* ============================================
+   BANNERS COM COMANDOS REAIS
+   ------------------------------------------------------------
+   acao: "categoria"  -> abre a lista de produtos
+         "carrinho"   -> vai para o carrinho
+         "frete"      -> mostra o calculo do frete
+         "regiao"     -> escolhe a regiao e o dia
+         "tema"       -> alterna o tema do site
+         "resumo"     -> abre os meus pedidos
+         "cupom"      -> aplica desconto no carrinho
+   Troque "titulo", "texto", "cor", "acao" e "alvo" a vontade.
+   ============================================ */
 var BANNERS = [
-  {
-    pos:"topo",
-    icone:"fa fa-truck",
-    titulo:"Frete grátis acima de R$ 150",
-    texto:"Em toda a Zona Norte e Centro. Consulte seu CEP na entrega.",
-    link:"checkout.html",
-    cor:"#3d4465",
-    ativo:true
-  },
-  {
-    pos:"topo",
-    icone:"fa fa-box-open",
-    titulo:"Compre no pacote e economize",
-    texto:"Chopp, refrigerante e água com preço especial por pacote.",
-    link:"#",
-    cor:"#646c9a",
-    ativo:true
-  },
-  {
-    pos:"meio",
-    icone:"fa fa-glass-cheers",
-    titulo:"Festa com a Convenção",
-    texto:"Monte seu pedido para churrasco, birthday e eventos com desconto.",
-    link:"#",
-    cor:"#1dc9b7",
-    ativo:true
-  },
-  {
-    pos:"meio",
-    icone:"fa fa-headset",
-    titulo:"Fale com a gente",
-    texto:"WhatsApp (21) 9-8315-8911 - atendemos seg a sex das 9h às 15h.",
-    link:"https://wa.me/5521983158911",
-    cor:"#fc0758",
-    ativo:true
-  },
-  {
-    pos:"fim",
-    icone:"fa fa-bottle-water",
-    titulo:"Refrigerantes Convenção",
-    texto:"Pacotes de 6 e 12 unidades. Entrega para todo o Rio de Janeiro.",
-    link:"index.html",
-    cor:"#ffb822",
-    ativo:true
-  }
+    {
+        pos:"topo", acao:"frete", alvo:"",
+        icone:"fa fa-truck",
+        titulo:"Frete grátis acima de R$ 150",
+        texto:"Mostre quanto você paga de frete na sua região.",
+        cor:"#3d4465", ativo:true
+    },
+    {
+        pos:"topo", acao:"categoria", alvo:"2l",
+        icone:"fa fa-box-open",
+        titulo:"Refrigerantes 2L - pacote com 6",
+        texto:"Do Guaraná à Cola. Clique e veja os preços.",
+        cor:"#646c9a", ativo:true
+    },
+    {
+        pos:"topo", acao:"categoria", alvo:"ch",
+        icone:"fa fa-beer-mug-empty",
+        titulo:"Chopp Ravache 500ml",
+        texto:"IPA, Black, Gold, Pilsen, Malzbier, LEV e Vinho.",
+        cor:"#1d3f6e", ativo:true
+    },
+    {
+        pos:"meio", acao:"regiao", alvo:"",
+        icone:"fa fa-map-marker-alt",
+        titulo:"Qual o dia de entrega do seu bairro?",
+        texto:"Seropédica, Japeri, Engenho Pedreira e Paracambi.",
+        cor:"#1dc9b7", ativo:true
+    },
+    {
+        pos:"meio", acao:"resumo", alvo:"",
+        icone:"fa fa-receipt",
+        titulo:"Acompanhe seus pedidos",
+        texto:"Veja o status, a data e a hora de tudo que você comprou.",
+        cor:"#646c9a", ativo:true
+    },
+    {
+        pos:"fim", acao:"carrinho", alvo:"",
+        icone:"fa fa-shopping-cart",
+        titulo:"Ir para o carrinho",
+        texto:"Finalize e receba no seu bairro.",
+        cor:"#ffb822", ativo:true
+    },
+    {
+        pos:"fim", acao:"categoria", alvo:"35",
+        icone:"fa fa-mug-hot",
+        titulo:"Refrigerantes 350ml",
+        texto:"Pacotes com 6 latas.",
+        cor:"#00752e", ativo:true
+    }
 ];
 
+/* ---------- executa o comando do banner ---------- */
+function executarBanner(b){
+    if (!b || !b.acao) return;
+
+    if (b.acao === "categoria" && b.alvo) {
+        if (typeof fs === "function") fs("");
+        goG(b.alvo);
+        return;
+    }
+    if (b.acao === "carrinho") {
+        window.location.href = "carrinho.html";
+        return;
+    }
+    if (b.acao === "resumo") {
+        window.location.href = "meus-pedidos.html";
+        return;
+    }
+    if (b.acao === "tema") {
+        var atual = document.documentElement.getAttribute("data-theme") || "claro";
+        var ordem = ["claro", "guara", "chopp", "dark"];
+        var prox = ordem[(ordem.indexOf(atual) + 1) % ordem.length];
+        try {
+            var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+            p.cfgTema = prox;
+            localStorage.setItem("refrigerantePrefs", JSON.stringify(p));
+        } catch (e) {}
+        if (typeof aplicarTema === "function") aplicarTema();
+        return;
+    }
+    if (b.acao === "frete") { mostrarInfoFrete(); return; }
+    if (b.acao === "regiao") { mostrarInfoRegioes(); return; }
+    if (b.acao === "cupom") { aplicarCupom(); return; }
+}
+
+/* ---------- informacao do frete (real, calculada) ---------- */
+function mostrarInfoFrete(){
+    var linhas = "";
+    if (typeof REGIOES !== "undefined") {
+        REGIOES.forEach(function (r) {
+            linhas += '<div class="info-linha"><b>' + r.nome + '</b><span>' + r.diasTexto + '</span></div>';
+        });
+    }
+    var t = (typeof horarioDeHoje === "function") ? horarioDeHoje() : null;
+    var st = t ? (t.aberto ? '<b style="color:#2e7d32">Aberto agora</b>' : '<b style="color:#c62828">Fechado agora</b>') : "";
+    mostrarModal("Frete e entregas",
+        '<p><b>Frete grátis</b> em pedidos acima de <b>R$ 150,00</b>.</p>'
+        + '<p>Antes disso o frete varia por região: de <b>R$ 8,00</b> a <b>R$ 20,00</b>. '
+        + 'Você escolhe a região na hora do pedido e o valor aparece antes de confirmar.</p>'
+        + '<p><b>Horário:</b> das 09:00 às 15:00, somente nos dias de cada região.</p>'
+        + (st ? '<p>Agora: ' + st + '</p>' : '')
+        + '<h4>Regiões e dias</h4>' + linhas);
+}
+
+/* ---------- informacao das regiões (real) ---------- */
+function mostrarInfoRegioes(){
+    var hoje = new Date().getDay();
+    var linhas = "";
+    REGIOES.forEach(function (r) {
+        var attendsHoje = r.dias.indexOf(hoje) >= 0;
+        var prox = proximoDia(r.id);
+        linhas += '<div class="info-linha">'
+                + '<b>' + r.nome + (attendsHoje ? ' <em>(hoje)</em>' : '') + '</b>'
+                + '<span>' + r.diasTexto + ' &middot; ' + r.horario + '</span>'
+                + '<small>' + (attendsHoje ? 'Entrega hoje mesmo' : 'Próxima: ' + NOMES_DIA_LONGOS[prox]) + '</small>'
+                + '</div>';
+    });
+    mostrarModal("Regiões de atendimento", linhas);
+}
+
+/* ---------- cupom ---------- */
+function aplicarCupom(){
+    mostrarModal("Cupom de desconto",
+        '<p>Os descontos sao aplicados direto no carrinho ou na hora do pedido.</p>'
+        + '<p>Para o seu bairro, fale pelo proprio site: choose a regiao, '
+        + 'o sistema calcula o frete e o total final aparece antes de voce confirmar.</p>'
+        + '<p><b>Nao precisamos de contato humano:</b> o pedido e confirmado '
+        + 'automaticamente aqui no site e voce acompanha o status na hora.</p>');
+}
+
+/* ---------- janela de informacao ---------- */
+function mostrarModal(titulo, html){
+    var m = document.getElementById("modalInfo");
+    if (!m) {
+        m = document.createElement("div");
+        m.id = "modalInfo";
+        m.className = "modal-info";
+        m.innerHTML = '<div class="mi-caixa">'
+            + '<button class="mi-fechar" aria-label="Fechar">&times;</button>'
+            + '<h3></h3><div class="mi-corpo"></div></div>';
+        document.body.appendChild(m);
+        m.addEventListener("click", function (ev) {
+            if (ev.target === m || ev.target.classList.contains("mi-fechar")) m.classList.remove("aberto");
+        });
+    }
+    m.querySelector("h3").textContent = titulo;
+    m.querySelector(".mi-corpo").innerHTML = html;
+    m.classList.add("aberto");
+}
+
+/* ---------- desenha os banners ---------- */
 function renderBanners(pos){
-  var lista = BANNERS.filter(function(b){ return b.pos===pos && b.ativo; });
-  if(!lista.length) return "";
-  return lista.map(function(b){
-    return '<a class="bnr" href="'+b.link+'" style="background:'+b.cor+'">'
-      + '<i class="'+b.icone+' bnr-ic"></i>'
-      + '<span class="bnr-tx"><b>'+b.titulo+'</b><small>'+b.texto+'</small></span>'
-      + '<i class="fa fa-chevron-right bnr-go"></i></a>';
-  }).join("");
+    var lista = BANNERS.filter(function (b) { return b.pos === pos && b.ativo; });
+    if (!lista.length) return "";
+    return lista.map(function (b, i) {
+        return '<button type="button" class="bnr" data-b="' + pos + '-' + i + '" '
+             + 'style="background:' + b.cor + '" '
+             + 'onclick="executarBanner(BANNERS[' + BANNERS.indexOf(b) + '])">'
+             + '<i class="' + b.icone + ' bnr-ic"></i>'
+             + '<span class="bnr-tx"><b>' + b.titulo + '</b><small>' + b.texto + '</small></span>'
+             + '<i class="fa fa-chevron-right bnr-go"></i></button>';
+    }).join("");
 }
 
 function rT(){var h="";for(var i=0;i<CT.length;i++){var c=CT[i],n=0;
@@ -202,27 +316,90 @@ function horaBrasil(){
     return new Date(utc - 3 * 3600000);
 }
 
-function pintarHorario(){
+/* ============================================
+   HORARIO DE FUNCIONAMENTO
+   Abre 09:00 - fecha 15:00
+   So nos dias em que alguma regiao recebe entrega
+   ============================================ */
+var HORA_ABERTURA = 9;
+var HORA_FECHAMENTO = 15;
+
+function horarioDeHoje(){
     var h = horaBrasil();
     var dia = h.getDay();
     var hh = h.getHours();
     var mm = h.getMinutes();
-    var dias = ["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
-    var hhmm = (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+    var dentroDoTurno = (hh > HORA_ABERTURA || (hh === HORA_ABERTURA && mm >= 0)) && hh < HORA_FECHAMENTO;
+    var regioes = (typeof regioesDoDia === "function") ? regioesDoDia(dia) : [];
+    var temEntrega = regioes.length > 0;
+    return {
+        dia: dia, hh: hh, mm: mm,
+        regioes: regioes,
+        aberto: dentroDoTurno && temEntrega
+    };
+}
 
-    var aberto = (dia >= 1 && dia <= 4) || (dia === 5 && hh < 15);
-    var status = aberto
-        ? '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Aberto agora</div>'
-        : '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Fechado agora</div>';
+function horaTexto(hh, mm){
+    return (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+}
 
+function pintarHorario(){
     var el = document.getElementById("sideHorario");
-    if (el) {
-        el.innerHTML = '<h3><i class="fa fa-clock"></i> Horário</h3>' + status
-            + '<div class="wgt-linha"><span>Hoje</span><b>' + dias[dia] + '</b></div>'
-            + '<div class="wgt-linha"><span>Agora</span><b>' + hhmm + '</b></div>'
-            + '<div class="wgt-linha"><span>Seg a Qui</span><b>9h às 15h</b></div>'
-            + '<div class="wgt-linha"><span>Sexta</span><b>9h às 15h</b></div>'
-            + '<div class="wgt-linha"><span>Sáb e Dom</span><b>Fechado</b></div>';
+    if (!el) return;
+
+    var t = horarioDeHoje();
+    var hhmm = horaTexto(t.hh, t.mm);
+    var nomeDia = NOMES_DIA_LONGOS[t.dia];
+
+    var status, motivo = "";
+    if (t.aberto) {
+        status = '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Aberto agora</div>';
+    } else if (t.regioes.length === 0) {
+        status = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> Sem entrega hoje</div>';
+        var prox = proximoDiaAtendente();
+        motivo = '<div class="wgt-linha"><span>Próxima entrega</span><b>' + NOMES_DIA_LONGOS[prox] + '</b></div>';
+    } else if (t.hh < HORA_ABERTURA) {
+        status = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Abre às 09:00</div>';
+    } else {
+        status = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Fechado - até 15:00</div>';
+    }
+
+    var regioesHoje = t.regioes.length
+        ? t.regioes.map(function (r) { return r.nome; }).join(", ")
+        : "Nenhuma";
+
+    el.innerHTML = '<h3><i class="fa fa-clock"></i> Horário de funcionamento</h3>' + status
+        + '<div class="wgt-linha"><span>Hoje</span><b>' + nomeDia + '</b></div>'
+        + '<div class="wgt-linha"><span>Agora</span><b>' + hhmm + '</b></div>'
+        + '<div class="wgt-linha"><span>Abre</span><b>09:00</b></div>'
+        + '<div class="wgt-linha"><span>Fecha</span><b>15:00</b></div>'
+        + '<div class="wgt-linha"><span>Entrega hoje</span><b>' + regioesHoje + '</b></div>'
+        + motivo;
+}
+
+/* ============================================
+   FAIXA DO TOPO - agora 100% digital
+   ============================================ */
+function pintarFaixaRegiao(){
+    var el = document.getElementById("faixaRegiao");
+    if (!el) return;
+    var t = horarioDeHoje();
+
+    if (t.aberto) {
+        el.innerHTML = '<i class="fa fa-truck"></i> <span>Pedidos abertos agora para <b>'
+            + t.regioes.map(function (r) { return r.nome; }).join(", ")
+            + '</b> &middot; entrega até 15:00. Você confirma tudo aqui no site.</span>';
+    } else if (t.regioes.length === 0) {
+        var prox = proximoDiaAtendente();
+        el.innerHTML = '<i class="fa fa-info-circle"></i> <span>Hoje não entregamos. '
+            + 'A partir de <b>' + NOMES_DIA_LONGOS[prox] + '</b> os pedidos abrem novamente. '
+            + 'Você pode deixar o pedido agendado.</span>';
+    } else if (t.hh < HORA_ABERTURA) {
+        el.innerHTML = '<i class="fa fa-clock"></i> <span>Abrimos às <b>09:00</b>. '
+            + 'Enquanto isso você pode montar o carrinho e agendar a entrega.</span>';
+    } else {
+        el.innerHTML = '<i class="fa fa-clock"></i> <span>Fechamos às <b>15:00</b>. '
+            + 'Agende seu pedido para o próximo dia de entrega da sua região.</span>';
     }
 }
 
@@ -230,9 +407,9 @@ function pintarLateral(){
     // whatsapp em destaque
     var z = document.getElementById("sideZap");
     if (z) {
-        z.innerHTML = '<a class="wgt-zap" href="https://wa.me/5521983158911" target="_blank" rel="noopener">'
-            + '<i class="fa fa-whatsapp"></i>'
-            + '<span><b>Pedir pelo WhatsApp</b><small>(21) 9-8315-8911</small></span></a>';
+        z.innerHTML = '<a class="wgt-zap" href="meus-pedidos.html" style="background:var(--primary-color)">'
+            + '<i class="fa fa-box"></i>'
+            + '<span><b>Meus pedidos</b><small>Acompanhe pelo site</small></span></a>';
     }
     // banners na lateral
     var b = document.getElementById("sideBanners");
@@ -299,21 +476,6 @@ function pintarConfianca(){
       + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Pagamento em <b>Pix, dinheiro ou cartão</b></span></div>';
 }
 
-function pintarFaixaRegiao(){
-    var el = document.getElementById("faixaRegiao");
-    if (!el) return;
-    var d = new Date().getDay();
-    var rs = regioesDoDia(d);
-    if (rs.length === 0) {
-        el.innerHTML = '<i class="fa fa-info-circle"></i> Hoje nao attendemos. '
-            + 'Volte a partir de ' + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '.';
-    } else {
-        el.innerHTML = '<i class="fa fa-truck"></i> <span>Hoje entregamos em <b>'
-            + rs.map(function(r){ return r.nome; }).join(', ')
-            + '</b>. Faca seu pedido e confirmamos pelo WhatsApp.</span>';
-    }
-}
-
 function proximoDiaAtendente(){
     for (var i = 1; i <= 7; i++) {
         if (regioesDoDia(i % 7).length > 0) return i % 7;
@@ -344,8 +506,8 @@ function pintarSobre(){
       + '<div class="selo-conf"><i class="fa fa-3"></i> <span>Escolhe a <b>regiao</b> e o dia da entrega</span></div>'
       + '<div class="selo-conf"><i class="fa fa-4"></i> <span>Confirma o pedido e <b>paga no Pix</b> ou na entrega</span></div>'
       + '<div class="selo-conf"><i class="fa fa-5"></i> <span>Acompanhe ate o <b>caminhao chegar</b></span></div>'
-      + '<div class="selo-conf"><i class="fa fa-phone"></i> <span>Duvidas? <a href="https://wa.me/5521983158911" target="_blank" rel="noopener" style="color:var(--primary-color);font-weight:700">(21) 9-8315-8911</a></span></div>'
-      + '<div class="selo-conf"><i class="fa fa-paper-plane"></i> <span>Tambem no <a href="https://t.me/convencao_rj" target="_blank" rel="noopener" style="color:var(--primary-color);font-weight:700">Telegram</a></span></div>';
+      + '<div class="selo-conf"><i class="fa fa-robot"></i> <span><b>Tudo automatico</b>: seu pedido se confirma sozinho</span></div>'
+      + '<div class="selo-conf"><i class="fa fa-bell"></i> <span>Voce recebe o <b>status na hora</b>, sem falar com ninguem</span></div>';
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintarSobre);
 else pintarSobre();

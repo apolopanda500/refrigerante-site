@@ -1304,3 +1304,56 @@ body{font-size:16.5px}
 [data-theme="dark"] .caixa-limpar{background:#2a1a1c;border-color:#5a2a2e}
 [data-theme="dark"] .caixa-limpar .cl-tx{color:#e6a3a3}
 [data-theme="dark"] .caixa-limpar .cl-tx b{color:#ff8a8a}
+
+/* ===== JANELA DE INFORMACAO (banner -> comando real) ===== */
+.modal-info{
+    position:fixed;inset:0;z-index:1000;
+    background:rgba(15,18,32,.62);
+    display:none;align-items:center;justify-content:center;padding:18px;
+    backdrop-filter:blur(2px);
+}
+.modal-info.aberto{display:flex}
+.mi-caixa{
+    background:#fff;border-radius:16px;padding:28px 26px;max-width:520px;width:100%;
+    max-height:86vh;overflow-y:auto;position:relative;
+    box-shadow:0 18px 50px rgba(0,0,0,.35);
+    animation:sobeSobe .25s cubic-bezier(.2,.8,.3,1);
+}
+@keyframes sobeSobe{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+.mi-caixa h3{
+    margin:0 0 14px;font-size:1.25rem;font-weight:800;
+    color:var(--primary-color);padding-right:34px;
+}
+.mi-corpo p{font-size:.96rem;line-height:1.65;color:var(--text-color);margin-bottom:11px}
+.mi-corpo h4{
+    font-size:.8rem;text-transform:uppercase;letter-spacing:.6px;
+    color:var(--text-muted);margin:18px 0 9px;
+}
+.mi-fechar{
+    position:absolute;top:14px;right:14px;width:36px;height:36px;
+    background:var(--bg-alt);border:none;border-radius:50%;
+    font-size:1.5rem;line-height:1;color:var(--text-muted);cursor:pointer;
+}
+.mi-fechar:hover{background:var(--primary-color);color:#fff}
+.info-linha{
+    display:flex;flex-direction:column;gap:2px;
+    padding:11px 13px;border-radius:10px;background:var(--bg-alt);margin-bottom:8px;
+}
+.info-linha b{font-size:.95rem;color:var(--primary-color)}
+.info-linha b em{font-style:normal;font-size:.72rem;background:var(--accent-color);
+    color:var(--text-color);padding:2px 7px;border-radius:9px;margin-left:5px;vertical-align:middle}
+.info-linha span{font-size:.85rem;color:var(--text-muted)}
+.info-linha small{font-size:.8rem;color:var(--sucesso);font-weight:600}
+[data-theme="dark"] .mi-caixa{background:#1c1f33}
+[data-theme="dark"] .mi-corpo p{color:#cdd2e6}
+[data-theme="dark"] .mi-corpo h4{color:#a1a8c3}
+[data-theme="dark"] .mi-fechar{background:#232742;color:#cdd2e6}
+[data-theme="dark"] .info-linha b{color:#ffb822}
+[data-theme="dark"] .info-linha span{color:#a1a8c3}
+
+/* botao agora e <button>, precisa de reset */
+button.bnr{
+    border:none;font-family:inherit;text-align:left;width:100%;
+    cursor:pointer;display:flex;align-items:center;gap:14px;
+}
+button.bnr:hover{color:#fff}

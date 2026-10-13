@@ -213,9 +213,10 @@ function enviarPedido() {
     const pedido = criarPedido({
         nome: nome, tel: tel, end: end, bairro: bairro, comp: comp,
         regiao: regiaoTexto, frete: c.frete, pagamento: pagSelecionado, troco: trocoVal,
-        itens: itens, subtotal: c.subtotal, total: c.total
+        itens: itens, subtotal: c.subtotal, total: c.total, digital: true
     });
     localStorage.setItem("ultimoPedido", pedido.id);
+    if (typeof agendarAvanco === "function") agendarAvanco(pedido);
     if (typeof Conta !== "undefined") Conta.salvar({ nome: nome, tel: tel, endereco: end, bairro: bairro, complemento: comp });
     limparCarrinho();
     window.location.href = "pedido-sucesso.html";
