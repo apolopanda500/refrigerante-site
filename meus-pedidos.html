@@ -189,10 +189,11 @@ function mostrarPedidos(){
   var sessao = Conta && !Conta.estaVazia()
         ? { nome: Conta.dados().nome, tel: Conta.dados().tel }
         : null;
-  var lista = todos;
-
+  var lista = [];
   if (sessao && sessao.tel) {
     lista = todos.filter(function(p){ return String(p.tel).replace(/\D/g,"") === String(sessao.tel).replace(/\D/g,""); });
+  } else {
+    lista = [];
   }
 
   var nomeEl = document.getElementById("nomeUsuario");
