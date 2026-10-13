@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurações - Refrigerantes Convenção</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
+.page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
+.page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }
+.config-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:22px; margin-bottom:18px; }
+.config-card h2 { font-size:1.1rem; color:var(--text-color); margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+.config-card h2 i { color:var(--primary-color); }
+.config-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f0f0f0; flex-wrap:wrap; gap:10px; }
+.config-row:last-child { border-bottom:none; }
+.config-label { font-size:0.95rem; color:#555; }
+.config-label small { display:block; color:#999; font-size:0.8rem; margin-top:2px; }
+.toggle { position:relative; width:52px; height:28px; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; border-radius:28px; transition:0.3s; }
+.toggle .slider::before { content:''; position:absolute; height:22px; width:22px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:0.3s; }
+.toggle input:checked + .slider { background:var(--primary-color); }
+.toggle input:checked + .slider::before { transform:translateX(24px); }
+.btn-limpar { padding:10px 24px; background:var(--primary-color); color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; }
+.btn-limpar:hover { background:#c62828; }
+.btn-perigo { padding:10px 24px; background:#ff5252; color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; }
+.btn-perigo:hover { background:#d32f2f; }
+.info-box { background:#e8f5e9; border-left:4px solid #43a047; padding:14px 18px; border-radius:8px; font-size:0.9rem; color:#2e7d32; margin-bottom:18px; }
+.version-info { text-align:center; color:#999; font-size:0.82rem; padding:20px 0 10px; }
+</style>
+</head>
+<body>
+<header class="main-header"><div class="container"><nav>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
+<ul class="nav-links"><li><a href="index.html">Produtos</a></li><li><a href="meus-pedidos.html">Histórico</a></li><li><a href="configuracoes.html">Configurações</a></li><li><a href="perfil.html">Perfil</a></li></ul>
+<div class="header-actions"><div class="cart-icon" onclick="window.location.href='checkout.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div></div>
+</nav></div></header>
+
+<section class="page"><div class="container">
+<div class="page-head">
+  <h1><i class="fa fa-cog"></i> Configurações</h1>
+  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
+</div>
+
+<div class="info-box"><i class="fa fa-info-circle"></i> As configurações são salvas apenas neste dispositivo.</div>
+
+<div class="config-card">
+  <h2><i class="fa fa-bell"></i> Notificações</h2>
+  <div class="config-row">
+    <div class="config-label">Notificações de pedido<small>Avisos quando o pedido mudar de status</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgNotifPedido" checked><span class="slider"></span></label>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Promoções e ofertas<small>Novidades e descontos</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgNotifPromo"><span class="slider"></span></label>
+  </div>
+</div>
+
+<div class="config-card">
+  <h2><i class="fa fa-eye"></i> Aparência</h2>
+  <div class="config-row">
+    <div class="config-label">Modo escuro<small>Tema escuro</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgModoEscuro"><span class="slider"></span></label>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Animações reduzidas<small>Reduzir animações da interface</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgReducedMotion"><span class="slider"></span></label>
+  </div>
+</div>
+
+<div class="config-card">
+  <h2><i class="fa fa-shopping-cart"></i> Carrinho e Pedidos</h2>
+  <div class="config-row">
+    <div class="config-label">Lembrar último pedido<small>Preencher o último endereço automaticamente</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgLembrarPedido" checked><span class="slider"></span></label>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Limpar carrinho ao finalizar<small>Esvaziar o carrinho após enviar</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgLimparCarrinho" checked><span class="slider"></span></label>
+  </div>
+</div>
+
+<div class="config-card">
+  <h2><i class="fa fa-trash"></i> Dados</h2>
+  <div class="config-row">
+    <div class="config-label">Limpar carrinho<small>Remover todos os itens do carrinho</small></div>
+    <button class="btn-limpar" onclick="limparCarrinho()"><i class="fa fa-trash"></i> Limpar</button>
+  </div>
+  <div class="config-row">
+    <div class="config-label">Limpar histórico de pedidos<small>Remover todos os pedidos deste dispositivo</small></div>
+    <button class="btn-perigo" onclick="limparHistorico()"><i class="fa fa-exclamation-triangle"></i> Apagar tudo</button>
+  </div>
+</div>
+
+<div class="version-info">
+  <i class="fa fa-leaf"></i> Refrigerantes Convenção — v2.0<br>
+  Feito com carinho para você
+</div>
+</div></section>
+
+<script src="script.js"></script>
+<script>
+(function() {
+    var prefs = {};
+    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
+    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgModoEscuro","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho"];
+    ids.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (id in prefs) el.checked = prefs[id];
+        el.addEventListener("change", function() {
+            prefs[id] = el.checked;
+            try { localStorage.setItem("refrigerantePrefs", JSON.stringify(prefs)); } catch(e) {}
+        });
+    });
+})();
+function limparCarrinho() {
+    if (confirm("Deseja realmente limpar o carrinho?")) {
+        try { localStorage.removeItem("refrigeranteCart"); } catch(e) {}
+        var b = document.getElementById("cartCount"); if (b) b.textContent = "0";
+        alert("Carrinho limpo com sucesso!");
+    }
+}
+function limparHistorico() {
+    if (confirm("ATENCAO: Isso apagara TODO o historico de pedidos deste dispositivo. Continuar?")) {
+        try { Object.keys(localStorage).forEach(function(k) { if (k.indexOf("pedidos_") === 0) localStorage.removeItem(k); }); } catch(e) {}
+        alert("Historico apagado!");
+    }
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil - Refrigerantes Convenção</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
+.page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
+.page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }
+.perfil-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:22px; margin-bottom:18px; }
+.perfil-card h2 { font-size:1.1rem; color:var(--text-color); margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+.perfil-card h2 i { color:var(--primary-color); }
+.perfil-avatar { display:flex; flex-direction:column; align-items:center; padding:30px 20px; text-align:center; }
+.perfil-avatar .avatar-circle { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg, var(--primary-color), var(--secondary-color)); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+.perfil-avatar .avatar-circle i { font-size:2.8rem; color:#fff; }
+.perfil-avatar .avatar-name { font-size:1.3rem; font-weight:bold; color:var(--text-color); }
+.perfil-avatar .avatar-email { color:#999; font-size:0.9rem; margin-top:4px; }
+.form-group { margin-bottom:16px; }
+.form-group label { display:block; font-weight:600; margin-bottom:6px; color:var(--text-color); font-size:0.9rem; }
+.form-group input { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:1rem; font-family:inherit; transition:border-color 0.3s; }
+.form-group input:focus { outline:none; border-color:var(--primary-color); }
+.form-row { display:flex; gap:14px; flex-wrap:wrap; }
+.form-row .form-group { flex:1; min-width:180px; }
+.btn-salvar { padding:12px 30px; background:var(--primary-color); color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:1rem; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
+.btn-salvar:hover { background:#c62828; }
+.status-msg { display:none; padding:12px 16px; border-radius:10px; margin-bottom:16px; font-weight:600; }
+.status-msg.ok { display:block; background:#e8f5e9; color:#2e7d32; border-left:4px solid #43a047; }
+.stats-row { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px; }
+.stat-box { flex:1; min-width:140px; background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:20px; text-align:center; }
+.stat-box .stat-icon { font-size:1.8rem; color:var(--primary-color); margin-bottom:8px; }
+.stat-box .stat-num { font-size:1.6rem; font-weight:bold; color:var(--text-color); }
+.stat-box .stat-label { font-size:0.82rem; color:#999; margin-top:4px; }
+</style>
+</head>
+<body>
+<header class="main-header"><div class="container"><nav>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
+<ul class="nav-links"><li><a href="index.html">Produtos</a></li><li><a href="meus-pedidos.html">Histórico</a></li><li><a href="configuracoes.html">Configurações</a></li><li><a href="perfil.html">Perfil</a></li></ul>
+<div class="header-actions"><div class="cart-icon" onclick="window.location.href='checkout.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div></div>
+</nav></div></header>
+
+<section class="page"><div class="container">
+<div class="page-head">
+  <h1><i class="fa fa-user"></i> Meu Perfil</h1>
+  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
+</div>
+
+<div class="stats-row">
+  <div class="stat-box"><div class="stat-icon"><i class="fa fa-box"></i></div><div class="stat-num" id="statPedidos">0</div><div class="stat-label">Pedidos realizados</div></div>
+  <div class="stat-box"><div class="stat-icon"><i class="fa fa-shopping-bag"></i></div><div class="stat-num" id="statItens">0</div><div class="stat-label">Itens comprados</div></div>
+  <div class="stat-box"><div class="stat-icon"><i class="fa fa-dollar-sign"></i></div><div class="stat-num" id="statGasto">R$ 0</div><div class="stat-label">Total gasto</div></div>
+</div>
+
+<div class="perfil-card">
+  <div class="perfil-avatar">
+    <div class="avatar-circle"><i class="fa fa-user"></i></div>
+    <div class="avatar-name" id="avatarNome">Cliente</div>
+    <div class="avatar-email" id="avatarTel">WhatsApp não informado</div>
+  </div>
+</div>
+
+<div class="perfil-card">
+  <h2><i class="fa fa-id-card"></i> Dados Pessoais</h2>
+  <div class="status-msg ok" id="msgSalvo"><i class="fa fa-check-circle"></i> Dados salvos com sucesso!</div>
+  <div class="form-row">
+    <div class="form-group"><label>Nome completo</label><input type="text" id="pNome" placeholder="Seu nome"></div>
+    <div class="form-group"><label>WhatsApp</label><input type="tel" id="pTel" placeholder="(21) 99999-9999"></div>
+  </div>
+  <div class="form-group"><label>E-mail (opcional)</label><input type="email" id="pEmail" placeholder="seu@email.com"></div>
+  <div class="form-group"><label>Endereço padrão</label><input type="text" id="pEndereco" placeholder="Rua, número"></div>
+  <div class="form-row">
+    <div class="form-group"><label>Bairro</label><input type="text" id="pBairro" placeholder="Seu bairro"></div>
+    <div class="form-group"><label>Complemento</label><input type="text" id="pComplemento" placeholder="Apto, bloco, etc."></div>
+  </div>
+  <button class="btn-salvar" onclick="salvarPerfil()"><i class="fa fa-save"></i> Salvar alterações</button>
+</div>
+
+<div class="perfil-card">
+  <h2><i class="fa fa-info-circle"></i> Contato</h2>
+  <div style="font-size:0.95rem;color:#555;line-height:2">
+    <div><i class="fa fa-phone" style="color:var(--primary-color);width:22px"></i> <b>Telefone:</b> (21) 9-8315-8911</div>
+    <div><i class="fa fa-envelope" style="color:var(--primary-color);width:22px"></i> <b>E-mail:</b> rickjax1234@gmail.com</div>
+  </div>
+</div>
+</div></section>
+
+
+<script src="script.js"></script>
+<script>
+(function() {
+    var perfil = {};
+    try { perfil = JSON.parse(localStorage.getItem("refrigerantePerfil") || "{}"); } catch(e) {}
+    if (perfil.nome) document.getElementById("pNome").value = perfil.nome;
+    if (perfil.tel) document.getElementById("pTel").value = perfil.tel;
+    if (perfil.email) document.getElementById("pEmail").value = perfil.email;
+    if (perfil.endereco) document.getElementById("pEndereco").value = perfil.endereco;
+    if (perfil.bairro) document.getElementById("pBairro").value = perfil.bairro;
+    if (perfil.complemento) document.getElementById("pComplemento").value = perfil.complemento;
+    if (perfil.nome) document.getElementById("avatarNome").textContent = perfil.nome;
+    if (perfil.tel) document.getElementById("avatarTel").textContent = perfil.tel;
+    var tp = 0, ti = 0, tg = 0;
+    try { Object.keys(localStorage).forEach(function(k) {
+        if (k.indexOf("pedidos_") === 0) {
+            var l = JSON.parse(localStorage.getItem(k) || "[]");
+            if (Array.isArray(l)) l.forEach(function(p) { tp++; if (Array.isArray(p.itens)) p.itens.forEach(function(i){ ti += (i.qty||0); }); tg += (p.total||0); });
+        }
+    }); } catch(e) {}
+    document.getElementById("statPedidos").textContent = tp;
+    document.getElementById("statItens").textContent = ti;
+    document.getElementById("statGasto").textContent = "R$ " + tg.toFixed(2).replace(".", ",");
+})();
+function salvarPerfil() {
+    var perfil = {
+        nome: document.getElementById("pNome").value.trim(),
+        tel: document.getElementById("pTel").value.trim(),
+        email: document.getElementById("pEmail").value.trim(),
+        endereco: document.getElementById("pEndereco").value.trim(),
+        bairro: document.getElementById("pBairro").value.trim(),
+        complemento: document.getElementById("pComplemento").value.trim()
+    };
+    try { localStorage.setItem("refrigerantePerfil", JSON.stringify(perfil)); } catch(e) {}
+    if (perfil.nome) document.getElementById("avatarNome").textContent = perfil.nome;
+    if (perfil.tel) document.getElementById("avatarTel").textContent = perfil.tel;
+    var msg = document.getElementById("msgSalvo"); msg.style.display = "block";
+    setTimeout(function() { msg.style.display = "none"; }, 3000);
+}
+</script>
+</body>
+</html>
