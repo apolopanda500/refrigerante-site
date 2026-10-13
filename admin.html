@@ -189,7 +189,9 @@ function renderAdmin() {
         return;
     }
     let h = "";
-    lista.forEach(function(p) {
+    var bairroAtual = null;
+lista.forEach(function(p) {
+    if (bairroAtual !== p.bairro) { bairroAtual = p.bairro; h += '\n<h3 style="color:#ffb822;margin:16px 0 6px;font-size:1.2rem;border-bottom:1px solid #333;padding-bottom:6px;">Bairro: ' + (p.bairro || "—") + ' — ' + lista.filter(function(x){return x.bairro===p.bairro;}).length + ' pedido(s)</h3>'; }
         h += '<div class="pedido-card">';
         h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta">' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
         h += '<div class="pedido-info"><i class="fa fa-user"></i> ' + p.nome + ' &nbsp; <i class="fa fa-phone"></i> ' + p.tel + '</div>';
