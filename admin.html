@@ -65,6 +65,7 @@
     <h1><i class="fa fa-tachometer-alt"></i> Pedidos</h1>
     <span style="color:#888;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
   </div>
+  <div style="margin-bottom:12px"><label style="margin-right:6px">Período:</label><select id="periodoVendas" onchange="renderAdmin()"><option value="hoje">Hoje</option><option value="sem">Semana</option><option value="mes">Mês</option><option value="ano">Ano</option><option value="all">Tudo</option></select></div>
   <div class="stats" id="stats"></div>
   <div class="filtros" id="filtros">
     <button class="filtro ativo" data-f="todos" onclick="filtrarAdmin('todos',this)">Todos</button>
