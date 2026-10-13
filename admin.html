@@ -154,6 +154,14 @@ function renderAdmin() {
         h += '</div></div>';
     });
     box.innerHTML = h;
+    // resumo produtos mais vendidos
+    var rp = {};
+    pedidos.forEach(function(p){ (p.itens || []).forEach(function(i){ var n = i.name || i.nome || ''; if (!rp[n]) rp[n] = {q:0}; rp[n].q += (i.qty || 0); }); });
+    var htmlp = '<div style="margin:12px 0"><h4 style="margin:6px 0;color:#3d4465;font-size:1rem">Produtos mais vendidos</h4>';
+    Object.keys(rp).sort(function(a,b){return (rp[b].q||0)-(rp[a].q||0);}).forEach(function(n){ htmlp += '<div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>' + n + '</span><b>' + rp[n].q + '</b></div>'; });
+    htmlp += '</div>';
+    box.innerHTML = box.innerHTML + htmlp;
+
 }
 function mudarStatus(id, status) {
     atualizarStatus(id, status);
