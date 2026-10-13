@@ -251,3 +251,83 @@ function ligarLateral(){
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", ligarLateral);
 } else { ligarLateral(); }
+
+/* ============================================
+   REGIOES, CAMINHOES E CONFIANCA
+   ============================================ */
+function pintarRegioes(){
+    var el = document.getElementById("sideRegioes");
+    if (!el) return;
+    var d = new Date().getDay();
+    var h = "";
+    REGIOES.forEach(function(r){
+        var atende = r.dias.indexOf(d) >= 0;
+        var tag = atende
+            ? '<span class="reg-tag hoje"><i class="fa fa-check"></i> Hoje</span>'
+            : '<span class="reg-tag fecho">' + (r.diasTexto.length > 14 ? "Fora do dia" : "Fora do dia") + '</span>';
+        h += '<div class="reg-linha"><div>'
+           + '<div class="reg-nome">' + r.nome + '</div>'
+           + '<div class="reg-dias">' + r.diasTexto + ' - ' + r.horario + '</div>'
+           + '</div>' + tag + '</div>';
+    });
+    el.innerHTML = '<h3><i class="fa fa-map-marker-alt"></i> Regiões e dias</h3>' + h;
+}
+
+function pintarCaminhoes(){
+    var el = document.getElementById("sideCaminhoes");
+    if (!el) return;
+    var h = "";
+    CAMINHOES.forEach(function(c){
+        h += '<div class="cam ' + c.cor + '">'
+           + '<span class="cam-cam"><i class="fa fa-truck"></i></span>'
+           + '<span class="cam-tx"><b>' + c.corNome + ' - ' + c.modelo + '</b>'
+           + '<small>' + (c.motorista === "A INFORMAR" ? "Motorista a informar" : c.motorista) + '</small>'
+           + '<small>' + (c.telefone === "A INFORMAR" ? "Telefone a informar" : c.telefone) + '</small></span>'
+           + '<span class="cam-placa">' + c.placa + '</span></div>';
+    });
+    el.innerHTML = '<h3><i class="fa fa-truck"></i> Nossa frota</h3>' + h;
+}
+
+function pintarConfianca(){
+    var el = document.getElementById("sideConfianca");
+    if (!el) return;
+    el.innerHTML = '<h3><i class="fa fa-shield-alt"></i> Compre tranquilo</h3>'
+      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Empresa <b>legalizada</b> com nota fiscal</span></div>'
+      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Entrega feita por <b>caminhões próprios</b> e identificados</span></div>'
+      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Motorista <b>identificado</b> com nome e telefone</span></div>'
+      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Você acompanha o pedido em <b>tempo real</b></span></div>'
+      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Pagamento em <b>Pix, dinheiro ou cartão</b></span></div>';
+}
+
+function pintarFaixaRegiao(){
+    var el = document.getElementById("faixaRegiao");
+    if (!el) return;
+    var d = new Date().getDay();
+    var rs = regioesDoDia(d);
+    if (rs.length === 0) {
+        el.innerHTML = '<i class="fa fa-info-circle"></i> Hoje nao attendemos. '
+            + 'Volte a partir de ' + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '.';
+    } else {
+        el.innerHTML = '<i class="fa fa-truck"></i> <span>Hoje entregamos em <b>'
+            + rs.map(function(r){ return r.nome; }).join(', ')
+            + '</b>. Faca seu pedido e confirmamos pelo WhatsApp.</span>';
+    }
+}
+
+function proximoDiaAtendente(){
+    for (var i = 1; i <= 7; i++) {
+        if (regioesDoDia(i % 7).length > 0) return i % 7;
+    }
+    return 1;
+}
+
+function ligarConfianca(){
+    pintarRegioes();
+    pintarCaminhoes();
+    pintarConfianca();
+    pintarFaixaRegiao();
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ligarConfianca);
+} else { ligarConfianca(); }

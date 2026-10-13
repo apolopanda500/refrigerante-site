@@ -34,6 +34,28 @@
 .btn-enviar:hover { background:#1da851; }
 .aviso { font-size:0.82rem; color:#6b7280; margin-top:10px; text-align:center; }
 @media (max-width: 768px){ .checkout-grid{grid-template-columns:1fr;} .resumo-lateral{position:static;} .linha2{grid-template-columns:1fr;} }
+
+.reg-opcao{display:flex;align-items:center;gap:10px;border:2px solid #eee;border-radius:11px;
+    padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:border-color .2s,background .2s}
+.reg-opcao:hover{border-color:#cfd6e4}
+.reg-opcao.ativa{border-color:var(--primary-color);background:var(--bg-alt)}
+.reg-opcao input{width:auto}
+.reg-opcao .ro-tx{flex:1;line-height:1.35}
+.reg-opcao .ro-tx b{display:block;font-size:.94rem;color:var(--primary-color)}
+.reg-opcao .ro-tx small{display:block;font-size:.79rem;color:var(--text-muted)}
+.reg-opcao .ro-dias{font-size:.72rem;font-weight:800;padding:4px 9px;border-radius:11px;
+    background:#e7f6ec;color:#0a6b34;white-space:nowrap}
+.reg-opcao .ro-dias.fecho{background:#f1f3f5;color:#6b7280}
+.aviso-regiao{margin-top:8px;padding:11px 13px;border-radius:10px;font-size:.86rem;
+    line-height:1.45;display:flex;gap:9px;align-items:flex-start}
+.aviso-regiao.ok{background:#e8f5e9;color:#1b5e20;border-left:4px solid #43a047}
+.aviso-regiao.aviso{background:#fff8e1;color:#8a6100;border-left:4px solid #ffb822}
+.aviso-regiao i{flex:0 0 auto;margin-top:2px}
+[data-theme="dark"] .reg-opcao{border-color:#353a5c}
+[data-theme="dark"] .reg-opcao .ro-tx b{color:#ffb822}
+[data-theme="dark"] .reg-opcao.ativa{border-color:#ffb822;background:#232742}
+[data-theme="dark"] .aviso-regiao.ok{background:#14331f;color:#8fe0a8}
+[data-theme="dark"] .aviso-regiao.aviso{background:#3a3319;color:#ffd97a}
 </style>
 </head>
 <body>
@@ -53,26 +75,10 @@
   <div class="card-section">
     <h2><i class="fa fa-map-marker-alt"></i> Dados de Entrega</h2>
     <div class="linha2">
-      <div class="campo"><label>Nome completo *</label><input id="fNome" type="text" placeholder="Seu nome"></div>
-      <div class="campo"><label>WhatsApp *</label><input id="fTel" type="text" placeholder="(21) 99999-9999"></div>
-    </div>
-    <div class="campo"><label>Endereço (rua, número) *</label><input id="fEnd" type="text" placeholder="Rua, número"></div>
-    <div class="linha2">
-      <div class="campo"><label>Bairro *</label><input id="fBairro" type="text" placeholder="Bairro"></div>
-      <div class="campo"><label>Complemento</label><input id="fComp" type="text" placeholder="Apto, referência..."></div>
-    </div>
-  </div>
-
-  <div class="card-section">
-    <h2><i class="fa fa-truck"></i> Região de Entrega (Frete)</h2>
-    <div class="campo">
-      <label>Selecione a região *</label>
-      <select id="fRegiao" onchange="calcular()">
-        <option value="8">Centro e bairros próximos — R$ 8,00</option>
-        <option value="12">Zona Norte / Zona Sul — R$ 12,00</option>
-        <option value="15">Zona Oeste — R$ 15,00</option>
-        <option value="20">Baixada / Regiões afastadas — R$ 20,00</option>
-      </select>
+      <div class="campo">
+      <label>Região de entrega *</label>
+      <select id="fRegiao"></select>
+      <div id="avisoRegiao" class="aviso-regiao"></div>
     </div>
     <div class="aviso" style="text-align:left"><i class="fa fa-info-circle"></i> Frete grátis para pedidos acima de R$ 150,00.</div>
   </div>
@@ -100,6 +106,7 @@
 </div>
 </div></section>
 
+<script src="loja.js"></script>
 <script src="script.js"></script>
 <script>
     // Mobile menu toggle
@@ -215,6 +222,53 @@ function enviarPedido() {
 
 renderItens();
 calcular();
+</script>
+<script>
+/* ===== escolha da regiao e dia de entrega ===== */
+function montarRegioes(){
+    var sel = document.getElementById("fRegiao");
+    if (!sel || typeof REGIOES === "undefined") return;
+    var atual = sel.value;
+    sel.innerHTML = "";
+    REGIOES.forEach(function (r) {
+        var o = document.createElement("option");
+        o.value = r.id;
+        o.text = r.nome + " (" + r.diasTexto + ")";
+        sel.appendChild(o);
+    });
+    if (atual && document.querySelector('#fRegiao option[value="' + atual + '"]')) sel.value = atual;
+    else sel.value = REGIOES[0].id;
+    sel.onchange = function () { atualizarRegiao(); };
+    atualizarRegiao();
+}
+
+function atualizarRegiao(){
+    var id = document.getElementById("fRegiao").value;
+    var r = null;
+    REGIOES.forEach(function (x) { if (x.id === id) r = x; });
+    var aviso = document.getElementById("avisoRegiao");
+    if (!r || !aviso) return;
+
+    var dia = new Date().getDay();
+    var atende = r.dias.indexOf(dia) >= 0;
+    var prox = proximoDia(r.id);
+    var cam = caminhaoDaRegiao(r.id);
+
+    if (atende) {
+        aviso.className = "aviso-regiao ok";
+        aviso.innerHTML = '<i class="fa fa-check-circle"></i><span><b>' + r.nome
+            + '</b> - entregamos hoje (' + r.diasTexto + '), das ' + r.horario
+            + '.<br>Caminhao ' + cam.corNome + ' placa ' + cam.placa + '.</span>';
+    } else {
+        aviso.className = "aviso-regiao aviso";
+        aviso.innerHTML = '<i class="fa fa-calendar-alt"></i><span><b>' + r.nome
+            + '</b> atendemos ' + r.diasTexto + '.'
+            + '<br>Proxima entrega: <b>' + NOMES_DIA_LONGOS[prox] + '</b>.'
+            + '<br>' + r.obs + '</span>';
+    }
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", montarRegioes); else montarRegioes();
 </script>
 </body>
 </html>

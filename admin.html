@@ -40,6 +40,52 @@
 .pedido-total-linha { font-size:1.15rem; font-weight:bold; color:var(--primary-color); }
 .vazio { text-align:center; padding:50px; color:#6b7280; }
 .btn-sair { background:none; border:none; color:#c62828; cursor:pointer; font-size:0.9rem; }
+
+/* ===== conta do vendedor ===== */
+.vend{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:18px}
+.vend-card{
+    background:#fff;border-radius:14px;padding:18px 20px;
+    box-shadow:0 0 13px 0 rgba(82,63,105,.06);border:1px solid #eeeef4;
+}
+.vend-card h3{
+    display:flex;align-items:center;gap:9px;margin:0 0 14px;
+    font-size:1rem;font-weight:800;color:var(--primary-color);text-transform:uppercase;letter-spacing:.3px;
+}
+.vend-card h3 i{color:var(--accent-color);font-size:1.1rem}
+.vend-linha{
+    display:flex;justify-content:space-between;gap:12px;align-items:center;
+    padding:8px 0;border-bottom:1px dashed #eeeef4;font-size:.9rem;color:var(--text-muted);
+}
+.vend-linha:last-child{border-bottom:0}
+.vend-linha b{color:var(--primary-color);font-weight:700;text-align:right}
+.vend-linha .placa{
+    font-family:'Courier New',monospace;font-weight:800;letter-spacing:.6px;
+    padding:3px 9px;border-radius:6px;background:var(--bg-alt);
+    border:1px solid var(--borda);color:var(--primary-color);font-size:.82rem;
+}
+.vend-dia{
+    display:flex;align-items:center;gap:9px;padding:7px 0;font-size:.9rem;
+    color:var(--text-color);
+}
+.vend-dia .dia-nome{
+    width:96px;flex:0 0 96px;font-weight:700;color:var(--primary-color);font-size:.85rem;
+}
+.vend-dia .regioes{display:flex;flex-wrap:wrap;gap:5px}
+.chip{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 10px;border-radius:12px;font-size:.76rem;font-weight:700;
+    background:var(--bg-alt);color:var(--text-muted);border:1px solid var(--borda);
+}
+.chip.on{background:#e7f6ec;color:#0a6b34;border-color:#bfe3cb}
+[data-theme="dark"] .vend-card{background:#1c1f33;border-color:#353a5c}
+[data-theme="dark"] .vend-card h3{color:#ffb822}
+[data-theme="dark"] .vend-linha{color:#a1a8c3;border-bottom-color:#353a5c}
+[data-theme="dark"] .vend-linha b{color:#e6e8f2}
+[data-theme="dark"] .vend-linha .placa{background:#232742;border-color:#454b70;color:#ffb822}
+[data-theme="dark"] .vend-dia{color:#cdd2e6}
+[data-theme="dark"] .vend-dia .dia-nome{color:#ffb822}
+[data-theme="dark"] .chip{background:#232742;border-color:#353a5c;color:#a1a8c3}
+[data-theme="dark"] .chip.on{background:#14331f;color:#8fe0a8;border-color:#2d6b46}
 </style>
 </head>
 <body>
@@ -74,11 +120,13 @@
     <button class="filtro" data-f="enviado" onclick="filtrarAdmin('enviado',this)">Enviados</button>
     <button class="filtro" data-f="entregue" onclick="filtrarAdmin('entregue',this)">Entregues</button>
   </div>
-  <div id="listaPedidos"></div>
+  <div class="vend" id="contaVendedor"></div>
+<div id="listaPedidos"></div>
 </div>
 
 </div></section>
 
+<script src="loja.js"></script>
 <script src="script.js"></script>
 <script>
 let filtroAdminAtual = "todos";
@@ -164,6 +212,74 @@ function falarCliente(tel, id) {
     window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
+</script>
+<script>
+/* ===== conta do vendedor: regioes, dias e frota ===== */
+function pintarContaVendedor(){
+    var el = document.getElementById("contaVendedor");
+    if (!el || typeof REGIOES === "undefined") return;
+
+    var d = new Date().getDay();
+    var dias = "";
+
+    for (var i = 1; i <= 6; i++) {
+        var rs = regioesDoDia(i);
+        var chips = rs.length
+            ? rs.map(function (r) {
+                var cls = (i === d) ? "chip on" : "chip";
+                return '<span class="' + cls + '">' + r.nome + '</span>';
+              }).join("")
+            : '<span class="chip">Sem entrega</span>';
+        dias += '<div class="vend-dia"><span class="dia-nome">' + NOMES_DIA[i] + '</span>'
+              + '<span class="regioes">' + chips + '</span></div>';
+    }
+
+    var frota = "";
+    CAMINHOES.forEach(function (c) {
+        var regs = c.regioes.map(function (r) {
+            for (var j = 0; j < REGIOES.length; j++) if (REGIOES[j].id === r) return REGIOES[j].nome;
+            return r;
+        }).join(", ");
+        frota += '<div class="vend-linha"><span>'
+               + '<i class="fa fa-truck" style="color:' + (c.cor === "verde" ? "#0f9d58" : "#2f6fb5") + '"></i> '
+               + c.corNome + ' - ' + c.modelo
+               + '</span><b>' + c.placa + '</b></div>'
+               + '<div class="vend-linha"><span>Motorista</span><b>'
+               + (c.motorista === "A INFORMAR" ? "A informar" : c.motorista) + '</b></div>'
+               + '<div class="vend-linha"><span>Telefone</span><b>'
+               + (c.telefone === "A INFORMAR" ? "A informar" : c.telefone) + '</b></div>'
+               + '<div class="vend-linha"><span>Atende</span><b>' + regs + '</b></div>';
+    });
+
+    var hoje = regioesDoDia(d);
+    var hojeTxt = hoje.length
+        ? hoje.map(function (r) { return r.nome; }).join(", ")
+        : "Nenhuma regiao hoje";
+
+    el.innerHTML =
+        '<div class="vend-card">'
+      + '  <h3><i class="fa fa-calendar-alt"></i> Agenda da semana</h3>'
+      + dias
+      + '  <div class="vend-linha" style="margin-top:10px"><span>Hoje (' + NOMES_DIA_LONGOS[d] + ')</span><b>' + hojeTxt + '</b></div>'
+      + '</div>'
+      + '<div class="vend-card">'
+      + '  <h3><i class="fa fa-truck"></i> Caminhoes e motoristas</h3>'
+      + frota
+      + '</div>'
+      + '<div class="vend-card">'
+      + '  <h3><i class="fa fa-store"></i> Dados da loja</h3>'
+      + '  <div class="vend-linha"><span>Loja</span><b>Refrigerantes Convencao</b></div>'
+      + '  <div class="vend-linha"><span>WhatsApp</span><b>(21) 9-8315-8911</b></div>'
+      + '  <div class="vend-linha"><span>E-mail</span><b>rickjax1234@gmail.com</b></div>'
+      + '  <div class="vend-linha"><span>Regioes atendidas</span><b>' + REGIOES.length + '</b></div>'
+      + '  <div class="vend-linha"><span>Caminhoes</span><b>' + CAMINHOES.length + '</b></div>'
+      + '</div>';
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", pintarContaVendedor);
+} else { pintarContaVendedor(); }
+
 </script>
 </body>
 </html>

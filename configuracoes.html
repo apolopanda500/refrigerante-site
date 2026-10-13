@@ -121,6 +121,30 @@
   </div>
 </div>
 
+
+<div class="config-card">
+  <h2><i class="fa fa-palette"></i> Tema da loja</h2>
+  <div class="config-row config-col">
+    <div class="config-label">Escolha as cores
+      <small>Cada cliente pode usar o tema que preferir</small>
+    </div>
+    <div class="temas">
+      <button class="tema-btn tema-claro" data-tema="claro" onclick="setTema(this)">
+        <span class="amostra"><i></i><i></i><i></i></span><span>Claro</span>
+      </button>
+      <button class="tema-btn tema-guara" data-tema="guara" onclick="setTema(this)">
+        <span class="amostra"><i></i><i></i><i></i></span><span>Guaraná</span>
+      </button>
+      <button class="tema-btn tema-chopp" data-tema="chopp" onclick="setTema(this)">
+        <span class="amostra"><i></i><i></i><i></i></span><span>Chopp</span>
+      </button>
+      <button class="tema-btn tema-escuro" data-tema="dark" onclick="setTema(this)">
+        <span class="amostra"><i></i><i></i><i></i></span><span>Escuro</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="config-card">
   <h2><i class="fa fa-eye"></i> Aparência</h2>
   <div class="config-row">
@@ -229,6 +253,7 @@
 </div>
 </div></section>
 
+<script src="loja.js"></script>
 <script src="script.js"></script>
 <script>
     // Mobile menu toggle
@@ -396,6 +421,30 @@ function aviso(msg){
     box.style.display = "block";
     setTimeout(function(){ box.style.display = "none"; }, 3000);
 }
+
+</script>
+<script>
+/* ===== seletor de tema ===== */
+function setTema(btn){
+    var p = carregarPrefs();
+    p.cfgTema = btn.dataset.tema;
+    salvarPrefs(p);
+    marcarTemaAtivo();
+    if (typeof aplicarTema === "function") aplicarTema();
+    // o interruptor antigo reflete o tema
+    var antigo = document.getElementById("cfgModoEscuro");
+    if (antigo) antigo.checked = (p.cfgTema === "dark");
+}
+function marcarTemaAtivo(){
+    var p = carregarPrefs();
+    var tema = p.cfgTema || (p.cfgModoEscuro ? "dark" : "claro");
+    document.querySelectorAll(".tema-btn").forEach(function(b){
+        b.classList.toggle("ativo", b.dataset.tema === tema);
+    });
+}
+document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(marcarTemaAtivo, 60);
+});
 
 </script>
 </body>

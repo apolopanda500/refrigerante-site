@@ -1000,3 +1000,238 @@ table tfoot td {
 @media(max-width:560px){
     .aviso-oferta{left:10px;right:10px;bottom:10px;padding:12px 14px;font-size:.85rem}
 }
+
+/* ============================================
+   TEMAS DA LOJA
+   1 Claro   2 Guara   3 Chopp   4 Escuro
+  (data-theme: claro | guara | chopp | dark)
+   ============================================ */
+
+/* ---------- 2. GUARANA (verde, tipo a lata) ---------- */
+[data-theme="guara"] {
+    --primary-color: #00752e;
+    --secondary-color: #0f9d58;
+    --accent-color: #ffd100;
+    --destaque: #00a651;
+    --info: #1a9e6f;
+    --sucesso: #2bb673;
+    --text-color: #12301f;
+    --text-muted: #5a6f60;
+    --light-bg: #eef7f0;
+    --bg-alt: #f4fbf6;
+    --borda: #d6ead d;
+    --borda: #d6eadd;
+    --white: #ffffff;
+    --card-shadow: 0 2px 10px rgba(0,117,46,.08);
+    --card-shadow-hover: 0 8px 22px rgba(0,117,46,.18);
+    --tema-fundo: linear-gradient(165deg, #f2fbf4 0%, #e8f6ec 55%, #f6fdf8 100%);
+}
+[data-theme="guara"] body { background: #eef7f0; }
+[data-theme="guara"] body::before {
+    background-image: linear-gradient(165deg, #f4fcf6 0%, #e4f4e9 50%, #f8fef9 100%) !important;
+}
+[data-theme="guara"] .main-header,
+[data-theme="guara"] .ft { background: #00622a !important; }
+[data-theme="guara"] .main-header .logo,
+[data-theme="guara"] .ft a { color: #ffd100 !important; }
+[data-theme="guara"] .nav-links a { color: #cdebd8 !important; }
+[data-theme="guara"] .nav-links a:hover { color: #ffd100 !important; }
+[data-theme="guara"] .ti.on { background: linear-gradient(135deg,#00752e,#0f9d58) !important; }
+[data-theme="guara"] .ti .cn { background: #ffd100 !important; color: #12301f !important; }
+[data-theme="guara"] .ti.on .cn { background: #fff !important; color: #00752e !important; }
+[data-theme="guara"] .ti i { color: #00752e; }
+[data-theme="guara"] .ti.on i,
+[data-theme="guara"] .ti:hover i { color: #ffd100; }
+[data-theme="guara"] .ti:hover { background: #00752e; color: #fff; }
+[data-theme="guara"] .qa { background: #ffd100; color: #12301f; }
+[data-theme="guara"] .qa:hover { background: #ffc400; }
+[data-theme="guara"] .bs { background: #ffd100; color: #12301f; }
+[data-theme="guara"] .btn-primario { background: #00752e !important; }
+[data-theme="guara"] .btn-enviar { background: #0f9d58 !important; }
+[data-theme="guara"] .fb2 { background: #ffd100; color: #12301f; }
+[data-theme="guara"] .cb, [data-theme="guara"] .fbb { background: #e03131 !important; }
+[data-theme="guara"] .btn-buscar { background: #00752e !important; }
+
+/* ---------- 3. CHOPP (azul profundo com ambar) ---------- */
+[data-theme="chopp"] {
+    --primary-color: #12386b;
+    --secondary-color: #1e5aa0;
+    --accent-color: #f0a500;
+    --destaque: #d98a00;
+    --info: #2f7fc4;
+    --sucesso: #23a67a;
+    --text-color: #16233a;
+    --text-muted: #5c6b85;
+    --light-bg: #eef2f8;
+    --bg-alt: #f5f8fc;
+    --borda: #d8e1ee;
+    --white: #ffffff;
+    --card-shadow: 0 2px 10px rgba(18,56,107,.09);
+    --card-shadow-hover: 0 8px 22px rgba(18,56,107,.20);
+    --tema-fundo: linear-gradient(165deg, #f5f9fd 0%, #e8f0f9 55%, #fbfdff 100%);
+}
+[data-theme="chopp"] body { background: #eef2f8; }
+[data-theme="chopp"] body::before {
+    background-image: linear-gradient(165deg, #f6faff 0%, #e7eff9 50%, #fbfdff 100%) !important;
+}
+[data-theme="chopp"] .main-header,
+[data-theme="chopp"] .ft { background: #0e2a52 !important; }
+[data-theme="chopp"] .main-header .logo,
+[data-theme="chopp"] .ft a { color: #f0a500 !important; }
+[data-theme="chopp"] .nav-links a { color: #c9d8ee !important; }
+[data-theme="chopp"] .nav-links a:hover { color: #f0a500 !important; }
+[data-theme="chopp"] .ti.on { background: linear-gradient(135deg,#12386b,#1e5aa0) !important; }
+[data-theme="chopp"] .ti .cn { background: #f0a500 !important; color: #16233a !important; }
+[data-theme="chopp"] .ti.on .cn { background: #fff !important; color: #12386b !important; }
+[data-theme="chopp"] .ti i { color: #12386b; }
+[data-theme="chopp"] .ti.on i,
+[data-theme="chopp"] .ti:hover i { color: #f0a500; }
+[data-theme="chopp"] .ti:hover { background: #12386b; color: #fff; }
+[data-theme="chopp"] .qa { background: #f0a500; color: #16233a; }
+[data-theme="chopp"] .qa:hover { background: #e09400; }
+[data-theme="chopp"] .bs { background: #f0a500; color: #16233a; }
+[data-theme="chopp"] .btn-primario { background: #12386b !important; }
+[data-theme="chopp"] .btn-enviar { background: #1e5aa0 !important; }
+[data-theme="chopp"] .fb2 { background: #f0a500; color: #16233a; }
+[data-theme="chopp"] .cb, [data-theme="chopp"] .fbb { background: #e03131 !important; }
+[data-theme="chopp"] .btn-buscar { background: #12386b !important; }
+
+/* ---------- 4. ESCURO (base ja existente) ---------- */
+[data-theme="dark"] {
+    --bg-body: #232742;
+    --bg-alt: #1c1f33;
+    --light-bg: #1c1f33;
+    --borda: #353a5c;
+    --text-color: #e6e8f2;
+    --text-muted: #a1a8c3;
+}
+
+/* ---------- componentes que seguem o tema ---------- */
+[data-theme] .wgt,
+[data-theme] .selo { background: #fff; }
+[data-theme="guara"] .wgt,
+[data-theme="chopp"] .wgt { background: #fff; border-color: var(--borda); }
+[data-theme="guara"] .wgt h3,
+[data-theme="chopp"] .wgt h3 { color: var(--primary-color); }
+[data-theme="guara"] .wgt-linha b,
+[data-theme="chopp"] .wgt-linha b { color: var(--primary-color); }
+[data-theme="guara"] .selo,
+[data-theme="chopp"] .selo { background: var(--bg-alt); color: var(--secondary-color); }
+
+/* ---------- SELETOR DE TEMA ---------- */
+.temas{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:4px}
+.tema-btn{
+    display:flex;flex-direction:column;align-items:center;gap:9px;
+    padding:13px 10px;border:2px solid transparent;border-radius:12px;
+    background:var(--bg-alt);cursor:pointer;font-family:inherit;
+    transition:border-color .18s ease,transform .18s ease;
+}
+.tema-btn:hover{transform:translateY(-2px)}
+.tema-btn .amostra{
+    width:100%;height:38px;border-radius:8px;
+    display:flex;overflow:hidden;border:1px solid rgba(0,0,0,.08);
+}
+.tema-btn .amostra i{flex:1}
+.tema-btn span{font-size:.82rem;font-weight:700;color:var(--text-muted)}
+.tema-btn.ativo{border-color:var(--primary-color)}
+.tema-btn.ativo span{color:var(--primary-color)}
+.tema-claro .amostra i:nth-child(1){background:#3d4465}
+.tema-claro .amostra i:nth-child(2){background:#ffb822}
+.tema-claro .amostra i:nth-child(3){background:#f2f2f2}
+.tema-guara .amostra i:nth-child(1){background:#00752e}
+.tema-guara .amostra i:nth-child(2){background:#ffd100}
+.tema-guara .amostra i:nth-child(3){background:#eef7f0}
+.tema-chopp .amostra i:nth-child(1){background:#12386b}
+.tema-chopp .amostra i:nth-child(2){background:#f0a500}
+.tema-chopp .amostra i:nth-child(3){background:#eef2f8}
+.tema-escuro .amostra i:nth-child(1){background:#232742}
+.tema-escuro .amostra i:nth-child(2){background:#ffb822}
+.tema-escuro .amostra i:nth-child(3){background:#1c1f33}
+[data-theme="dark"] .tema-btn .amostra{filter:brightness(.95)}
+
+/* ---------- TIPOGRAFIA MAIOR (padrao do cliente) ---------- */
+body{font-size:16.5px}
+.ti{font-size:1.02rem}
+.gn{font-size:1.14rem}
+.pch{font-size:.95rem}
+.pds{font-size:.84rem}
+.pp{font-size:1.18rem}
+.qa{font-size:.86rem}
+.wgt-linha{font-size:.94rem}
+.wgt h3{font-size:1rem}
+.selo{font-size:.85rem}
+
+/* ===== REGIOES DE ATENDIMENTO ===== */
+.reg-linha{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:9px 0;border-bottom:1px dashed #eeeef4;
+}
+.reg-linha:last-child{border-bottom:0}
+.reg-linha .reg-nome{font-size:.9rem;font-weight:700;color:var(--primary-color)}
+.reg-linha .reg-dias{font-size:.8rem;color:var(--text-muted);margin-top:2px}
+.reg-tag{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 9px;border-radius:12px;font-size:.72rem;font-weight:800;
+    background:#e7f6ec;color:#0a6b34;white-space:nowrap;
+}
+.reg-tag.fecho{background:#f1f3f5;color:#6b7280}
+.reg-tag.hoje{background:#fff3cd;color:#8a6100}
+
+/* ===== CAMINHOES / CONFIANCA ===== */
+.cam{
+    display:flex;align-items:center;gap:12px;
+    padding:11px 12px;border-radius:11px;margin-bottom:9px;
+    background:var(--bg-alt);border-left:4px solid var(--accent-color);
+}
+.cam:last-child{margin-bottom:0}
+.cam.azul{border-left-color:#2f6fb5}
+.cam .cam-cam{
+    width:42px;height:42px;flex:0 0 42px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.25rem;color:#fff;background:#0f9d58;
+}
+.cam.azul .cam-cam{background:#2f6fb5}
+.cam .cam-tx{min-width:0;line-height:1.35}
+.cam .cam-tx b{display:block;font-size:.87rem;color:var(--primary-color)}
+.cam .cam-tx small{display:block;font-size:.76rem;color:var(--text-muted)}
+.cam .cam-placa{
+    margin-left:auto;font-family:'Courier New',monospace;font-weight:800;
+    font-size:.78rem;padding:4px 8px;border-radius:6px;
+    background:var(--white);border:1px solid var(--borda);color:var(--primary-color);
+    letter-spacing:.5px;white-space:nowrap;
+}
+
+/* ===== SELOS DE CONFIANCA ===== */
+.selo-conf{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 0;border-bottom:1px dashed var(--borda);font-size:.85rem;
+    color:var(--text-color);
+}
+.selo-conf:last-child{border-bottom:0}
+.selo-conf i{color:var(--sucesso);font-size:1rem;width:20px;text-align:center;flex:0 0 20px}
+.selo-conf b{color:var(--primary-color)}
+
+/* ===== AVISO DE REGIAO no topo ===== */
+.faixa-regiao{
+    display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+    padding:10px 16px;margin:12px auto;max-width:1280px;
+    background:var(--bg-alt);border-left:4px solid var(--primary-color);
+    border-radius:10px;font-size:.9rem;color:var(--text-color);line-height:1.45;
+}
+.faixa-regiao i{color:var(--primary-color);font-size:1.05rem}
+.faixa-regiao b{color:var(--primary-color)}
+
+/* tema escuro */
+[data-theme="dark"] .reg-linha,
+[data-theme="dark"] .selo-conf{border-bottom-color:#353a5c}
+[data-theme="dark"] .reg-linha .reg-nome,
+[data-theme="dark"] .selo-conf b{color:#ffb822}
+[data-theme="dark"] .reg-linha .reg-dias{color:#a1a8c3}
+[data-theme="dark"] .cam{background:#232742}
+[data-theme="dark"] .cam .cam-tx b{color:#e6e8f2}
+[data-theme="dark"] .cam .cam-tx small{color:#a1a8c3}
+[data-theme="dark"] .cam .cam-placa{background:#1c1f33;border-color:#454b70;color:#ffb822}
+[data-theme="dark"] .selo-conf{color:#cdd2e6}
+[data-theme="dark"] .faixa-regiao{background:#232742;border-left-color:#ffb822}
+[data-theme="dark"] .faixa-regiao b{color:#ffb822}
+[data-theme="dark"] .faixa-regiao i{color:#ffb822}

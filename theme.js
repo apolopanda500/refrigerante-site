@@ -12,9 +12,11 @@
         var p = prefs();
         var h = document.documentElement;
 
-        // Tema escuro
-        if (p.cfgModoEscuro) h.setAttribute("data-theme", "dark");
-        else h.removeAttribute("data-theme");
+        // Tema: claro | guara | chopp | dark  (ou o interruptor antigo)
+        var tema = p.cfgTema;
+        if (!tema) tema = p.cfgModoEscuro ? "dark" : "claro";
+        if (tema === "claro") h.removeAttribute("data-theme");
+        else h.setAttribute("data-theme", tema);
 
         // Animate? — controla a animacao
         if (p.cfgReducedMotion) h.setAttribute("data-motion", "reduced");
