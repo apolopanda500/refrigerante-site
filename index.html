@@ -173,11 +173,12 @@ a{text-decoration:none;color:inherit}
 </style>
 </head>
 <body>
+<div class="nav-backdrop" id="navBackdrop"></div>
 <div class="ld" id="ldBox"><div class="ldb"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="ldt">Carregando<br><b>Convenção - Delivery</b></div></div>
 
 <header class="hd"><nav>
 <div class="lg"><i class="fa fa-bottle-water"></i> Convenção</div>
-<span class="mobile-menu-btn"><span></span><span></span><span></span></span>
+<button class="mobile-menu-btn" id="menuBtn" aria-label="Abrir menu"><span></span><span></span><span></span></button>
 <ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="ha"><button class="bs" onclick="partilhar()"><i class="fa fa-share-alt"></i> Compartilhar</button>
 <div class="ci" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="cb" id="cBag">0</span></div></div>
@@ -189,15 +190,28 @@ a{text-decoration:none;color:inherit}
 
 <main class="pw" id="pwMain"></main>
 
-<button class="fb2" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
+<button class="fb2" onclick="location.href='checkout.html'" aria-label="Carrinho"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
 
 <footer class="ft">
 <p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p>
 <p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Seg a sex 9h às 15h - Horário de São Paulo</p>
-<div id="operatingStatus"></div>
 </footer>
 
 <script src="theme.js"></script>
 <script src="app.js"></script>
+<script>
+(function(){
+  var btn=document.getElementById('menuBtn');
+  var nav=document.getElementById('mainNav');
+  var bd=document.getElementById('navBackdrop');
+  if(!btn||!nav)return;
+  function abrir(){btn.classList.add('active');nav.classList.add('active');if(bd)bd.classList.add('on');}
+  function fechar(){btn.classList.remove('active');nav.classList.remove('active');if(bd)bd.classList.remove('on');}
+  btn.addEventListener('click',function(){nav.classList.contains('active')?fechar():abrir();});
+  if(bd)bd.addEventListener('click',fechar);
+  nav.querySelectorAll('a').forEach(function(a){a.addEventListener('click',fechar);});
+  window.addEventListener('resize',function(){if(window.innerWidth>768)fechar();});
+})();
+</script>
 </body>
 </html>

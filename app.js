@@ -11,19 +11,18 @@ var CT=[
 var PD=[];
 function addP(c,n,d,p,i){PD.push({ct:c,nm:n,ds:d,pr:p,im:i})}
 // ===== DESTAQUES =====
-addP("de","Chinotto 269ml Pct c12","Pack 12 latinhas","R$ 25,00","img/p01.jpg");
 addP("de","Guarana Zero 269ml Pct c12","Sem acucar - Pack 12","R$ 33,40","img/p03.jpg");
 
 // ===== REFRIGERANTES 2L - pacotes c6 =====
 addP("2l","Guarana 2L Pct c6","Pack 6 garrafas","R$ 27,00","img/p06.jpg");
 addP("2l","Guarana Zero 2L Pct c6","Zero - Pack 6","R$ 27,00","img/p07.jpg");
+addP("2l","Frutaina 2L Pct c6","4 sabores - Pack 6","R$ 27,50","img/p04.jpg");
 addP("2l","Laranja 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p08.jpg");
 addP("2l","Uva 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p09.jpg");
 addP("2l","Limao 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p10.jpg");
 addP("2l","Abacaxi 2L Pct c6","Pack 6 garrafas","R$ 27,50","img/p11.jpg");
 addP("2l","Vitts Limao 2L Pct c6","Pack 6 garrafas","R$ 28,00","img/p27.jpg");
 addP("2l","Cola 2L Pct c6","Pack 6 garrafas","R$ 29,00","img/p05.jpg");
-addP("2l","MSX 2L Pct c6","Pack 6 garrafas","R$ 40,00","img/p21.jpg");
 
 // ===== REFRIGERANTES 600ml - pacotes c12 =====
 addP("60","Guarana 600ml Pct c12","Pack 12 garrafas","R$ 21,00","img/p12.jpg");
@@ -40,10 +39,11 @@ addP("35","Abacaxi 350ml Pct c6","Pack 6 latas","R$ 19,00","img/p20.jpg");
 addP("35","Vitts Limao 350ml Pct c6","Limao - Pack 6","R$ 19,00","img/p26.jpg");
 
 // ===== REFRESCOS E CHINOTTO =====
-addP("re","Frutaina 2L Pct c6","4 sabores - Pack 6","R$ 27,50","img/p04.jpg");
+addP("re","Chinotto 269ml Pct c12","Pack 12 latinhas","R$ 25,00","img/p01.jpg");
 
 // ===== MSX ENERGETICO =====
 addP("mx","MSX 269ml Pct c12","Pack 12 latinhas","R$ 25,00","img/p02.jpg");
+addP("mx","MSX 2L Pct c6","Pack 6 garrafas","R$ 40,00","img/p21.jpg");
 
 // ===== AGUA =====
 addP("ag","Agua 510ml Pct c12","Sem gas - Pack 12","R$ 14,70","img/p22.jpg");
