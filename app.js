@@ -303,7 +303,7 @@ localStorage.setItem("refrigeranteCart",JSON.stringify(ct));
 function partilhar(){try{var u=location.href.split("#")[0];
 if(navigator.share){navigator.share({title:"Convencao",text:"Confira!",url:u}).catch(function(){})}
 else if(navigator.clipboard){navigator.clipboard.writeText(u);alert("Link copiado!")}}catch(e){}}
-if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){try{rT()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"})}else{try{rT()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"}
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){try{rT()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}try{aplicarPrecosSalvar()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"})}else{try{rT()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"}
 setTimeout(function(){var l=document.getElementById("ldBox");if(l)l.style.display="none"},3000);
 
 /* ============================================
@@ -531,3 +531,14 @@ function pintarSobre(){
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintarSobre);
 else pintarSobre();
+
+
+function aplicarPrecosSalvar(){
+  try{
+    var ov = JSON.parse(localStorage.getItem("productPriceOverrides")||"{}");
+    PD.forEach(function(p){
+      var k = p.ct + "|" + p.nm;
+      if (ov[k] !== undefined) p.pr = ov[k];
+    });
+  }catch(e){}
+}
