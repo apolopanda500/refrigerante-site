@@ -510,6 +510,7 @@ function falarCliente(tel, id) {
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
 <script src="app.js?v=20261014g"></script>
+<script src="firebase-appcheck.js?v=20261014g"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
@@ -646,23 +647,24 @@ function testarPrecosURLAdmin(btn){
   if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Testando...'; }
 
   /* teste de verdade: escreve uma chave de teste, le de volta e apaga */
+  appCheckPronto();
   var marca = "teste_" + Date.now();
   var caminho = url + "/__teste_convencao.json";
   fetch(caminho, {
     method:"PUT",
-    headers:{"Content-Type":"application/json"},
+    headers: cabecalhosPrecos(),
     body: JSON.stringify({ ok:true, quando: marca })
   })
     .then(function(r){
       if(!r.ok) throw new Error("gravação recusada (HTTP " + r.status + ")");
-      return fetch(caminho, {cache:"no-store"}).then(function(r2){
+      return fetch(caminho, {cache:"no-store", headers: cabecalhosPrecos()}).then(function(r2){
         if(!r2.ok) throw new Error("leitura recusada (HTTP " + r2.status + ")");
         return r2.json();
       });
     })
     .then(function(d){
       if(!d || d.quando !== marca) throw new Error("o banco devolveu outro conteúdo");
-      return fetch(caminho, {method:"DELETE"});
+      return fetch(caminho, {method:"DELETE", headers: cabecalhosPrecos()});
     })
     .then(function(){
       precosMsgAdmin("Tudo certo: o banco aceita gravação e leitura. Agora é só salvar a URL.", "#2e7d32");
@@ -699,15 +701,18 @@ function checarNuvemPrecos(){
       return;
     }
     var url = lista[i++];
-    fetch(caminhoPrecos(url), { cache: "no-store" })
+    fetch(caminhoPrecos(url), { cache: "no-store", headers: cabecalhosPrecos() })
       .then(function (r) {
         if (!r.ok) throw new Error("http " + r.status);
         return r.json();
       })
       .then(function (dados) {
         var n = (dados && typeof dados === "object") ? Object.keys(dados).length : 0;
+        var protecao = (typeof AppCheck !== "undefined" && AppCheck.ativo && AppCheck.ativo())
+            ? '<br><span style="color:#2e7d32"><i class="fa fa-shield-alt"></i> App Check ligado: só este site consegue ler e gravar os preços.</span>'
+            : '';
         msg.style.color = "#2e7d32";
-        msg.innerHTML = '<i class="fa fa-check-circle"></i> Banco ligado! ' + n + ' preço(s) publicado(s). Os clientes veem as alterações na hora.';
+        msg.innerHTML = '<i class="fa fa-check-circle"></i> Banco ligado! ' + n + ' preço(s) publicado(s). Os clientes veem as alterações na hora.' + protecao;
         lembrarEndereco(url);
       })
       .catch(function () { tentar(); });

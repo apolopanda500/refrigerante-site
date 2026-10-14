@@ -700,16 +700,25 @@ function aplicarPrecosOverride(){
   });
 }
 
+/* cabecalhos das requisicoes (inclui o token do App Check quando existe) */
+function cabecalhosPrecos(){
+  try {
+    if (typeof AppCheck !== "undefined" && AppCheck.temChaves && AppCheck.temChaves()) return AppCheck.cabecalhos();
+  } catch(e){}
+  return { "Content-Type":"application/json" };
+}
+
 /* le os precos da nuvem, tentando os enderecos ate um responder */
 function puxarPrecosNuvem(cb){
   if (typeof fetch !== "function"){ aplicarPrecosSalvar(); if (cb) cb(false); return; }
+  appCheckPronto();
   var lista = listaEnderecos();
   if (!lista.length){ aplicarPrecosSalvar(); if (cb) cb(false); return; }
   var i = 0;
   (function tentar(){
     if (i >= lista.length){ aplicarPrecosSalvar(); if (cb) cb(false); return; }
     var url = lista[i++];
-    fetch(caminhoPrecos(url), {cache:"no-store"})
+    fetch(caminhoPrecos(url), {cache:"no-store", headers: cabecalhosPrecos()})
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(dados){
         if (!dados || typeof dados !== "object"){ tentar(); return; }
@@ -736,7 +745,7 @@ function enviarPrecosNuvem(cb){
     if (ehArquivoEstatico(url)){ tentar(); return; }
     fetch(caminhoPrecos(url), {
       method: "PUT",
-      headers: {"Content-Type":"application/json"},
+      headers: cabecalhosPrecos(),
       body: JSON.stringify(precosLocais())
     })
       .then(function(r){ if (!r.ok) throw new Error("erro HTTP " + r.status); })
