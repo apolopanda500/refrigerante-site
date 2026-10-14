@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014h">
+<link rel="manifest" href="manifest.json?v=20261014i">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Configurações - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014h">
-<script src="theme.js?v=20261014h"></script>
+<link rel="stylesheet" href="style.css?v=20261014i">
+<script src="theme.js?v=20261014i"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -133,7 +133,25 @@
 
 
 <div class="config-card">
-  <h2><i class="fa fa-palette"></i> Tema da loja</h2>
+  <h2><i class="fa fa-mobile-screen"></i> Aplicativo do celular</h2>
+  <div class="config-row config-col">
+    <div class="config-label">Baixar o aplicativo
+      <small>Instalar no Android deixa o site com ícone próprio, tela cheia e mais rápido.</small>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn-mini" href="apk/convencao-cliente.apk" download style="text-decoration:none"><i class="fa fa-download"></i> App do cliente (APK)</a>
+      <a class="btn-mini neutro" href="apk/convencao-vendedor.apk" download style="text-decoration:none"><i class="fa fa-download"></i> App do vendedor (APK)</a>
+      <button class="btn-mini" onclick="instalarApp()"><i class="fa fa-plus-square"></i> Instalar sem baixar</button>
+    </div>
+    <p style="font-size:.8rem;color:#8a8a8a;margin:10px 0 0">
+      <b>Como instalar:</b> baixe o arquivo, abra ele e toque em <b>Instalar</b>. O celular vai pedir autorização para instalar de fontes desconhecidas — libere para o navegador que fez o download.
+      No iPhone use o botão <b>Compartilhar</b> e depois <b>Adicionar à Tela de Início</b>.
+    </p>
+  </div>
+</div>
+
+<div class="config-card">
+  <h2><i class="fa fa-cog"></i> Tema da loja</h2>
   <div class="config-row config-col">
     <div class="config-label">Escolha as cores
       <small>Cada cliente pode usar o tema que preferir</small>
@@ -316,11 +334,11 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261014h"></script>
-<script src="firebase-appcheck.js?v=20261014h"></script>
-<script src="app-update.js?v=20261014h"></script>
-<script src="loja.js?v=20261014h"></script>
-<script src="script.js?v=20261014h"></script>
+<script src="conta.js?v=20261014i"></script>
+<script src="firebase-appcheck.js?v=20261014i"></script>
+<script src="app-update.js?v=20261014i"></script>
+<script src="loja.js?v=20261014i"></script>
+<script src="script.js?v=20261014i"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
