@@ -47,16 +47,43 @@ jobs:
           node -e "const c=require('./catalogo.json'); if(!c.produtos||!c.produtos.length){console.error('catalogo vazio');process.exit(1)} console.log('catalogo ok:', c.produtos.length, 'produtos, gerado em', c.geradoEm);"
 
       - name: Publicar (commit automatico)
+        id: publicar
         run: |
           git config user.name  "robo-catalogo"
           git config user.email "robo-catalogo@users.noreply.github.com"
           git add catalogo.json img/cat/
           if git diff --staged --quiet; then
             echo "Nada mudou no catalogo. Site oficial igual ao de ontem."
-            exit 0
+            echo "mudou=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Catalogo atualizado automaticamente ($(date -u '+%d/%m/%Y %H:%M UTC'))"
+            git push
+            echo "mudou=true" >> "$GITHUB_OUTPUT"
           fi
-          git commit -m "Catalogo atualizado automaticamente ($(date -u '+%d/%m/%Y %H:%M UTC'))"
-          git push
+
+      - name: Avisar no Telegram
+        if: steps.publicar.outputs.mudou == 'true'
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN || '8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU' }}
+          TG_CHAT:  ${{ secrets.TG_CHAT_ID || '1810807613' }}
+        run: |
+          node -e "
+            const r = require('./.github/scripts/ultimo-resumo.json');
+            let t = 'CATALOGO ATUALIZADO\n\n';
+            t += 'Produtos no site: ' + r.total + '\n';
+            if (r.novos && r.novos.length) t += 'Entraram: ' + r.novos.join(', ') + '\n';
+            if (r.sumiram && r.sumiram.length) t += 'Saíram (acabaram): ' + r.sumiram.join(', ') + '\n';
+            if (!r.novos.length && !r.sumiram.length) t += 'Entraram/saíram: nada\n';
+            t += '\nPreços: mantidos pelo dono (' + r.precosDoDono + '/' + r.total + '). O robô não altera preços.';
+            if (r.precosOficiaisNovos && r.precosOficiaisNovos.length) {
+              t += '\nNovos usando preço do site (ajuste no painel): ' + r.precosOficiaisNovos.map(p => p.nm).join(', ');
+            }
+            require('fs').writeFileSync('telegram.txt', t);
+          "
+          curl -s -G "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+               --data-urlencode "chat_id=${TG_CHAT}" \
+               --data-urlencode "text=$(cat telegram.txt)" \
+               --data-urlencode "disable_web_page_preview=true" > /dev/null && echo "Aviso enviado no Telegram."
 
       - name: Resumo da execucao
         if: always()

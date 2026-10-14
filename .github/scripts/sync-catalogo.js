@@ -24,6 +24,7 @@ const RAIZ = path.resolve(__dirname, "..", "..");
 const FONTE = process.env.CATALOGO_URL
     || "https://refrigerantesconvencaorio.entregaaki.app.br/Principal/Publico/Produtos";
 const SAIDA = path.join(RAIZ, "catalogo.json");
+const RESUMO = path.join(RAIZ, ".github", "scripts", "ultimo-resumo.json");
 const PASTA_IMG = path.join(RAIZ, "img", "cat");
 
 /* ---------- categorias do site (mesmas do app.js) ---------- */
@@ -318,30 +319,54 @@ function principal() {
                     fs.writeFileSync(SAIDA, JSON.stringify(saida, null, 2), "utf8");
                     console.log("catalogo.json gravado: " + saida.produtos.length + " produtos (antes " + antes + ")");
 
-                    /* resumo do que mudou (para o log do GitHub) */
-                    const antesPrecos = {};
-                    (anterior ? (anterior.produtos || []) : []).forEach(function (p) { antesPrecos[p.key || p.nm] = p.pr; });
-                    let mudou = 0;
-                    const novosPreco = [];
+                    /* ---------- resumo: o catalogo mudou? ---------- */
+                    const antesMap = {};
+                    (anterior ? (anterior.produtos || []) : []).forEach(function (p) { antesMap[p.key || p.nm] = p; });
+                    const agoraMap = {};
+                    saida.produtos.forEach(function (p) { agoraMap[p.key || p.nm] = p; });
+
+                    const novos = [], sumiram = [];
                     saida.produtos.forEach(function (p) {
-                        const antigo = antesPrecos[p.key || p.nm];
-                        if (antigo !== undefined && String(antigo) !== String(p.pr)) {
-                            mudou++;
-                            novosPreco.push(p.nm + ": " + antigo + " -> " + p.pr);
-                        }
+                        if (!antesMap[p.key || p.nm]) novos.push(p.nm);
                     });
-                    let sumiram = [];
                     if (anterior) {
-                        const novos = {};
-                        saida.produtos.forEach(function (p) { novos[p.key || p.nm] = 1; });
-                        (anterior.produtos || []).forEach(function (p) { if (!novos[p.key || p.nm]) sumiram.push(p.nm); });
+                        (anterior.produtos || []).forEach(function (p) {
+                            if (!agoraMap[p.key || p.nm]) sumiram.push(p.nm);
+                        });
                     }
+
+                    /* preco: o robo NUNCA muda. So produto novo (sem preco
+                       do dono) pega o preco do site uma unica vez. */
+                    const doDono = produtos.filter(function (p) { return p.precoBase !== null; }).length;
+                    const novosComPrecoOficial = produtos.filter(function (p) { return p.precoBase === null; });
+
+                    const catalogoMudou = novos.length > 0 || sumiram.length > 0 ||
+                        JSON.stringify(anterior ? anterior.produtos : null) !== JSON.stringify(saida.produtos);
+
+                    const resumo = {
+                        geradoEm: saida.geradoEm,
+                        total: saida.produtos.length,
+                        antes: antes,
+                        novos: novos,
+                        sumiram: sumiram,
+                        precosDoDono: doDono,
+                        precosOficiaisNovos: novosComPrecoOficial.map(function (p) {
+                            return { nm: p.nm, pr: p.precoOficial };
+                        }),
+                        catalogoMudou: catalogoMudou
+                    };
+                    fs.writeFileSync(RESUMO, JSON.stringify(resumo, null, 2), "utf8");
+
                     console.log("\n=== RESUMO DA ATUALIZACAO ===");
-                    console.log("Produtos: " + saida.produtos.length);
-                    console.log("Precos alterados: " + mudou);
-                    if (novosPreco.length) console.log(novosPreco.slice(0, 20).join("\n"));
-                    console.log("Produtos que sairam (acabaram): " + sumiram.length);
-                    if (sumiram.length) console.log(sumiram.join(", "));
+                    console.log("Produtos no catalogo: " + saida.produtos.length + " (antes " + antes + ")");
+                    console.log("Entraram: " + novos.length + (novos.length ? " -> " + novos.join(", ") : ""));
+                    console.log("Saíram (acabaram): " + sumiram.length + (sumiram.length ? " -> " + sumiram.join(", ") : ""));
+                    console.log("Preços do dono mantidos: " + doDono + " de " + saida.produtos.length + " (o robo não altera preços)");
+                    if (novosComPrecoOficial.length) {
+                        console.log("Produto NOVO usando preço do site (ajuste no painel quando quiser):");
+                        novosComPrecoOficial.forEach(function (p) { console.log("   " + p.nm + " — R$ " + p.precoOficial); });
+                    }
+                    console.log("Catalogo mudou: " + (catalogoMudou ? "SIM" : "NAO"));
                     console.log("=======================\n");
                     return saida;
                 });
