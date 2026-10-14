@@ -304,7 +304,7 @@ function notificarTelegramPedido(p) {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
     var token = prefs.cfgTelegramToken || localStorage.getItem("telegramBotToken") || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
-    var chat = prefs.cfgTelegramChatId || localStorage.getItem("telegramChatId") || "93372553";
+    var chat = prefs.cfgTelegramChatId || localStorage.getItem("telegramChatId") || "1810807613"; // chat do vendedor (@Rickcao22) - confirmado com start em @Apolopanda_bot
     var habilitado = (prefs.cfgTelegram !== false); if (!habilitado || !token || !chat) return;
     var msg = "Novo pedido!\n\nID: " + p.id
         + "\nCliente: " + p.nome + (p.cpf ? " (CPF " + p.cpf + ")" : "")
