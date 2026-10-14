@@ -332,14 +332,19 @@ function aplicarCatalogoJSON(cat) {
     PD.sort(function (a, b) { return (ordem[a.ct] === undefined ? 9 : ordem[a.ct]) - (ordem[b.ct] === undefined ? 9 : ordem[b.ct]); });
     try { aplicarPrecosSalvar(); } catch (e) {}
     try { rT(); rP(); uC(); } catch (e) {}
-    /* os precos editados pelo vendedor (nuvem) tem prioridade sobre o do site oficial */
+/* os precos editados pelo vendedor (nuvem) tem prioridade sobre o do site oficial */
     if (typeof puxarPrecosNuvem === "function") {
         try {
             puxarPrecosNuvem(function () {
                 try { rP(); uC(); } catch (e) {}
+                /* o painel do vendedor repinta com os precos atuais */
+                try { if (window.painelPrecos && typeof window.painelPrecos.repintar === "function") window.painelPrecos.repintar(); } catch (e) {}
             });
         } catch (e) {}
     }
+    /* o editor de precos do painel so pode pintar DEPOIS do catalogo,
+       senao ele usa a lista antiga e salva com a chave errada */
+try { if (window.painelPrecos && typeof window.painelPrecos.repintar === "function") window.painelPrecos.repintar(); } catch (e) {}
     return true;
 }
 

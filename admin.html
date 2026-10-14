@@ -540,7 +540,9 @@ if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
       if(!itens.length) return;
       h += '<div style="margin-bottom:14px"><div style="font-weight:800;font-size:.88rem;color:var(--primary-color);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px"><i class="fa ' + c.ic + '"></i> ' + c.nm + '</div>';
       itens.forEach(function(p){
-        var k = p.ct + "|" + p.nm;
+        /* chave estavel: codigo do produto no site oficial (k:12345).
+           Sem o codigo, cai para nome (so para produtos da lista antiga). */
+        var k = (typeof chavePreco === "function") ? chavePreco(p) : (p.ct + "|" + p.nm);
         var valor = ov[k] !== undefined ? ov[k] : p.pr;
         h += '<div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-bottom:1px solid #eee">'
            + '  <span style="flex:1;min-width:0;font-size:.92rem">' + p.nm + '</span>'
@@ -615,8 +617,18 @@ if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
       } else { if(btn) btn.disabled = false; pintar(); msg("Precos originais restaurados."); }
     }
   };
-  window.addEventListener("DOMContentLoaded", pintar);
-  if(document.readyState !== "loading") pintar();
+window.addEventListener("DOMContentLoaded", pintar);
+if(document.readyState !== "loading") pintar();
+
+/* repinta depois que o catalogo e os precos da nuvem chegarem.
+   Se o vendedor estiver digitando um preco, espera. */
+window.painelPrecos.repintar = function () {
+    try {
+        var foco = document.activeElement;
+        if (foco && foco.classList && foco.classList.contains("preco-input")) return;
+    } catch (e) {}
+    pintar();
+};
 })();
 </script>
 <script>
