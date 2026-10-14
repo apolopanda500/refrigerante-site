@@ -13,6 +13,7 @@ var REGIOES = [
         dias: [5, 6],
         diasTexto: "Sexta e Sábado",
         horario: "9h às 15h",
+        frete: 8,
         obs: "Entregamos sexta e sábado. Faça seu pedido até quinta para sexta."
     },
     {
@@ -21,6 +22,7 @@ var REGIOES = [
         dias: [2, 3, 4, 5, 6],
         diasTexto: "Terça a Sábado",
         horario: "9h às 15h",
+        frete: 12,
         obs: "Terça, quarta, quinta, sexta e sábado. Pedidos até quarta para quinta e sexta."
     },
     {
@@ -29,6 +31,7 @@ var REGIOES = [
         dias: [2, 3, 4, 5, 6],
         diasTexto: "Terça a Sábado",
         horario: "9h às 15h",
+        frete: 15,
         obs: "Mesma agenda do Japeri: terça, quarta, quinta, sexta e sábado."
     },
     {
@@ -37,6 +40,7 @@ var REGIOES = [
         dias: [4, 5, 6],
         diasTexto: "Quinta, Sexta e Sábado",
         horario: "9h às 15h",
+        frete: 20,
         obs: "Entregamos quinta, sexta e sábado. Segunda é só para montar pedidos, sem entrega."
     }
 ];

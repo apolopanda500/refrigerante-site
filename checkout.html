@@ -18,6 +18,7 @@
 .campo input, .campo select, .campo textarea { width:100%; padding:11px 12px; border:1px solid #ddd; border-radius:9px; font-size:0.95rem; font-family:inherit; }
 .campo input:focus, .campo select:focus { outline:none; border-color:var(--primary-color); }
 .linha2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.linha2 > .campo:only-child { grid-column: 1 / -1; }
 .pag-opcao { display:flex; align-items:center; gap:10px; border:2px solid #eee; border-radius:11px; padding:13px 14px; margin-bottom:10px; cursor:pointer; transition:border-color .2s, background .2s; }
 .pag-opcao:hover { border-color:#ffcdd2; }
 .pag-opcao.ativa { border-color:var(--primary-color); background:#fff3f3; }
@@ -183,10 +184,16 @@ function selPag(radio) {
 }
 
 function calcular() {
-    const regiao = arredonda(parseFloat(document.getElementById("fRegiao").value) || 0);
+    var freteBase = 0;
+    var sel = document.getElementById("fRegiao");
+    if (sel && typeof REGIOES !== "undefined") {
+        var reg = null;
+        for (var i = 0; i < REGIOES.length; i++) { if (REGIOES[i].id === sel.value) reg = REGIOES[i]; }
+        if (reg && typeof reg.frete === "number") freteBase = reg.frete;
+    }
     const subtotal = arredonda(calcSubtotal());
     // frete gratis a partir de R$ 150,00 - carrinho vazio nunca paga frete
-    const frete = (subtotal <= 0) ? 0 : ((subtotal >= 150) ? 0 : regiao);
+    const frete = (subtotal <= 0) ? 0 : ((subtotal >= 150) ? 0 : arredonda(freteBase));
     const total = arredonda(subtotal + frete);
 
     document.getElementById("rSub").innerText = formatBRL(subtotal);
@@ -207,6 +214,7 @@ function enviarPedido() {
     var d = (typeof Conta !== "undefined" && Conta.dados()) || {};
     const nome = String(d.nome || "").trim();
     const tel = String(d.tel || "").trim();
+    const cpf = String(d.cpf || "").trim();
     const end = String(d.endereco || "").trim();
     const bairro = String(d.bairro || "").trim();
     const rua = String(d.rua || "").trim();
@@ -221,9 +229,16 @@ function enviarPedido() {
         if (!continuar) return;
     }
 
-    if (!nome || !tel || (!end && !rua) || !bairro) {
-        const continuarFallback = confirm("Não encontramos cadastro, ou está incompleto. Deseja entrar agora no perfil para preencher?");
-        location.href = "perfil.html";
+    const faltando = [];
+    if (!nomeValido(nome)) faltando.push("nome completo");
+    if (!tel) faltando.push("WhatsApp");
+    if (cpf && !cpfValido(cpf)) faltando.push("CPF válido");
+    if (!end && !rua) faltando.push("endereço");
+    if (!bairro) faltando.push("bairro");
+    if (faltando.length) {
+        if (confirm("Para finalizar o pedido complete seu perfil. Está faltando: " + faltando.join(", ") + ".\n\nIr para a página do perfil agora?")) {
+            location.href = "perfil.html";
+        }
         return;
     }
 
@@ -253,11 +268,12 @@ function enviarPedido() {
     const itens = cart.map(function(i) { return { name: i.name, qty: i.qty, priceNum: i.priceNum, subtotal: i.priceNum * i.qty }; });
 
     const pedido = criarPedido({
-        nome: nome, tel: tel, end: enderecoCompleto, bairro: bairro, comp: comp,
+        nome: nome, tel: tel, cpf: cpf, end: enderecoCompleto, bairro: bairro, comp: comp,
         regiao: regiaoTexto, frete: c.frete, pagamento: pagSelecionado, troco: trocoVal,
         itens: itens, subtotal: c.subtotal, total: c.total, digital: true
     });
     localStorage.setItem("ultimoPedido", pedido.id);
+    if (typeof notificarTelegramPedido === "function") { try { notificarTelegramPedido(pedido); } catch (e) {} }
     if (typeof agendarAvanco === "function") agendarAvanco(pedido);
     if (typeof Conta !== "undefined") Conta.salvar({ nome: nome, tel: tel, endereco: enderecoCompleto, bairro: bairro, complemento: comp, rua: rua, numero: numero, observacao: obs });
     limparCarrinho();
@@ -266,6 +282,9 @@ function enviarPedido() {
 
 renderItens();
 calcular();
+
+/* garante o recalculo depois que as regioes entram no select */
+document.addEventListener("DOMContentLoaded", function(){ if (typeof calcular === "function") calcular(); });
 </script>
 <script>
 /* ===== escolha da regiao e dia de entrega ===== */
@@ -291,9 +310,10 @@ function montarRegioes(){
         }
     }
     if (!encontrou) sel.value = REGIOES[0].id;
-    sel.onchange = function () { atualizarRegiao(); if (typeof pintarJanelaEntrega === "function") pintarJanelaEntrega(); };
+    sel.onchange = function () { atualizarRegiao(); if (typeof pintarJanelaEntrega === "function") pintarJanelaEntrega(); calcular(); };
     atualizarRegiao();
     if (typeof pintarJanelaEntrega === "function") pintarJanelaEntrega();
+    calcular();
 }
 
 function atualizarRegiao(){
@@ -383,8 +403,13 @@ function pintarJanelaEntrega(){
 }
 
 </script>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  if(typeof Conta!=="undefined" && Conta.estaVazia()){
+    alert("Complete seu perfil antes de finalizar o pedido. Preencha nome, WhatsApp, CPF e endereço na página do perfil.");
+    location.href="perfil.html";
+  }
+});
+</script>
 </body>
 </html>
-
-
-<script>document.addEventListener("DOMContentLoaded",function(){ if(typeof Conta!=="undefined" && Conta.estaVazia()){ alert("Fa�a login/complete seu perfil antes de finalizar."); location.href="perfil.html"; } });</script>

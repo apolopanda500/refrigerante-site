@@ -34,7 +34,13 @@
 .pedido-itens div { padding:2px 0; }
 .pedido-acoes { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center; }
 .btn-st { padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; color:#fff; }
-.b-confirmar{background:#2196F3}.b-separar{background:#9C27B0}.b-enviar{background:#00BCD4}.b-entregar{background:#4CAF50}.b-cancelar{background:#f44336}
+.b-confirmar{background:#2196F3}.b-separar{background:#9C27B0}.b-enviar{background:#00BCD4}.b-entregar{background:#4CAF50}.b-cancelar{background:#f44336}.b-copiar{background:#607D8B}
+.btn-st{display:inline-flex;align-items:center;gap:6px}
+.btn-zap{display:inline-flex;align-items:center;gap:6px}
+.filtro{display:inline-flex;align-items:center;gap:6px}
+.filtro .filtro-count{background:rgba(0,0,0,.12);border-radius:10px;padding:1px 7px;font-size:.76rem;font-weight:800}
+.filtro.ativo .filtro-count{background:rgba(255,255,255,.28)}
+[data-theme="dark"] .filtro .filtro-count{background:rgba(255,255,255,.14)}
 .btn-zap { background:#25D366; color:#fff; padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
 .pedido-total-linha { font-size:1.15rem; font-weight:bold; color:var(--primary-color); }
 .vazio { text-align:center; padding:50px; color:#888; }
@@ -55,7 +61,12 @@
     <div class="icone"><i class="fa fa-lock"></i></div>
     <h2 style="color:var(--primary-color)">Painel do Vendedor</h2>
     <p style="color:#777;font-size:0.9rem">Acesso restrito</p>
-    <input id="fSenha" type="password" placeholder="Senha de acesso">
+    <input id="fUsuario" type="text" placeholder="Usuário" autocomplete="username" onkeydown="if(event.key==='Enter')entrar()">
+    <div style="position:relative">
+      <input id="fSenha" type="password" placeholder="Senha de acesso" autocomplete="current-password" style="padding-right:44px" onkeydown="if(event.key==='Enter')entrar()">
+      <button type="button" onclick="verSenha(this)" title="Mostrar/ocultar senha" aria-label="Mostrar ou ocultar senha" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#777;cursor:pointer;font-size:1rem;padding:8px"><i class="fa fa-eye"></i></button>
+    </div>
+    <p id="loginErro" style="display:none;color:#c62828;font-size:0.85rem;margin:6px 0 0;font-weight:600"></p>
     <button onclick="entrar()"><i class="fa fa-sign-in-alt"></i> Entrar</button>
   </div>
 </div>
@@ -75,6 +86,7 @@
     <button class="filtro" data-f="entregue" onclick="filtrarAdmin('entregue',this)">Entregues</button>
   </div>
   <div id="listaPedidos"></div>
+  <div class="card" id="editorPrecos" style="margin-top:12px"></div>
 </div>
 
 </div></section>
@@ -83,13 +95,31 @@
 <script>
 let filtroAdminAtual = "todos";
 
+function verSenha(btn) {
+    var campo = document.getElementById("fSenha");
+    if (!campo) return;
+    var mostrando = campo.type === "text";
+    campo.type = mostrando ? "password" : "text";
+    btn.innerHTML = '<i class="fa fa-eye' + (mostrando ? "" : "-slash") + '"></i>';
+}
+
 function entrar() {
+    const u = (document.getElementById("fUsuario").value || "").trim();
     const s = document.getElementById("fSenha").value;
-    if (s === ADMIN_SENHA) {
+    const erro = document.getElementById("loginErro");
+    if (erro) { erro.style.display = "none"; erro.innerText = ""; }
+    if (u === VENDEDOR_USUARIO && s === VENDEDOR_SENHA) {
         sessionStorage.setItem("adminLogado", "1");
         mostrarPainel();
     } else {
-        alert("Senha incorreta!");
+        if (erro) {
+            erro.innerText = "Usuário ou senha incorretos. Verifique e tente novamente.";
+            erro.style.display = "block";
+        } else {
+            alert("Usuário ou senha incorretos!");
+        }
+        document.getElementById("fSenha").value = "";
+        document.getElementById("fSenha").focus();
     }
 }
 function sair() {
@@ -111,18 +141,28 @@ function filtrarAdmin(f, btn) {
     renderAdmin();
 }
 function renderAdmin() {
-    const pedidos = getPedidos();
+    const selPeriodo = document.getElementById("periodoVendas");
+    const periodo = selPeriodo ? selPeriodo.value : "all";
+    const pedidos = filtrarPeriodo(getPedidos(), periodo);
     // Stats
     const total = pedidos.length;
     const aguardando = pedidos.filter(p => p.status === "aguardando").length;
     const andamento = pedidos.filter(p => ["confirmado","separacao","enviado"].includes(p.status)).length;
     const faturamento = pedidos.filter(p => p.status !== "cancelado").reduce((t, p) => t + p.total, 0);
-    const cancelados = pedidos.filter(p => p.status === "cancelado").length;
     document.getElementById("stats").innerHTML =
         '<div class="stat"><div class="num">' + total + '</div><div class="lbl">Total de pedidos</div></div>' +
         '<div class="stat"><div class="num" style="color:#FF9800">' + aguardando + '</div><div class="lbl">Aguardando</div></div>' +
         '<div class="stat azul"><div class="num">' + andamento + '</div><div class="lbl">Em andamento</div></div>' +
         '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>';
+
+    // contadores nos botoes de filtro
+    var rotulos = {todos:"Todos", aguardando:"Aguardando", confirmado:"Confirmados", enviado:"Enviados", entregue:"Entregues"};
+    document.querySelectorAll(".filtro").forEach(function(b){
+        var f = b.dataset.f;
+        if (!f || !rotulos[f]) return;
+        var n = (f === "todos") ? total : pedidos.filter(function(p){ return p.status === f; }).length;
+        b.innerHTML = rotulos[f] + ' <span class="filtro-count">' + n + '</span>';
+    });
 
     let lista = pedidos;
     if (filtroAdminAtual !== "todos") lista = pedidos.filter(p => p.status === filtroAdminAtual);
@@ -130,30 +170,22 @@ function renderAdmin() {
     const box = document.getElementById("listaPedidos");
     if (lista.length === 0) {
         box.innerHTML = '<div class="vazio"><i class="fa fa-inbox"></i><p>Nenhum pedido encontrado.</p></div>';
-        return;
+    } else {
+        // agrupa por bairro (o mais recente primeiro dentro de cada bairro)
+        const grupos = {};
+        const ordemBairros = [];
+        lista.forEach(function(p) {
+            const b = p.bairro || "Sem bairro";
+            if (!grupos[b]) { grupos[b] = []; ordemBairros.push(b); }
+            grupos[b].push(p);
+        });
+        let h = "";
+        ordemBairros.forEach(function(b) {
+            h += '<h3 style="margin:14px 0 6px;font-size:1rem;color:var(--primary-color);border-bottom:2px solid var(--accent-color);padding-bottom:4px">Bairro: ' + b + '</h3>';
+            grupos[b].forEach(function(p) { h += cardPedido(p); });
+        });
+        box.innerHTML = h;
     }
-    let h = "";
-    lista.forEach(function(p) {
-        if (bairroAtual !== p.bairro) { bairroAtual = p.bairro; h += '<h3 style="margin:14px 0 6px;font-size:1rem;color:var(--primary-color);border-bottom:2px solid var(--accent-color);padding-bottom:4px">Bairro: ' + (p.bairro || "Sem bairro") + '</h3>'; }
-        h += '<div class="pedido-card">';
-        h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta">' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
-        h += '<div class="pedido-info"><i class="fa fa-user"></i> ' + p.nome + ' &nbsp; <i class="fa fa-phone"></i> ' + p.tel + '</div>';
-        h += '<div class="pedido-info"><i class="fa fa-map-marker-alt"></i> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + ' — ' + p.bairro + '</div>';
-        h += '<div class="pedido-info"><i class="fa fa-credit-card"></i> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco p/ " + p.troco + ")" : "") + ' &nbsp; <i class="fa fa-truck"></i> Frete: ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</div>';
-        h += '<div class="pedido-itens">';
-        p.itens.forEach(function(i) { h += '<div>' + i.name + ' x' + i.qty + ' — ' + formatBRL(i.subtotal) + '</div>'; });
-        h += '</div>';
-        h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span class="pedido-total-linha">Total: ' + formatBRL(p.total) + '</span></div>';
-        h += '<div class="pedido-acoes">';
-        h += '<button class="btn-st b-confirmar" onclick="mudarStatus(\'' + p.id + '\',\'confirmado\')">Confirmar</button>';
-        h += '<button class="btn-st b-separar" onclick="mudarStatus(\'' + p.id + '\',\'separacao\')">Em separação</button>';
-        h += '<button class="btn-st b-enviar" onclick="mudarStatus(\'' + p.id + '\',\'enviado\')">Enviado</button>';
-        h += '<button class="btn-st b-entregar" onclick="mudarStatus(\'' + p.id + '\',\'entregue\')">Entregue</button>';
-        h += '<button class="btn-st b-cancelar" onclick="mudarStatus(\'' + p.id + '\',\'cancelado\')">Cancelar</button>';
-        h += '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> Falar c/ cliente</a>';
-        h += '</div></div>';
-    });
-    box.innerHTML = h;
     // resumo produtos mais vendidos
     var rp = {};
     pedidos.forEach(function(p){ (p.itens || []).forEach(function(i){ var n = i.name || i.nome || ''; if (!rp[n]) rp[n] = {q:0}; rp[n].q += (i.qty || 0); }); });
@@ -161,7 +193,79 @@ function renderAdmin() {
     Object.keys(rp).sort(function(a,b){return (rp[b].q||0)-(rp[a].q||0);}).forEach(function(n){ htmlp += '<div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>' + n + '</span><b>' + rp[n].q + '</b></div>'; });
     htmlp += '</div>';
     box.innerHTML = box.innerHTML + htmlp;
+}
 
+function cardPedido(p) {
+    let h = '<div class="pedido-card">';
+    h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta">' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
+    h += '<div class="pedido-info"><i class="fa fa-user"></i> ' + p.nome + ' &nbsp; <i class="fa fa-phone"></i> ' + p.tel + '</div>';
+    if (p.cpf) h += '<div class="pedido-info"><i class="fa fa-id-card"></i> CPF: ' + p.cpf + '</div>';
+    h += '<div class="pedido-info"><i class="fa fa-map-marker-alt"></i> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + ' — ' + p.bairro + '</div>';
+    h += '<div class="pedido-info"><i class="fa fa-credit-card"></i> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco p/ " + p.troco + ")" : "") + ' &nbsp; <i class="fa fa-truck"></i> Frete: ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</div>';
+    h += '<div class="pedido-itens">';
+    p.itens.forEach(function(i) { h += '<div>' + i.name + ' x' + i.qty + ' — ' + formatBRL(i.subtotal) + '</div>'; });
+    h += '</div>';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span class="pedido-total-linha">Total: ' + formatBRL(p.total) + '</span></div>';
+    h += '<div class="pedido-acoes">';
+    h += '<button class="btn-st b-confirmar" onclick="mudarStatus(\'' + p.id + '\',\'confirmado\')">Confirmar</button>';
+    h += '<button class="btn-st b-separar" onclick="mudarStatus(\'' + p.id + '\',\'separacao\')">Em separação</button>';
+    h += '<button class="btn-st b-enviar" onclick="mudarStatus(\'' + p.id + '\',\'enviado\')">Enviado</button>';
+    h += '<button class="btn-st b-entregar" onclick="mudarStatus(\'' + p.id + '\',\'entregue\')">Entregue</button>';
+    h += '<button class="btn-st b-cancelar" onclick="mudarStatus(\'' + p.id + '\',\'cancelado\')">Cancelar</button>';
+    h += '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> Falar c/ cliente</a>';
+    h += '<button class="btn-st b-copiar" onclick="copiarPedido(\'' + p.id + '\')"><i class="fa fa-copy"></i> Copiar</button>';
+    h += '</div></div>';
+    return h;
+}
+
+/* copia o resumo completo do pedido (para colar no WhatsApp ou planilha) */
+function copiarPedido(id) {
+    const p = getPedidos().find(x => x.id === id);
+    if (!p) return;
+    var linhas = p.itens.map(function(i) { return "- " + i.name + " x" + i.qty + " = " + formatBRL(i.subtotal); }).join("\n");
+    var txt = "PEDIDO " + p.id + "\n"
+        + "Cliente: " + p.nome + (p.cpf ? "\nCPF: " + p.cpf : "") + "\n"
+        + "WhatsApp: " + p.tel + "\n"
+        + "Endereço: " + p.end + (p.comp ? " (" + p.comp + ")" : "") + " - " + p.bairro + "\n"
+        + "Região: " + p.regiao + "\n"
+        + "Pagamento: " + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + "\n"
+        + "Frete: " + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + "\n"
+        + "Itens:\n" + linhas + "\n"
+        + "TOTAL: " + formatBRL(p.total) + "\n"
+        + "Status: " + (STATUS_LABEL[p.status] || p.status);
+    function pronto() { alert("Pedido " + p.id + " copiado!"); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(pronto).catch(function(){ copiarAntigo(txt); });
+    } else { copiarAntigo(txt); }
+}
+function copiarAntigo(txt) {
+    const ta = document.createElement("textarea");
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); alert("Pedido copiado!"); } catch (e) { alert("Não foi possível copiar."); }
+    document.body.removeChild(ta);
+}
+
+// periodo: hoje | sem | mes | ano | tudo
+function filtrarPeriodo(pedidos, periodo) {
+    if (!periodo || periodo === "all") return pedidos;
+    var agora = new Date();
+    var inicio;
+    if (periodo === "hoje") {
+        inicio = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+    } else if (periodo === "sem") {
+        var diaSemana = (agora.getDay() + 6) % 7; // segunda = 0
+        inicio = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() - diaSemana);
+    } else if (periodo === "mes") {
+        inicio = new Date(agora.getFullYear(), agora.getMonth(), 1);
+    } else if (periodo === "ano") {
+        inicio = new Date(agora.getFullYear(), 0, 1);
+    } else {
+        return pedidos;
+    }
+    var t0 = inicio.getTime();
+    return pedidos.filter(function(p) { return (p.criadoEm || 0) >= t0; });
 }
 function mudarStatus(id, status) {
     atualizarStatus(id, status);
@@ -175,8 +279,16 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
+<script src="app.js"></script>
+<script>(function(){function pintar(){var el=document.getElementById("editorPrecos");if(!el||typeof PD==="undefined"||!PD.length)return;var ov={};try{ov=JSON.parse(localStorage.getItem("productPriceOverrides")||"{}");}catch(e){}var h="<h3 style=\"padding:10px 0\">Editar preços</h3>";PD.forEach(function(p){var k=p.ct+"|"+p.nm; h+="<div style=\"display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid #ddd\"><span style=\"flex:1\">"+p.nm+"</span><input style=\"width:100px;padding:6px\" value=\""+(ov[k]||p.pr).replace("R\$ ","")+"\" data-k=\""+k+"\" onblur=\"salvarPreco(this)\"></div>";});h+="<button class=\"btn-st b-entregar\" style=\"margin-top:8px\" onclick=\"location.reload()\">Aplicar/Atualizar</button>";el.innerHTML=h;}function salvarPreco(el){var ov={};try{ov=JSON.parse(localStorage.getItem("productPriceOverrides")||"{}");}catch(e){}ov[el.getAttribute("data-k")]="R$ "+el.value.trim();try{localStorage.setItem("productPriceOverrides",JSON.stringify(ov));}catch(e){}}window.addEventListener("DOMContentLoaded",pintar);})();</script>
+<script>sessionStorage.setItem("adminLogado","1"); if(typeof mostrarPainel==="function") mostrarPainel();</script>
+<script>
+/* sincroniza com outras abas: se um pedido mudar, o painel atualiza sozinho */
+window.addEventListener("storage", function(e){
+    if (e.key === "convencao_pedidos" && sessionStorage.getItem("adminLogado") === "1" && typeof renderAdmin === "function") {
+        renderAdmin();
+    }
+});
+</script>
 </body>
 </html>
-
-<div class="card" id="editorPrecos" style="margin-top:12px"></div><script src="app.js"></script><script>(function(){function pintar(){var el=document.getElementById("editorPrecos");if(!el||typeof PD==="undefined"||!PD.length)return;var ov={};try{ov=JSON.parse(localStorage.getItem("productPriceOverrides")||"{}");}catch(e){}var h="<h3 style=\"padding:10px 0\">Editar pre�os</h3>";PD.forEach(function(p){var k=p.ct+"|"+p.nm; h+="<div style=\"display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid #ddd\"><span style=\"flex:1\">"+p.nm+"</span><input style=\"width:100px;padding:6px\" value=\""+(ov[k]||p.pr).replace("R\$ ","")+"\" data-k=\""+k+"\" onblur=\"salvarPreco(this)\"></div>";});h+="<button class=\"btn-st b-entregar\" style=\"margin-top:8px\" onclick=\"location.reload()\">Aplicar/Atualizar</button>";el.innerHTML=h;}function salvarPreco(el){var ov={};try{ov=JSON.parse(localStorage.getItem("productPriceOverrides")||"{}");}catch(e){}ov[el.getAttribute("data-k")]="R$ "+el.value.trim();try{localStorage.setItem("productPriceOverrides",JSON.stringify(ov));}catch(e){}}window.addEventListener("DOMContentLoaded",pintar);})();</script>
-<script>sessionStorage.setItem("adminLogado","1"); if(typeof mostrarPainel==="function") mostrarPainel();</script>

@@ -36,7 +36,10 @@
 .timeline-item i { color:var(--primary-color); }
 .vazio { text-align:center; padding:50px 20px; color:#6b7280; }
 .vazio i { font-size:3rem; color:#ddd; margin-bottom:12px; }
+.vazio p { margin-bottom:14px; }
 .aviso-info { background:#e3f2fd; border-left:4px solid var(--secondary-color); padding:12px 16px; border-radius:8px; font-size:0.88rem; color:#1565c0; margin-bottom:18px; }
+.link-voltar { color:#666; font-size:0.95rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+.link-voltar:hover { color: var(--primary-color); }
 
 /* ===== barra de sessao ===== */
 .sessao-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
@@ -128,14 +131,12 @@
   <button class="btn-sair" onclick="sair()"><i class="fa fa-sign-out-alt"></i> Sair</button>
 </div>
 
+<div id="avisoSincronia" class="aviso-info" style="display:none;align-items:flex-start;gap:8px"></div>
+
 <div class="filtros" id="filtros" style="display:none">
   <button class="filtro ativo" data-f="todos" onclick="filtrar('todos',this)">Todos</button>
   <button class="filtro" data-f="andamento" onclick="filtrar('andamento',this)">Em andamento</button>
   <button class="filtro" data-f="finalizados" onclick="filtrar('finalizados',this)">Finalizados</button>
-</div>
-
-<div id="usuarioLogado" style="display:none;margin-bottom:18px;background:#e8f5e9;border-left:4px solid #43a047;padding:12px 16px;border-radius:8px;font-size:0.9rem;color:#2e7d32">
-  <i class="fa fa-user-check"></i> Conectado como <b id="nomeUsuario"></b> — <a href="#" onclick="sair();return false;" style="color:#c62828;font-weight:bold">sair</a>
 </div>
 
 <div id="listaPedidos"></div>
@@ -179,25 +180,48 @@ function salvarSessao(nome, tel){
   return u;
 }
 function sair(){
-  try{ localStorage.removeItem(chaveSessao()); }catch(e){}
+  try{
+    localStorage.removeItem(chaveSessao());
+    // sai de verdade: limpa o perfil para o boletim mostrar tudo do aparelho
+    localStorage.removeItem("refrigerantePerfil");
+  }catch(e){}
   location.reload();
 }
 
 /* ===== SEMPRE mostra os pedidos, sem pedir numero nem nome ===== */
 function mostrarPedidos(){
   var todos = getPedidos();
-  var sessao = Conta && !Conta.estaVazia()
-        ? { nome: Conta.dados().nome, tel: Conta.dados().tel }
+  var sessao = (typeof Conta !== "undefined" && !Conta.estaVazia())
+        ? { nome: Conta.dados().nome, tel: Conta.dados().tel, cpf: Conta.dados().cpf }
         : null;
   var lista = [];
+  var porTelefone = false;
   if (sessao && sessao.tel) {
-    lista = todos.filter(function(p){ return String(p.tel).replace(/\D/g,"") === String(sessao.tel).replace(/\D/g,""); });
-  } else {
-    lista = [];
+    lista = todos.filter(function(p){ return mesmoTelefone(p.tel, sessao.tel); });
+    if (lista.length) porTelefone = true;
   }
+  // nao achou pelo telefone (ou nao esta logado): mostra tudo que este aparelho tem
+  if (!lista.length) lista = todos.slice();
 
   var nomeEl = document.getElementById("nomeUsuario");
-  if (nomeEl) nomeEl.innerText = sessao ? (sessao.nome || "Cliente") : "Todos os pedidos deste dispositivo";
+  if (nomeEl) {
+      if (sessao && porTelefone) nomeEl.innerText = sessao.nome || "Cliente";
+      else if (sessao) nomeEl.innerText = sessao.nome || "Cliente";
+      else nomeEl.innerText = "visitante";
+  }
+
+  var aviso = document.getElementById("avisoSincronia");
+  if (aviso) {
+      if (!sessao) {
+          aviso.style.display = "flex";
+          aviso.innerHTML = '<i class="fa fa-info-circle"></i> <span>Você não está identificado. Preencha seu <a href="perfil.html" style="color:#1565c0;font-weight:700">perfil</a> para ver apenas os seus pedidos. Abaixo, todos os pedidos salvos neste aparelho.</span>';
+      } else if (!porTelefone && lista.length) {
+          aviso.style.display = "flex";
+          aviso.innerHTML = '<i class="fa fa-sync-alt"></i> <span>Nenhum pedido antigo com o WhatsApp <b>' + sessao.tel + '</b>. Mostramos todos os pedidos salvos neste aparelho.</span>';
+      } else {
+          aviso.style.display = "none";
+      }
+  }
 
   var f = document.getElementById("filtros");
   if (f) f.style.display = lista.length ? "flex" : "none";
@@ -230,7 +254,8 @@ function render(){
   }
 
   if (!pedidosAtuais.length) {
-    box.innerHTML = '<div class="vazio"><i class="fa fa-receipt"></i><p>Você ainda não fez nenhum pedido.</p>'
+    box.innerHTML = '<div class="vazio"><i class="fa fa-receipt"></i><p>Nenhum pedido salvo neste aparelho ainda.</p>'
+      + '<p>Quando você fizer um pedido, ele aparece aqui automaticamente.</p>'
       + '<a href="index.html" class="link-voltar"><i class="fa fa-arrow-left"></i> Ver produtos</a></div>';
     return;
   }
@@ -249,6 +274,7 @@ function render(){
     h += '<div class="pedido-total"><button class="btn-detalhe" onclick="toggleDetalhe(\'' + p.id + '\')"><i class="fa fa-chevron-down"></i> Ver detalhes</button><span class="val">' + formatBRL(p.total) + '</span></div>';
     h += '<div class="detalhe-extra" id="det-' + p.id + '">';
     h += '<div><b>Cliente:</b> ' + (p.nome || "—") + (p.tel ? " &middot; " + p.tel : "") + '</div>';
+    if (p.cpf) h += '<div><b>CPF:</b> ' + p.cpf + '</div>';
     h += '<div><b>Entrega:</b> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + " — " + p.bairro + '</div>';
     h += '<div><b>Pagamento:</b> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</div>';
     h += '<div><b>Frete:</b> ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</div>';
@@ -269,10 +295,17 @@ function toggleDetalhe(id){
 
 document.addEventListener("DOMContentLoaded", function(){ mostrarPedidos(); });
 if (document.readyState !== "loading") mostrarPedidos();
+
+/* sincroniza: pedido feito em outra aba (ou no perfil) aparece aqui sozinho */
+window.addEventListener("storage", function(e){
+    if (e.key === "convencao_pedidos" || e.key === "convencao_usuario" || e.key === "refrigerantePerfil") {
+        if (typeof mostrarPedidos === "function") mostrarPedidos();
+    }
+});
+/* volta da aba do perfil: recarrega na hora */
+document.addEventListener("visibilitychange", function(){
+    if (!document.hidden && typeof mostrarPedidos === "function") mostrarPedidos();
+});
 </script>
 </body>
 </html>
-
-
-
-<style>.pedido-card{padding:10px 14px!important;margin-bottom:8px!important} .pedido-itens div{font-size:.85rem!important} .pedido-meta{font-size:.75rem!important}</style>

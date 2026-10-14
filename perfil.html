@@ -27,6 +27,8 @@
 .form-row .form-group { flex:1; min-width:180px; }
 .btn-salvar { padding:12px 30px; background:var(--primary-color); color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:1rem; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
 .btn-salvar:hover { background:#c62828; }
+.btn-perigo { padding:12px 30px; background:#ff5252; color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:1rem; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
+.btn-perigo:hover { background:#d32f2f; }
 .status-msg { display:none; padding:12px 16px; border-radius:10px; margin-bottom:16px; font-weight:600; }
 .status-msg.ok { display:block; background:#e8f5e9; color:#2e7d32; border-left:4px solid #43a047; }
 .stats-row { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px; }
@@ -183,8 +185,9 @@
 function salvarPerfil() {
     var cpfVal = (document.getElementById("pCpf") || {}).value || "";
     cpfVal = cpfVal.replace(/\D/g, "");
-    if (cpfVal && (cpfVal.length !== 11 || new Set(cpfVal).size === 1)) {
-        alert("CPF inválido.");
+    if (cpfVal && !cpfValido(cpfVal)) {
+        alert("CPF inválido. Confira os números e tente novamente.");
+        document.getElementById("pCpf").focus();
         return;
     }
     var f = function (id) { var e = document.getElementById(id); return e ? e.value.trim() : ""; };
@@ -192,14 +195,30 @@ function salvarPerfil() {
     var dados = {
         nome: f("pNome"), tel: f("pTel"), email: f("pEmail"),
         endereco: f("pEndereco"), bairro: f("pBairro"), complemento: f("pComplemento"),
-        numero: f("pNumero"), rua: f("pRua"), cep: f("pCep"), observacao: f("pObs"), cpf: f("pCpf")
+        numero: f("pNumero"), rua: f("pRua"), cep: f("pCep"), observacao: f("pObs"),
+        cpf: cpfVal
     };
 
-    if (!dados.nome) { alert("Preencha o nome completo."); document.getElementById("pNome").focus(); return; }
-    if (!dados.tel)  { alert("Preencha o WhatsApp."); document.getElementById("pTel").focus(); return; }
+    if (!nomeValido(dados.nome)) {
+        alert("Informe seu nome completo (nome e sobrenome, apenas letras).");
+        document.getElementById("pNome").focus();
+        return;
+    }
+    var telDigitos = dados.tel.replace(/\D/g, "");
+    if (telDigitos.length < 10 || telDigitos.length > 11) {
+        alert("Informe um WhatsApp válido com DDD. Exemplo: (21) 99999-9999.");
+        document.getElementById("pTel").focus();
+        return;
+    }
+    if (dados.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(dados.email)) {
+        alert("E-mail inválido. Verifique o endereço digitado.");
+        document.getElementById("pEmail").focus();
+        return;
+    }
 
     var resumo = "Nome: " + dados.nome + "\n"
                + "WhatsApp: " + dados.tel + "\n"
+               + "CPF: " + (cpfVal ? cpfVal.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") : "não informado") + "\n"
                + (dados.email ? "E-mail: " + dados.email + "\n" : "")
                + (dados.endereco ? "Endereço: " + dados.endereco + "\n" : "")
                + (dados.bairro ? "Bairro: " + dados.bairro : "");
@@ -240,6 +259,6 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 </script>
-<div style="width:100%;display:flex;justify-content:center;margin:16px 0"><button class="btn-perigo" style="font-size:1.1rem;padding:14px 28px;border-radius:12px" onclick="sairConta()">Sair / Limpar perfil</button></div><script>function sairConta(){if(!confirm("Apagar seus dados locais?"))return;try{["convencao_usuario","refrigerantePerfil","refrigeranteFoto"].forEach(function(k){localStorage.removeItem(k);});}catch(e){}location.reload();}</script>
+<div style="width:100%;display:flex;justify-content:center;margin:16px 0"><button class="btn-perigo" onclick="sairConta()">Sair / Limpar perfil</button></div><script>function sairConta(){if(!confirm("Apagar seus dados locais?"))return;try{["convencao_usuario","refrigerantePerfil","refrigeranteFoto"].forEach(function(k){localStorage.removeItem(k);});}catch(e){}location.reload();}</script>
 </body>
-</html><div style="width:100%;display:flex;justify-content:center;margin:16px 0"><button class="btn btn-primario" onclick="salvarPerfil()" style="font-size:1.1rem;padding:14px 28px;border-radius:12px;background:#3d4465;color:#fff;border:none">Fazer login / Criar perfil</button></div>
+</html>

@@ -106,6 +106,32 @@
 [data-theme="dark"] .caixa-limpar{background:#2a1a1c;border-color:#5a2a2e}
 [data-theme="dark"] .caixa-limpar .cl-tx{color:#e6a3a3}
 [data-theme="dark"] .caixa-limpar .cl-tx b{color:#ff8a8a}
+
+/* ===== aviso de frete (faltam X para frete gratis) ===== */
+.aviso-frete{
+    display:flex;align-items:center;gap:10px;
+    padding:12px 14px;border-radius:10px;margin-bottom:12px;
+    background:#e8f5e9;border-left:4px solid #43a047;
+    color:#1b5e20;font-size:.92rem;font-weight:600;line-height:1.45;
+}
+.aviso-frete i{flex:0 0 auto;font-size:1.05rem;color:#2e7d32}
+.aviso-frete b{font-weight:800}
+[data-theme="dark"] .aviso-frete{background:#14331f;color:#8fe0a8;border-left-color:#1dc9b7}
+[data-theme="dark"] .aviso-frete i{color:#8fe0a8}
+
+/* ===== regioes e dias no carrinho ===== */
+.vend-dia{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    padding:9px 0;border-bottom:1px dashed var(--borda);
+}
+.vend-dia:last-child{border-bottom:0}
+.vend-dia .dia-nome{font-size:.92rem;font-weight:700;color:var(--primary-color)}
+.vend-dia .reg-dias{font-size:.82rem;color:var(--text-muted);text-align:right}
+.vend-dia .reg-dias b{color:#2e7d32}
+[data-theme="dark"] .vend-dia{border-bottom-color:#353a5c}
+[data-theme="dark"] .vend-dia .dia-nome{color:#ffb822}
+[data-theme="dark"] .vend-dia .reg-dias{color:#a1a8c3}
+[data-theme="dark"] .vend-dia .reg-dias b{color:#8fe0a8}
 </style>
 </head>
 <body>
@@ -260,6 +286,6 @@ if (document.readyState === "loading") document.addEventListener("DOMContentLoad
 else pintarRegiaoCarrinho();
 
 </script>
+<script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};var box=document.createElement("div");box.style="max-width:720px;margin:20px auto;padding:14px;border:1px solid #ddd;border-radius:10px;background:#fff";box.innerHTML="<b>EndereÃ§o de entrega</b><br><small>"+(d.endereco||"NÃ£o informado")+" "+(d.bairro||"")+" "+(d.complemento||"")+"</small><br><a href=perfil.html style=color:#3d4465;font-weight:600>Editar endereÃ§o</a>";var main=document.querySelector("section.page .container");if(main)main.appendChild(box);});</script><script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};if(!d.nome||!d.tel){var b=document.createElement("div");b.style="max-width:720px;margin:10px auto;padding:12px;background:#fff3cd;border:2px solid #ffc107;border-radius:10px;color:#856404";b.innerHTML="<b>AtenÃ§Ã£o:</b> identifique-se (nome e WhatsApp no Perfil) antes de finalizar o pedido.";var m=document.querySelector("section.page .container");if(m)m.appendChild(b);}});</script></body>
 </body>
-</html><script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};var box=document.createElement("div");box.style="max-width:720px;margin:20px auto;padding:14px;border:1px solid #ddd;border-radius:10px;background:#fff";box.innerHTML="<b>Endereço de entrega</b><br><small>"+(d.endereco||"Não informado")+" "+(d.bairro||"")+" "+(d.complemento||"")+"</small><br><a href=perfil.html style=color:#3d4465;font-weight:600>Editar endereço</a>";var main=document.querySelector("section.page .container");if(main)main.appendChild(box);});</script>
-<script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};if(!d.nome||!d.tel){var b=document.createElement("div");b.style="max-width:720px;margin:10px auto;padding:12px;background:#fff3cd;border:2px solid #ffc107;border-radius:10px;color:#856404";b.innerHTML="<b>Atenção:</b> identifique-se (nome e WhatsApp no Perfil) antes de finalizar o pedido.";var m=document.querySelector("section.page .container");if(m)m.appendChild(b);}});</script>
+</html>

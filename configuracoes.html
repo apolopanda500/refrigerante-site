@@ -226,10 +226,6 @@
     <label class="toggle"><input type="checkbox" id="cfgConfirmarPedido" checked><span class="slider"></span></label>
   </div>
   <div class="config-row">
-    <div class="config-label">Avisos de promoção<small>Mostrar ofertas na tela</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgNotifPromo" checked><span class="slider"></span></label>
-  </div>
-  <div class="config-row">
     <div class="config-label">Salvar endereço automaticamente<small>Completar os dados no checkout</small></div>
     <label class="toggle"><input type="checkbox" id="cfgSalvarEndereco" checked><span class="slider"></span></label>
   </div>
@@ -261,6 +257,8 @@
     <div class="config-label">Acompanhamento automatico<small>O pedido avança sozinho, sem precisar falar com ninguem</small></div>
     <label class="toggle"><input type="checkbox" id="cfgAutoStatus" checked><span class="slider"></span></label>
   </div>
+</div>
+
 <div class="config-card">
   <h2><i class="fa fa-comments"></i> Fale com a gente</h2>
   <div class="config-row config-col">
@@ -290,7 +288,12 @@
   </div>
 </div>
 
-</div>
+<div class="config-card">
+  <h2><i class="fa fa-paper-plane"></i> Avisos do vendedor</h2>
+  <div class="config-row">
+    <div class="config-label">Avisar novos pedidos no Telegram<small>Receba um resumo de cada pedido no seu Telegram</small></div>
+    <label class="toggle"><input type="checkbox" id="cfgTelegram"><span class="slider"></span></label>
+  </div>
   <div class="config-row config-col">
     <label class="config-label">Bot Token</label>
     <input type="text" id="cfgTelegramToken" placeholder="123456:ABC-DEF..." style="width:100%;padding:10px">
@@ -299,7 +302,13 @@
     <label class="config-label">Chat ID</label>
     <input type="text" id="cfgTelegramChatId" placeholder="-1001234567890" style="width:100%;padding:10px">
   </div>
+  <div class="config-row">
+    <div class="config-label">Testar aviso<small>Envia uma mensagem de teste para o seu Telegram</small></div>
+    <button class="btn-mini" id="btnTestarTelegram" onclick="testarTelegram(this)" style="background:#229ED9"><i class="fa fa-paper-plane"></i> Enviar teste</button>
+  </div>
 </div>
+
+<div class="version-info">
   <i class="fa fa-leaf"></i> Refrigerantes Convenção — v2.0<br>
   Feito com carinho para você
 </div>
@@ -416,6 +425,34 @@ function limparFoto(){
     aviso("Foto removida");
 }
 
+/* ===== testar aviso do Telegram ===== */
+function testarTelegram(btn){
+    var u = document.getElementById("cfgTelegramToken");
+    var c = document.getElementById("cfgTelegramChatId");
+    var token = (u && u.value.trim()) || "";
+    var chat = (c && c.value.trim()) || "";
+    if (!token || !chat) { aviso("Preencha o Bot Token e o Chat ID antes de testar."); return; }
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Enviando...'; }
+    fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chat_id: chat,
+            text: "Teste de aviso - Painel Refrigerantes Convencao.\n\nSe voce recebeu esta mensagem, os avisos de novos pedidos vao chegar aqui automaticamente."
+        })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar teste'; }
+        if (d && d.ok) { aviso("Mensagem de teste enviada! Confira seu Telegram."); }
+        else { aviso("Falhou: " + ((d && d.description) || "resposta inesperada")); }
+    })
+    .catch(function(){
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar teste'; }
+        aviso("Falha de conexao. Verifique sua internet e tente novamente.");
+    });
+}
+
 function aviso(msg){
     var box = document.getElementById("msgSalvo");
     if (!box) { alert(msg); return; }
@@ -437,6 +474,7 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 function assoc(p){}
 
+document.addEventListener("DOMContentLoaded", function(){
     var foto = document.getElementById("inputFoto");
     if (foto) foto.addEventListener("change", function(){
         var self = this;

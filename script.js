@@ -1,5 +1,5 @@
 // ============================================
-//  Refrigerantes Conven��o - Carrinho & Pedidos
+//  Refrigerantes Convenção - Carrinho & Pedidos
 // ============================================
 
 const MENTOR_WHATSAPP = "5521983158911"; // (21) 9-8315-8911
@@ -43,7 +43,7 @@ function somaCentavos(itens, campoPreco, campoQtd) {
     return total / 100;
 }
 
-// getCart: l� localStorage e normaliza itens (trata dados legados / campos ausentes)
+// getCart: lê localStorage e normaliza itens (trata dados legados / campos ausentes)
 function getCart() {
     var s = localStorage.getItem("refrigeranteCart");
     if (!s) return [];
@@ -76,12 +76,12 @@ function calcTotalItens() {
     return cart.reduce((t, i) => t + (typeof i.qty === 'number' ? i.qty : 0), 0);
 }
 
-// ---------- Inicializa��o ----------
+// ---------- Inicialização ----------
 document.addEventListener("DOMContentLoaded", () => {
     cart = getCart();
     updateCartCount();
 
-    // Anima��o suave ao rolar (apenas no cat�logo)
+    // Animação suave ao rolar (apenas no catálogo)
     if (document.querySelector(".product-item")) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ---------- Cat�logo: quantidade e adicionar ----------
+// ---------- Catálogo: quantidade e adicionar ----------
 function mudarQtd(btn, delta) {
     const card = btn.closest(".product-item");
     if (!card) return;
@@ -120,13 +120,13 @@ function adicionarAoCarrinho(btn) {
     const qtd = parseInt(card.querySelector(".qtd-valor").textContent) || 0;
 
     if (qtd < 1) {
-        alert("Use os bot�es + e - para escolher a quantidade.");
+        alert("Use os botões + e - para escolher a quantidade.");
         return;
     }
 
     const priceNum = parsePreco(priceStr);
     if (isNaN(priceNum) || priceNum <= 0) {
-        alert("Erro ao ler o pre�o do produto. Tente novamente.");
+        alert("Erro ao ler o preço do produto. Tente novamente.");
         return;
     }
     const existente = cart.find(i => i.name === name);
@@ -167,7 +167,7 @@ function mostrarToast(msg, type) {
 // ---------- Ir para o carrinho ----------
 function finalizarPedido() {
     if (cart.length === 0) {
-        alert("Seu carrinho est� vazio! Adicione produtos com os bot�es + e -.");
+        alert("Seu carrinho está vazio! Adicione produtos com os botões + e -.");
         return;
     }
     window.location.href = "carrinho.html";
@@ -184,8 +184,8 @@ function limparCarrinho() {
 // ---------- Compartilhar ----------
 async function compartilharSite() {
     const dados = {
-        title: "Refrigerantes Conven��o - Delivery Online",
-        text: "Confira nosso cat�logo de refrigerantes, refrescos, �guas e chopp! Pe�a pelo WhatsApp.",
+        title: "Refrigerantes Convenção - Delivery Online",
+        text: "Confira nosso catálogo de refrigerantes, refrescos, águas e chopp! Peça pelo WhatsApp.",
         url: SHARE_URL
     };
     if (navigator.share) {
@@ -215,12 +215,57 @@ async function copiarLink() {
 //  SISTEMA DE PEDIDOS (status)
 // ============================================
 const PEDIDOS_KEY = "convencao_pedidos";
-const ADMIN_SENHA = "admin123";
+const ADMIN_SENHA = "Flamengo903@";
+// acesso do vendedor (painel admin.html)
+const VENDEDOR_USUARIO = "apolopanda500";
+const VENDEDOR_SENHA = "Flamengo903@";
+
+/* ---------- validacao de CPF (digitos verificadores) ---------- */
+function cpfValido(cpf) {
+    var s = String(cpf || "").replace(/\D/g, "");
+    if (s.length !== 11) return false;
+    if (/^(\d)\1{10}$/.test(s)) return false;
+    var soma = 0, i, resto;
+    for (i = 0; i < 9; i++) soma += parseInt(s.charAt(i)) * (10 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(s.charAt(9))) return false;
+    soma = 0;
+    for (i = 0; i < 10; i++) soma += parseInt(s.charAt(i)) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(s.charAt(10))) return false;
+    return true;
+}
+
+/* ---------- validacao de nome (nome completo, so letras) ---------- */
+function nomeValido(nome) {
+    var n = String(nome || "").trim().replace(/\s+/g, " ");
+    if (n.length < 5 || n.length > 80) return false;
+    if (!/^[A-Za-zÀ-ÿ'\- ]+$/.test(n)) return false;
+    return n.split(" ").length >= 2;
+}
+
+/* ---------- telefone: so digitos, sem o 55 do meio ---------- */
+function telNormalizado(tel) {
+    var d = String(tel || "").replace(/\D/g, "");
+    if (d.length === 13 && d.indexOf("55") === 0) d = d.slice(2);
+    return d;
+}
+/* ---------- comparacao de telefones: aceita 8 ou 9 digitos finais ---------- */
+function mesmoTelefone(a, b) {
+    var x = telNormalizado(a), y = telNormalizado(b);
+    if (!x || !y) return false;
+    if (x === y) return true;
+    var menor = x.length <= y.length ? x : y;
+    var maior = x.length <= y.length ? y : x;
+    return menor.length >= 8 && maior.slice(-menor.length) === menor;
+}
 
 const STATUS_LABEL = {
     aguardando: "Aguardando confirmação",
     confirmado: "Confirmado",
-    separacao: "Em separa��o",
+    separacao: "Em separação",
     enviado: "Saiu para entrega",
     entregue: "Entregue",
     cancelado: "Cancelado"
@@ -242,9 +287,11 @@ function criarPedido(dados) {
     const pedidos = getPedidos();
     const pedido = {
         id: gerarId(),
-        nome: dados.nome, tel: dados.tel, end: dados.end, bairro: dados.bairro, comp: dados.comp,
+        nome: dados.nome, tel: dados.tel, cpf: dados.cpf || "",
+        end: dados.end, bairro: dados.bairro, comp: dados.comp,
         regiao: dados.regiao, frete: dados.frete, pagamento: dados.pagamento, troco: dados.troco,
         itens: dados.itens, subtotal: dados.subtotal, total: dados.total,
+        digital: dados.digital === true,
         status: "aguardando", criadoEm: Date.now(),
         historico: [{ status: "aguardando", quando: Date.now() }]
     };
@@ -257,10 +304,11 @@ function notificarTelegramPedido(p) {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
     var token = prefs.cfgTelegramToken || localStorage.getItem("telegramBotToken") || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
-    var chat = prefs.cfgTelegramChatId || localStorage.getItem("telegramChatId") || "1810807613";
+    var chat = prefs.cfgTelegramChatId || localStorage.getItem("telegramChatId") || "93372553";
     var habilitado = (prefs.cfgTelegram !== false); if (!habilitado || !token || !chat) return;
     var msg = "Novo pedido!\n\nID: " + p.id
-        + "\nCliente: " + p.nome + " (" + p.tel + ")"
+        + "\nCliente: " + p.nome + (p.cpf ? " (CPF " + p.cpf + ")" : "")
+        + "\nWhatsApp: " + p.tel
         + "\nEndereço: " + p.end + (p.comp ? " (" + p.comp + ")" : "") + " - " + p.bairro
         + "\nRegião: " + p.regiao
         + "\nPagamento: " + p.pagamento

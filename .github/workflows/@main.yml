@@ -14,7 +14,16 @@ jobs:
     - name: Validate site
       run: |
         # Validar HTML, CSS, JS
+        for f in *.js; do node --check "$f" || exit 1; done
         echo "Validando site..."
+
+    - name: Preparar arquivos do site
+      run: |
+        rm -rf dist
+        mkdir -p dist
+        git archive HEAD | tar -x -C dist
+        echo "Arquivos preparados:"
+        ls dist | head -30
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
