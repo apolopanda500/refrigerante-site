@@ -12,7 +12,8 @@
     --info: #5d78ff;
     --sucesso: #1dc9b7;
     --text-color: #3d4465;
-    --text-muted: #a1a8c3;
+    /* cinza escuro: antes era lilás claro e as palavras sumiam no branco */
+    --text-muted: #5f677f;
     --light-bg: #f2f2f2;
     --bg-alt: #f7f7f7;
     --borda: #eeeef4;

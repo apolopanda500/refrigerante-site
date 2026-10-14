@@ -5,7 +5,7 @@
    Aqui conferimos a versao e, se houver versao nova,
    aparece uma barra para atualizar na hora.
    ============================================ */
-var VERSAO_APP = "20261014g";
+var VERSAO_APP = "20261014h";
 
 function barraAtualizar() {
     if (document.getElementById("barraAtualizar")) return;
@@ -103,6 +103,16 @@ function iniciarApp() {
 
 /* botao "Instalar app" igual ao da home */
 function instalarApp() {
+    /* se ja existe APK pronto, o celular baixa direto */
+    var apk = document.body && document.body.getAttribute ? document.body.getAttribute("data-apk") : null;
+    if (apk && /android/i.test(navigator.userAgent)) {
+        var link = document.createElement("a");
+        link.href = apk;
+        link.download = apk.split("/").pop();
+        document.body.appendChild(link);
+        link.click();
+        return;
+    }
     if (!window.__promptInstalacao) {
         alert("Para instalar o app:\n\nAndroid: menu do navegador (⋮) > Instalar app.\niPhone: botão Compartilhar > Adicionar à Tela de Início.\nPC (Chrome/Edge): ícone de instalar na barra de endereços.");
         return;

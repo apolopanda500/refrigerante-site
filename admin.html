@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261014g">
+<link rel="manifest" href="manifest-vendedor.json?v=20261014h">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014g">
-<script src="theme.js?v=20261014g"></script>
+<link rel="stylesheet" href="style.css?v=20261014h">
+<script src="theme.js?v=20261014h"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -77,7 +77,11 @@
 .tabela-pedidos .td-total{font-weight:800;color:#3d4465;font-size:1.02rem}
 .tabela-pedidos .td-acoes{white-space:nowrap}
 .tabela-pedidos .td-cliente{font-weight:700}
-.tabela-pedidos .sub{display:block;font-size:.82rem;color:#7a8199;font-weight:600}
+.tabela-pedidos .sub{display:block;font-size:.84rem;color:#5d6478;font-weight:600}
+[data-theme="dark"] .tabela-pedidos .sub{color:#aeb5cf}
+/* texto secundario com contraste bom em TODOS os temas */
+.config-label small, .pedido-meta, .aviso, .vazio { color: var(--text-muted); }
+.resumo-linha small, .ficha-grid { color: var(--text-muted); }
 [data-theme="dark"] .tabela-pedidos thead th{background:#232742;color:#ffb822}
 [data-theme="dark"] .tabela-pedidos tbody td{color:#e6e8f2}
 [data-theme="dark"] .tabela-pedidos tbody tr:nth-child(even){background:#1c1f33}
@@ -93,7 +97,16 @@
 .ficha-linha{grid-column:1/-1;border-top:1px dashed #d8dbe6;padding-top:8px;margin-top:4px}
 [data-theme="dark"] .ficha{background:#1c1f33;border-left-color:#ffb822}
 [data-theme="dark"] .ficha h4,[data-theme="dark"] .ficha-grid b{color:#ffb822}
-[data-theme="dark"] .ficha-grid{color:#a1a8c3}
+[data-theme="dark"] .ficha-grid{color:#c8cee6}
+/* tabela do painel: mais densa (usa toda a largura) e legivel em qualquer tema */
+.tab-wrap{background:#fff}
+.tabela-pedidos{width:100%;table-layout:auto}
+.tabela-pedidos thead th{padding:11px 10px}
+.tabela-pedidos tbody td{padding:10px}
+.tabela-pedidos .td-total{font-size:1.08rem}
+@media(max-width:1100px){
+    .tabela-pedidos thead th,.tabela-pedidos tbody td{padding:8px 7px;font-size:.9rem}
+}
 
 /* linha clicavel */
 .linha-pedido{cursor:pointer}
@@ -250,8 +263,8 @@
 
 </div></section>
 
-<script src="script.js?v=20261014g"></script>
-<script src="telegram.js?v=20261014g"></script>
+<script src="script.js?v=20261014h"></script>
+<script src="telegram.js?v=20261014h"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -717,9 +730,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261014g"></script>
-<script src="firebase-appcheck.js?v=20261014g"></script>
-<script src="app-update.js?v=20261014g"></script>
+<script src="app.js?v=20261014h"></script>
+<script src="firebase-appcheck.js?v=20261014h"></script>
+<script src="app-update.js?v=20261014h"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
