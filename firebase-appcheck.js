@@ -16,11 +16,14 @@
    (so que o banco fica sem a protecao extra).
    ============================================ */
 var APPCHECK_CONFIG = {
-    apiKey: "",      // cole aqui (Project Settings > Your apps > Web)
+    apiKey: "AIzaSyD4HSoi2gnchfdMb1HAwkniz-cNEfgBCpE",
+    authDomain: "planning-with-ai-9b2c9.firebaseapp.com",
     projectId: "planning-with-ai-9b2c9",
     databaseURL: "https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com",
-    appId: "",
-    siteKey: ""      // chave do site do reCAPTCHA v3 (Build > App Check)
+    storageBucket: "planning-with-ai-9b2c9.firebasestorage.app",
+    messagingSenderId: "45318659756",
+    appId: "1:45318659756:web:785e268808d398f72e0909",
+    siteKey: ""      // <- cole aqui a chave do site do reCAPTCHA v3 (App Check)
 };
 
 var AppCheck = (function () {
