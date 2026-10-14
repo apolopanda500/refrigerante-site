@@ -8,7 +8,8 @@ var Conta = (function () {
     var K_CONTA  = "convencao_usuario";   // { nome, tel }
     var K_PERFIL = "refrigerantePerfil";   // { nome, tel, email, endereco, bairro, complemento, rua, numero, observacao, cep }
     var K_FOTO   = "refrigeranteFoto";     // dataURL da foto
-    var MAX_FOTO = 1.6 * 1024 * 1024;     // 1,5 MB
+    var MAX_FOTO = 10 * 1024 * 1024;       // 10 MB no arquivo (a imagem e reduzida antes de salvar)
+    var FOTO_MAX_LADO = 1000;              // maior lado da foto salva, em pixels
 
     function ler(chave, padrao) {
         try {
@@ -93,15 +94,38 @@ var Conta = (function () {
         var arq = input && input.files && input.files[0];
         if (!arq) return;
         if (arq.size > MAX_FOTO) {
-            if (typeof avisar === "function") avisar("Foto muito grande. Use uma imagem de ate 1,5 MB.");
-            else alert("Foto muito grande. Use uma imagem de ate 1,5 MB.");
+            if (typeof avisar === "function") avisar("Foto muito grande. Use uma imagem de ate 10 MB.");
+            else alert("Foto muito grande. Use uma imagem de ate 10 MB.");
             input.value = "";
             return;
         }
         var leitor = new FileReader();
         leitor.onload = function (e) {
-            if (salvarFoto(e.target.result) && cb) cb(e.target.result);
-            else alert("Nao foi possivel salvar a foto.");
+            var original = String(e.target.result);
+            var img = new Image();
+            img.onload = function () {
+                var pronta = original;
+                try {
+                    var w = img.naturalWidth || img.width;
+                    var h = img.naturalHeight || img.height;
+                    var lado = Math.max(w, h);
+                    if (lado > FOTO_MAX_LADO) {
+                        var esc = FOTO_MAX_LADO / lado;
+                        var canvas = document.createElement("canvas");
+                        canvas.width = Math.max(1, Math.round(w * esc));
+                        canvas.height = Math.max(1, Math.round(h * esc));
+                        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                        pronta = canvas.toDataURL("image/jpeg", 0.88);
+                    }
+                } catch (err) { pronta = original; }
+                if (salvarFoto(pronta) && cb) cb(pronta);
+                else alert("Nao foi possivel salvar a foto. Tente uma imagem menor.");
+            };
+            img.onerror = function () {
+                if (salvarFoto(original) && cb) cb(original);
+                else alert("Nao foi possivel salvar a foto.");
+            };
+            img.src = original;
         };
         leitor.onerror = function () { alert("Nao foi possivel ler a imagem."); };
         leitor.readAsDataURL(arq);
@@ -119,7 +143,7 @@ var Conta = (function () {
             if (document.activeElement !== el) el.value = d.tel;
             el.placeholder = d.tel || "Seu WhatsApp";
         });
-        ['email', 'endereco', 'bairro', 'rua', 'numero', 'complemento', 'observacao', 'cep'].forEach(function (k) {
+        ['email', 'endereco', 'bairro', 'rua', 'numero', 'complemento', 'observacao', 'cep', 'cpf'].forEach(function (k) {
             document.querySelectorAll("[data-conta='" + k + "']").forEach(function (el) {
                 if (document.activeElement !== el) el.value = d[k] || "";
             });

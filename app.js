@@ -392,6 +392,15 @@ function pintarFaixaRegiao() {
     var soPedidos = (typeof somentePedidos === "function") && somentePedidos(t.dia);
     var rs = regioesDoDia(t.dia);
 
+    /* REGRA: fora do horario (08:50 as 15:00) os pedidos ficam pausados */
+    var regra = (typeof pedidosLiberados === "function") ? pedidosLiberados("") : { liberado: true };
+    if (!regra.liberado) {
+        el.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> '
+            + regra.texto
+            + ' Atendemos <b>' + BAIRROS_ATENDIDOS_TEXTO + '</b>, das <b>08:50</b> às <b>15:00</b>.</span>';
+        return;
+    }
+
     if (soPedidos) {
         el.innerHTML = '<i class="fa fa-clipboard-list"></i> <span><b>Segunda é dia de montar pedidos.</b> '
             + 'O caminhão carrega amanhã e a entrega começa na '
@@ -515,6 +524,8 @@ function ligarConfianca(){
     pintarCaminhoes();
     pintarConfianca();
     pintarFaixaRegiao();
+    // reavalia a regra de atendimento a cada minuto (abre 08:50 / fecha 15:00 em ponto)
+    setInterval(function(){ pintarFaixaRegiao(); }, 60000);
 }
 
 if (document.readyState === "loading") {

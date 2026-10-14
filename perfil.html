@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Perfil - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014b">
-<script src="theme.js?v=20261014b"></script>
+<link rel="stylesheet" href="style.css?v=20261014c">
+<script src="theme.js?v=20261014c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -132,9 +132,9 @@
 </div></section>
 
 
-<script src="conta.js?v=20261014b"></script>
-<script src="loja.js?v=20261014b"></script>
-<script src="script.js?v=20261014b"></script>
+<script src="conta.js?v=20261014c"></script>
+<script src="loja.js?v=20261014c"></script>
+<script src="script.js?v=20261014c"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -169,6 +169,7 @@
     if (perfil.rua) document.getElementById("pRua").value = perfil.rua;
     if (perfil.cep) document.getElementById("pCep").value = perfil.cep;
     if (perfil.observacao) document.getElementById("pObs").value = perfil.observacao;
+    if (perfil.cpf) document.getElementById("pCpf").value = perfil.cpf;
     if (perfil.nome) document.getElementById("avatarNome").textContent = perfil.nome;
     if (perfil.tel) document.getElementById("avatarTel").textContent = perfil.tel;
     var tp = 0, ti = 0, tg = 0;

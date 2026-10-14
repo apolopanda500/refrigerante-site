@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014b">
-<script src="theme.js?v=20261014b"></script>
+<link rel="stylesheet" href="style.css?v=20261014c">
+<script src="theme.js?v=20261014c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -89,11 +89,21 @@
   </div>
   <div id="listaPedidos"></div>
   <div class="card" id="editorPrecos" style="margin-top:12px"></div>
+  <div class="card" id="caixaPrecosNuvem" style="margin-top:12px;display:none">
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-cloud"></i> Preços em tempo real</h3>
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Opcional. Com a URL do banco, os preços que você salvar aparecem na hora na página de todos os clientes. Crie em <b>console.firebase.google.com</b> → <b>Realtime Database</b> → modo <b>teste</b> e cole a URL aqui.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input id="cfgPrecosURL" type="text" placeholder="https://seu-banco.firebaseio.com" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
+      <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarPrecosURLAdmin(this)"><i class="fa fa-save"></i> Salvar URL</button>
+      <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="testarPrecosURLAdmin(this)"><i class="fa fa-plug"></i> Testar</button>
+    </div>
+    <div id="precosURLMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
+  </div>
 </div>
 
 </div></section>
 
-<script src="script.js?v=20261014b"></script>
+<script src="script.js?v=20261014c"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -302,7 +312,7 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261014b"></script>
+<script src="app.js?v=20261014c"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
@@ -410,6 +420,53 @@ if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
   window.addEventListener("DOMContentLoaded", pintar);
   if(document.readyState !== "loading") pintar();
 })();
+</script>
+<script>
+/* ===== URL do banco de precos (tempo real) - so o vendedor ve ===== */
+function precosMsgAdmin(texto, cor){
+  var m = document.getElementById("precosURLMsg");
+  if(m){ m.style.color = cor || "#2e7d32"; m.innerHTML = texto; }
+}
+function salvarPrecosURLAdmin(btn){
+  var inp = document.getElementById("cfgPrecosURL");
+  if(!inp) return;
+  var url = inp.value.trim().replace(/\/+$/,"");
+  try{
+    var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+    p.cfgPrecosURL = url;
+    localStorage.setItem("refrigerantePrefs", JSON.stringify(p));
+  }catch(e){}
+  if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Salvando...'; }
+  setTimeout(function(){
+    if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-save"></i> Salvar URL'; }
+    precosMsgAdmin(url ? "URL salva. Os preços agora vão em tempo real para os clientes." : "URL apagada. Os preços voltam a valer só neste aparelho.");
+  }, 400);
+}
+function testarPrecosURLAdmin(btn){
+  var inp = document.getElementById("cfgPrecosURL");
+  var url = (inp ? inp.value.trim() : "").replace(/\/+$/,"");
+  if(!url){ precosMsgAdmin("Cole a URL do banco antes de testar.", "#8a6100"); return; }
+  if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Testando...'; }
+  fetch(url + "/precos.json", {cache:"no-store"})
+    .then(function(r){
+      if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-plug"></i> Testar'; }
+      precosMsgAdmin(r.ok ? "Conexão OK! O banco respondeu." : "O banco respondeu com erro HTTP " + r.status + ".", r.ok ? "#2e7d32" : "#c62828");
+    })
+    .catch(function(){
+      if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-plug"></i> Testar'; }
+      precosMsgAdmin("Não foi possível conectar. Confira a URL e o modo teste do banco.", "#c62828");
+    });
+}
+document.addEventListener("DOMContentLoaded", function(){
+  var caixa = document.getElementById("caixaPrecosNuvem");
+  if(!caixa) return;
+  caixa.style.display = "";
+  var inp = document.getElementById("cfgPrecosURL");
+  try{
+    var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+    if(inp) inp.value = p.cfgPrecosURL || "";
+  }catch(e){}
+});
 </script>
 <script>sessionStorage.setItem("adminLogado","1"); if(typeof mostrarPainel==="function") mostrarPainel();</script>
 <script>

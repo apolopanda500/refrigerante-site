@@ -373,52 +373,8 @@ function statusBadge(status) {
 
 
 /* ============================================
-   PEDIDO 100% DIGITAL - sem contato humano
-   O pedido e confirmado e avanzado sozinho
+   STATUS 100% MANUAL
+   O pedido nasce "aguardando" e so muda quando o
+   vendedor clicar em Confirmar / Em separacao /
+   Enviado / Entregue no painel. Nada avanca sozinho.
    ============================================ */
-var STATUS_AUTOMATICO = {
-    aguardando: { rotulo:"Aguardando confirmação", proximo:"confirmado", minutos:1 },
-    confirmado: { rotulo:"Confirmado",            proximo:"separacao",   minutos:1 },
-    separacao:  { rotulo:"Em separacao",          proximo:"enviado",     minutos:1 },
-    enviado:    { rotulo:"Saiu para entrega",     proximo:"entregue",    minutos:2 }
-};
-
-function horarioAberto(){
-    if (typeof HORA_ABERTURA === "undefined") return true;
-    if (typeof horarioDeHoje === "function") return horarioDeHoje().aberto;
-    var h = new Date();
-    return h.getHours() >= HORA_ABERTURA && h.getHours() < HORA_FECHAMENTO;
-}
-
-/* avanca o status de um pedido a cada X minutos, sem ninguem tocar */
-function agendarAvanco(pedido){
-    var regra = STATUS_AUTOMATICO[pedido.status];
-    if (!regra) return;
-    setTimeout(function () {
-        var pedidos = getPedidos();
-        var p = pedidos.find(function (x) { return x.id === pedido.id; });
-        if (!p || p.status !== pedido.status) return;   // ja mudou na mao
-        if (!p.digital) return;                           // nao mexe em pedido feito no admin
-        p.status = regra.proximo;
-        p.historico.push({ status: regra.proximo, quando: Date.now() });
-        savePedidos(pedidos);
-        agendarAvanco(p);
-    }, regra.minutos * 60000);
-}
-
-function iniciarAutomacao(){
-    // pedidos feitos pelo site comecam a andar sozinhos
-    getPedidos().forEach(function (p) {
-        if (p.digital && STATUS_AUTOMATICO[p.status]) agendarAvanco(p);
-    });
-    if (typeof setInterval === "function") {
-        setInterval(function () {
-            if (!horarioAberto()) return;
-            document.dispatchEvent(new CustomEvent("atualizaPedidos"));
-        }, 30000);
-    }
-}
-
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", iniciarAutomacao);
-} else { iniciarAutomacao(); }

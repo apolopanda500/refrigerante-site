@@ -51,6 +51,46 @@ var TEXTO_SOMENTE_PEDIDOS = "Segunda-feira é o dia de montar os pedidos. A entr
 
 var OBS_CARGA = "O caminhão carrega um dia antes para sair na entrega.";
 
+/* ============================================
+   REGRA DE OURO DO ATENDIMENTO
+   1) So aceitamos pedidos dos 4 bairros abaixo
+   2) So aceitamos pedidos das 08:50 as 15:00
+   ============================================ */
+var BAIRROS_ATENDIDOS = ["japeri", "engenho pedreira", "paracambi", "seropedica"];
+var BAIRROS_ATENDIDOS_TEXTO = "Japeri, Engenho Pedreira, Paracambi e Seropédica";
+var HORA_ABRE_PEDIDOS = 8 * 60 + 50;   // 08:50 (abre 10 minutos antes)
+var HORA_FECHA_PEDIDOS = 15 * 60;      // 15:00 em ponto
+
+function semAcento(t) {
+    return String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+}
+function bairroAtendido(bairro) {
+    var b = semAcento(bairro);
+    if (!b || b.length < 3) return false;
+    for (var i = 0; i < BAIRROS_ATENDIDOS.length; i++) {
+        var alvo = BAIRROS_ATENDIDOS[i];
+        if (b === alvo) return true;
+        if (b.indexOf(alvo) >= 0) return true;
+        if (alvo.indexOf(b) >= 0 && b.length >= 5) return true;
+    }
+    return false;
+}
+/* devolve {liberado, motivo} - motivo: horario | bairro | ok */
+function pedidosLiberados(bairro) {
+    var a = (typeof agoraSP === "function") ? agoraSP() : { minutos: new Date().getHours() * 60 + new Date().getMinutes() };
+    var m = a.minutos;
+    if (m < HORA_ABRE_PEDIDOS) {
+        return { liberado: false, motivo: "horario", texto: "Os pedidos abrem às 08:50. Agora ainda não estão sendo recebidos." };
+    }
+    if (m >= HORA_FECHA_PEDIDOS) {
+        return { liberado: false, motivo: "horario", texto: "Os pedidos de hoje encerraram às 15:00. Voltamos amanhã às 08:50." };
+    }
+    if (bairro !== undefined && !bairroAtendido(bairro)) {
+        return { liberado: false, motivo: "bairro", texto: "Atendemos apenas " + BAIRROS_ATENDIDOS_TEXTO + ". Não entregamos em outros bairros." };
+    }
+    return { liberado: true, motivo: "ok", texto: "" };
+}
+
 /* ---------- HORARIOS: EMPRESA e ENTREGA sao diferentes ---------- */
 /* A LOJA abre para montar pedidos. O CAMINHAO entrega em outro horario. */
 var HORARIOS = {

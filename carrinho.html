@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014b">
-<script src="theme.js?v=20261014b"></script>
+<link rel="stylesheet" href="style.css?v=20261014c">
+<script src="theme.js?v=20261014c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
@@ -146,6 +146,7 @@
 </nav></div></header>
 
 <section class="page"><div class="container">
+<div id="avisoAtendimento" class="regra-atendimento" style="display:none"></div>
 <div class="page-head">
   <h1><i class="fa fa-shopping-cart"></i> Meu Carrinho</h1>
   <a class="link-voltar" href="index.html"><i class="fa fa-arrow-left"></i> Continuar comprando</a>
@@ -164,9 +165,9 @@
 <div class="caixa-limpar btn-limpar-mobile" style="display:none"></div>
 </div></section>
 
-<script src="conta.js?v=20261014b"></script>
-<script src="loja.js?v=20261014b"></script>
-<script src="script.js?v=20261014b"></script>
+<script src="conta.js?v=20261014c"></script>
+<script src="loja.js?v=20261014c"></script>
+<script src="script.js?v=20261014c"></script>
 <script>
 cart = getCart();
 
@@ -282,6 +283,32 @@ function pintarRegiaoCarrinho(){
         + '<b><i class="fa fa-map-marker-alt"></i> Regioes de atendimento</b>'
         + 'Cada bairro tem dias proprios de entrega:</div>' + linhas;
 }
+
+/* ===== regra de atendimento: bairros + horario ===== */
+function atualizarAvisoCarrinho(){
+    if (typeof pedidosLiberados !== "function") return;
+    var box = document.getElementById("avisoAtendimento");
+    var btn = document.getElementById("btnCheckout");
+    if (!box) return;
+    var bairro = "";
+    try { bairro = (typeof Conta !== "undefined") ? (Conta.dados().bairro || "") : ""; } catch(e) {}
+    var regra = pedidosLiberados("");
+    var peloBairro = bairro ? pedidosLiberados(bairro) : { liberado: true, texto: "" };
+    if (regra.liberado && peloBairro.liberado) {
+        box.style.display = "none";
+        box.innerHTML = "";
+        if (btn) btn.style.display = "";
+        return;
+    }
+    var texto = (!regra.liberado) ? regra.texto : peloBairro.texto;
+    box.className = "regra-atendimento" + ((!regra.liberado) ? " fechado" : "");
+    box.style.display = "flex";
+    box.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> ' + texto
+        + ' Atendemos <b>' + BAIRROS_ATENDIDOS_TEXTO + '</b>, das <b>08:50</b> às <b>15:00</b>.</span>';
+    if (btn) btn.style.display = "none";
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", atualizarAvisoCarrinho);
+else atualizarAvisoCarrinho();
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintarRegiaoCarrinho);
 else pintarRegiaoCarrinho();
 
