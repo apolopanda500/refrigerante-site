@@ -11,7 +11,5 @@ jobs:
   info:
     runs-on: ubuntu-latest
     steps:
-      - name: Validar JS do site
-        run: |
-          for f in *.js; do node --check "$f" || exit 1; done
-          echo "Sintaxe OK. O GitHub Pages publica o branch main automaticamente."
+      - name: Publicacao automatica
+        run: echo "GitHub Pages publica o branch main a cada push. Sintaxe JS validada em check.yml."
