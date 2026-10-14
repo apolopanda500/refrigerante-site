@@ -3,8 +3,8 @@
    Deixa o site instalavel no celular e abre
    mesmo sem internet (usa a ultima versao salva).
    ============================================ */
-var VERSAO = "convencao-v2";
-var BASE = "convencao-cache-v2";
+var VERSAO = "convencao-v3";
+var BASE = "convencao-cache-v3";
 
 /* o essencial para o app abrir rapido e funcionar offline */
 var ESSENCIAL = [
@@ -16,12 +16,12 @@ var ESSENCIAL = [
     "meus-pedidos.html",
     "pedido-sucesso.html",
     "configuracoes.html",
-    "style.css?v=20261014f",
-    "theme.js?v=20261014f",
-    "conta.js?v=20261014f",
-    "loja.js?v=20261014f",
-    "script.js?v=20261014f",
-    "app.js?v=20261014f",
+    "style.css?v=20261014g",
+    "theme.js?v=20261014g",
+    "conta.js?v=20261014g",
+    "loja.js?v=20261014g",
+    "script.js?v=20261014g",
+    "app.js?v=20261014g",
     "catalogo.json",
     "manifest.json",
     "img/icon-192.png",

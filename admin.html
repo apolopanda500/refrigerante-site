@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014f">
-<script src="theme.js?v=20261014f"></script>
+<link rel="stylesheet" href="style.css?v=20261014g">
+<script src="theme.js?v=20261014g"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -189,8 +189,8 @@
 
 </div></section>
 
-<script src="script.js?v=20261014f"></script>
-<script src="telegram.js?v=20261014f"></script>
+<script src="script.js?v=20261014g"></script>
+<script src="telegram.js?v=20261014g"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -495,7 +495,7 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261014f"></script>
+<script src="app.js?v=20261014g"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
@@ -630,15 +630,45 @@ function testarPrecosURLAdmin(btn){
   var url = (inp ? inp.value.trim() : "").replace(/\/+$/,"");
   if(!url){ precosMsgAdmin("Cole a URL do banco antes de testar.", "#8a6100"); return; }
   if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Testando...'; }
-  fetch(url + "/precos.json", {cache:"no-store"})
+
+  /* teste de verdade: escreve uma chave de teste, le de volta e apaga */
+  var marca = "teste_" + Date.now();
+  var caminho = url + "/__teste_convencao.json";
+  fetch(caminho, {
+    method:"PUT",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ ok:true, quando: marca })
+  })
     .then(function(r){
-      if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-plug"></i> Testar'; }
-      precosMsgAdmin(r.ok ? "Conexão OK! O banco respondeu." : "O banco respondeu com erro HTTP " + r.status + ".", r.ok ? "#2e7d32" : "#c62828");
+      if(!r.ok) throw new Error("gravação recusada (HTTP " + r.status + ")");
+      return fetch(caminho, {cache:"no-store"}).then(function(r2){
+        if(!r2.ok) throw new Error("leitura recusada (HTTP " + r2.status + ")");
+        return r2.json();
+      });
     })
-    .catch(function(){
+    .then(function(d){
+      if(!d || d.quando !== marca) throw new Error("o banco devolveu outro conteúdo");
+      return fetch(caminho, {method:"DELETE"});
+    })
+    .then(function(){
+      precosMsgAdmin("Tudo certo: o banco aceita gravação e leitura. Agora é só salvar a URL.", "#2e7d32");
+    })
+    .catch(function(e){
+      var dica = "";
+      if(/Failed to fetch|NetworkError/.test(e.message)) dica = " O navegador bloqueou a conexão - confira se a URL começa com https:// e se o banco está em modo teste.";
+      if(/401|403|Permission|HTTP 4/.test(e.message)) dica = " As regras do banco estão bloqueando a escrita. No Firebase, use uma URL com ?ns= ou abra o banco em modo teste.";
+      precosMsgAdmin("Falha no teste: " + e.message + "." + dica, "#c62828");
+    })
+    .then(function(){
       if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-plug"></i> Testar'; }
-      precosMsgAdmin("Não foi possível conectar. Confira a URL e o modo teste do banco.", "#c62828");
     });
+}
+
+/* mostra/oculta o passo a passo do Firebase */
+function verPassoFirebase(){
+  var el = document.getElementById("passoFirebase");
+  if(!el) return;
+  el.style.display = (el.style.display === "none") ? "block" : "none";
 }
 document.addEventListener("DOMContentLoaded", function(){
   var caixa = document.getElementById("caixaPrecosNuvem");

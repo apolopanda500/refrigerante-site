@@ -1,17 +1,16 @@
 // Convencao - dados
 var CT=[
-{id:"de",nm:"Destaques",ic:"fa-star"},
-{id:"2l",nm:"Refrigerantes 2L",ic:"fa-bottle-water"},
-{id:"60",nm:"Refrigerantes 600ml",ic:"fa-glass-water"},
-{id:"35",nm:"Refrigerantes 350ml",ic:"fa-mug-hot"},
-{id:"re",nm:"Refrescos e Chinotto",ic:"fa-lemon"},
-{id:"mx",nm:"MSX Energetico",ic:"fa-bolt"},
-{id:"ag",nm:"Agua",ic:"fa-tint"},
-{id:"ch",nm:"Chopp Ravache",ic:"fa-beer-mug-empty"}];
+ {id:"2l",nm:"Refrigerantes 2L",ic:"fa-bottle-water"},
+ {id:"60",nm:"Refrigerantes 600ml",ic:"fa-glass-water"},
+ {id:"35",nm:"Refrigerantes Latas",ic:"fa-mug-hot"},
+ {id:"re",nm:"Refrescos e Chinotto",ic:"fa-lemon"},
+ {id:"mx",nm:"MSX Energetico",ic:"fa-bolt"},
+ {id:"ag",nm:"Agua",ic:"fa-tint"},
+ {id:"ch",nm:"Chopp Ravache",ic:"fa-beer-mug-empty"}];
 var PD=[];
-function addP(c,n,d,p,i){PD.push({ct:c,nm:n,ds:d,pr:p,im:i})}
-// ===== DESTAQUES =====
-addP("de","Guarana Zero 269ml Pct c12","Sem acucar - Pack 12","R$ 33,40","img/p03.jpg");
+function addP(c,n,d,p,i){PD.push({ct:c,nm:n,ds:d,pr:p,im:i,key:""})}
+// ===== REFRIGERANTES Latas =====
+addP("35","Guarana Zero 269ml Pct c12","Zero - Pack 12","R$ 33,40","img/p03.jpg");
 
 // ===== REFRIGERANTES 2L - pacotes c6 =====
 addP("2l","Guarana 2L Pct c6","Pack 6 garrafas","R$ 27,00","img/p06.jpg");
@@ -320,7 +319,7 @@ function aplicarCatalogoJSON(cat) {
     var novos = [];
     cat.produtos.forEach(function (p) {
         if (!p || !p.nm || !p.pr) return;
-        novos.push({ ct: p.ct || "de", nm: p.nm, ds: p.ds || "", pr: String(p.pr), im: p.im || "", key: p.key || "" });
+        novos.push({ ct: p.ct || "2l", nm: p.nm, ds: p.ds || "", pr: String(p.pr), im: p.im || "", key: p.key || "" });
     });
     if (novos.length < 3) return false;
 
@@ -328,11 +327,19 @@ function aplicarCatalogoJSON(cat) {
     if (cat.grupos && cat.grupos.length) {
         CT = cat.grupos.map(function (g) { return { id: g.id, nm: g.nm, ic: g.ic }; });
     }
-    /* ordem: destaques primeiro */
-    var ordem = { de: 0, "2l": 1, "60": 2, "35": 3, re: 4, mx: 5, ag: 6, ch: 7 };
+    /* ordem das abas na tela */
+    var ordem = { "2l": 1, "60": 2, "35": 3, re: 4, mx: 5, ag: 6, ch: 7 };
     PD.sort(function (a, b) { return (ordem[a.ct] === undefined ? 9 : ordem[a.ct]) - (ordem[b.ct] === undefined ? 9 : ordem[b.ct]); });
     try { aplicarPrecosSalvar(); } catch (e) {}
     try { rT(); rP(); uC(); } catch (e) {}
+    /* os precos editados pelo vendedor (nuvem) tem prioridade sobre o do site oficial */
+    if (typeof puxarPrecosNuvem === "function") {
+        try {
+            puxarPrecosNuvem(function () {
+                try { rP(); uC(); } catch (e) {}
+            });
+        } catch (e) {}
+    }
     return true;
 }
 
@@ -603,12 +610,32 @@ if (document.readyState === "loading") document.addEventListener("DOMContentLoad
 else pintarSobre();
 
 
+/* ============================================
+   CHAVE DO PRECO
+   Usa o codigo do produto no site oficial (p.key),
+   que nunca muda. So cai para o nome quando o
+   produto nao tem codigo. Assim o preco editado
+   pelo vendedor continua valendo mesmo quando o
+   robo renomeia/reorganiza o catalogo.
+   ============================================ */
+function chavePreco(p) {
+    if (!p) return "";
+    if (p.key) return "k:" + p.key;
+    return "n:" + (p.ct || "") + "|" + (p.nm || "");
+}
+function chavePrecoAntiga(p) {
+    return p ? (p.ct || "") + "|" + (p.nm || "") : "";
+}
+
 function aplicarPrecosSalvar(){
   try{
     var ov = JSON.parse(localStorage.getItem("productPriceOverrides")||"{}");
     PD.forEach(function(p){
-      var k = p.ct + "|" + p.nm;
-      if (ov[k] !== undefined) p.pr = ov[k];
+      var k = chavePreco(p);
+      if (ov[k] !== undefined) { p.pr = ov[k]; return; }
+      /* chave antiga (versoes anteriores do painel) */
+      var antiga = chavePrecoAntiga(p);
+      if (antiga && ov[antiga] !== undefined) p.pr = ov[antiga];
     });
   }catch(e){}
 }
@@ -636,8 +663,10 @@ function salvarPrecosLocais(ov){
 function aplicarPrecosOverride(){
   var ov = precosLocais();
   PD.forEach(function(p){
-    var k = p.ct + "|" + p.nm;
-    if (ov[k] !== undefined) p.pr = ov[k];
+    var k = chavePreco(p);
+    if (ov[k] !== undefined) { p.pr = ov[k]; return; }
+    var antiga = chavePrecoAntiga(p);
+    if (antiga && ov[antiga] !== undefined) p.pr = ov[antiga];
   });
 }
 /* puxa os precos da nuvem e aplica (se houver URL configurada) */

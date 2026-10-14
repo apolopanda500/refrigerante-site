@@ -28,15 +28,18 @@ const PASTA_IMG = path.join(RAIZ, "img", "cat");
 
 /* ---------- categorias do site (mesmas do app.js) ---------- */
 const GRUPOS = [
-    { id: "de", nm: "Destaques", ic: "fa-star",          chaves: ["destaque"] },
-    { id: "2l", nm: "Refrigerantes 2L", ic: "fa-bottle-water", chaves: ["2l", "2 litros", "2l"] },
+    { id: "2l", nm: "Refrigerantes 2L", ic: "fa-bottle-water", chaves: ["2l", "2 litros"] },
     { id: "60", nm: "Refrigerantes 600ml", ic: "fa-glass-water", chaves: ["600ml", "600 ml"] },
-    { id: "35", nm: "Refrigerantes 350ml", ic: "fa-mug-hot",     chaves: ["350ml", "350 ml"] },
-    { id: "re", nm: "Refrescos e Chinotto", ic: "fa-lemon",     chaves: ["chinotto", "refresco"] },
-    { id: "mx", nm: "MSX Energético", ic: "fa-bolt",           chaves: ["msx", "energetico", "energético"] },
-    { id: "ag", nm: "Água", ic: "fa-tint",                     chaves: ["agua", "água"] },
-    { id: "ch", nm: "Chopp Ravache", ic: "fa-beer-mug-empty",  chaves: ["chopp", "barril"] }
+    { id: "35", nm: "Refrigerantes Latas", ic: "fa-mug-hot", chaves: ["350ml", "350 ml", "269ml", "269 ml", "lata"] },
+    { id: "re", nm: "Refrescos e Chinotto", ic: "fa-lemon", chaves: ["chinotto", "refresco"] },
+    { id: "mx", nm: "MSX Energético", ic: "fa-bolt", chaves: ["msx", "energetico", "energético"] },
+    { id: "ag", nm: "Água", ic: "fa-tint", chaves: ["agua", "água"] },
+    { id: "ch", nm: "Chopp Ravache", ic: "fa-beer-mug-empty", chaves: ["chopp", "barril"] }
 ];
+
+/* ordem de checagem: mais especifico primeiro (chopp, msx e agua
+   antes de 2l/lata, senao "MSX 2L" cairia em Refrigerantes 2L) */
+const ORDEM_CATEGORIA = ["ch", "mx", "re", "ag", "2l", "60", "35"];
 
 /* ---------- utilidades ---------- */
 function texto(x) {
@@ -92,7 +95,65 @@ function baixar(url) {
     });
 }
 
-/* ---------- grupos: o nome fica depois do <i> do cabecalho ---------- */
+/* ---------- PRECOS ANTIGOS DO SITE (fonte da verdade do dono) ----------
+   O robo NAO troca os precos: ele mantem o valor que o dono
+   cadastrou. Produto novo (que nao existe na base) usa o preco
+   do site oficial, para nunca aparecer sem preco. */
+const ARQ_PRECOS = path.join(RAIZ, "precos-base.json");
+let PRECOS_BASE = [];
+try { PRECOS_BASE = JSON.parse(fs.readFileSync(ARQ_PRECOS, "utf8")); } catch (e) { PRECOS_BASE = []; }
+
+/* palavras que nao distinguem um produto do outro.
+   "gas" NAO entra aqui: agua com gas tem preco diferente da sem gas. */
+const PARADAS = ["pacote", "pct", "pack", "un", "unidades", "unidade", "und", "c", "pet", "lata", "latas",
+    "latinha", "latinhas", "garrafa", "garrafas", "convencao", "conv", "com", "sem", "g"];
+
+function semAcento(t) {
+    return String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+function tokenVolume(t) {
+    /* 1500ml -> 1.5l | 269 ml -> 0.269l | 2 litros -> 2l | 1,5L -> 1.5l */
+    return t
+        .replace(/(\d+)[.,](\d+)\s*ml/g, function (_, a, b) { return (parseInt(a, 10) + parseInt(b, 10) / 10) + "l"; })
+        .replace(/(\d+)\s*ml/g, function (_, a) { return (parseInt(a, 10) / 1000) + "l"; })
+        .replace(/(\d+)[.,](\d+)\s*l\b/g, "$1.$2l")
+        .replace(/(\d+)\s*litros?/g, "$1l");
+}
+function palavrasChave(nome) {
+    let base = tokenVolume(semAcento(nome).toLowerCase());
+    base = base.replace(/c\s*\/\s*gas/g, "gas").replace(/\bgas\b/g, "gas");   // "c/gas" vira "gas"
+    return base.split(/[^a-z0-9.]+/)
+        .filter(function (p) {
+            if (p.length < 2) return false;
+            if (PARADAS.indexOf(p) >= 0) return false;
+            if (/^c\d+$/.test(p)) return false;          // c6, c12 = quantidade do pacote
+            return true;
+        });
+}
+/* procura o preco antigo que mais combina com o produto do site oficial */
+function precoBaseDe(nome) {
+    if (!PRECOS_BASE.length) return null;
+    const alvo = palavrasChave(nome);
+    let melhor = null, pontos = 0, empate = false;
+    PRECOS_BASE.forEach(function (b) {
+        const cand = palavrasChave(b.nm);
+        let p = 0;
+        cand.forEach(function (t) { if (alvo.indexOf(t) >= 0) p++; });
+        if (p > pontos) { pontos = p; melhor = b; empate = false; }
+        else if (p === pontos && p > 0 && melhor) {
+            /* empate: vence o nome mais parecido (menos palavras sobrando) */
+            empate = true;
+            if (Math.abs(cand.length - alvo.length) < Math.abs(palavrasChave(melhor.nm).length - alvo.length)) {
+                melhor = b;
+            }
+        }
+    });
+    /* precisa combinar pelo menos sabor + medida */
+    if (!melhor || pontos < 2) return null;
+    return melhor.pr;
+}
+
+/* ---------- categorias do site ---------- */
 function extrairGrupos(html) {
     const mapa = {};
     const re = /data-grupo-id="(Grupo\d+)"[^>]*>\s*<i[^>]*>\s*<\/i>\s*([^<]{2,40}?)\s*</g;
@@ -144,27 +205,14 @@ function nomeLimpo(nome) {
     return nm.length >= 3 ? nm : String(nome || "").trim();
 }
 
-/* ---------- categoria local a partir do grupo oficial ---------- */
-const GRUPO_OFICIAL = [
-    { grupo: "DESTAQUE", id: "de" },
-    { grupo: "2L", id: "2l" },
-    { grupo: "600ML", id: "60" },
-    { grupo: "600 ML", id: "60" },
-    { grupo: "350ML", id: "35" },
-    { grupo: "350 ML", id: "35" },
-    { grupo: "CHINOTTO", id: "re" },
-    { grupo: "REFRESCO", id: "re" },
-    { grupo: "MSX", id: "mx" },
-    { grupo: "ENERG", id: "mx" },
-    { grupo: "AGUA", id: "ag" },
-    { grupo: "ÁGUA", id: "ag" },
-    { grupo: "CHOPP", id: "ch" },
-    { grupo: "BARRIL", id: "ch" }
-];
-function categoriaPeloGrupo(nomeGrupo) {
-    const g = String(nomeGrupo || "").toUpperCase();
-    const achado = GRUPO_OFICIAL.find(function (r) { return g.indexOf(r.grupo) >= 0; });
-    return achado ? achado.id : null;
+/* ---------- categoria pelo NOME do produto (ignora o grupo DESTAQUES do site) ---------- */
+function categoriaPeloNome(nome, descricao, grupoNome) {
+    const bruto = (nome + " " + descricao + " " + (grupoNome || "")).toLowerCase();
+    for (let i = 0; i < ORDEM_CATEGORIA.length; i++) {
+        const g = GRUPOS.find(function (x) { return x.id === ORDEM_CATEGORIA[i]; });
+        if (g && g.chaves.some(function (c) { return bruto.indexOf(c) >= 0; })) return g.id;
+    }
+    return "2l";
 }
 
 /* ---------- 2) produtos ---------- */
@@ -181,21 +229,27 @@ function extrairProdutos(html, gruposOficiais) {
         const key = (b.match(/iniciaModalVendaItem\("NO", (\d+)\)/) || [])[1] || "";
         const valor = parseFloat(precoBR((precoTxt.match(/R\$\s*([\d.,]+)/) || [])[1]));
 
-        /* 1) pelo grupo do site oficial (confiavel) 2) pelo nome do produto */
+        /* categoria pelo proprio produto (o grupo DESTAQUES do site oficial
+           nao define a classe real: Chinotto e MSX voltam para suas classes) */
         const grupoNome = gruposOficiais[grupo] || "";
-        const bruto = (nome + " " + descricao + " " + grupoNome).toLowerCase();
-        const catId = categoriaPeloGrupo(grupoNome)
-            || (GRUPOS.find(function (g) { return g.chaves.some(function (c) { return bruto.indexOf(c) >= 0; }); }) || GRUPOS[0]).id;
+        const catId = categoriaPeloNome(nome, descricao, grupoNome);
 
         /* nome limpo + descricao curta */
         const nm = nomeLimpo(nome);
         const ds = descricaoCurta(nome, descricao);
 
+        /* preco: mantem o do dono (precos-base.json); produto novo usa o do site */
+        const base = precoBaseDe(nome);
+        const precoFinal = base !== null ? parseFloat(String(base).replace(/\./g, "").replace(",", "."))
+                                         : (valor > 0 ? valor : null);
+
         lista.push({
             ct: catId,
             nm: nm,
             ds: ds || "Ver detalhes",
-            pr: valor > 0 ? valor.toFixed(2) : null,
+            pr: precoFinal,
+            precoOficial: valor > 0 ? valor : null,
+            precoBase: base !== null ? base : null,
             key: key,
             grupo: grupo,
             imgUrl: img ? img.replace(/&amp;/g, "&") : ""
