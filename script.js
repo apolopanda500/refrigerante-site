@@ -300,6 +300,41 @@ function criarPedido(dados) {
     return pedido;
 }
 
+/* ============================================
+   AVISO DE NOVO PEDIDO - SOMENTE PARA O VENDEDOR
+   A mensagem vai para o chat fixo do dono da loja
+   (confirmado com /start no bot). O cliente NAO
+   recebe nada no Telegram: ele so usa o site.
+   ============================================ */
+function notificarTelegramPedido(p) {
+    var prefs = {};
+    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
+    if (prefs.cfgAvisoPedido === false) return;          // desligado nas configuracoes
+    var token = prefs.cfgTelegramToken || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
+    var chat  = prefs.cfgTelegramChatId || "1810807613";  // chat do vendedor (@Rickcao22)
+    if (!token || !chat) return;
+    var itens = "";
+    (p.itens || []).forEach(function(i){ itens += "\n  - " + i.name + " x" + i.qty + " = " + formatBRL(i.subtotal); });
+    var msg = "NOVO PEDIDO " + p.id + "\n"
+        + "\nCliente: " + p.nome
+        + (p.cpf ? "\nCPF: " + p.cpf : "")
+        + "\nWhatsApp: " + p.tel
+        + "\nEndereco: " + p.end + (p.comp ? " (" + p.comp + ")" : "") + " - " + p.bairro
+        + "\nRegiao: " + p.regiao
+        + "\nPagamento: " + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "")
+        + "\nFrete: " + (p.frete === 0 ? "GRATIS" : formatBRL(p.frete))
+        + "\n\nItens:" + itens
+        + "\n\nTOTAL: " + formatBRL(p.total)
+        + "\nStatus: " + (STATUS_LABEL["aguardando"] ? STATUS_LABEL["aguardando"] : "Aguardando confirmacao");
+    try {
+        fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: chat, text: msg })
+        }).catch(function(){});
+    } catch(e) {}
+}
+
 function pedidosPorTelefone(tel) {
     const t = String(tel).replace(/\D/g, "");
     return getPedidos().filter(p => String(p.tel).replace(/\D/g, "") === t);
