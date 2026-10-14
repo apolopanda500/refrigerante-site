@@ -75,7 +75,10 @@ function bairroAtendido(bairro) {
     }
     return false;
 }
-/* devolve {liberado, motivo} - motivo: horario | bairro | ok */
+/* devolve {liberado, motivo} - motivo: horario | ok
+   ATENCAO: bairro vazio NAO pode travar o pedido (o campo
+   so e preenchido no perfil). Quem decide a area de entrega
+   e a regiao escolhida no checkout. */
 function pedidosLiberados(bairro) {
     var a = (typeof agoraSP === "function") ? agoraSP() : { minutos: new Date().getHours() * 60 + new Date().getMinutes() };
     var m = a.minutos;
@@ -85,10 +88,14 @@ function pedidosLiberados(bairro) {
     if (m >= HORA_FECHA_PEDIDOS) {
         return { liberado: false, motivo: "horario", texto: "Os pedidos de hoje encerraram às 15:00. Voltamos amanhã às 08:50." };
     }
-    if (bairro !== undefined && !bairroAtendido(bairro)) {
-        return { liberado: false, motivo: "bairro", texto: "Atendemos apenas " + BAIRROS_ATENDIDOS_TEXTO + ". Não entregamos em outros bairros." };
-    }
     return { liberado: true, motivo: "ok", texto: "" };
+}
+
+/* bairro digitado esta FORA da area de entrega? (aviso, nao trava o pedido) */
+function bairroForaDaArea(bairro) {
+    var b = String(bairro || "").trim();
+    if (!b) return false;
+    return !bairroAtendido(b);
 }
 
 /* ---------- HORARIOS: EMPRESA e ENTREGA sao diferentes ---------- */

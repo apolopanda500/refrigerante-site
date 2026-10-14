@@ -67,7 +67,9 @@
 }
 .regra-atendimento i{flex:0 0 auto;margin-top:2px;font-size:1.05rem}
 .regra-atendimento b{font-weight:800}
+.regra-atendimento.pausado{background:#fdecea;border-left-color:#e53935;color:#a11b0f}
 [data-theme="dark"] .regra-atendimento{background:#3a3319;color:#ffd97a;border-left-color:#ffb822}
+[data-theme="dark"] .regra-atendimento.pausado{background:#3a1a1c;color:#ffb3a7;border-left-color:#e53935}
 
 .janela-entrega{
     margin-top:12px;border-radius:12px;overflow:hidden;
@@ -107,7 +109,7 @@
 
 <section class="page"><div class="container">
 <div id="avisoAtendimento" class="regra-atendimento" style="display:none"></div>
-<div class="page-head"><h1><i class="fa fa-credit-card"></i> Finalizar Pedido</h1></div>
+  <div class="page-head"><h1><i class="fa fa-money-bill-wave"></i> Finalizar Pedido</h1></div>
 <div class="checkout-grid">
 <div>
   <div class="card-section">
@@ -145,7 +147,7 @@
 </div></section>
 
 <script src="conta.js?v=20261014c"></script>
-<script src="loja.js?v=20261014c"></script>
+<script src="loja.js?v=20261014d"></script>
 <script src="script.js?v=20261014c"></script>
 <script>
     // Mobile menu toggle
@@ -233,20 +235,28 @@ function enviarPedido() {
     const comp = String(d.complemento || "").trim();
     const obs = String(d.observacao || "").trim();
 
-    const regiaoSel = document.getElementById("fRegiao");
-    const regiaoTexto = regiaoSel.options[regiaoSel.selectedIndex].text;
-    if (bairro && regiaoTexto.toLowerCase().indexOf(bairro.toLowerCase()) === -1) {
-        const continuar = confirm("A região selecionada (" + regiaoTexto + ") pode não corresponder ao bairro (" + bairro + "). Continuar mesmo assim?");
-        if (!continuar) return;
-    }
-
-    /* REGRA: bairro atendido + horario de atendimento (08:50 as 15:00) */
+    /* REGRA: horario de atendimento (08:50 as 15:00) */
     var regra = (typeof pedidosLiberados === "function")
-        ? pedidosLiberados(bairro)
+        ? pedidosLiberados("")
         : { liberado: true, texto: "" };
     if (!regra.liberado) {
-        alert("Pedido não aceito.\n\n" + regra.texto + "\n\nAtendemos apenas " + BAIRROS_ATENDIDOS_TEXTO + ", das 08:50 às 15:00.");
+        alert("Pedido não aceito.\n\n" + regra.texto + "\n\nAtendemos das 08:50 às 15:00.");
         return;
+    }
+
+    /* bairro fora da area: avisa, mas deixa enviar (o vendedor confirma no painel) */
+    var foraArea = (typeof bairroForaDaArea === "function") && bairroForaDaArea(bairro);
+    if (foraArea) {
+        var foraOk = confirm("O bairro \"" + bairro + "\" não está na nossa lista de entregas ("
+            + BAIRROS_ATENDIDOS_TEXTO + ").\n\nConfira a região de entrega selecionada. Enviar o pedido mesmo assim?");
+        if (!foraOk) return;
+    }
+
+    const regiaoSel = document.getElementById("fRegiao");
+    const regiaoTexto = regiaoSel.options[regiaoSel.selectedIndex].text;
+    if (!foraArea && bairro && regiaoTexto.toLowerCase().indexOf(bairro.toLowerCase()) === -1) {
+        const continuar = confirm("A região selecionada (" + regiaoTexto + ") pode não corresponder ao bairro (" + bairro + "). Continuar mesmo assim?");
+        if (!continuar) return;
     }
 
     const faltando = [];
@@ -308,26 +318,40 @@ calcular();
 document.addEventListener("DOMContentLoaded", function(){ if (typeof calcular === "function") calcular(); });
 </script>
 <script>
-/* ===== aviso da regra de atendimento (bairros + horario) ===== */
+/* ===== aviso da regra de atendimento (horario + bairro) ===== */
 function atualizarAvisoAtendimento(){
   var box = document.getElementById("avisoAtendimento");
   if(!box || typeof pedidosLiberados !== "function") return;
   var bairro = "";
   try{ bairro = (typeof Conta !== "undefined") ? (Conta.dados().bairro || "") : ""; }catch(e){}
   var regra = pedidosLiberados("");
-  var peloBairro = bairro ? pedidosLiberados(bairro) : {liberado:true, texto:""};
+  var fora = (typeof bairroForaDaArea === "function") && bairroForaDaArea(bairro);
   var btn = document.getElementById("btnEnviar");
-  if(regra.liberado && peloBairro.liberado){
-    box.style.display = "none";
-    box.innerHTML = "";
+
+  /* 1) fora do horario (08:50 as 15:00): pedidos pausados, botao some */
+  if(!regra.liberado){
+    box.className = "regra-atendimento pausado";
+    box.style.display = "flex";
+    box.innerHTML = '<i class="fa fa-clock"></i> <span><b>Pedidos pausados.</b> ' + regra.texto
+      + ' Atendemos das <b>08:50</b> às <b>15:00</b>.</span>';
+    if(btn) btn.style.display = "none";
+    return;
+  }
+
+  /* 2) bairro fora da area: aviso, mas o pedido pode ser enviado */
+  if(fora){
+    box.className = "regra-atendimento";
+    box.style.display = "flex";
+    box.innerHTML = '<i class="fa fa-map-marker-alt"></i> <span><b>Atenção:</b> o bairro "'
+      + bairro + '" não está na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
+      + '). Confira a região de entrega antes de finalizar.</span>';
     if(btn) btn.style.display = "";
     return;
   }
-  var texto = (!regra.liberado) ? regra.texto : peloBairro.texto;
-  box.style.display = "flex";
-  box.innerHTML = '<i class="fa fa-clock"></i> <span><b>Pedidos pausados.</b> ' + texto
-    + ' Atendemos <b>' + BAIRROS_ATENDIDOS_TEXTO + '</b>, das <b>08:50</b> às <b>15:00</b>.</span>';
-  if(btn) btn.style.display = "none";
+
+  box.style.display = "none";
+  box.innerHTML = "";
+  if(btn) btn.style.display = "";
 }
 if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", atualizarAvisoAtendimento);
 else atualizarAvisoAtendimento();

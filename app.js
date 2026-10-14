@@ -509,7 +509,7 @@ function pintarConfianca(){
       + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Entrega feita por <b>caminhões próprios</b> e identificados</span></div>'
       + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Motorista <b>identificado</b> com nome e telefone</span></div>'
       + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Você acompanha o pedido em <b>tempo real</b></span></div>'
-      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Pagamento em <b>Pix, dinheiro ou cartão</b></span></div>';
+      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Pagamento em <b>Pix ou dinheiro</b></span></div>';
 }
 
 function proximoDiaAtendente(){
