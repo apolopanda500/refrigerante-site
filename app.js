@@ -704,8 +704,15 @@ function aplicarPrecosOverride(){
 function cabecalhosPrecos(){
   try {
     if (typeof AppCheck !== "undefined" && AppCheck.temChaves && AppCheck.temChaves()) return AppCheck.cabecalhos();
-  } catch(e){}
+  }catch(e){}
   return { "Content-Type":"application/json" };
+}
+
+/* o App Check e opcional: se o script nao carregou, seguimos sem ele */
+function appCheckPronto(){
+  try {
+    if (typeof AppCheck !== "undefined" && AppCheck.temChaves && AppCheck.temChaves()) AppCheck.iniciar();
+  }catch(e){}
 }
 
 /* le os precos da nuvem, tentando os enderecos ate um responder */
