@@ -542,3 +542,100 @@ function aplicarPrecosSalvar(){
     });
   }catch(e){}
 }
+
+/* ============================================
+   PRECOS EM TEMPO REAL
+   - local: funciona neste aparelho (padrao)
+   - nuvem (opcional): ao configurar a URL nas
+     Configuracoes, os precos editados no painel
+     aparecem na hora na pagina de todos os clientes
+   ============================================ */
+function precosURLCfg(){
+  try{
+    var p = JSON.parse(localStorage.getItem("refrigerantePrefs")||"{}");
+    return String(p.cfgPrecosURL||"").trim().replace(/\/+$/,"");
+  }catch(e){ return ""; }
+}
+function precosLocais(){
+  try{ return JSON.parse(localStorage.getItem("productPriceOverrides")||"{}"); }
+  catch(e){ return {}; }
+}
+function salvarPrecosLocais(ov){
+  try{ localStorage.setItem("productPriceOverrides", JSON.stringify(ov)); }catch(e){}
+}
+function aplicarPrecosOverride(){
+  var ov = precosLocais();
+  PD.forEach(function(p){
+    var k = p.ct + "|" + p.nm;
+    if (ov[k] !== undefined) p.pr = ov[k];
+  });
+}
+/* puxa os precos da nuvem e aplica (se houver URL configurada) */
+function puxarPrecosNuvem(cb){
+  var url = precosURLCfg();
+  if(!url || typeof fetch !== "function"){
+    aplicarPrecosSalvar();
+    if(cb) cb(false);
+    return;
+  }
+  fetch(url + "/precos.json", {cache:"no-store"})
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(dados){
+      if(dados && typeof dados === "object"){
+        var ov = {};
+        try{ ov = JSON.parse(localStorage.getItem("productPriceOverrides")||"{}"); }catch(e){}
+        var mudou = false;
+        for(var k in dados){
+          if(typeof dados[k] === "string" && ov[k] !== dados[k]){ ov[k] = dados[k]; mudou = true; }
+        }
+        salvarPrecosLocais(ov);
+        aplicarPrecosSalvar();
+        if(cb) cb(mudou);
+      } else {
+        aplicarPrecosSalvar();
+        if(cb) cb(false);
+      }
+    })
+    .catch(function(){
+      aplicarPrecosSalvar();
+      if(cb) cb(false);
+    });
+}
+/* envia os precos editados para a nuvem */
+function enviarPrecosNuvem(cb){
+  var url = precosURLCfg();
+  if(!url || typeof fetch !== "function"){
+    if(cb) cb(false, "nuvem nao configurada");
+    return;
+  }
+  fetch(url + "/precos.json", {
+    method: "PUT",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(precosLocais())
+  })
+    .then(function(r){ if(cb) cb(r.ok, r.ok ? "ok" : "erro HTTP " + r.status); })
+    .catch(function(e){ if(cb) cb(false, "falha de conexao"); });
+}
+/* escuta mudancas na nuvem: o cliente ve o preco novo sem recarregar */
+function ouvirPrecosNuvem(){
+  var url = precosURLCfg();
+  if(!url || typeof EventSource !== "function") return;
+  try{
+    var es = new EventSource(url + "/precos.json");
+    es.addEventListener("put", function(){
+      puxarPrecosNuvem(function(mudou){
+        if(mudou && typeof rP === "function") rP();
+      });
+    });
+    es.addEventListener("error", function(){ /* reconecta sozinho */ });
+  }catch(e){}
+}
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", function(){
+    puxarPrecosNuvem(function(mudou){ if(mudou && typeof rP === "function") rP(); });
+    ouvirPrecosNuvem();
+  });
+} else {
+  puxarPrecosNuvem(function(mudou){ if(mudou && typeof rP === "function") rP(); });
+  ouvirPrecosNuvem();
+}

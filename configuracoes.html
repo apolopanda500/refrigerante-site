@@ -250,7 +250,6 @@
     <div class="opcoes" id="cfgPagamento">
       <button class="op-btn" data-v="Pix" onclick="setOpcao('cfgPagamento',this)">Pix</button>
       <button class="op-btn" data-v="Dinheiro" onclick="setOpcao('cfgPagamento',this)">Dinheiro</button>
-      <button class="op-btn" data-v="Cartão" onclick="setOpcao('cfgPagamento',this)">Cartão</button>
     </div>
   </div>
   <div class="config-row">
@@ -305,6 +304,27 @@
   <div class="config-row">
     <div class="config-label">Testar aviso<small>Envia uma mensagem de teste para o seu Telegram</small></div>
     <button class="btn-mini" id="btnTestarTelegram" onclick="testarTelegram(this)" style="background:#229ED9"><i class="fa fa-paper-plane"></i> Enviar teste</button>
+  </div>
+</div>
+
+<div class="config-card">
+  <h2><i class="fa fa-tags"></i> Preços em tempo real</h2>
+  <div class="config-row config-col">
+    <div class="config-label">URL do banco de preços
+      <small>Opcional. Com ela, os preços editados no painel aparecem na hora na página de todos os clientes.</small>
+    </div>
+    <input type="text" id="cfgPrecosURL" placeholder="https://seu-banco.firebaseio.com" style="width:100%;padding:10px">
+  </div>
+  <div class="config-row">
+    <div class="config-label">Testar conexão<small>Verifica se a URL responde</small></div>
+    <button class="btn-mini" id="btnTestarPrecos" onclick="testarPrecosURL(this)" style="background:#2e7d32"><i class="fa fa-plug"></i> Testar</button>
+  </div>
+  <div class="info-box" style="margin-bottom:6px">
+    <b>Como ligar (2 minutos, gratuito):</b><br>
+    1. Acesse <b>console.firebase.google.com</b> e crie um projeto.<br>
+    2. Em <b>Realtime Database</b>, clique em <b>Criar banco de dados</b> e escolha o modo <b>teste</b>.<br>
+    3. Copie a URL do banco (começa com https:// e termina com firebaseio.com) e cole aqui.<br>
+    4. Clique em <b>Testar</b>. Pronto: salve os preços no painel e eles aparecem na hora para os clientes.
   </div>
 </div>
 
@@ -468,10 +488,38 @@ document.addEventListener("DOMContentLoaded", function(){
   var u = document.getElementById("cfgTelegramToken");
   var c = document.getElementById("cfgTelegramChatId");
   var t = document.getElementById("cfgTelegram");
+  var pr = document.getElementById("cfgPrecosURL");
   if (u) { u.value = p.cfgTelegramToken || ""; u.onchange = function(){ var pp=carregarPrefs(); pp.cfgTelegramToken=u.value.trim(); salvarPrefs(pp); }; }
   if (c) { c.value = p.cfgTelegramChatId || ""; c.onchange = function(){ var pp=carregarPrefs(); pp.cfgTelegramChatId=c.value.trim(); salvarPrefs(pp); }; }
   if (t) { t.checked = !!p.cfgTelegram; t.addEventListener("change",function(){ var pp=carregarPrefs(); pp.cfgTelegram=t.checked; salvarPrefs(pp); }); }
+  if (pr) {
+    pr.value = p.cfgPrecosURL || "";
+    pr.onchange = function(){
+      var pp = carregarPrefs();
+      pp.cfgPrecosURL = pr.value.trim().replace(/\/+$/,"");
+      salvarPrefs(pp);
+      aviso("URL dos precos salva. Feche e abra a loja para valer em todas as paginas.");
+    };
+  }
 });
+
+/* ===== testar a URL do banco de precos ===== */
+function testarPrecosURL(btn){
+  var inp = document.getElementById("cfgPrecosURL");
+  var url = (inp ? inp.value.trim() : "").replace(/\/+$/,"");
+  if(!url){ aviso("Cole a URL do banco de precos antes de testar."); return; }
+  if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Testando...'; }
+  fetch(url + "/precos.json", {cache:"no-store"})
+    .then(function(r){
+      if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-plug"></i> Testar'; }
+      if(r.ok) aviso("Conexao OK! O banco de precos respondeu. Salve os precos no painel do vendedor.");
+      else aviso("O banco respondeu com erro HTTP " + r.status + ". Confira a URL.");
+    })
+    .catch(function(){
+      if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-plug"></i> Testar'; }
+      aviso("Nao foi possivel conectar. Confira a URL e se o banco esta no modo teste.");
+    });
+}
 function assoc(p){}
 
 document.addEventListener("DOMContentLoaded", function(){

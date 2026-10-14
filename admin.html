@@ -280,7 +280,114 @@ function falarCliente(tel, id) {
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
 <script src="app.js"></script>
-<script>(function(){function pintar(){var el=document.getElementById("editorPrecos");if(!el||typeof PD==="undefined"||!PD.length)return;var ov={};try{ov=JSON.parse(localStorage.getItem("productPriceOverrides")||"{}");}catch(e){}var h="<h3 style=\"padding:10px 0\">Editar preços</h3>";PD.forEach(function(p){var k=p.ct+"|"+p.nm; h+="<div style=\"display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid #ddd\"><span style=\"flex:1\">"+p.nm+"</span><input style=\"width:100px;padding:6px\" value=\""+(ov[k]||p.pr).replace("R\$ ","")+"\" data-k=\""+k+"\" onblur=\"salvarPreco(this)\"></div>";});h+="<button class=\"btn-st b-entregar\" style=\"margin-top:8px\" onclick=\"location.reload()\">Aplicar/Atualizar</button>";el.innerHTML=h;}function salvarPreco(el){var ov={};try{ov=JSON.parse(localStorage.getItem("productPriceOverrides")||"{}");}catch(e){}ov[el.getAttribute("data-k")]="R$ "+el.value.trim();try{localStorage.setItem("productPriceOverrides",JSON.stringify(ov));}catch(e){}}window.addEventListener("DOMContentLoaded",pintar);})();</script>
+<script>
+(function(){
+  function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
+  function moedaBR(v){
+    var n = parseFloat(String(v).replace(/\./g,"").replace(",","."));
+    if(isNaN(n)) n = 0;
+    return n.toFixed(2).replace(".",",");
+  }
+  function pintar(){
+    var el = document.getElementById("editorPrecos");
+    if(!el || typeof PD === "undefined" || !PD.length) return;
+    var ov = {};
+    try{ ov = JSON.parse(localStorage.getItem("productPriceOverrides")||"{}"); }catch(e){}
+    var url = (typeof precosURLCfg === "function") ? precosURLCfg() : "";
+
+    var h = "";
+    h += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:10px 0">';
+    h += '  <h3 style="margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-tags"></i> Editar precos dos produtos</h3>';
+    h += url
+       ? '  <span style="font-size:.8rem;font-weight:700;color:#2e7d32;background:#e8f5e9;border-radius:10px;padding:5px 11px"><i class="fa fa-cloud"></i> Tempo real ligado: os clientes veem na hora</span>'
+       : '  <a href="configuracoes.html" style="font-size:.8rem;font-weight:700;color:#8a6100;background:#fff8e1;border-radius:10px;padding:5px 11px;text-decoration:none"><i class="fa fa-exclamation-triangle"></i> Sem nuvem: vale so neste aparelho. Configurar</a>';
+    h += '</div>';
+    h += '<p style="font-size:.83rem;color:#777;margin:0 0 10px">Digite o valor com virgula (ex: 29,90). Depois clique em <b>Salvar e aplicar</b>.</p>';
+
+    (typeof CT !== "undefined" ? CT : []).forEach(function(c){
+      var itens = PD.filter(function(p){ return p.ct === c.id; });
+      if(!itens.length) return;
+      h += '<div style="margin-bottom:14px"><div style="font-weight:800;font-size:.88rem;color:var(--primary-color);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px"><i class="fa ' + c.ic + '"></i> ' + c.nm + '</div>';
+      itens.forEach(function(p){
+        var k = p.ct + "|" + p.nm;
+        var valor = ov[k] !== undefined ? ov[k] : p.pr;
+        h += '<div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-bottom:1px solid #eee">'
+           + '  <span style="flex:1;min-width:0;font-size:.92rem">' + p.nm + '</span>'
+           + '  <span style="font-size:.78rem;color:#999;white-space:nowrap">original ' + p.pr + '</span>'
+           + '  <input class="preco-input" data-k="' + k + '" value="' + fmtCampo(valor) + '" inputmode="decimal" '
+           + '     style="width:110px;padding:9px 10px;border:1px solid #ddd;border-radius:9px;font-size:1rem;text-align:right">'
+           + '</div>';
+      });
+      h += '</div>';
+    });
+
+    h += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 6px">'
+       + '  <button class="btn-st b-entregar" style="min-height:46px;padding:11px 20px" onclick="painelPrecos.salvar(this)"><i class="fa fa-save"></i> Salvar e aplicar</button>'
+       + '  <button class="btn-st b-enviar" style="min-height:46px;padding:11px 20px" onclick="painelPrecos.recarregar(this)"><i class="fa fa-cloud-download-alt"></i> Recarregar da nuvem</button>'
+       + '  <button class="btn-st b-cancelar" style="min-height:46px;padding:11px 20px" onclick="painelPrecos.restaurar(this)"><i class="fa fa-undo"></i> Restaurar originais</button>'
+       + '</div>';
+    h += '<div id="precosMsg" style="font-size:.86rem;font-weight:700;margin:6px 0 2px"></div>';
+    el.innerHTML = h;
+  }
+  function msg(texto, cor){
+    var m = document.getElementById("precosMsg");
+    if(m){ m.style.color = cor || "#2e7d32"; m.innerHTML = texto; }
+  }
+  function lerCampos(){
+    var ov = {};
+    document.querySelectorAll(".preco-input").forEach(function(inp){
+      var v = String(inp.value||"").trim().replace(/\./g,"").replace(",",".");
+      var n = parseFloat(v);
+      if(isNaN(n) || n < 0) n = 0;
+      ov[inp.getAttribute("data-k")] = "R$ " + moedaBR(n);
+    });
+    return ov;
+  }
+  window.painelPrecos = {
+    salvar: function(btn){
+      try{ localStorage.setItem("productPriceOverrides", JSON.stringify(lerCampos())); }catch(e){}
+      if(typeof aplicarPrecosSalvar === "function") aplicarPrecosSalvar();
+      if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Salvando...'; }
+      if(typeof enviarPrecosNuvem === "function"){
+        enviarPrecosNuvem(function(ok, err){
+          if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-save"></i> Salvar e aplicar'; }
+          if(ok) msg('<i class="fa fa-check-circle"></i> Precos salvos e aplicados na pagina dos clientes em tempo real.');
+          else if(err === "nuvem nao configurada") msg('<i class="fa fa-check-circle"></i> Precos salvos. Ligados somente neste aparelho (configure a nuvem para os clientes verem na hora).', "#8a6100");
+          else msg('<i class="fa fa-exclamation-triangle"></i> Salvos neste aparelho, mas a nuvem nao aceitou: ' + err, "#c62828");
+        });
+      } else {
+        if(btn) btn.disabled = false;
+        msg('<i class="fa fa-check-circle"></i> Precos salvos e aplicados.');
+      }
+    },
+    recarregar: function(btn){
+      if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Buscando...'; }
+      if(typeof puxarPrecosNuvem === "function"){
+        puxarPrecosNuvem(function(){
+          if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-cloud-download-alt"></i> Recarregar da nuvem'; }
+          pintar();
+          msg('<i class="fa fa-check-circle"></i> Precos atualizados.');
+        });
+      } else { if(btn) btn.disabled = false; pintar(); }
+    },
+    restaurar: function(btn){
+      if(!confirm("Apagar todos os precos editados e voltar aos precos originais do site?")) return;
+      try{ localStorage.removeItem("productPriceOverrides"); }catch(e){}
+      if(typeof aplicarPrecosSalvar === "function") aplicarPrecosSalvar();
+      if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Restaurando...'; }
+      if(typeof enviarPrecosNuvem === "function"){
+        enviarPrecosNuvem(function(){
+          if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-undo"></i> Restaurar originais'; }
+          pintar();
+          msg('<i class="fa fa-check-circle"></i> Precos originais restaurados.');
+        });
+      } else { if(btn) btn.disabled = false; pintar(); msg("Precos originais restaurados."); }
+    }
+  };
+  window.addEventListener("DOMContentLoaded", pintar);
+  if(document.readyState !== "loading") pintar();
+})();
+</script>
 <script>sessionStorage.setItem("adminLogado","1"); if(typeof mostrarPainel==="function") mostrarPainel();</script>
 <script>
 /* sincroniza com outras abas: se um pedido mudar, o painel atualiza sozinho */
