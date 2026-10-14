@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014h">
+<link rel="manifest" href="manifest.json?v=20261014j">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014h">
-<script src="theme.js?v=20261014h"></script>
+<link rel="stylesheet" href="style.css?v=20261014j">
+<script src="theme.js?v=20261014j"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
@@ -89,9 +89,20 @@
         padding:10px 12px calc(10px + env(safe-area-inset-bottom));
         background:#fff;border-top:1px solid #eee;
         box-shadow:0 -4px 16px rgba(0,0,0,.1);gap:8px;margin:0}
-    .acoes .btn{min-width:0;flex:1;padding:13px 10px;font-size:.9rem;border-radius:12px}
-    .page{padding-bottom:96px !important}
-    .btn-limpar-mobile{display:block !important}
+    .acoes .btn{min-width:0;flex:1;padding:13px 6px;font-size:.82rem;border-radius:12px;gap:4px}
+    .page{padding-bottom:104px !important}
+    .btn-limpar-mobile{display:none}
+    .caixa-limpar{margin-bottom:84px}
+}
+/* botao de limpar dentro da barra de acoes (sempre visivel) */
+.btn-limpar-item{
+    background:#fff;color:#c62828;border:2px solid #f3c9c9;
+    font-weight:700;
+}
+.btn-limpar-item:hover{background:#c62828;border-color:#c62828;color:#fff}
+[data-theme="dark"] .btn-limpar-item{background:#2a1a1c;color:#ff8a8a;border-color:#5a2a2e}
+[data-theme="dark"] .btn-limpar-item:hover{background:#c62828;color:#fff}
+.btn-limpar-item i{margin-right:6px}
 }
 .btn-limpar-mobile{display:none}
 
@@ -129,6 +140,43 @@
 [data-theme="dark"] .vend-dia .dia-nome{color:#ffb822}
 [data-theme="dark"] .vend-dia .reg-dias{color:#a1a8c3}
 [data-theme="dark"] .vend-dia .reg-dias b{color:#8fe0a8}
+
+/* ===== NAVEGACAO HORIZONTAL (igual a home) ===== */
+.main-header{background:var(--primary-color,#3d4465)!important;position:sticky;top:0;z-index:100}
+.main-header .container{max-width:1600px;width:100%;padding:0 12px}
+.main-header nav{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;min-height:60px}
+.main-header .logo{
+    display:flex;align-items:center;gap:8px;flex:0 0 auto;white-space:nowrap;
+    font-size:1.1rem;font-weight:800;color:var(--accent-color,#ffb822);
+}
+.main-header .nav-links{
+    display:flex;gap:4px;list-style:none;flex:1 1 auto;min-width:0;
+    overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.main-header .nav-links::-webkit-scrollbar{display:none}
+.main-header .nav-links a{
+    display:flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap;
+    padding:9px 14px;border-radius:20px;text-decoration:none;
+    color:rgba(255,255,255,.94)!important;font-size:.95rem;font-weight:700;
+}
+.main-header .nav-links a i{font-size:.92rem;opacity:.9}
+.main-header .nav-links a:hover{background:rgba(255,255,255,.15)!important;color:#fff!important}
+.main-header .nav-links a.ativo{background:var(--accent-color,#ffb822)!important;color:var(--primary-color,#3d4465)!important}
+.main-header .header-actions{flex:0 0 auto;display:flex;align-items:center;gap:8px}
+.main-header .cart-icon{
+    display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+    border-radius:50%;background:rgba(255,255,255,.14);color:#fff!important;font-size:1.15rem;
+}
+.main-header .cart-count{background:#fc0758;color:#fff;font-size:.7rem;font-weight:800;padding:2px 7px;border-radius:10px}
+.main-header .mobile-menu-btn{display:none!important}
+[data-theme="dark"] .main-header{background:#232742!important}
+[data-theme="dark"] .main-header .nav-links a.ativo{background:#ffb822!important;color:#3d4465!important}
+@media(max-width:640px){
+    .main-header .logo span{display:none}
+    .main-header .logo{font-size:0}
+    .main-header .logo i{font-size:1.4rem}
+    .main-header .nav-links a{padding:9px 12px;font-size:.9rem}
+}
 </style>
 </head>
 <body>
@@ -152,22 +200,22 @@
 <div class="resumo" id="resumoBox"></div>
 <div class="caixa-limpar" id="infoRegiao" style="background:var(--bg-alt);border-color:var(--borda)"></div>
 <div class="acoes">
+  <button class="btn btn-limpar-item" onclick="confirmarLimpar()" title="Esvaziar o carrinho"><i class="fa fa-trash"></i> Limpar carrinho</button>
   <a class="btn btn-secundario" href="index.html"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
   <a class="btn btn-primario" href="checkout.html" id="btnCheckout"><i class="fa fa-credit-card"></i> Entrega e Pagamento</a>
 </div>
-<div class="caixa-limpar">
+<div class="caixa-limpar" id="caixaLimpar">
   <div class="cl-tx"><b>Quer esvaziar o carrinho?</b>Todos os itens ser&atilde;o removidos deste aparelho.</div>
   <button class="btn-limpar-forte" onclick="confirmarLimpar()"><i class="fa fa-trash"></i> Limpar carrinho</button>
 </div>
-<div class="caixa-limpar btn-limpar-mobile" style="display:none"></div>
 </div></section>
 
-<script src="conta.js?v=20261014h"></script>
-<script src="firebase-appcheck.js?v=20261014h"></script>
-<script src="app-update.js?v=20261014h"></script>
-<script src="atendimento.js?v=20261014h"></script>
-<script src="loja.js?v=20261014h"></script>
-<script src="script.js?v=20261014h"></script>
+<script src="conta.js?v=20261014j"></script>
+<script src="firebase-appcheck.js?v=20261014j"></script>
+<script src="app-update.js?v=20261014j"></script>
+<script src="atendimento.js?v=20261014j"></script>
+<script src="loja.js?v=20261014j"></script>
+<script src="script.js?v=20261014j"></script>
 <script>
 cart = getCart();
 
@@ -262,13 +310,18 @@ renderCarrinho();
 </script>
 
 <script>
-/* ===== confirma antes de limpar ===== */
+/* ===== confirma antes de limpar (funciona com carrinho cheio ou vazio) ===== */
 function confirmarLimpar(){
-    if (cart.length === 0) { alert("O carrinho já está vazio."); return; }
+    if (cart.length === 0) {
+        alert("O carrinho já está vazio.");
+        return;
+    }
     var n = cart.length;
-    if (!confirm("Remover " + n + " " + (n === 1 ? "item" : "itens") + " do carrinho?\n\nEsta ação não pode ser desfeita.")) return;
-    if (!confirm("Tem certeza? Seu carrinho vai ficar vazio.")) return;
+    var itens = cart.reduce(function (t, i) { return t + i.qty; }, 0);
+    if (!confirm("Remover " + itens + " " + (itens === 1 ? "item" : "itens")
+        + " (" + n + " " + (n === 1 ? "produto" : "produtos") + ") do carrinho?\n\nEsta ação não pode ser desfeita.")) return;
     limparCarrinho();
+    if (typeof renderCarrinho === "function") renderCarrinho();
     alert("Carrinho esvaziado.");
 }
 
@@ -332,5 +385,17 @@ else pintarRegiaoCarrinho();
 
 </script>
 <script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};var box=document.createElement("div");box.style="max-width:720px;margin:20px auto;padding:14px;border:1px solid #ddd;border-radius:10px;background:#fff";box.innerHTML="<b>Endereço de entrega</b><br><small>"+(d.endereco||"Não informado")+" "+(d.bairro||"")+" "+(d.complemento||"")+"</small><br><a href=perfil.html style=color:#3d4465;font-weight:600>Editar endereço</a>";var main=document.querySelector("section.page .container");if(main)main.appendChild(box);});</script><script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};if(!d.nome||!d.tel){var b=document.createElement("div");b.style="max-width:720px;margin:10px auto;padding:12px;background:#fff3cd;border:2px solid #ffc107;border-radius:10px;color:#856404";b.innerHTML="<b>Atenção:</b> identifique-se (nome e WhatsApp no Perfil) antes de finalizar o pedido.";var m=document.querySelector("section.page .container");if(m)m.appendChild(b);}});</script></body>
+<script>
+/* destaca a pagina atual no menu */
+(function(){
+  try{
+    var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    document.querySelectorAll('.nav-links a').forEach(function(a){
+      var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
+      if (alvo === atual) a.classList.add('ativo');
+    });
+  }catch(e){}
+})();
+</script>
 </body>
 </html>

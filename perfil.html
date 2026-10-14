@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014h">
+<link rel="manifest" href="manifest.json?v=20261014j">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Perfil - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014h">
-<script src="theme.js?v=20261014h"></script>
+<link rel="stylesheet" href="style.css?v=20261014j">
+<script src="theme.js?v=20261014j"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -69,6 +69,43 @@
 [data-theme="dark"] .perfil-avatar .pa-lapis{background:#ffb822;color:#3d4465;border-color:#1c1f33}
 [data-theme="dark"] .perfil-dados b{color:#ffb822}
 [data-theme="dark"] .perfil-dados small{color:#a1a8c3}
+
+/* ===== NAVEGACAO HORIZONTAL (igual a home) ===== */
+.main-header{background:var(--primary-color,#3d4465)!important;position:sticky;top:0;z-index:100}
+.main-header .container{max-width:1600px;width:100%;padding:0 12px}
+.main-header nav{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;min-height:60px}
+.main-header .logo{
+    display:flex;align-items:center;gap:8px;flex:0 0 auto;white-space:nowrap;
+    font-size:1.1rem;font-weight:800;color:var(--accent-color,#ffb822);
+}
+.main-header .nav-links{
+    display:flex;gap:4px;list-style:none;flex:1 1 auto;min-width:0;
+    overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.main-header .nav-links::-webkit-scrollbar{display:none}
+.main-header .nav-links a{
+    display:flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap;
+    padding:9px 14px;border-radius:20px;text-decoration:none;
+    color:rgba(255,255,255,.94)!important;font-size:.95rem;font-weight:700;
+}
+.main-header .nav-links a i{font-size:.92rem;opacity:.9}
+.main-header .nav-links a:hover{background:rgba(255,255,255,.15)!important;color:#fff!important}
+.main-header .nav-links a.ativo{background:var(--accent-color,#ffb822)!important;color:var(--primary-color,#3d4465)!important}
+.main-header .header-actions{flex:0 0 auto;display:flex;align-items:center;gap:8px}
+.main-header .cart-icon{
+    display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+    border-radius:50%;background:rgba(255,255,255,.14);color:#fff!important;font-size:1.15rem;
+}
+.main-header .cart-count{background:#fc0758;color:#fff;font-size:.7rem;font-weight:800;padding:2px 7px;border-radius:10px}
+.main-header .mobile-menu-btn{display:none!important}
+[data-theme="dark"] .main-header{background:#232742!important}
+[data-theme="dark"] .main-header .nav-links a.ativo{background:#ffb822!important;color:#3d4465!important}
+@media(max-width:640px){
+    .main-header .logo span{display:none}
+    .main-header .logo{font-size:0}
+    .main-header .logo i{font-size:1.4rem}
+    .main-header .nav-links a{padding:9px 12px;font-size:.9rem}
+}
 </style>
 </head>
 <body>
@@ -139,11 +176,11 @@
 </div></section>
 
 
-<script src="conta.js?v=20261014h"></script>
-<script src="firebase-appcheck.js?v=20261014h"></script>
-<script src="app-update.js?v=20261014h"></script>
-<script src="loja.js?v=20261014h"></script>
-<script src="script.js?v=20261014h"></script>
+<script src="conta.js?v=20261014j"></script>
+<script src="firebase-appcheck.js?v=20261014j"></script>
+<script src="app-update.js?v=20261014j"></script>
+<script src="loja.js?v=20261014j"></script>
+<script src="script.js?v=20261014j"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -270,5 +307,17 @@ document.addEventListener("DOMContentLoaded", function(){
 
 </script>
 <div style="width:100%;display:flex;justify-content:center;margin:16px 0"><button class="btn-perigo" onclick="sairConta()">Sair / Limpar perfil</button></div><script>function sairConta(){if(!confirm("Apagar seus dados locais?"))return;try{["convencao_usuario","refrigerantePerfil","refrigeranteFoto"].forEach(function(k){localStorage.removeItem(k);});}catch(e){}location.reload();}</script>
+<script>
+/* destaca a pagina atual no menu */
+(function(){
+  try{
+    var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    document.querySelectorAll('.nav-links a').forEach(function(a){
+      var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
+      if (alvo === atual) a.classList.add('ativo');
+    });
+  }catch(e){}
+})();
+</script>
 </body>
 </html>

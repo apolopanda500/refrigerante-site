@@ -626,6 +626,8 @@ else pintarSobre();
 function chavePreco(p) {
     if (!p) return "";
     if (p.key) return "k:" + p.key;
+    /* nunca devolver chave vazia: dois produtos sem codigo
+       compartilhariam o mesmo preco */
     return "n:" + (p.ct || "") + "|" + (p.nm || "");
 }
 function chavePrecoAntiga(p) {

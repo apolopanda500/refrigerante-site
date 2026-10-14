@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014i">
+<link rel="manifest" href="manifest.json?v=20261014j">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,8 +14,8 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="style.css?v=20261014i">
-<script src="theme.js?v=20261014i"></script>
+<link rel="stylesheet" href="style.css?v=20261014j">
+<script src="theme.js?v=20261014j"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 /* header da home e sticky: nao precisa do espaco do header fixo */
@@ -293,11 +293,15 @@ a{text-decoration:none;color:inherit}
    Preenchem o espaco vazio ao lado dos produtos
    ============================================ */
 .pw-layout{
-    display:grid;grid-template-columns:320px 1fr;
-    gap:24px;align-items:start;max-width:1280px;margin:0 auto;padding:16px 20px;
+    display:block;
+    max-width:1600px;margin:0 auto;padding:14px;
 }
 .pw-main{min-width:0}
-.pw-side{position:static;display:flex;flex-direction:column;gap:16px}
+.pw-side{
+    position:static;display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+    gap:14px;margin:18px 0 0;
+}
 
 /* banner ja existente, ajustado para o espaco estreito */
 .pw-side .bnr{margin:0;padding:14px 16px;flex-direction:column;align-items:flex-start;gap:10px}
@@ -377,10 +381,10 @@ a{text-decoration:none;color:inherit}
 [data-theme="dark"] .wgt-status.fechado{background:#3a1a1d !important;color:#ff9d9d !important}
 [data-theme="dark"] .pw-side .bnr{box-shadow:0 4px 14px rgba(0,0,0,.4)}
 
-/* responsivo: lateral vira bloco abaixo do principal no celular */
+/* responsivo: os widgets ficam em grade tambem no celular */
 @media(max-width:1024px){
-    .pw-layout{grid-template-columns:1fr;padding:12px 14px}
-    .pw-side{position:static;display:flex}
+    .pw-layout{padding:12px}
+    .pw-side{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 }
 </style>
 </head>
@@ -433,12 +437,12 @@ a{text-decoration:none;color:inherit}
 <p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Seg a sex 9h às 15h - Horário de São Paulo</p>
 </footer>
 
-<script src="conta.js?v=20261014i"></script>
-<script src="loja.js?v=20261014i"></script>
-<script src="app.js?v=20261014i"></script>
-<script src="firebase-appcheck.js?v=20261014i"></script>
-<script src="app-update.js?v=20261014i"></script>
-<script src="atendimento.js?v=20261014i"></script>
+<script src="conta.js?v=20261014j"></script>
+<script src="loja.js?v=20261014j"></script>
+<script src="app.js?v=20261014j"></script>
+<script src="firebase-appcheck.js?v=20261014j"></script>
+<script src="app-update.js?v=20261014j"></script>
+<script src="atendimento.js?v=20261014j"></script>
 <script>
 (function(){
 /* a barra de navegacao e sempre visivel: destaca a pagina atual */
@@ -455,5 +459,17 @@ if (caixinha && typeof Atendimento !== 'undefined') Atendimento.montar(caixinha)
 </script>
 
 
+<script>
+/* destaca a pagina atual no menu */
+(function(){
+  try{
+    var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    document.querySelectorAll('.nav-links a').forEach(function(a){
+      var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
+      if (alvo === atual) a.classList.add('ativo');
+    });
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
