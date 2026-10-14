@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-10-14T19:56:54.577Z",
+  "geradoEm": "2026-10-14T20:58:01.545Z",
   "fonte": "https://refrigerantesconvencaorio.entregaaki.app.br/Principal/Publico/Produtos",
   "gruposOficiais": {
     "Grupo500000001": "DESTAQUES",
@@ -12,11 +12,6 @@
   },
   "grupos": [
     {
-      "id": "de",
-      "nm": "Destaques",
-      "ic": "fa-star"
-    },
-    {
       "id": "2l",
       "nm": "Refrigerantes 2L",
       "ic": "fa-bottle-water"
@@ -28,7 +23,7 @@
     },
     {
       "id": "35",
-      "nm": "Refrigerantes 350ml",
+      "nm": "Refrigerantes Latas",
       "ic": "fa-mug-hot"
     },
     {
@@ -54,42 +49,42 @@
   ],
   "produtos": [
     {
-      "ct": "de",
+      "ct": "re",
       "nm": "Chinotto 269ml",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 21,94",
+      "pr": "R$ 25,00",
       "im": "img/cat/100000425.jpg",
       "key": "100000425"
     },
     {
-      "ct": "de",
+      "ct": "mx",
       "nm": "Energético MSX 269 ml",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 22,26",
+      "pr": "R$ 25,00",
       "im": "img/cat/100000460.jpg",
       "key": "100000460"
     },
     {
-      "ct": "de",
+      "ct": "2l",
       "nm": "Frutaína Convenção 2L",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 24,34",
+      "pr": "R$ 27,50",
       "im": "img/cat/500000019.jpg",
       "key": "500000019"
     },
     {
-      "ct": "de",
+      "ct": "35",
       "nm": "Guaraná Convenção Zero Açúcar Lata 269ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 32,35",
+      "pr": "R$ 33,40",
       "im": "img/cat/500000113.jpg",
       "key": "500000113"
     },
     {
-      "ct": "de",
+      "ct": "mx",
       "nm": "MSX Convenção 2L",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 31,00",
+      "pr": "R$ 40,00",
       "im": "img/cat/100000462.jpg",
       "key": "100000462"
     },
@@ -97,7 +92,7 @@
       "ct": "2l",
       "nm": "Abacaxi 2 litros",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 26,37",
+      "pr": "R$ 27,50",
       "im": "img/cat/100000395.jpg",
       "key": "100000395"
     },
@@ -105,7 +100,7 @@
       "ct": "2l",
       "nm": "Cola 2 litros",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 28,28",
+      "pr": "R$ 29,00",
       "im": "img/cat/100000427.jpg",
       "key": "100000427"
     },
@@ -113,7 +108,7 @@
       "ct": "2l",
       "nm": "Guaraná Convenção 2L",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 24,34",
+      "pr": "R$ 27,00",
       "im": "img/cat/100000440.jpg",
       "key": "100000440"
     },
@@ -121,7 +116,7 @@
       "ct": "2l",
       "nm": "Guaraná Convenção Zero Açúcar 2L",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 23,80",
+      "pr": "R$ 27,00",
       "im": "img/cat/100000446.jpg",
       "key": "100000446"
     },
@@ -129,7 +124,7 @@
       "ct": "2l",
       "nm": "Laranja 2 litros",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 26,37",
+      "pr": "R$ 27,50",
       "im": "img/cat/100000452.jpg",
       "key": "100000452"
     },
@@ -137,7 +132,7 @@
       "ct": "2l",
       "nm": "Limão 2 litros",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 26,37",
+      "pr": "R$ 27,50",
       "im": "img/cat/100000456.jpg",
       "key": "100000456"
     },
@@ -145,7 +140,7 @@
       "ct": "2l",
       "nm": "Uva 2 litros",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 26,37",
+      "pr": "R$ 27,50",
       "im": "img/cat/100000484.jpg",
       "key": "100000484"
     },
@@ -153,7 +148,7 @@
       "ct": "2l",
       "nm": "Vitts limão 2 litros",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 27,20",
+      "pr": "R$ 28,00",
       "im": "img/cat/100000487.jpg",
       "key": "100000487"
     },
@@ -161,7 +156,7 @@
       "ct": "35",
       "nm": "Abacaxi 350ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 16,64",
+      "pr": "R$ 19,00",
       "im": "img/cat/100000397.jpg",
       "key": "100000397"
     },
@@ -169,7 +164,7 @@
       "ct": "35",
       "nm": "Cola Convenção 350ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 18,37",
+      "pr": "R$ 19,00",
       "im": "img/cat/500000053.jpg",
       "key": "500000053"
     },
@@ -177,7 +172,7 @@
       "ct": "35",
       "nm": "Guaraná 350ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 16,12",
+      "pr": "R$ 19,00",
       "im": "img/cat/100000447.jpg",
       "key": "100000447"
     },
@@ -185,7 +180,7 @@
       "ct": "35",
       "nm": "Laranja 350ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 16,64",
+      "pr": "R$ 19,00",
       "im": "img/cat/100000450.jpg",
       "key": "100000450"
     },
@@ -193,7 +188,7 @@
       "ct": "35",
       "nm": "Uva 350ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 16,64",
+      "pr": "R$ 19,00",
       "im": "img/cat/100000486.jpg",
       "key": "100000486"
     },
@@ -201,7 +196,7 @@
       "ct": "35",
       "nm": "Vitt s limão 350ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 18,37",
+      "pr": "R$ 19,00",
       "im": "img/cat/100000489.jpg",
       "key": "100000489"
     },
@@ -209,7 +204,7 @@
       "ct": "ag",
       "nm": "Água 1500ml",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 14,80",
+      "pr": "R$ 15,80",
       "im": "img/cat/100000403.jpg",
       "key": "100000403"
     },
@@ -217,7 +212,7 @@
       "ct": "ag",
       "nm": "Água 510ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 13,69",
+      "pr": "R$ 14,70",
       "im": "img/cat/100000405.jpg",
       "key": "100000405"
     },
@@ -225,7 +220,7 @@
       "ct": "ag",
       "nm": "Água 510ml c/gás",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 18,97",
+      "pr": "R$ 19,00",
       "im": "img/cat/100000401.jpg",
       "key": "100000401"
     },
@@ -233,7 +228,7 @@
       "ct": "ag",
       "nm": "Agua C/Gas 1,5l",
       "ds": "Ver detalhes",
-      "pr": "R$ 21,47",
+      "pr": "R$ 22,50",
       "im": "img/cat/500000089.jpg",
       "key": "500000089"
     },
@@ -241,7 +236,7 @@
       "ct": "60",
       "nm": "Abacaxi 600ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 19,81",
+      "pr": "R$ 21,00",
       "im": "img/cat/100000399.jpg",
       "key": "100000399"
     },
@@ -249,7 +244,7 @@
       "ct": "60",
       "nm": "Guaraná 600ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 18,88",
+      "pr": "R$ 21,00",
       "im": "img/cat/100000443.jpg",
       "key": "100000443"
     },
@@ -257,7 +252,7 @@
       "ct": "60",
       "nm": "Laranja 600ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 19,81",
+      "pr": "R$ 21,00",
       "im": "img/cat/100000454.jpg",
       "key": "100000454"
     },
@@ -265,7 +260,7 @@
       "ct": "60",
       "nm": "Uva 600ml",
       "ds": "Pacote com 12 un.",
-      "pr": "R$ 19,81",
+      "pr": "R$ 21,00",
       "im": "img/cat/100000482.jpg",
       "key": "100000482"
     },
@@ -273,7 +268,7 @@
       "ct": "ch",
       "nm": "Chopp Lev 500ml Pet",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 25,50",
+      "pr": "R$ 29,50",
       "im": "img/cat/100000637.jpg",
       "key": "100000637"
     },
@@ -281,7 +276,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Black 500ml Pet",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 33,49",
+      "pr": "R$ 34,50",
       "im": "img/cat/500000009.jpg",
       "key": "500000009"
     },
@@ -289,7 +284,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Gold Pet 500ml",
       "ds": "Ver detalhes",
-      "pr": "R$ 27,40",
+      "pr": "R$ 29,50",
       "im": "img/cat/100000614.jpg",
       "key": "100000614"
     },
@@ -297,7 +292,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Ipa 500ml Pet",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 29,40",
+      "pr": "R$ 29,50",
       "im": "img/cat/500000022.jpg",
       "key": "500000022"
     },
@@ -305,7 +300,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Malzbier 500ml Pet",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 32,32",
+      "pr": "R$ 33,30",
       "im": "img/cat/500000008.jpg",
       "key": "500000008"
     },
@@ -313,7 +308,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Pilsen Pet 500ml",
       "ds": "Ver detalhes",
-      "pr": "R$ 27,40",
+      "pr": "R$ 29,50",
       "im": "img/cat/100000609.jpg",
       "key": "100000609"
     },
@@ -321,7 +316,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Vinho 500ml Pet",
       "ds": "Pacote com 6 un.",
-      "pr": "R$ 34,81",
+      "pr": "R$ 35,80",
       "im": "img/cat/500000004.jpg",
       "key": "500000004"
     },
@@ -337,7 +332,7 @@
       "ct": "ch",
       "nm": "Chopp Lev Pet 30l",
       "ds": "Ver detalhes",
-      "pr": "R$ 255,00",
+      "pr": "R$ 260,00",
       "im": "img/cat/500000024.jpg",
       "key": "500000024"
     },
@@ -345,7 +340,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Apa Pet 20l",
       "ds": "Ver detalhes",
-      "pr": "R$ 328,63",
+      "pr": "R$ 330,00",
       "im": "img/cat/100000649.jpg",
       "key": "100000649"
     },
@@ -353,7 +348,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Apa Pet 30l",
       "ds": "Ver detalhes",
-      "pr": "R$ 452,75",
+      "pr": "R$ 455,00",
       "im": "img/cat/100000632.jpg",
       "key": "100000632"
     },
@@ -361,7 +356,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Gold Pet 20l",
       "ds": "Ver detalhes",
-      "pr": "R$ 328,63",
+      "pr": "R$ 330,00",
       "im": "img/cat/100000648.jpg",
       "key": "100000648"
     },
@@ -369,7 +364,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Gold Pet 30l",
       "ds": "Ver detalhes",
-      "pr": "R$ 452,75",
+      "pr": "R$ 455,00",
       "im": "img/cat/100000611.jpg",
       "key": "100000611"
     },
@@ -377,7 +372,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Ipa Pet 20l",
       "ds": "Ver detalhes",
-      "pr": "R$ 348,45",
+      "pr": "R$ 330,00",
       "im": "img/cat/100000646.jpg",
       "key": "100000646"
     },
@@ -385,7 +380,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Pilsen Pet 20l",
       "ds": "Ver detalhes",
-      "pr": "R$ 308,40",
+      "pr": "R$ 310,00",
       "im": "img/cat/100000644.jpg",
       "key": "100000644"
     },
@@ -393,7 +388,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Pilsen Pet 30l",
       "ds": "Ver detalhes",
-      "pr": "R$ 422,69",
+      "pr": "R$ 425,00",
       "im": "img/cat/100000606.jpg",
       "key": "100000606"
     },
@@ -401,7 +396,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Vinho Pet 20l",
       "ds": "Ver detalhes",
-      "pr": "R$ 318,87",
+      "pr": "R$ 320,00",
       "im": "img/cat/500000007.jpg",
       "key": "500000007"
     },
@@ -409,7 +404,7 @@
       "ct": "ch",
       "nm": "Chopp Ravache Vinho Pet 30l",
       "ds": "Ver detalhes",
-      "pr": "R$ 438,11",
+      "pr": "R$ 440,00",
       "im": "img/cat/500000005.jpg",
       "key": "500000005"
     }
