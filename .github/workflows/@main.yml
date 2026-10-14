@@ -1,32 +1,17 @@
-name: Deploy to GitHub Pages
+# Deploy: o proprio GitHub Pages (pages-build-deployment) publica
+# automaticamente o branch main a cada push. Nao é preciso workflow extra.
+# Este arquivo fica apenas como documentacao do processo.
+name: Deploy to GitHub Pages (informativo)
 
 on:
   push:
     branches: [main]
 
 jobs:
-  deploy:
+  info:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Validate site
-      run: |
-        # Validar HTML, CSS, JS
-        for f in *.js; do node --check "$f" || exit 1; done
-        echo "Validando site..."
-
-    - name: Preparar arquivos do site
-      run: |
-        rm -rf dist
-        mkdir -p dist
-        git archive HEAD | tar -x -C dist
-        echo "Arquivos preparados:"
-        ls dist | head -30
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+      - name: Validar JS do site
+        run: |
+          for f in *.js; do node --check "$f" || exit 1; done
+          echo "Sintaxe OK. O GitHub Pages publica o branch main automaticamente."
