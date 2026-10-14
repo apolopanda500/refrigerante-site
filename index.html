@@ -3,11 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json?v=20261014f">
+<meta name="theme-color" content="#3d4465">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Convenção">
+<link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Convenção - Delivery OFICIAL</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2226%22 text-anchor=%22middle%22 fill=%22%23e53935%22>??</text></svg>">
+<link rel="icon" type="image/png" href="img/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="style.css?v=20261014c">
-<script src="theme.js?v=20261014c"></script>
+<link rel="stylesheet" href="style.css?v=20261014f">
+<script src="theme.js?v=20261014f"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 /* header da home e sticky: nao precisa do espaco do header fixo */
@@ -312,8 +320,9 @@ a{text-decoration:none;color:inherit}
 <header class="hd"><nav>
 <div class="lg"><i class="fa fa-bottle-water"></i> Convenção</div>
 <button class="mobile-menu-btn" id="menuBtn" aria-label="Abrir menu"><span></span><span></span><span></span></button>
-<ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configuraçes</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
-<div class="ha"><button class="bs" onclick="partilhar()"><i class="fa fa-share-alt"></i><span class="bs-tx">Compartilhar</span></button>
+<ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
+<div class="ha"><button class="bs" id="btnInstalar" onclick="instalarApp()" style="display:none"><i class="fa fa-download"></i><span class="bs-tx">Instalar app</span></button>
+<button class="bs" onclick="partilhar()"><i class="fa fa-share-alt"></i><span class="bs-tx">Compartilhar</span></button>
 <div class="ci" onclick="location.href='checkout.html'"><i class="fa fa-shopping-cart"></i><span class="cb" id="cBag">0</span></div></div>
 </nav></header>
 
@@ -362,10 +371,10 @@ a{text-decoration:none;color:inherit}
 <p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Seg a sex 9h às 15h - Horário de São Paulo</p>
 </footer>
 
-<script src="theme.js?v=20261014c"></script>
-<script src="conta.js?v=20261014c"></script>
-<script src="loja.js?v=20261014d"></script>
-<script src="app.js?v=20261014d"></script>
+<script src="theme.js?v=20261014f"></script>
+<script src="conta.js?v=20261014f"></script>
+<script src="loja.js?v=20261014f"></script>
+<script src="app.js?v=20261014f"></script>
 <script>
 (function(){
   var btn=document.getElementById('menuBtn');
@@ -378,6 +387,58 @@ a{text-decoration:none;color:inherit}
   if(bd)bd.addEventListener('click',fechar);
   nav.querySelectorAll('a').forEach(function(a){a.addEventListener('click',fechar);});
   window.addEventListener('resize',function(){if(window.innerWidth>768)fechar();});
+})();
+</script>
+
+<script>
+/* ============================================
+   APP DO CLIENTE (PWA)
+   - registra o service worker (abre offline)
+   - botao "Instalar app" quando o celular permite
+   ============================================ */
+(function () {
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+            navigator.serviceWorker.register("sw.js").catch(function () { /* sem service worker: segue o normal */ });
+        });
+    }
+
+    var promptInstalacao = null;
+    var btn = document.getElementById("btnInstalar");
+
+    function mostrarBotao() {
+        if (!btn) return;
+        btn.style.display = "inline-flex";
+    }
+
+    window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault();
+        promptInstalacao = e;
+        mostrarBotao();
+    });
+
+    window.instalarApp = function () {
+        if (!promptInstalacao) {
+            alert("Para instalar o app no celular:\n\nAndroid: abra o menu do navegador e toque em \"Instalar app\" (ou \"Adicionar à tela inicial\").\niPhone: toque no botão Compartilhar e depois em \"Adicionar à Tela de Início\".");
+            return;
+        }
+        promptInstalacao.prompt();
+        promptInstalacao.userChoice.then(function () {
+            promptInstalacao = null;
+            if (btn) btn.style.display = "none";
+        });
+    };
+
+    /* ja esta instalado? esconde o botao */
+    try {
+        if (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true) {
+            if (btn) btn.style.display = "none";
+        }
+    } catch (e) {}
+
+    window.addEventListener("appinstalled", function () {
+        if (btn) btn.style.display = "none";
+    });
 })();
 </script>
 </body>

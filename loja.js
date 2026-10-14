@@ -3,6 +3,63 @@
    Regioes, dias de atendimento, caminhoes, motorista
    ============================================ */
 
+/* ============================================
+   FRETE - FONTE UNICA DA VERDADE
+   Usada pelo carrinho, pelo checkout e pelo painel,
+   para o valor ser sempre o mesmo em todas as telas.
+   ============================================ */
+
+/* pedido minimo para o frete sair de graca (o vendedor pode mudar em Configuracoes) */
+function freteGratisMinimo() {
+    try {
+        var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+        var v = parseFloat(p.cfgFreteGratisAcima);
+        return (isNaN(v) || v <= 0) ? 150 : v;
+    } catch (e) { return 150; }
+}
+
+/* menor frete charged entre as regioes (usado nos avisos) */
+function freteMinimo() {
+    if (typeof REGIOES === "undefined" || !REGIOES.length) return 0;
+    var menor = REGIOES[0].frete;
+    REGIOES.forEach(function (r) { if (typeof r.frete === "number" && r.frete < menor) menor = r.frete; });
+    return typeof menor === "number" ? menor : 0;
+}
+
+/* regiao escolhida; se nada estiver marcado, usa a primeira (nunca frete 0 por engano) */
+function regiaoDoPedido(regiaoId) {
+    if (typeof REGIOES === "undefined" || !REGIOES.length) return null;
+    var achada = null;
+    REGIOES.forEach(function (r) { if (r.id === regiaoId) achada = r; });
+    return achada || REGIOES[0];
+}
+
+/* CALCULA o frete: { subtotal, frete, total, gratis, faltaParaGratis, regiao }
+   - carrinho vazio nunca paga frete
+   - sem regiao valida, cobra a menor regiao (seguro contra frete gratis indevido)
+   - acima do minimo: frete 0 (gratis) */
+function calcularFrete(subtotal, regiaoId) {
+    var reg = regiaoDoPedido(regiaoId);
+    var minimo = freteGratisMinimo();
+    var base = (reg && typeof reg.frete === "number") ? reg.frete : freteMinimo();
+    var sub = arredonda(Number(subtotal) || 0);
+
+    var frete = 0;
+    var gratis = false;
+    if (sub > 0 && sub >= minimo) { frete = 0; gratis = true; }
+    else if (sub > 0) { frete = arredonda(base); }
+
+    return {
+        subtotal: sub,
+        frete: frete,
+        total: arredonda(sub + frete),
+        gratis: gratis,
+        regiao: reg,
+        minimo: minimo,
+        faltaParaGratis: (sub > 0 && sub < minimo) ? arredonda(minimo - sub) : 0
+    };
+}
+
 /* ---------- REGIOES DE ATENDIMENTO ---------- */
 /* dias: 0=Dom 1=Seg 2=Ter 3=Qua 4=Qui 5=Sex 6=Sab */
 /* Segunda-feira NAO tem entrega: e o dia de montar os pedidos. */

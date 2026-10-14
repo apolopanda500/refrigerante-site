@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json?v=20261014f">
+<meta name="theme-color" content="#3d4465">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Convenção">
+<link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014c">
-<script src="theme.js?v=20261014c"></script>
+<link rel="stylesheet" href="style.css?v=20261014f">
+<script src="theme.js?v=20261014f"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
@@ -107,17 +114,7 @@
 [data-theme="dark"] .caixa-limpar .cl-tx{color:#e6a3a3}
 [data-theme="dark"] .caixa-limpar .cl-tx b{color:#ff8a8a}
 
-/* ===== aviso de frete (faltam X para frete gratis) ===== */
-.aviso-frete{
-    display:flex;align-items:center;gap:10px;
-    padding:12px 14px;border-radius:10px;margin-bottom:12px;
-    background:#e8f5e9;border-left:4px solid #43a047;
-    color:#1b5e20;font-size:.92rem;font-weight:600;line-height:1.45;
-}
-.aviso-frete i{flex:0 0 auto;font-size:1.05rem;color:#2e7d32}
-.aviso-frete b{font-weight:800}
-[data-theme="dark"] .aviso-frete{background:#14331f;color:#8fe0a8;border-left-color:#1dc9b7}
-[data-theme="dark"] .aviso-frete i{color:#8fe0a8}
+/* ===== aviso de frete: usa o estilo global em style.css ===== */
 
 /* ===== regioes e dias no carrinho ===== */
 .vend-dia{
@@ -165,9 +162,9 @@
 <div class="caixa-limpar btn-limpar-mobile" style="display:none"></div>
 </div></section>
 
-<script src="conta.js?v=20261014c"></script>
-<script src="loja.js?v=20261014d"></script>
-<script src="script.js?v=20261014c"></script>
+<script src="conta.js?v=20261014f"></script>
+<script src="loja.js?v=20261014f"></script>
+<script src="script.js?v=20261014f"></script>
 <script>
 cart = getCart();
 
@@ -205,17 +202,23 @@ function renderCarrinho() {
 
     const subtotal = arredonda(calcSubtotal());
     const nItens = calcTotalItens();
-    const FRETES = [8, 12, 15, 20];
-    const freteMin = Math.min.apply(null, FRETES);
+    const minimo = (typeof freteGratisMinimo === "function") ? freteGratisMinimo() : 150;
+    const menorFrete = (typeof freteMinimo === "function") ? freteMinimo() : 8;
+
     let aviso = "";
-    if (subtotal < 150) {
-        const falta = arredonda(150 - subtotal);
-        aviso = '<div class="aviso-frete"><i class="fa fa-truck"></i> Faltam <b>' + formatBRL(falta)
+    if (subtotal <= 0) {
+        aviso = "";
+    } else if (subtotal < minimo) {
+        aviso = '<div class="aviso-frete"><i class="fa fa-truck"></i> Faltam <b>' + formatBRL(arredonda(minimo - subtotal))
               + '</b> para o frete ficar <b>GRÁTIS</b></div>';
+    } else {
+        aviso = '<div class="aviso-frete"><i class="fa fa-check-circle"></i> <b>Frete GRÁTIS!</b> Seu pedido passou de '
+              + formatBRL(minimo) + '</div>';
     }
+
     res.innerHTML = aviso
         + '<div class="resumo-row"><span>Subtotal (' + nItens + (nItens === 1 ? ' item' : ' itens') + ')</span><span>' + formatBRL(subtotal) + '</span></div>'
-        + '<div class="resumo-row"><span>Frete</span><span class="muted">calculado na entrega</span></div>'
+        + '<div class="resumo-row"><span>Frete</span><span class="muted">calculado por região (de ' + formatBRL(menorFrete) + ')</span></div>'
         + '<div class="resumo-row total"><span>Total dos produtos</span><span>' + formatBRL(subtotal) + '</span></div>';
 }
 
@@ -284,7 +287,7 @@ function pintarRegiaoCarrinho(){
         + 'Cada bairro tem dias proprios de entrega:</div>' + linhas;
 }
 
-/* ===== regra de atendimento: bairros + horario ===== */
+/* ===== regra de atendimento: horario + bairro ===== */
 function atualizarAvisoCarrinho(){
     if (typeof pedidosLiberados !== "function") return;
     var box = document.getElementById("avisoAtendimento");
@@ -293,19 +296,31 @@ function atualizarAvisoCarrinho(){
     var bairro = "";
     try { bairro = (typeof Conta !== "undefined") ? (Conta.dados().bairro || "") : ""; } catch(e) {}
     var regra = pedidosLiberados("");
-    var peloBairro = bairro ? pedidosLiberados(bairro) : { liberado: true, texto: "" };
-    if (regra.liberado && peloBairro.liberado) {
-        box.style.display = "none";
-        box.innerHTML = "";
-        if (btn) btn.style.display = "";
+    var fora = (typeof bairroForaDaArea === "function") && bairroForaDaArea(bairro);
+    var btnMostrar = function () { if (btn) btn.style.display = ""; };
+
+    /* fora do horario: pausa */
+    if (!regra.liberado) {
+        box.className = "regra-atendimento" + ((!regra.liberado) ? " fechado" : "");
+        box.style.display = "flex";
+        box.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> ' + regra.texto
+            + ' Atendemos das <b>08:50</b> às <b>15:00</b>.</span>';
+        if (btn) btn.style.display = "none";
         return;
     }
-    var texto = (!regra.liberado) ? regra.texto : peloBairro.texto;
-    box.className = "regra-atendimento" + ((!regra.liberado) ? " fechado" : "");
-    box.style.display = "flex";
-    box.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> ' + texto
-        + ' Atendemos <b>' + BAIRROS_ATENDIDOS_TEXTO + '</b>, das <b>08:50</b> às <b>15:00</b>.</span>';
-    if (btn) btn.style.display = "none";
+    /* bairro fora da area: so avisa */
+    if (fora) {
+        box.className = "regra-atendimento";
+        box.style.display = "flex";
+        box.innerHTML = '<i class="fa fa-map-marker-alt"></i> <span><b>Atenção:</b> o bairro "' + bairro
+            + '" não está na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
+            + '). Confira a região na próxima tela.</span>';
+        btnMostrar();
+        return;
+    }
+    box.style.display = "none";
+    box.innerHTML = "";
+    btnMostrar();
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", atualizarAvisoCarrinho);
 else atualizarAvisoCarrinho();

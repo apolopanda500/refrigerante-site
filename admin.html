@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014c">
-<script src="theme.js?v=20261014c"></script>
+<link rel="stylesheet" href="style.css?v=20261014f">
+<script src="theme.js?v=20261014f"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -46,6 +46,71 @@
 .pedido-total-linha { font-size:1.15rem; font-weight:bold; color:var(--primary-color); }
 .vazio { text-align:center; padding:50px; color:#888; }
 .btn-sair { background:none; border:none; color:#c62828; cursor:pointer; font-size:0.9rem; }
+
+/* ============ TABELA PROFISSIONAL DE PEDIDOS ============ */
+.painel-busca{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.painel-busca input[type=text]{
+    flex:1;min-width:200px;padding:12px 14px;border:1px solid #d8dbe6;border-radius:10px;
+    font-size:1rem;font-family:inherit;background:#fff;color:#3d4465;
+}
+.painel-busca input[type=text]:focus{outline:none;border-color:#3d4465}
+.painel-busca select{padding:12px 14px;border:1px solid #d8dbe6;border-radius:10px;font-size:1rem;background:#fff;color:#3d4465;font-family:inherit}
+
+.tab-wrap{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);overflow:hidden;border:1px solid var(--borda)}
+.tabela-pedidos{width:100%;border-collapse:collapse;font-size:.95rem}
+.tabela-pedidos thead th{
+    background:#3d4465;color:#fff;text-align:left;padding:13px 12px;
+    font-size:.8rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;
+    position:sticky;top:0;z-index:2;
+}
+.tabela-pedidos tbody td{padding:12px;border-bottom:1px solid var(--borda);vertical-align:middle;color:#3d4465}
+.tabela-pedidos tbody tr:nth-child(even){background:#fafafd}
+.tabela-pedidos tbody tr:hover{background:#f0f2fa}
+.tabela-pedidos .td-id{font-weight:800;font-size:.95rem;white-space:nowrap}
+.tabela-pedidos .td-num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tabela-pedidos .td-total{font-weight:800;color:#3d4465;font-size:1.02rem}
+.tabela-pedidos .td-acoes{white-space:nowrap}
+.tabela-pedidos .td-cliente{font-weight:700}
+.tabela-pedidos .sub{display:block;font-size:.82rem;color:#7a8199;font-weight:600}
+[data-theme="dark"] .tabela-pedidos thead th{background:#232742;color:#ffb822}
+[data-theme="dark"] .tabela-pedidos tbody td{color:#e6e8f2}
+[data-theme="dark"] .tabela-pedidos tbody tr:nth-child(even){background:#1c1f33}
+[data-theme="dark"] .tabela-pedidos tbody tr:hover{background:#232742}
+[data-theme="dark"] .painel-busca input[type=text],
+[data-theme="dark"] .painel-busca select{background:#232742;color:#e6e8f2;border-color:#353a5c}
+
+/* ficha detalhada que abre ao clicar na linha */
+.ficha{background:#f7f8fc;border-left:4px solid #3d4465;border-radius:10px;padding:14px 16px;margin-top:2px}
+.ficha h4{margin:0 0 8px;font-size:.95rem;color:#3d4465;display:flex;align-items:center;gap:7px}
+.ficha-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:6px 18px;font-size:.9rem;color:#4a5070}
+.ficha-grid b{color:#3d4465}
+.ficha-linha{grid-column:1/-1;border-top:1px dashed #d8dbe6;padding-top:8px;margin-top:4px}
+[data-theme="dark"] .ficha{background:#1c1f33;border-left-color:#ffb822}
+[data-theme="dark"] .ficha h4,[data-theme="dark"] .ficha-grid b{color:#ffb822}
+[data-theme="dark"] .ficha-grid{color:#a1a8c3}
+
+/* linha clicavel */
+.linha-pedido{cursor:pointer}
+
+/* no celular a tabela vira lista */
+@media(max-width:720px){
+    .tabela-pedidos thead{display:none}
+    .tabela-pedidos,.tabela-pedidos tbody,.tabela-pedidos tr,.tabela-pedidos td{display:block;width:100%}
+    .tabela-pedidos tr{border-bottom:2px solid var(--borda);padding:10px 0}
+    .tabela-pedidos td{border:none;padding:5px 12px;display:flex;justify-content:space-between;gap:10px;text-align:left !important}
+    .tabela-pedidos td::before{content:attr(data-rot);font-weight:800;color:#7a8199;font-size:.8rem;text-transform:uppercase;flex:0 0 auto}
+    .tabela-pedidos .td-id{font-size:1rem}
+    .tabela-pedidos .td-total{font-size:1.1rem}
+}
+
+/* etiquetas de status */
+.chip-st{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:14px;font-size:.82rem;font-weight:800;color:#fff;white-space:nowrap}
+
+/* resumo do dia */
+.resumo-linha{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--borda);font-size:.95rem}
+.resumo-linha b{color:#3d4465;font-variant-numeric:tabular-nums}
+[data-theme="dark"] .resumo-linha b{color:#ffb822}
+[data-theme="dark"] .resumo-linha{border-bottom-color:#353a5c}
 </style>
 </head>
 <body>
@@ -87,6 +152,10 @@
     <button class="filtro" data-f="enviado" onclick="filtrarAdmin('enviado',this)">Enviados</button>
     <button class="filtro" data-f="entregue" onclick="filtrarAdmin('entregue',this)">Entregues</button>
   </div>
+  <div class="painel-busca">
+    <input type="text" id="buscaAdmin" placeholder="Buscar pedido, cliente, telefone, bairro, regiao ou produto..." oninput="buscaAdmin=this.value;renderAdmin()" autocomplete="off">
+    <button class="btn-st b-copiar" style="min-height:44px;padding:11px 16px" onclick="buscaAdmin='';document.getElementById('buscaAdmin').value='';renderAdmin()"><i class="fa fa-times"></i> Limpar</button>
+  </div>
   <div id="listaPedidos"></div>
   <div class="card" id="editorPrecos" style="margin-top:12px"></div>
   <div class="card" id="caixaPrecosNuvem" style="margin-top:12px;display:none">
@@ -99,11 +168,29 @@
     </div>
     <div id="precosURLMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
   </div>
+  <div class="card" id="caixaBot" style="margin-top:12px">
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-robot"></i> Bot do Telegram - comandos do vendedor</h3>
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Além do aviso de novo pedido, o bot aceita comandos. Toque no botão <b>/</b> do Telegram para ver todos:
+      <b>/confirmar</b>, <b>/separacao</b>, <b>/enviado</b>, <b>/entregue</b>, <b>/cancelar</b>, <b>/ultimos</b> e <b>/ajuda</b>.
+      Na mensagem de cada pedido também tem botões para mudar o status com um toque.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <label style="display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600;cursor:pointer">
+        <input type="checkbox" id="cfgBotComandos" checked onchange="TelegramBot.ligadoMudou(this)"> Ligar os comandos
+      </label>
+      <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="TelegramBot.registrarComandos(this)"><i class="fa fa-list"></i> Ativar comandos no bot</button>
+      <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="TelegramBot.verificarAgora(this)"><i class="fa fa-sync"></i> Verificar agora</button>
+    </div>
+    <div id="botStatus" style="font-size:.86rem;font-weight:700;margin-top:10px;color:#666"></div>
+    <div id="botLog" style="font-size:.8rem;color:#777;margin-top:8px;display:grid;gap:2px"></div>
+    <p style="font-size:.78rem;color:#8a8a8a;margin:10px 0 0"><i class="fa fa-info-circle"></i> Os comandos são aplicados no navegador onde o painel está aberto (deixe esta página aberta para funcionar na hora). O status do cliente continua sendo alterado por aqui também.</p>
+  </div>
+
 </div>
 
 </div></section>
 
-<script src="script.js?v=20261014c"></script>
+<script src="script.js?v=20261014f"></script>
+<script src="telegram.js?v=20261014f"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -127,6 +214,8 @@
 </script>
 <script>
 let filtroAdminAtual = "todos";
+let buscaAdmin = "";
+let fichaAberta = "";
 
 function verSenha(btn) {
     var campo = document.getElementById("fSenha");
@@ -166,6 +255,11 @@ function mostrarPainel() {
     document.getElementById("painelTela").style.display = "block";
     document.getElementById("btnSair").style.display = "inline";
     renderAdmin();
+    var chk = document.getElementById("cfgBotComandos");
+    if (chk) {
+        try { chk.checked = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}").cfgBotComandos !== false; } catch (e) {}
+    }
+    if (typeof TelegramBot !== "undefined") { TelegramBot.log("Painel aberto - comandos do bot em espera"); TelegramBot.iniciar(); TelegramBot.registrarComandos(); }
 }
 function filtrarAdmin(f, btn) {
     filtroAdminAtual = f;
@@ -177,18 +271,26 @@ function renderAdmin() {
     const selPeriodo = document.getElementById("periodoVendas");
     const periodo = selPeriodo ? selPeriodo.value : "all";
     const pedidos = filtrarPeriodo(getPedidos(), periodo);
-    // Stats
+
+    /* ---------- indicadores ---------- */
     const total = pedidos.length;
     const aguardando = pedidos.filter(p => p.status === "aguardando").length;
     const andamento = pedidos.filter(p => ["confirmado","separacao","enviado"].includes(p.status)).length;
+    const entregues = pedidos.filter(p => p.status === "entregue").length;
+    const cancelados = pedidos.filter(p => p.status === "cancelado").length;
     const faturamento = pedidos.filter(p => p.status !== "cancelado").reduce((t, p) => t + p.total, 0);
+    const ticket = total ? faturamento / pedidos.filter(p => p.status !== "cancelado").length : 0;
+
     document.getElementById("stats").innerHTML =
         '<div class="stat"><div class="num">' + total + '</div><div class="lbl">Total de pedidos</div></div>' +
         '<div class="stat"><div class="num" style="color:#FF9800">' + aguardando + '</div><div class="lbl">Aguardando</div></div>' +
         '<div class="stat azul"><div class="num">' + andamento + '</div><div class="lbl">Em andamento</div></div>' +
-        '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>';
+        '<div class="stat verde"><div class="num">' + entregues + '</div><div class="lbl">Entregues</div></div>' +
+        '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>' +
+        '<div class="stat"><div class="num">' + formatBRL(ticket) + '</div><div class="lbl">Ticket médio</div></div>' +
+        '<div class="stat"><div class="num" style="color:#c62828">' + cancelados + '</div><div class="lbl">Cancelados</div></div>';
 
-    // contadores nos botoes de filtro
+    /* ---------- contadores nos filtros ---------- */
     var rotulos = {todos:"Todos", aguardando:"Aguardando", confirmado:"Confirmados", enviado:"Enviados", entregue:"Entregues"};
     document.querySelectorAll(".filtro").forEach(function(b){
         var f = b.dataset.f;
@@ -197,59 +299,140 @@ function renderAdmin() {
         b.innerHTML = rotulos[f] + ' <span class="filtro-count">' + n + '</span>';
     });
 
+    /* ---------- lista filtrada ---------- */
     let lista = pedidos;
-    if (filtroAdminAtual !== "todos") lista = pedidos.filter(p => p.status === filtroAdminAtual);
+    if (filtroAdminAtual !== "todos") lista = lista.filter(p => p.status === filtroAdminAtual);
+
+    const termo = buscaAdmin.trim().toLowerCase();
+    if (termo) {
+        lista = lista.filter(function(p) {
+            return [p.id, p.nome, p.tel, p.bairro, p.regiao, p.pagamento].join(" ").toLowerCase().indexOf(termo) >= 0
+                || (p.itens || []).some(function(i){ return String(i.name || "").toLowerCase().indexOf(termo) >= 0; });
+        });
+    }
 
     const box = document.getElementById("listaPedidos");
     if (lista.length === 0) {
         box.innerHTML = '<div class="vazio"><i class="fa fa-inbox"></i><p>Nenhum pedido encontrado.</p></div>';
     } else {
-        // agrupa por bairro (o mais recente primeiro dentro de cada bairro)
-        const grupos = {};
-        const ordemBairros = [];
-        lista.forEach(function(p) {
-            const b = p.bairro || "Sem bairro";
-            if (!grupos[b]) { grupos[b] = []; ordemBairros.push(b); }
-            grupos[b].push(p);
-        });
-        let h = "";
-        ordemBairros.forEach(function(b) {
-            h += '<h3 style="margin:14px 0 6px;font-size:1rem;color:var(--primary-color);border-bottom:2px solid var(--accent-color);padding-bottom:4px">Bairro: ' + b + '</h3>';
-            grupos[b].forEach(function(p) { h += cardPedido(p); });
-        });
-        box.innerHTML = h;
+        box.innerHTML = tabelaPedidos(lista);
     }
-    // resumo produtos mais vendidos
-    var rp = {};
-    pedidos.forEach(function(p){ (p.itens || []).forEach(function(i){ var n = i.name || i.nome || ''; if (!rp[n]) rp[n] = {q:0}; rp[n].q += (i.qty || 0); }); });
-    var htmlp = '<div style="margin:12px 0"><h4 style="margin:6px 0;color:#3d4465;font-size:1rem">Produtos mais vendidos</h4>';
-    Object.keys(rp).sort(function(a,b){return (rp[b].q||0)-(rp[a].q||0);}).forEach(function(n){ htmlp += '<div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>' + n + '</span><b>' + rp[n].q + '</b></div>'; });
-    htmlp += '</div>';
-    box.innerHTML = box.innerHTML + htmlp;
+    box.innerHTML = box.innerHTML + resumoProdutos(pedidos) + resumoPorStatus(pedidos);
 }
 
-function cardPedido(p) {
-    let h = '<div class="pedido-card">';
-    h += '<div class="pedido-topo"><div><b>' + p.id + '</b><div class="pedido-meta">' + dataHora(p.criadoEm) + '</div></div>' + statusBadge(p.status) + '</div>';
-    h += '<div class="pedido-info"><i class="fa fa-user"></i> ' + p.nome + ' &nbsp; <i class="fa fa-phone"></i> ' + p.tel + '</div>';
-    if (p.cpf) h += '<div class="pedido-info"><i class="fa fa-id-card"></i> CPF: ' + p.cpf + '</div>';
-    h += '<div class="pedido-info"><i class="fa fa-map-marker-alt"></i> ' + p.end + (p.comp ? " (" + p.comp + ")" : "") + ' — ' + p.bairro + '</div>';
-    h += '<div class="pedido-info"><i class="fa fa-credit-card"></i> ' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco p/ " + p.troco + ")" : "") + ' &nbsp; <i class="fa fa-truck"></i> Frete: ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</div>';
-    h += '<div class="pedido-itens">';
-    p.itens.forEach(function(i) { h += '<div>' + i.name + ' x' + i.qty + ' — ' + formatBRL(i.subtotal) + '</div>'; });
-    h += '</div>';
-    h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span class="pedido-total-linha">Total: ' + formatBRL(p.total) + '</span></div>';
-    h += '<div class="pedido-acoes">';
-    h += '<button class="btn-st b-confirmar" onclick="mudarStatus(\'' + p.id + '\',\'confirmado\')">Confirmar</button>';
-    h += '<button class="btn-st b-separar" onclick="mudarStatus(\'' + p.id + '\',\'separacao\')">Em separação</button>';
-    h += '<button class="btn-st b-enviar" onclick="mudarStatus(\'' + p.id + '\',\'enviado\')">Enviado</button>';
-    h += '<button class="btn-st b-entregar" onclick="mudarStatus(\'' + p.id + '\',\'entregue\')">Entregue</button>';
-    h += '<button class="btn-st b-cancelar" onclick="mudarStatus(\'' + p.id + '\',\'cancelado\')">Cancelar</button>';
-    h += '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> Falar c/ cliente</a>';
-    h += '<button class="btn-st b-copiar" onclick="copiarPedido(\'' + p.id + '\')"><i class="fa fa-copy"></i> Copiar</button>';
+/* ---------- tabela profissional ---------- */
+function tabelaPedidos(lista) {
+    let h = '<div class="tab-wrap"><table class="tabela-pedidos"><thead><tr>'
+        + '<th>Pedido</th><th>Cliente</th><th>Entrega</th><th>Pagamento</th>'
+        + '<th style="text-align:right">Frete</th><th style="text-align:right">Total</th>'
+        + '<th>Status</th><th>Ações</th></tr></thead><tbody>';
+    lista.forEach(function (p) {
+        const aberto = (fichaAberta === p.id);
+        h += '<tr class="linha-pedido" onclick="abrirFicha(\'' + p.id + '\')">'
+            + '<td class="td-id">' + p.id + '<span class="sub">' + dataHora(p.criadoEm) + '</span></td>'
+            + '<td class="td-cliente">' + p.nome + '<span class="sub"><i class="fa fa-phone"></i> ' + p.tel + '</span></td>'
+            + '<td>' + (p.bairro || "—") + '<span class="sub">' + (p.regiao || "") + '</span></td>'
+            + '<td>' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? '<span class="sub">troco p/ ' + p.troco + '</span>' : '') + '</td>'
+            + '<td class="td-num">' + (p.frete === 0 ? '<b style="color:#2e7d32">GRÁTIS</b>' : formatBRL(p.frete)) + '</td>'
+            + '<td class="td-num td-total">' + formatBRL(p.total) + '</td>'
+            + '<td>' + statusBadge(p.status) + '</td>'
+            + '<td class="td-acoes" onclick="event.stopPropagation()">' + botoesStatus(p) + '</td>'
+            + '</tr>';
+        if (aberto) h += '<tr><td colspan="8" style="padding:0 6px 10px">' + fichaPedido(p) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    return h;
+}
+
+/* ---------- botoes de status (todos os comandos) ---------- */
+function botoesStatus(p) {
+    let h = '';
+    if (p.status !== "confirmado" && p.status !== "entregue")
+        h += '<button class="btn-st b-confirmar" title="Confirmar pedido" onclick="mudarStatus(\'' + p.id + '\',\'confirmado\')"><i class="fa fa-check"></i></button>';
+    if (p.status !== "separacao")
+        h += '<button class="btn-st b-separar" title="Em separacao" onclick="mudarStatus(\'' + p.id + '\',\'separacao\')"><i class="fa fa-box"></i></button>';
+    if (p.status !== "enviado")
+        h += '<button class="btn-st b-enviar" title="Saiu para entrega" onclick="mudarStatus(\'' + p.id + '\',\'enviado\')"><i class="fa fa-truck"></i></button>';
+    if (p.status !== "entregue")
+        h += '<button class="btn-st b-entregar" title="Entregue" onclick="mudarStatus(\'' + p.id + '\',\'entregue\')"><i class="fa fa-home"></i></button>';
+    if (p.status !== "cancelado")
+        h += '<button class="btn-st b-cancelar" title="Cancelar" onclick="cancelarPedido(\'' + p.id + '\')"><i class="fa fa-times"></i></button>';
+    h += '<a class="btn-zap" title="Falar com o cliente no WhatsApp" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i></a>';
+    h += '<button class="btn-st b-copiar" title="Copiar resumo" onclick="copiarPedido(\'' + p.id + '\')"><i class="fa fa-copy"></i></button>';
+    return h;
+}
+
+/* ---------- ficha detalhada ---------- */
+function fichaPedido(p) {
+    let h = '<div class="ficha"><h4><i class="fa fa-file-text"></i> Detalhes do pedido ' + p.id + '</h4><div class="ficha-grid">';
+    h += '<div>Cliente: <b>' + p.nome + '</b></div>';
+    h += '<div>WhatsApp: <b>' + p.tel + '</b></div>';
+    h += '<div>CPF: <b>' + (p.cpf || "não informado") + '</b></div>';
+    h += '<div>Data: <b>' + dataHora(p.criadoEm) + '</b></div>';
+    h += '<div>Endereco: <b>' + p.end + (p.comp ? " (" + p.comp + ")" : "") + '</b></div>';
+    h += '<div>Bairro / Regiao: <b>' + (p.bairro || "—") + ' / ' + (p.regiao || "—") + '</b></div>';
+    h += '<div>Pagamento: <b>' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</b></div>';
+    h += '<div>Frete: <b>' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</b></div>';
+    h += '<div class="ficha-linha"><b>Itens:</b></div>';
+    (p.itens || []).forEach(function (i) {
+        h += '<div>' + i.name + ' <span class="sub">x' + i.qty + ' — ' + formatBRL(i.subtotal) + '</span></div>';
+    });
+    h += '<div class="ficha-linha"><b>Subtotal:</b> ' + formatBRL(p.subtotal)
+        + ' &nbsp;&nbsp; <b>Total:</b> ' + formatBRL(p.total) + '</div>';
+    if (p.historico && p.historico.length) {
+        h += '<div class="ficha-linha"><b>Acompanhamento:</b></div>';
+        p.historico.slice().reverse().forEach(function (ev) {
+            h += '<div>' + (STATUS_LABEL[ev.status] || ev.status) + ' — ' + dataHora(ev.quando) + '</div>';
+        });
+    }
+    h += '<div class="ficha-linha"><b>Comandos:</b> '
+        + '<button class="btn-st b-copiar" onclick="copiarPedido(\'' + p.id + '\')"><i class="fa fa-copy"></i> Copiar</button> '
+        + '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> WhatsApp</a>'
+        + '</div>';
     h += '</div></div>';
     return h;
 }
+
+function abrirFicha(id) {
+    fichaAberta = (fichaAberta === id) ? "" : id;
+    renderAdmin();
+}
+
+/* ---------- cancelamento com confirmacao ---------- */
+function cancelarPedido(id) {
+    if (!confirm("Cancelar o pedido " + id + "?")) return;
+    mudarStatus(id, "cancelado");
+}
+
+/* ---------- resumo dos produtos mais vendidos ---------- */
+function resumoProdutos(pedidos) {
+    var rp = {};
+    pedidos.forEach(function(p){ (p.itens || []).forEach(function(i){ var n = i.name || i.nome || ''; if (!rp[n]) rp[n] = {q:0}; rp[n].q += (i.qty || 0); }); });
+    var nomes = Object.keys(rp).sort(function(a,b){return (rp[b].q||0)-(rp[a].q||0);}).slice(0, 12);
+    if (!nomes.length) return '';
+    var htmlp = '<div class="card" style="margin-top:14px"><h4 style="margin:0 0 10px;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-star"></i> Produtos mais vendidos</h4>';
+    nomes.forEach(function (n) {
+        htmlp += '<div class="resumo-linha"><span>' + n + '</span><b>' + rp[n].q + ' un</b></div>';
+    });
+    htmlp += '</div>';
+    return htmlp;
+}
+
+/* ---------- resumo por status ---------- */
+function resumoPorStatus(pedidos) {
+    var ordem = ["aguardando","confirmado","separacao","enviado","entregue","cancelado"];
+    var html = '<div class="card" style="margin-top:14px"><h4 style="margin:0 0 10px;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-chart-bar"></i> Pedidos por status</h4>';
+    ordem.forEach(function (st) {
+        var ps = pedidos.filter(function (p){ return p.status === st; });
+        if (!ps.length) return;
+        var soma = ps.filter(function (p){ return p.status !== "cancelado"; }).reduce(function (t, p){ return t + p.total; }, 0);
+        html += '<div class="resumo-linha"><span>' + statusBadge(st) + '</span>'
+              + '<b>' + ps.length + ' pedido(s) — ' + formatBRL(soma) + '</b></div>';
+    });
+    html += '</div>';
+    return html;
+}
+
 
 /* copia o resumo completo do pedido (para colar no WhatsApp ou planilha) */
 function copiarPedido(id) {
@@ -312,7 +495,7 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261014d"></script>
+<script src="app.js?v=20261014f"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }

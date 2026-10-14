@@ -1,0 +1,26 @@
+{
+  "name": "Refrigerantes Convenção - Delivery",
+  "short_name": "Convenção",
+  "description": "Peça refrigerantes, chopp, águas e energético. Frete grátis acima de R$ 150.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "index.html",
+  "scope": "./",
+  "id": "convencao-delivery",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#3d4465",
+  "theme_color": "#3d4465",
+  "categories": ["shopping", "food", "business"],
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "img/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Meus pedidos", "short_name": "Pedidos", "url": "meus-pedidos.html", "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Meu perfil", "short_name": "Perfil", "url": "perfil.html", "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

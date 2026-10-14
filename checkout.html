@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json?v=20261014f">
+<meta name="theme-color" content="#3d4465">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Convenção">
+<link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Finalizar Pedido - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014c">
-<script src="theme.js?v=20261014c"></script>
+<link rel="stylesheet" href="style.css?v=20261014f">
+<script src="theme.js?v=20261014f"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
@@ -139,6 +146,7 @@
     <div class="resumo-row"><span>Subtotal</span><span id="rSub">R$ 0,00</span></div>
     <div class="resumo-row" id="rFreteRow"><span>Frete</span><span id="rFrete">R$ 0,00</span></div>
     <div class="resumo-row total"><span>Total</span><span id="rTotal">R$ 0,00</span></div>
+    <div class="aviso-frete" id="avisoFrete" style="display:none;margin-top:10px"></div>
     <button class="btn-enviar" id="btnEnviar" onclick="enviarPedido()"><i class="fa fa-check-circle"></i> Finalizar Pedido</button>
     <div class="aviso">Acompanhe o status do seu pedido na página "Meus Pedidos".</div>
   </div>
@@ -146,9 +154,9 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261014c"></script>
-<script src="loja.js?v=20261014d"></script>
-<script src="script.js?v=20261014c"></script>
+<script src="conta.js?v=20261014f"></script>
+<script src="loja.js?v=20261014f"></script>
+<script src="script.js?v=20261014f"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -197,30 +205,43 @@ function selPag(radio) {
 }
 
 function calcular() {
-    var freteBase = 0;
-    var sel = document.getElementById("fRegiao");
-    if (sel && typeof REGIOES !== "undefined") {
-        var reg = null;
-        for (var i = 0; i < REGIOES.length; i++) { if (REGIOES[i].id === sel.value) reg = REGIOES[i]; }
-        if (reg && typeof reg.frete === "number") freteBase = reg.frete;
-    }
     const subtotal = arredonda(calcSubtotal());
-    // frete gratis a partir de R$ 150,00 - carrinho vazio nunca paga frete
-    const frete = (subtotal <= 0) ? 0 : ((subtotal >= 150) ? 0 : arredonda(freteBase));
-    const total = arredonda(subtotal + frete);
+    var sel = document.getElementById("fRegiao");
+    const regiaoId = sel ? sel.value : "";
 
-    document.getElementById("rSub").innerText = formatBRL(subtotal);
+    /* regra unica de frete (mesma do carrinho e do painel) */
+    const r = (typeof calcularFrete === "function")
+        ? calcularFrete(subtotal, regiaoId)
+        : { subtotal: subtotal, frete: 0, total: subtotal, gratis: subtotal >= 150, faltaParaGratis: 0, regiao: null, minimo: 150 };
+
+    document.getElementById("rSub").innerText = formatBRL(r.subtotal);
     const fr = document.getElementById("rFrete");
     const frRow = document.getElementById("rFreteRow");
-    if (frete === 0) {
+    if (r.frete === 0) {
         frRow.classList.add("gratis");
         fr.innerText = "GRÁTIS";
     } else {
         frRow.classList.remove("gratis");
-        fr.innerText = formatBRL(frete);
+        fr.innerText = formatBRL(r.frete);
     }
-    document.getElementById("rTotal").innerText = formatBRL(total);
-    return { subtotal: subtotal, frete: frete, total: total };
+    document.getElementById("rTotal").innerText = formatBRL(r.total);
+
+    /* avisa quanto falta para o frete sair de graca */
+    var av = document.getElementById("avisoFrete");
+    if (av) {
+        if (r.faltaParaGratis > 0) {
+            av.style.display = "";
+            av.innerHTML = '<i class="fa fa-truck"></i> Faltam <b>' + formatBRL(r.faltaParaGratis)
+                + '</b> para o frete ficar <b>GRÁTIS</b>';
+        } else if (r.subtotal > 0 && r.gratis) {
+            av.style.display = "";
+            av.innerHTML = '<i class="fa fa-check-circle" style="color:#2e7d32"></i> <b style="color:#2e7d32">Frete grátis!</b> Pedido acima de ' + formatBRL(r.minimo);
+        } else {
+            av.style.display = "none";
+            av.innerHTML = "";
+        }
+    }
+    return { subtotal: r.subtotal, frete: r.frete, total: r.total, gratis: r.gratis, regiao: r.regiao, minimo: r.minimo, faltaParaGratis: r.faltaParaGratis };
 }
 
 function enviarPedido() {

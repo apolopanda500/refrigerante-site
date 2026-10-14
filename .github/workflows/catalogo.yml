@@ -1,0 +1,68 @@
+# ============================================
+# ROBO DO CATALOGO - CONVENCAO
+# De segunda a sexta, 10:00 (fuso de Sao Paulo),
+# entra no site oficial, ve os produtos disponiveis,
+# baixa as fotos e atualiza o catalogo.json do site.
+#
+# O que o robo NAO mexe:
+# - horarios de funcionamento
+# - regioes e dias de entrega
+# - valores de frete
+# - qualquer coisa em loja.js
+# ============================================
+name: Atualizar catalogo
+
+on:
+  schedule:
+    # 10:00 de segunda a sexta (13:00 UTC = 10:00 em SP)
+    - cron: '0 13 * * 1-5'
+  workflow_dispatch:        # da para rodar na mao pela aba Actions
+  push:
+    paths:
+      - '.github/scripts/sync-catalogo.js'
+      - '.github/workflows/catalogo.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: catalogo
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Ler catalogo oficial e atualizar
+        run: node .github/scripts/sync-catalogo.js
+
+      - name: Conferir o catalogo.json
+        run: |
+          node -e "const c=require('./catalogo.json'); if(!c.produtos||!c.produtos.length){console.error('catalogo vazio');process.exit(1)} console.log('catalogo ok:', c.produtos.length, 'produtos, gerado em', c.geradoEm);"
+
+      - name: Publicar (commit automatico)
+        run: |
+          git config user.name  "robo-catalogo"
+          git config user.email "robo-catalogo@users.noreply.github.com"
+          git add catalogo.json img/cat/
+          if git diff --staged --quiet; then
+            echo "Nada mudou no catalogo. Site oficial igual ao de ontem."
+            exit 0
+          fi
+          git commit -m "Catalogo atualizado automaticamente ($(date -u '+%d/%m/%Y %H:%M UTC'))"
+          git push
+
+      - name: Resumo da execucao
+        if: always()
+        run: |
+          {
+            echo "### Catalogo atualizado"
+            echo ""
+            node -e "const c=require('./catalogo.json'); console.log('Produtos disponiveis: **'+c.produtos.length+'**'); console.log('Categorias: '+[...new Set(c.produtos.map(p=>p.ct))].join(', ')); console.log('Ultima leitura: '+c.geradoEm);" || true
+          } >> "$GITHUB_STEP_SUMMARY"

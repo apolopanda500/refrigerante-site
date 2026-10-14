@@ -309,15 +309,14 @@ function criarPedido(dados) {
    Envio por GET (query string): e o unico metodo que
    passa em qualquer navegador (Android, iPhone, PC),
    porque a API do Telegram barra POST com JSON.
-   ============================================ */
-function notificarTelegramPedido(p) {
-    var prefs = {};
-    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
-    if (prefs.cfgAvisoPedido === false) return;          // desligado (opcao oculta)
-    var token = prefs.cfgTelegramToken || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
-    var chat  = prefs.cfgTelegramChatId || "1810807613";  // chat do vendedor (@Rickcao22)
-    if (!token || !chat) return;
 
+   A mensagem chega com BOTOES: o vendedor toca em
+   Confirmar / Separação / Enviado / Entregue /
+   Cancelar e o status muda no painel.
+   ============================================ */
+
+/* texto da mensagem de um pedido (usado no aviso e na edicao) */
+function mensagemPedidoTG(p) {
     var itens = "";
     (p.itens || []).forEach(function(i){ itens += "\n  - " + i.name + " x" + i.qty + " = " + formatBRL(i.subtotal); });
     if (itens.length > 900) itens = itens.slice(0, 900) + "\n  ...(demais itens no painel)";
@@ -332,14 +331,40 @@ function notificarTelegramPedido(p) {
         + "\nFrete: " + (p.frete === 0 ? "GRATIS" : formatBRL(p.frete))
         + "\n\nItens:" + itens
         + "\n\nTOTAL: " + formatBRL(p.total)
-        + "\nStatus: aguardando confirmacao";
+        + "\n\nStatus: " + (STATUS_LABEL[p.status] || p.status);
 
     if (msg.length > 3500) msg = msg.slice(0, 3450) + "\n...(veja o pedido completo no painel)";
+    return msg;
+}
+
+/* botoes de status que vem na mensagem do pedido */
+function tecladoPedidoTG(id) {
+    return {
+        inline_keyboard: [
+            [ { text: "Confirmar", callback_data: "st|" + id + "|confirmado" },
+              { text: "Em separacao", callback_data: "st|" + id + "|separacao" } ],
+            [ { text: "Enviado", callback_data: "st|" + id + "|enviado" },
+              { text: "Entregue", callback_data: "st|" + id + "|entregue" } ],
+            [ { text: "Cancelar", callback_data: "st|" + id + "|cancelado" } ]
+        ]
+    };
+}
+
+function notificarTelegramPedido(p) {
+    var prefs = {};
+    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
+    if (prefs.cfgAvisoPedido === false) return;          // desligado (opcao oculta)
+    var token = prefs.cfgTelegramToken || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
+    var chat  = prefs.cfgTelegramChatId || "1810807613";  // chat do vendedor (@Rickcao22)
+    if (!token || !chat) return;
+
+    var msg = mensagemPedidoTG(p) + "\n\nToque nos botoes abaixo ou digite /confirmar " + p.id;
 
     var url = "https://api.telegram.org/bot" + token + "/sendMessage"
             + "?chat_id=" + encodeURIComponent(chat)
             + "&text=" + encodeURIComponent(msg)
-            + "&disable_web_page_preview=true";
+            + "&disable_web_page_preview=true"
+            + "&reply_markup=" + encodeURIComponent(JSON.stringify(tecladoPedidoTG(p.id)));
     try { fetch(url, { mode: "no-cors" }).catch(function(){}); } catch(e) {}
 }
 

@@ -180,11 +180,15 @@ function mostrarInfoFrete(){
             linhas += '<div class="info-linha"><b>' + r.nome + '</b><span>' + r.diasTexto + '</span></div>';
         });
     }
-    var t = (typeof horarioDeHoje === "function") ? horarioDeHoje() : null;
+var t = (typeof horarioDeHoje === "function") ? horarioDeHoje() : null;
     var st = t ? (t.aberto ? '<b style="color:#2e7d32">Aberto agora</b>' : '<b style="color:#c62828">Fechado agora</b>') : "";
+    var minimo = (typeof freteGratisMinimo === "function") ? freteGratisMinimo() : 150;
+    var menor = (typeof freteMinimo === "function") ? freteMinimo() : 8;
+    var maior = 0;
+    if (typeof REGIOES !== "undefined") REGIOES.forEach(function (r) { if (typeof r.frete === "number" && r.frete > maior) maior = r.frete; });
     mostrarModal("Frete e entregas",
-        '<p><b>Frete grátis</b> em pedidos acima de <b>R$ 150,00</b>.</p>'
-        + '<p>Antes disso o frete varia por região: de <b>R$ 8,00</b> a <b>R$ 20,00</b>. '
+        '<p><b>Frete grátis</b> em pedidos a partir de <b>' + formatBRL(minimo) + '</b>.</p>'
+        + '<p>Antes disso o frete varia por região: de <b>' + formatBRL(menor) + '</b> a <b>' + formatBRL(maior) + '</b>. '
         + 'Você escolhe a região na hora do pedido e o valor aparece antes de confirmar.</p>'
         + '<p><b>Horário:</b> das 09:00 às 15:00, somente nos dias de cada região.</p>'
         + (st ? '<p>Agora: ' + st + '</p>' : '')
@@ -303,7 +307,55 @@ localStorage.setItem("refrigeranteCart",JSON.stringify(ct));
 function partilhar(){try{var u=location.href.split("#")[0];
 if(navigator.share){navigator.share({title:"Convencao",text:"Confira!",url:u}).catch(function(){})}
 else if(navigator.clipboard){navigator.clipboard.writeText(u);alert("Link copiado!")}}catch(e){}}
-if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){try{rT()}catch(e){}try{aplicarPrecosSalvar()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"})}else{try{rT()}catch(e){}try{aplicarPrecosSalvar()}catch(e){}try{rP()}catch(e){}try{uC()}catch(e){}var l=document.getElementById("ldBox");if(l)l.style.display="none"}
+/* ============================================
+   CATALOGO DO SITE OFICIAL (atualizado todo dia)
+   O robo .github/scripts/sync-catalogo.js grava
+   catalogo.json com os produtos disponiveis. Se o
+   arquivo nao carregar (site fora do ar, json
+   corrompido), o site continua com a lista fixa
+   que esta no topo deste arquivo.
+   ============================================ */
+function aplicarCatalogoJSON(cat) {
+    if (!cat || !cat.produtos || !cat.produtos.length) return false;
+    var novos = [];
+    cat.produtos.forEach(function (p) {
+        if (!p || !p.nm || !p.pr) return;
+        novos.push({ ct: p.ct || "de", nm: p.nm, ds: p.ds || "", pr: String(p.pr), im: p.im || "", key: p.key || "" });
+    });
+    if (novos.length < 3) return false;
+
+    PD = novos;
+    if (cat.grupos && cat.grupos.length) {
+        CT = cat.grupos.map(function (g) { return { id: g.id, nm: g.nm, ic: g.ic }; });
+    }
+    /* ordem: destaques primeiro */
+    var ordem = { de: 0, "2l": 1, "60": 2, "35": 3, re: 4, mx: 5, ag: 6, ch: 7 };
+    PD.sort(function (a, b) { return (ordem[a.ct] === undefined ? 9 : ordem[a.ct]) - (ordem[b.ct] === undefined ? 9 : ordem[b.ct]); });
+    try { aplicarPrecosSalvar(); } catch (e) {}
+    try { rT(); rP(); uC(); } catch (e) {}
+    return true;
+}
+
+function carregarCatalogo() {
+    if (typeof fetch !== "function") return;
+    /* o robo do catalogo reescreve o arquivo todo dia: sempre pede a versao nova */
+    fetch("catalogo.json?v=" + Date.now(), { cache: "no-cache" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (cat) { if (cat) aplicarCatalogoJSON(cat); })
+        .catch(function () { /* segue com a lista fixa */ });
+}
+
+/* ---------- sobe a tela (depois do catalogo) ---------- */
+function iniciarPagina() {
+    try { rT(); } catch (e) {}
+    try { aplicarPrecosSalvar(); } catch (e) {}
+    try { rP(); } catch (e) {}
+    try { uC(); } catch (e) {}
+    var l = document.getElementById("ldBox"); if (l) l.style.display = "none";
+    carregarCatalogo();
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciarPagina);
+else iniciarPagina();
 setTimeout(function(){var l=document.getElementById("ldBox");if(l)l.style.display="none"},3000);
 
 /* ============================================

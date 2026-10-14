@@ -12,9 +12,10 @@
         var p = prefs();
         var h = document.documentElement;
 
-        // Tema: claro | guara | chopp | dark  (ou o interruptor antigo)
+        // Tema: claro | guara | rosa | vermelho | dark  (ou o interruptor antigo)
         var tema = p.cfgTema;
         if (!tema) tema = p.cfgModoEscuro ? "dark" : "claro";
+        if (tema === "chopp") tema = "rosa";   // tema azul saiu do ar -> rosa
         if (tema === "claro") h.removeAttribute("data-theme");
         else h.setAttribute("data-theme", tema);
 
