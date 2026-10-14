@@ -22,8 +22,8 @@ var APPCHECK_CONFIG = {
     databaseURL: "https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com",
     storageBucket: "planning-with-ai-9b2c9.firebasestorage.app",
     messagingSenderId: "45318659756",
-    appId: "1:45318659756:web:785e268808d398f72e0909",
-    siteKey: ""      // <- cole aqui a chave do site do reCAPTCHA v3 (App Check)
+    appId: "1:45318659756:web:8e5872f6b43d162c2e0909",   // app "CONVENCAO"
+    siteKey: ""      // <- cole aqui a chave do site do reCAPTCHA v3 (tela App Check)
 };
 
 var AppCheck = (function () {
