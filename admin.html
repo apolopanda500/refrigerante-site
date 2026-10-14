@@ -167,6 +167,20 @@
       <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="testarPrecosURLAdmin(this)"><i class="fa fa-plug"></i> Testar</button>
     </div>
     <div id="precosURLMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
+    <div id="passoFirebase" style="display:none;margin-top:14px;background:var(--bg-alt);border:1px solid var(--borda);border-radius:12px;padding:16px">
+      <h4 style="margin:0 0 10px;color:var(--primary-color);font-size:1rem"><i class="fa fa-circle-info"></i> Como criar o banco (1 minuto)</h4>
+      <ol style="margin:0;padding-left:20px;font-size:.9rem;line-height:1.9;color:#4a5070">
+        <li>Abra <b>console.firebase.google.com</b> e entre no projeto <b>planning-with-ai-9b2c9</b>.</li>
+        <li>No menu da esquerda clique em <b>Realtime Database</b> (ou <i>Banco de dados em tempo real</i>).</li>
+        <li>Clique em <b>Criar banco de dados</b> → escolha a região <b>United States</b> → <b>Avançar</b>.</li>
+        <li>Escolha <b>Começar no modo de teste</b> e conclua.</li>
+        <li>Pronto! Não precisa colar nada aqui: o site encontra o banco sozinho.</li>
+      </ol>
+      <p style="margin:10px 0 0;font-size:.84rem;color:#7a8199">
+        Depois de criar, volte aqui e clique em <b>Testar</b>. Se aparecer “Tudo certo”, é só editar os preços e clicar em <b>Salvar e aplicar</b>: todos os clientes veem na hora.
+      </p>
+    </div>
+    <button class="btn-st b-copiar" style="margin-top:10px;min-height:40px;padding:9px 16px" onclick="verPassoFirebase()"><i class="fa fa-question-circle"></i> Como criar o banco</button>
   </div>
   <div class="card" id="caixaBot" style="margin-top:12px">
     <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-robot"></i> Bot do Telegram - comandos do vendedor</h3>
@@ -670,6 +684,35 @@ function verPassoFirebase(){
   if(!el) return;
   el.style.display = (el.style.display === "none") ? "block" : "none";
 }
+
+/* estado real da nuvem (verifica se o banco responde) */
+function checarNuvemPrecos(){
+  var msg = document.getElementById("precosURLMsg");
+  if (!msg || typeof listaEnderecos !== "function") return;
+  var lista = listaEnderecos(), i = 0;
+  msg.style.color = "#8a6100";
+  msg.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Procurando o banco de preços...';
+  (function tentar(){
+    if (i >= lista.length){
+      msg.style.color = "#8a6100";
+      msg.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Banco ainda não encontrado. Clique em <b>Como criar o banco</b> (leva 1 minuto).';
+      return;
+    }
+    var url = lista[i++];
+    fetch(caminhoPrecos(url), { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("http " + r.status);
+        return r.json();
+      })
+      .then(function (dados) {
+        var n = (dados && typeof dados === "object") ? Object.keys(dados).length : 0;
+        msg.style.color = "#2e7d32";
+        msg.innerHTML = '<i class="fa fa-check-circle"></i> Banco ligado! ' + n + ' preço(s) publicado(s). Os clientes veem as alterações na hora.';
+        lembrarEndereco(url);
+      })
+      .catch(function () { tentar(); });
+  })();
+}
 document.addEventListener("DOMContentLoaded", function(){
   var caixa = document.getElementById("caixaPrecosNuvem");
   if(!caixa) return;
@@ -679,6 +722,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
     if(inp) inp.value = p.cfgPrecosURL || "";
   }catch(e){}
+  setTimeout(function(){ if (typeof checarNuvemPrecos === "function") checarNuvemPrecos(); }, 400);
 });
 </script>
 <script>sessionStorage.setItem("adminLogado","1"); if(typeof mostrarPainel==="function") mostrarPainel();</script>

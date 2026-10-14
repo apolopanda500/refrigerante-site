@@ -657,6 +657,36 @@ function precosLocais(){
   try{ return JSON.parse(localStorage.getItem("productPriceOverrides")||"{}"); }
   catch(e){ return {}; }
 }
+
+/* ============================================
+   ONDE OS PRECOS FICAM NA NUVEM
+   - URL terminada em .json = ARQUIVO (so leitura).
+     Use se voce publicar o precos.json no Hosting.
+   - URL normal = BANCO (Realtime Database):
+     le E grava. E o que o painel usa para publicar.
+   ============================================ */
+
+/* enderecos tentados sozinhos: nao precisa colar URL nenhuma */
+var PRECOS_ENDERECOS = [
+  "https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com",
+  "https://planning-with-ai-9b2c9.firebaseio.com"
+];
+
+function ehArquivoEstatico(url){ return /\.json(\?|$)/i.test(String(url || "")); }
+function caminhoPrecos(url){ return ehArquivoEstatico(url) ? url : url + "/precos.json"; }
+function listaEnderecos(){
+  var out = [], salvo = precosURLCfg();
+  if (salvo) out.push(salvo);
+  PRECOS_ENDERECOS.forEach(function (u) { if (out.indexOf(u) < 0) out.push(u); });
+  return out;
+}
+function lembrarEndereco(url){
+  try{
+    var p = JSON.parse(localStorage.getItem("refrigerantePrefs")||"{}");
+    p.cfgPrecosURL = url; localStorage.setItem("refrigerantePrefs", JSON.stringify(p));
+  }catch(e){}
+}
+
 function salvarPrecosLocais(ov){
   try{ localStorage.setItem("productPriceOverrides", JSON.stringify(ov)); }catch(e){}
 }
@@ -669,56 +699,55 @@ function aplicarPrecosOverride(){
     if (antiga && ov[antiga] !== undefined) p.pr = ov[antiga];
   });
 }
-/* puxa os precos da nuvem e aplica (se houver URL configurada) */
+
+/* le os precos da nuvem, tentando os enderecos ate um responder */
 function puxarPrecosNuvem(cb){
-  var url = precosURLCfg();
-  if(!url || typeof fetch !== "function"){
-    aplicarPrecosSalvar();
-    if(cb) cb(false);
-    return;
-  }
-  fetch(url + "/precos.json", {cache:"no-store"})
-    .then(function(r){ return r.ok ? r.json() : null; })
-    .then(function(dados){
-      if(dados && typeof dados === "object"){
-        var ov = {};
-        try{ ov = JSON.parse(localStorage.getItem("productPriceOverrides")||"{}"); }catch(e){}
-        var mudou = false;
-        for(var k in dados){
-          if(typeof dados[k] === "string" && ov[k] !== dados[k]){ ov[k] = dados[k]; mudou = true; }
+  if (typeof fetch !== "function"){ aplicarPrecosSalvar(); if (cb) cb(false); return; }
+  var lista = listaEnderecos();
+  if (!lista.length){ aplicarPrecosSalvar(); if (cb) cb(false); return; }
+  var i = 0;
+  (function tentar(){
+    if (i >= lista.length){ aplicarPrecosSalvar(); if (cb) cb(false); return; }
+    var url = lista[i++];
+    fetch(caminhoPrecos(url), {cache:"no-store"})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(dados){
+        if (!dados || typeof dados !== "object"){ tentar(); return; }
+        var ov = precosLocais(), mudou = false;
+        for (var k in dados){
+          if (typeof dados[k] === "string" && ov[k] !== dados[k]){ ov[k] = dados[k]; mudou = true; }
         }
         salvarPrecosLocais(ov);
+        lembrarEndereco(url);
         aplicarPrecosSalvar();
-        if(cb) cb(mudou);
-      } else {
-        aplicarPrecosSalvar();
-        if(cb) cb(false);
-      }
-    })
-    .catch(function(){
-      aplicarPrecosSalvar();
-      if(cb) cb(false);
-    });
+        if (cb) cb(mudou);
+      })
+      .catch(function(){ tentar(); });
+  })();
 }
-/* envia os precos editados para a nuvem */
+
+/* grava os precos editados (so banco; arquivo estatico e so leitura) */
 function enviarPrecosNuvem(cb){
-  var url = precosURLCfg();
-  if(!url || typeof fetch !== "function"){
-    if(cb) cb(false, "nuvem nao configurada");
-    return;
-  }
-  fetch(url + "/precos.json", {
-    method: "PUT",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(precosLocais())
-  })
-    .then(function(r){ if(cb) cb(r.ok, r.ok ? "ok" : "erro HTTP " + r.status); })
-    .catch(function(e){ if(cb) cb(false, "falha de conexao"); });
+  if (typeof fetch !== "function"){ if (cb) cb(false, "nuvem nao configurada"); return; }
+  var lista = listaEnderecos(), i = 0;
+  (function tentar(){
+    if (i >= lista.length){ if (cb) cb(false, "nuvem nao configurada"); return; }
+    var url = lista[i++];
+    if (ehArquivoEstatico(url)){ tentar(); return; }
+    fetch(caminhoPrecos(url), {
+      method: "PUT",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(precosLocais())
+    })
+      .then(function(r){ if (!r.ok) throw new Error("erro HTTP " + r.status); })
+      .then(function(){ lembrarEndereco(url); if (cb) cb(true, "ok"); })
+      .catch(function(){ tentar(); });
+  })();
 }
 /* escuta mudancas na nuvem: o cliente ve o preco novo sem recarregar */
 function ouvirPrecosNuvem(){
   var url = precosURLCfg();
-  if(!url || typeof EventSource !== "function") return;
+  if(!url || typeof EventSource !== "function" || ehArquivoEstatico(url)) return;
   try{
     var es = new EventSource(url + "/precos.json");
     es.addEventListener("put", function(){
