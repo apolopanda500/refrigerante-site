@@ -148,10 +148,6 @@
 <div class="config-card">
   <h2><i class="fa fa-eye"></i> Aparência</h2>
   <div class="config-row">
-    <div class="config-label">Modo escuro<small>Tema escuro</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgModoEscuro"><span class="slider"></span></label>
-  </div>
-  <div class="config-row">
     <div class="config-label">Animações reduzidas<small>Reduzir animações da interface</small></div>
     <label class="toggle"><input type="checkbox" id="cfgReducedMotion"><span class="slider"></span></label>
   </div>
@@ -268,9 +264,6 @@
       <a class="btn-mini" href="https://wa.me/5521983158911" target="_blank" rel="noopener" style="background:#25D366">
         <i class="fa fa-whatsapp"></i> WhatsApp da loja
       </a>
-      <a class="btn-mini" href="https://t.me/convencao_rj" target="_blank" rel="noopener" style="background:#229ED9">
-        <i class="fa fa-paper-plane"></i> Telegram
-      </a>
     </div>
   </div>
 </div>
@@ -284,26 +277,6 @@
   <div class="config-row">
     <div class="config-label">Limpar histórico de pedidos<small>Remover todos os pedidos deste dispositivo</small></div>
     <button class="btn-perigo" onclick="limparHistorico()"><i class="fa fa-exclamation-triangle"></i> Apagar tudo</button>
-  </div>
-</div>
-
-<div class="config-card">
-  <h2><i class="fa fa-paper-plane"></i> Avisos do vendedor</h2>
-  <div class="config-row">
-    <div class="config-label">Avisar novos pedidos no Telegram<small>Receba um resumo de cada pedido no seu Telegram</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgTelegram"><span class="slider"></span></label>
-  </div>
-  <div class="config-row config-col">
-    <label class="config-label">Bot Token</label>
-    <input type="text" id="cfgTelegramToken" placeholder="123456:ABC-DEF..." style="width:100%;padding:10px">
-  </div>
-  <div class="config-row config-col">
-    <label class="config-label">Chat ID</label>
-    <input type="text" id="cfgTelegramChatId" placeholder="-1001234567890" style="width:100%;padding:10px">
-  </div>
-  <div class="config-row">
-    <div class="config-label">Testar aviso<small>Envia uma mensagem de teste para o seu Telegram</small></div>
-    <button class="btn-mini" id="btnTestarTelegram" onclick="testarTelegram(this)" style="background:#229ED9"><i class="fa fa-paper-plane"></i> Enviar teste</button>
   </div>
 </div>
 
@@ -361,7 +334,7 @@
 (function() {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
-    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgModoEscuro","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco","cfgAutoStatus","cfgAvisoRegiao"];
+    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco","cfgAutoStatus"];
     ids.forEach(function(id) {
         var el = document.getElementById(id);
         if (!el) return;
@@ -369,13 +342,6 @@
         el.addEventListener("change", function() {
             prefs[id] = el.checked;
             try { localStorage.setItem("refrigerantePrefs", JSON.stringify(prefs)); } catch(e) {}
-            if (id === "cfgModoEscuro") {
-                if (el.checked) {
-                    document.documentElement.setAttribute("data-theme", "dark");
-                } else {
-                    document.documentElement.removeAttribute("data-theme");
-                }
-            }
             if (id === "cfgReducedMotion") {
                 if (el.checked) {
                     document.documentElement.setAttribute("data-motion", "reduced");
@@ -445,34 +411,6 @@ function limparFoto(){
     aviso("Foto removida");
 }
 
-/* ===== testar aviso do Telegram ===== */
-function testarTelegram(btn){
-    var u = document.getElementById("cfgTelegramToken");
-    var c = document.getElementById("cfgTelegramChatId");
-    var token = (u && u.value.trim()) || "";
-    var chat = (c && c.value.trim()) || "";
-    if (!token || !chat) { aviso("Preencha o Bot Token e o Chat ID antes de testar."); return; }
-    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Enviando...'; }
-    fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            chat_id: chat,
-            text: "Teste de aviso - Painel Refrigerantes Convencao.\n\nSe voce recebeu esta mensagem, os avisos de novos pedidos vao chegar aqui automaticamente."
-        })
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar teste'; }
-        if (d && d.ok) { aviso("Mensagem de teste enviada! Confira seu Telegram."); }
-        else { aviso("Falhou: " + ((d && d.description) || "resposta inesperada")); }
-    })
-    .catch(function(){
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar teste'; }
-        aviso("Falha de conexao. Verifique sua internet e tente novamente.");
-    });
-}
-
 function aviso(msg){
     var box = document.getElementById("msgSalvo");
     if (!box) { alert(msg); return; }
@@ -485,13 +423,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var p = {};
   try { p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
   assoc(p);
-  var u = document.getElementById("cfgTelegramToken");
-  var c = document.getElementById("cfgTelegramChatId");
-  var t = document.getElementById("cfgTelegram");
   var pr = document.getElementById("cfgPrecosURL");
-  if (u) { u.value = p.cfgTelegramToken || ""; u.onchange = function(){ var pp=carregarPrefs(); pp.cfgTelegramToken=u.value.trim(); salvarPrefs(pp); }; }
-  if (c) { c.value = p.cfgTelegramChatId || ""; c.onchange = function(){ var pp=carregarPrefs(); pp.cfgTelegramChatId=c.value.trim(); salvarPrefs(pp); }; }
-  if (t) { t.checked = !!p.cfgTelegram; t.addEventListener("change",function(){ var pp=carregarPrefs(); pp.cfgTelegram=t.checked; salvarPrefs(pp); }); }
   if (pr) {
     pr.value = p.cfgPrecosURL || "";
     pr.onchange = function(){
@@ -541,13 +473,10 @@ function setTema(btn){
     salvarPrefs(p);
     marcarTemaAtivo();
     if (typeof aplicarTema === "function") aplicarTema();
-    // o interruptor antigo reflete o tema
-    var antigo = document.getElementById("cfgModoEscuro");
-    if (antigo) antigo.checked = (p.cfgTema === "dark");
 }
 function marcarTemaAtivo(){
     var p = carregarPrefs();
-    var tema = p.cfgTema || (p.cfgModoEscuro ? "dark" : "claro");
+    var tema = p.cfgTema || "claro";
     document.querySelectorAll(".tema-btn").forEach(function(b){
         b.classList.toggle("ativo", b.dataset.tema === tema);
     });

@@ -300,29 +300,6 @@ function criarPedido(dados) {
     return pedido;
 }
 
-function notificarTelegramPedido(p) {
-    var prefs = {};
-    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
-    var token = prefs.cfgTelegramToken || localStorage.getItem("telegramBotToken") || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
-    var chat = prefs.cfgTelegramChatId || localStorage.getItem("telegramChatId") || "1810807613"; // chat do vendedor (@Rickcao22) - confirmado com start em @Apolopanda_bot
-    var habilitado = (prefs.cfgTelegram !== false); if (!habilitado || !token || !chat) return;
-    var msg = "Novo pedido!\n\nID: " + p.id
-        + "\nCliente: " + p.nome + (p.cpf ? " (CPF " + p.cpf + ")" : "")
-        + "\nWhatsApp: " + p.tel
-        + "\nEndereço: " + p.end + (p.comp ? " (" + p.comp + ")" : "") + " - " + p.bairro
-        + "\nRegião: " + p.regiao
-        + "\nPagamento: " + p.pagamento
-        + "\nTotal: " + formatBRL(p.total)
-        + "\nItens: " + p.itens.map(function(i){return i.name+" x"+i.qty;}).join(", ");
-    try {
-        fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: chat, text: msg, parse_mode: "HTML" })
-        });
-    } catch(e) {}
-}
-
 function pedidosPorTelefone(tel) {
     const t = String(tel).replace(/\D/g, "");
     return getPedidos().filter(p => String(p.tel).replace(/\D/g, "") === t);

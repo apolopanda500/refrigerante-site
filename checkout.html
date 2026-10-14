@@ -272,7 +272,6 @@ function enviarPedido() {
         itens: itens, subtotal: c.subtotal, total: c.total, digital: true
     });
     localStorage.setItem("ultimoPedido", pedido.id);
-    if (typeof notificarTelegramPedido === "function") { try { notificarTelegramPedido(pedido); } catch (e) {} }
     if (typeof agendarAvanco === "function") agendarAvanco(pedido);
     if (typeof Conta !== "undefined") Conta.salvar({ nome: nome, tel: tel, endereco: enderecoCompleto, bairro: bairro, complemento: comp, rua: rua, numero: numero, observacao: obs });
     limparCarrinho();

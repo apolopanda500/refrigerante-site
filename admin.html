@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="stylesheet" href="style.css">
+<script src="theme.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -50,7 +51,8 @@
 <body>
 <header class="main-header"><div class="container"><nav>
 <div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
-<ul class="nav-links"><li><a href="index.html">Ver loja</a></li></ul>
+<span class="mobile-menu-btn"><span></span><span></span><span></span></span>
+<ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Ver loja</a></li></ul>
 <div class="header-actions"><button class="btn-sair" id="btnSair" onclick="sair()" style="display:none">Sair</button></div>
 </nav></div></header>
 
@@ -92,6 +94,27 @@
 </div></section>
 
 <script src="script.js"></script>
+<script>
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    const nav = document.getElementById('mainNav');
+    if (menuBtn && nav) {
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                nav.classList.remove('active');
+            });
+        });
+        window.addEventListener('resize', function(){ if (window.innerWidth > 768) {
+            menuBtn.classList.remove('active');
+            nav.classList.remove('active');
+        }});
+    }
+</script>
 <script>
 let filtroAdminAtual = "todos";
 

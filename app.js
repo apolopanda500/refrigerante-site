@@ -424,9 +424,13 @@ function pintarLateral(){
             + '<i class="fa fa-box"></i>'
             + '<span><b>Meus pedidos</b><small>Acompanhe pelo site</small></span></a>';
     }
-    // banners na lateral
+    // banners do MEIO na lateral (os do topo ja aparecem no topo da pagina)
     var b = document.getElementById("sideBanners");
-    if (b) b.innerHTML = '<h3><i class="fa fa-bullhorn"></i> Ofertas</h3>' + renderBanners("topo");
+    if (b) {
+        var meio = renderBanners("meio");
+        b.innerHTML = meio ? '<h3><i class="fa fa-bullhorn"></i> Ofertas</h3>' + meio : "";
+        b.style.display = meio ? "" : "none";
+    }
     pintarHorario();
 }
 
@@ -472,13 +476,16 @@ function pintarCaminhoes(){
             ? '<img class="cam-foto" src="' + c.imagem + '" alt="Caminhao ' + c.corNome + '" loading="lazy">'
               + '<span class="cam-selo">' + c.modeloCurto + '</span>'
             : '';
+        var zapMotorista = c.whatsapp
+            ? '<a href="https://wa.me/' + c.whatsapp + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none"><i class="fa fa-whatsapp" style="color:#25D366"></i> ' + c.telefone + '</a>'
+            : (c.telefone === "A INFORMAR" ? "Telefone a informar" : c.telefone);
         h += '<div class="cam ' + c.cor + (foto ? ' com-foto' : '') + '">'
            + foto
            + '<div class="cam-corpo">'
            + '<span class="cam-cam"><i class="fa fa-truck"></i></span>'
            + '<span class="cam-tx"><b>' + c.corNome + ' - ' + c.modelo + '</b>'
            + '<small>' + (c.motorista === "A INFORMAR" ? "Motorista a informar" : c.motorista) + '</small>'
-           + '<small>' + (c.telefone === "A INFORMAR" ? "Telefone a informar" : c.telefone) + '</small></span>'
+           + '<small>' + zapMotorista + '</small></span>'
            + '<span class="cam-placa">' + c.placa + '</span>'
            + '</div></div>';
     });
