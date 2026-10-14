@@ -60,6 +60,37 @@ html {
     /* base maior para leitura no celular (era 16px) */
     font-size: 17px;
     -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* ============================================
+   APARENCIA DO APP INSTALADO (celular/PC)
+   Textos mais nitidos, numeros alinhados e
+   area segura (nada embaixo da barra do sistema)
+   ============================================ */
+html, body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-synthesis: none;
+}
+/* numeros com largura igual (tabelas e precos alinhados) */
+.num, .preco, .td-num, .td-total, .resumo-row span:last-child,
+.stat .num, .pch + .pib ~ .pp, .pp, .qv, .ci-subtotal {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+}
+/* app em tela cheia: respeita a area segura */
+@media (display-mode: standalone) {
+    body { padding-bottom: env(safe-area-inset-bottom); }
+    .main-header { padding-top: env(safe-area-inset-top); }
+    .ft { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+}
+/* celular pequeno/medio: letras um pouco maiores e espacamento com ar */
+@media (max-width: 560px) {
+    html { font-size: 17.5px; }
+    .container { padding-left: 14px; padding-right: 14px; }
+    .pedido-info, .resumo-item, .detalhe-linha { line-height: 1.55; }
 }
 
 body {

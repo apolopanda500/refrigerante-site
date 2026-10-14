@@ -22,10 +22,17 @@ var ESSENCIAL = [
     "loja.js?v=20261014g",
     "script.js?v=20261014g",
     "app.js?v=20261014g",
+    "app-update.js?v=20261014g",
+    "telegram.js?v=20261014g",
+    "versao.txt",
     "catalogo.json",
     "manifest.json",
+    "manifest-vendedor.json",
+    "admin.html",
     "img/icon-192.png",
-    "img/icon-512.png"
+    "img/icon-512.png",
+    "img/icon-192-vendedor.png",
+    "img/icon-512-vendedor.png"
 ];
 
 self.addEventListener("install", function (e) {

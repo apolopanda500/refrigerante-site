@@ -2,7 +2,13 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"[^>]*>
+<link rel="manifest" href="manifest-vendedor.json?v=20261014g">
+<meta name="theme-color" content="#3d4465">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Painel Vendedor">
+<link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="stylesheet" href="style.css?v=20261014g">
 <script src="theme.js?v=20261014g"></script>
@@ -182,6 +188,47 @@
     </div>
     <button class="btn-st b-copiar" style="margin-top:10px;min-height:40px;padding:9px 16px" onclick="verPassoFirebase()"><i class="fa fa-question-circle"></i> Como criar o banco</button>
   </div>
+  <div class="card" id="caixaFerramentas" style="margin-top:12px">
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-briefcase"></i> Ferramentas do vendedor</h3>
+
+    <h4 style="margin:16px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-calendar-day"></i> Resumo de hoje</h4>
+    <div class="stats" id="resumoDia" style="margin-bottom:6px"></div>
+
+    <h4 style="margin:16px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-calculator"></i> Calculadora de preço e lucro</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end">
+      <div class="campo"><label>Custo de compra (R$)</label><input id="calcCusto" type="text" inputmode="decimal" placeholder="20,00" oninput="calcPreco()"></div>
+      <div class="campo"><label>Margem (%)</label><input id="calcMargem" type="text" inputmode="decimal" placeholder="30" oninput="calcPreco()"></div>
+      <div class="campo"><label>Desconto (%)</label><input id="calcDesc" type="text" inputmode="decimal" placeholder="0" oninput="calcPreco()"></div>
+      <div class="campo"><label>Quantidade</label><input id="calcQtd" type="text" inputmode="numeric" placeholder="1" oninput="calcPreco()"></div>
+    </div>
+    <div id="calcResultado" style="margin-top:10px"></div>
+
+    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-money-bill-wave"></i> Calculadora de troco</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end">
+      <div class="campo"><label>Total da compra (R$)</label><input id="trocoTotal" type="text" inputmode="decimal" placeholder="0,00" oninput="calcTroco()"></div>
+      <div class="campo"><label>Valor recebido (R$)</label><input id="trocoPago" type="text" inputmode="decimal" placeholder="0,00" oninput="calcTroco()"></div>
+    </div>
+    <div id="trocoResultado" style="margin-top:10px"></div>
+
+    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-file-lines"></i> Anotações da loja</h4>
+    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Lista de compras, combinado com fornecedor, telefone de cliente,olho do dia... fica salvo aqui.</p>
+    <textarea id="notasLoja" rows="5" placeholder="Ex.: ligar para o fornecedor de chopp às 8h&#10;Cliente Michele: trocar embalagem&#10;Faltando: barbear..."></textarea>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center">
+      <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarNotas()"><i class="fa fa-save"></i> Salvar</button>
+      <button class="btn-st b-copiar" style="min-height:44px;padding:11px 18px" onclick="baixarNotas()"><i class="fa fa-download"></i> Baixar .txt</button>
+      <span id="notasMsg" style="font-size:.86rem;font-weight:700"></span>
+    </div>
+
+    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-clock-rotate-left"></i> Histórico de preços editados</h4>
+    <div id="histPrecos"></div>
+
+    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-file-export"></i> Exportar e instalar</h4>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="exportarPedidos()"><i class="fa fa-file-csv"></i> Exportar pedidos (CSV/Excel)</button>
+      <button class="btn-st b-entregar" id="btnInstalarVendedor" style="min-height:44px;padding:11px 18px;display:none" onclick="instalarApp()"><i class="fa fa-download"></i> Instalar painel como app</button>
+    </div>
+  </div>
+
   <div class="card" id="caixaBot" style="margin-top:12px">
     <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-robot"></i> Bot do Telegram - comandos do vendedor</h3>
     <p style="font-size:.84rem;color:#777;margin:0 0 10px">Além do aviso de novo pedido, o bot aceita comandos. Toque no botão <b>/</b> do Telegram para ver todos:
@@ -273,6 +320,10 @@ function mostrarPainel() {
     if (chk) {
         try { chk.checked = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}").cfgBotComandos !== false; } catch (e) {}
     }
+    /* ferramentas */
+    try { resumoDoDia(); carregarNotas(); historicoPrecos(); } catch (e) { }
+    var bv = document.getElementById("btnInstalarVendedor");
+    if (bv && window.__promptInstalacao) bv.style.display = "inline-flex";
     if (typeof TelegramBot !== "undefined") { TelegramBot.log("Painel aberto - comandos do bot em espera"); TelegramBot.iniciar(); TelegramBot.registrarComandos(); }
 }
 function filtrarAdmin(f, btn) {
@@ -448,7 +499,164 @@ function resumoPorStatus(pedidos) {
 }
 
 
-/* copia o resumo completo do pedido (para colar no WhatsApp ou planilha) */
+/* ============================================
+   FERRAMENTAS DO VENDEDOR
+   Calculadora de preco/lucro, calculadora de troco,
+   notas/documentos, exportar e historico de precos.
+   Tudo salvo neste aparelho, sem sair do painel.
+   ============================================ */
+var K_FERRAMENTAS = "convencao_ferramentas";
+function ferramentasDados() {
+    try { return JSON.parse(localStorage.getItem(K_FERRAMENTAS) || "{}"); }
+    catch (e) { return {}; }
+}
+function salvarFerramentas(d) {
+    try { localStorage.setItem(K_FERRAMENTAS, JSON.stringify(d)); } catch (e) { }
+}
+
+function numero(v) {
+    var n = parseFloat(String(v || "").replace(/R\$/gi, "").replace(/\./g, "").replace(",", "."));
+    return isNaN(n) ? 0 : n;
+}
+function brl(v) { return formatBRL(v); }
+
+/* ---------- 1) calculadora de preco e lucro ---------- */
+function calcPreco() {
+    var custo = numero(document.getElementById("calcCusto").value);
+    var margem = numero(document.getElementById("calcMargem").value);
+    var qtd = Math.max(1, numero(document.getElementById("calcQtd").value) || 1);
+    var desconto = numero(document.getElementById("calcDesc").value);
+    var fundo = document.getElementById("calcResultado");
+
+    if (custo <= 0) { fundo.innerHTML = '<span style="color:#8a6100">Digite o custo de compra.</span>'; return; }
+
+    var venda = custo * (1 + margem / 100);
+    venda = venda * (1 - desconto / 100);
+    var lucro = venda - custo;
+    var margemReal = (lucro / venda) * 100;
+    var total = venda * qtd;
+
+    fundo.innerHTML =
+        '<div class="resumo-linha"><span>Preço de venda sugerido</span><b style="color:var(--primary-color)">' + brl(venda) + '</b></div>'
+        + '<div class="resumo-linha"><span>Lucro por unidade</span><b style="color:' + (lucro > 0 ? "#2e7d32" : "#c62828") + '">' + brl(lucro) + '</b></div>'
+        + '<div class="resumo-linha"><span>Margem real</span><b>' + margemReal.toFixed(1).replace(".", ",") + '%</b></div>'
+        + '<div class="resumo-linha"><span>Lucro com ' + qtd + ' un.</span><b style="color:' + (lucro > 0 ? "#2e7d32" : "#c62828") + '">' + brl(lucro * qtd) + '</b></div>'
+        + '<div class="resumo-linha"><span>Venda total (' + qtd + ' un.)</span><b>' + brl(total) + '</b></div>';
+}
+
+/* ---------- 2) calculadora de troco ---------- */
+function calcTroco() {
+    var total = numero(document.getElementById("trocoTotal").value);
+    var pago = numero(document.getElementById("trocoPago").value);
+    var out = document.getElementById("trocoResultado");
+    if (pago <= 0) { out.innerHTML = ""; return; }
+    var troco = pago - total;
+    var falta = total - pago;
+    if (troco < 0) {
+        out.innerHTML = '<div class="aviso-frete" style="background:#fdecea;border-left-color:#e53935;color:#a11b0f">Falta <b>' + brl(falta) + '</b> para completar.</div>';
+    } else {
+        /* notas de 50/20/10/5/2/1 para Orientação de gaveta */
+        var restante = troco, notas = [];
+        [50, 20, 10, 5, 2, 1].forEach(function (n) {
+            var q = Math.floor(restante / n);
+            if (q > 0) { notas.push(q + "x " + n); restante =+(restante - q * n).toFixed(2); }
+        });
+        out.innerHTML = '<div class="resumo-linha"><span>Troco a dar</span><b style="color:#2e7d32">' + brl(troco) + '</b></div>'
+            + (notas.length ? '<div class="resumo-linha"><span>Em notas</span><b>' + notas.join(" + ") + '</b></div>' : '')
+            + (restante > 0.009 ? '<div class="resumo-linha"><span>Restam em moedas</span><b>' + brl(restante) + '</b></div>' : '');
+    }
+}
+
+/* ---------- 3) notas / documentos da loja ---------- */
+function carregarNotas() {
+    var d = ferramentasDados();
+    var el = document.getElementById("notasLoja");
+    if (el && !el.value) el.value = d.notas || "";
+}
+function salvarNotas() {
+    var d = ferramentasDados();
+    var el = document.getElementById("notasLoja");
+    if (!el) return;
+    d.notas = el.value;
+    d.notasSalvoEm = Date.now();
+    salvarFerramentas(d);
+    var m = document.getElementById("notasMsg");
+    if (m) { m.style.color = "#2e7d32"; m.textContent = "Anotação salva."; }
+}
+function baixarNotas() {
+    var el = document.getElementById("notasLoja");
+    if (!el || !el.value.trim()) { alert("Escreva alguma coisa antes de baixar."); return; }
+    var blob = new Blob([el.value], { type: "text/plain;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "anotacoes-convencao.txt";
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+/* ---------- 4) exportar pedidos (CSV para Excel) ---------- */
+function exportarPedidos() {
+    var pedidos = getPedidos();
+    if (!pedidos.length) { alert("Nenhum pedido para exportar."); return; }
+    var linhas = ["Pedido;Data;Status;Cliente;WhatsApp;Bairro;Regiao;Pagamento;Troco;Subtotal;Frete;Total;Itens"];
+    pedidos.forEach(function (p) {
+        var itens = (p.itens || []).map(function (i) { return i.name + " x" + i.qty; }).join(" | ");
+        var data = p.criadoEm ? new Date(p.criadoEm).toLocaleString("pt-BR") : "";
+        linhas.push([p.id, data, (STATUS_LABEL[p.status] || p.status), p.nome, p.tel,
+            (p.bairro || "").replace(/;/g, ","), (p.regiao || "").replace(/;/g, ","), p.pagamento,
+            (p.troco || ""), p.subtotal, p.frete, p.total, itens.replace(/;/g, ",")].join(";"));
+    });
+    var blob = new Blob(["﻿" + linhas.join("\n")], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pedidos-convencao.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+/* ---------- 5) historico de precos editados ---------- */
+function historicoPrecos() {
+    var box = document.getElementById("histPrecos");
+    if (!box) return;
+    var d = ferramentasDados();
+    var hist = d.historicoPrecos || [];
+    if (!hist.length) { box.innerHTML = '<div class="vazio" style="padding:22px"><p>Nenhum preço editado ainda.</p></div>'; return; }
+    var h = "";
+    hist.slice(0, 40).forEach(function (r) {
+        h += '<div class="resumo-linha"><span>' + r.nome + '</span><b>' + r.de + " &rarr; " + r.para
+            + ' <small style="color:#8a8a8a">' + r.quando + '</small></b></div>';
+    });
+    box.innerHTML = h;
+}
+function registrarPreco(nome, de, para) {
+    var d = ferramentasDados();
+    d.historicoPrecos = d.historicoPrecos || [];
+    d.historicoPrecos.unshift({
+        nome: nome, de: de, para: para,
+        quando: new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
+    });
+    if (d.historicoPrecos.length > 60) d.historicoPrecos.length = 60;
+    salvarFerramentas(d);
+    historicoPrecos();
+}
+
+/* ---------- 6) resumo do dia ---------- */
+function resumoDoDia() {
+    var box = document.getElementById("resumoDia");
+    if (!box) return;
+    var hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    var doDia = getPedidos().filter(function (p) { return (p.criadoEm || 0) >= hoje.getTime(); });
+    var abertos = doDia.filter(function (p) { return p.status === "aguardando"; }).length;
+    var fat = doDia.filter(function (p) { return p.status !== "cancelado"; }).reduce(function (t, p) { return t + p.total; }, 0);
+    var itens = doDia.reduce(function (t, p) {
+        return t + (p.itens || []).reduce(function (s, i) { return s + (i.qty || 0); }, 0);
+    }, 0);
+    box.innerHTML =
+        '<div class="stat"><div class="num">' + doDia.length + '</div><div class="lbl">Pedidos hoje</div></div>'
+        + '<div class="stat"><div class="num" style="color:#FF9800">' + abertos + '</div><div class="lbl">Aguardando</div></div>'
+        + '<div class="stat verde"><div class="num">' + brl(fat) + '</div><div class="lbl">Faturamento do dia</div></div>'
+        + '<div class="stat azul"><div class="num">' + itens + '</div><div class="lbl">Itens vendidos</div></div>';
+}
 function copiarPedido(id) {
     const p = getPedidos().find(x => x.id === id);
     if (!p) return;
@@ -511,6 +719,7 @@ if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
 <script src="app.js?v=20261014g"></script>
 <script src="firebase-appcheck.js?v=20261014g"></script>
+<script src="app-update.js?v=20261014g"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
@@ -578,6 +787,17 @@ if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
   }
   window.painelPrecos = {
     salvar: function(btn){
+      /* guarda no historico quais precos mudaram */
+      try {
+        var novos = lerCampos();
+        var antigos = (typeof precosLocais === "function") ? precosLocais() : {};
+        PD.forEach(function (p) {
+          var k = (typeof chavePreco === "function") ? chavePreco(p) : (p.ct + "|" + p.nm);
+          if (novos[k] !== undefined && novos[k] !== antigos[k]) {
+            if (typeof registrarPreco === "function") registrarPreco(p.nm, antigos[k] || p.pr, novos[k]);
+          }
+        });
+      } catch (e) {}
       try{ localStorage.setItem("productPriceOverrides", JSON.stringify(lerCampos())); }catch(e){}
       if(typeof aplicarPrecosSalvar === "function") aplicarPrecosSalvar();
       if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Salvando...'; }

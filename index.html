@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="manifest" href="manifest.json?v=20261014g">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
@@ -371,11 +371,11 @@ a{text-decoration:none;color:inherit}
 <p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Seg a sex 9h às 15h - Horário de São Paulo</p>
 </footer>
 
-<script src="theme.js?v=20261014g"></script>
 <script src="conta.js?v=20261014g"></script>
 <script src="loja.js?v=20261014g"></script>
 <script src="app.js?v=20261014g"></script>
 <script src="firebase-appcheck.js?v=20261014g"></script>
+<script src="app-update.js?v=20261014g"></script>
 <script>
 (function(){
   var btn=document.getElementById('menuBtn');
@@ -391,56 +391,6 @@ a{text-decoration:none;color:inherit}
 })();
 </script>
 
-<script>
-/* ============================================
-   APP DO CLIENTE (PWA)
-   - registra o service worker (abre offline)
-   - botao "Instalar app" quando o celular permite
-   ============================================ */
-(function () {
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", function () {
-            navigator.serviceWorker.register("sw.js").catch(function () { /* sem service worker: segue o normal */ });
-        });
-    }
 
-    var promptInstalacao = null;
-    var btn = document.getElementById("btnInstalar");
-
-    function mostrarBotao() {
-        if (!btn) return;
-        btn.style.display = "inline-flex";
-    }
-
-    window.addEventListener("beforeinstallprompt", function (e) {
-        e.preventDefault();
-        promptInstalacao = e;
-        mostrarBotao();
-    });
-
-    window.instalarApp = function () {
-        if (!promptInstalacao) {
-            alert("Para instalar o app no celular:\n\nAndroid: abra o menu do navegador e toque em \"Instalar app\" (ou \"Adicionar à tela inicial\").\niPhone: toque no botão Compartilhar e depois em \"Adicionar à Tela de Início\".");
-            return;
-        }
-        promptInstalacao.prompt();
-        promptInstalacao.userChoice.then(function () {
-            promptInstalacao = null;
-            if (btn) btn.style.display = "none";
-        });
-    };
-
-    /* ja esta instalado? esconde o botao */
-    try {
-        if (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true) {
-            if (btn) btn.style.display = "none";
-        }
-    } catch (e) {}
-
-    window.addEventListener("appinstalled", function () {
-        if (btn) btn.style.display = "none";
-    });
-})();
-</script>
 </body>
 </html>
