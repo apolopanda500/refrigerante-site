@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261015c">
+<link rel="manifest" href="manifest-vendedor.json?v=20261015d">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015c">
-<script src="theme.js?v=20261015c"></script>
+<link rel="stylesheet" href="style.css?v=20261015d">
+<script src="theme.js?v=20261015d"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -110,6 +110,31 @@
 
 /* linha clicavel */
 .linha-pedido{cursor:pointer}
+
+/* ===== bloco novo do painel: opcoes em botao (mesmo visual da loja) ===== */
+.opcoes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.opcoes .op-btn{
+    display:inline-flex;align-items:center;justify-content:center;min-height:44px;cursor:pointer;
+    padding:11px 18px;border:1px solid var(--borda,#eeeef4);border-radius:12px;
+    background:var(--bg-alt,#f7f7f7);color:var(--text-color,#333);
+    font:700 .92rem/1 'Segoe UI',sans-serif;
+}
+.opcoes .op-btn:hover{border-color:var(--primary-color,#3d4465)}
+.opcoes .op-btn.ativo{background:var(--primary-color,#3d4465);color:#fff;border-color:var(--primary-color,#3d4465)}
+[data-theme="dark"] .opcoes .op-btn.ativo{background:#ffb822;color:#232742;border-color:#ffb822}
+
+/* ===== minimizar blocos do painel (so do vendedor) ===== */
+.btn-mini-bloco{
+    display:inline-flex;align-items:center;gap:7px;min-height:38px;cursor:pointer;
+    padding:8px 14px;border:0;border-radius:18px;
+    background:var(--primary-color,#3d4465);color:#fff;
+    font:800 .8rem/1 'Segoe UI',sans-serif;white-space:nowrap;
+}
+.btn-mini-bloco:hover{filter:brightness(1.12)}
+.btn-mini-bloco:focus-visible{outline:3px solid var(--accent-color,#ffb822);outline-offset:2px}
+.card h3 .btn-mini-bloco{float:right;margin:2px 0 0 10px}
+.card-corpo{min-width:0}
+[data-theme="dark"] .btn-mini-bloco{background:#ffb822;color:#232742}
 
 /* no celular a tabela vira lista */
 @media(max-width:720px){
@@ -338,6 +363,33 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
       <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarConfigBot(this)"><i class="fa fa-save"></i> Salvar</button>
     </div>
     <div id="configBotMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
+
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-text-height"></i> Tamanho da letra do painel</h4>
+    <div class="opcoes" id="opcoesFonteVendedor">
+      <button class="op-btn" data-v="p" onclick="setFonteVendedor(this)">Pequena</button>
+      <button class="op-btn" data-v="normal" onclick="setFonteVendedor(this)">Normal</button>
+      <button class="op-btn" data-v="g" onclick="setFonteVendedor(this)">Grande</button>
+      <button class="op-btn" data-v="gg" onclick="setFonteVendedor(this)">Bem grande</button>
+    </div>
+    <p style="font-size:.82rem;color:#777;margin:6px 0 0">Valendo só no painel. O cliente continua com a letra dele.</p>
+
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-table"></i> Leitura das tabelas do painel</h4>
+    <div class="opcoes" id="opcoesLeituraVendedor">
+      <button class="op-btn" data-v="horizontal" onclick="setLeituraVendedor(this)">Rolagem normal</button>
+      <button class="op-btn" data-v="vertical" onclick="setLeituraVendedor(this)">Cartões empilhados</button>
+    </div>
+
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-sync-alt"></i> Sincronização com a nuvem</h4>
+    <div class="opcoes" id="opcoesSyncVendedor">
+      <button class="op-btn" data-v="60000" onclick="setSyncVendedor(this)">A cada 1 minuto</button>
+      <button class="op-btn" data-v="120000" onclick="setSyncVendedor(this)">A cada 2 minutos</button>
+      <button class="op-btn" data-v="300000" onclick="setSyncVendedor(this)">A cada 5 minutos</button>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
+      <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="sincronizarAgora(this)"><i class="fa fa-cloud-download-alt"></i> Sincronizar agora</button>
+      <span id="syncMsg" style="font-size:.86rem;font-weight:700"></span>
+    </div>
+    <div id="versoesPainel" style="margin-top:12px"></div>
   </div>
 
   <div class="card" id="caixaBot" style="margin-top:12px">
@@ -361,8 +413,8 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261015c"></script>
-<script src="telegram.js?v=20261015c"></script>
+<script src="script.js?v=20261015d"></script>
+<script src="telegram.js?v=20261015d"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -434,22 +486,118 @@ function mostrarPainel() {
     /* ferramentas + config do painel */
     try { resumoDoDia(); carregarNotas(); historicoPrecos(); } catch (e) { }
     try { carregarConfigVendedor(); } catch (e) { }
+    try { marcarConfigVendedor(); mostrarVersoes(); } catch (e) { }
     var bv = document.getElementById("btnInstalarVendedor");
     if (bv && window.__promptInstalacao) bv.style.display = "inline-flex";
-    /* pedidos de TODOS os aparelhos (nuvem), renovados de 1 em 1 minuto */
+    /* pedidos de TODOS os aparelhos (nuvem), no tempo escolhido pelo dono */
     if (typeof sincronizarPedidosNuvem === "function") {
-        sincronizarPedidosNuvem(function (ok) { if (ok) renderAdmin(); });
-        if (!window._syncPedidosTimer) {
-            window._syncPedidosTimer = setInterval(function () {
-                if (sessionStorage.getItem("adminLogado") === "1") {
-                    sincronizarPedidosNuvem(function (ok) { if (ok) renderAdmin(); });
-                }
-            }, 60000);
-        }
+        sincronizarPedidosNuvem(function (ok) {
+            try { localStorage.setItem("vendedorPrefs", JSON.stringify(
+                Object.assign({}, JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"), { ultimaSync: Date.now() }))); }
+            catch (e) {}
+            if (ok) renderAdmin();
+            mostrarVersoes();
+        });
+        if (!window._syncPedidosTimer) iniciarSyncPedidos();
     }
     if (typeof TelegramBot !== "undefined") { TelegramBot.log("Painel aberto - comandos do bot em espera"); TelegramBot.iniciar(); TelegramBot.registrarSePendente(); }
 }
-/* ===== configuracoes PROPIAS do painel (independente do cliente) ===== */
+/* ===== configuracoes PROPIAS do painel (independente do cliente) =====
+   Tudo aqui grava em vendedorPrefs. O site do cliente usa
+   refrigerantePrefs e nao enxerga nada disto. */
+function salvarPrefVendedor(campo, valor) {
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        p[campo] = valor;
+        localStorage.setItem("vendedorPrefs", JSON.stringify(p));
+    } catch (e) {}
+}
+function marcarOpcaoVendedor(id, valor) {
+    document.querySelectorAll("#" + id + " .op-btn").forEach(function (b) {
+        b.classList.toggle("ativo", b.dataset.v === valor);
+    });
+}
+function setFonteVendedor(btn) {
+    salvarPrefVendedor("cfgFonteTamanho", btn.dataset.v);
+    marcarOpcaoVendedor("opcoesFonteVendedor", btn.dataset.v);
+    if (typeof aplicarTema === "function") aplicarTema();
+}
+function setLeituraVendedor(btn) {
+    salvarPrefVendedor("cfgLeitura", btn.dataset.v);
+    marcarOpcaoVendedor("opcoesLeituraVendedor", btn.dataset.v);
+    if (typeof aplicarTema === "function") aplicarTema();
+}
+function setSyncVendedor(btn) {
+    salvarPrefVendedor("cfgSyncMs", parseInt(btn.dataset.v, 10) || 60000);
+    marcarOpcaoVendedor("opcoesSyncVendedor", btn.dataset.v);
+    iniciarSyncPedidos();
+    var m = document.getElementById("syncMsg");
+    if (m) { m.style.color = "#2e7d32"; m.textContent = "Sincronização salva neste painel."; }
+}
+/* a sincronização roda com o tempo escolhido pelo dono */
+function iniciarSyncPedidos() {
+    if (typeof sincronizarPedidosNuvem !== "function") return;
+    if (window._syncPedidosTimer) { clearInterval(window._syncPedidosTimer); window._syncPedidosTimer = null; }
+    var ms = 60000;
+    try { ms = parseInt((JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").cfgSyncMs), 10) || 60000; } catch (e) {}
+    window._syncPedidosTimer = setInterval(function () {
+        if (sessionStorage.getItem("adminLogado") === "1") {
+            sincronizarPedidosNuvem(function (ok) { if (ok) renderAdmin(); });
+        }
+    }, ms);
+}
+function sincronizarAgora(btn) {
+    var msg = document.getElementById("syncMsg");
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sincronizando...'; }
+    if (msg) { msg.style.color = "#8a6100"; msg.textContent = "Buscando pedidos novos na nuvem..."; }
+    function terminate(ok, extra) {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-cloud-download-alt"></i> Sincronizar agora'; }
+        if (msg) {
+            msg.style.color = ok ? "#2e7d32" : "#c62828";
+            msg.textContent = ok ? "Painel em dia" + (extra ? " (" + extra + ")" : "") : "Sem resposta da nuvem agora";
+        }
+        if (ok) renderAdmin();
+        mostrarVersoes();
+    }
+    if (typeof sincronizarPedidosNuvem === "function") {
+        sincronizarPedidosNuvem(function (ok) {
+            try {
+                var todos = getPedidos().length;
+                terminate(!!ok, todos + (todos === 1 ? " pedido" : " pedidos"));
+            } catch (e) { terminate(!!ok, ""); }
+        });
+    } else terminate(false, "");
+}
+/* versoes: cada um tem a sua configuracao, os dados continuam sincronizados.
+   Aproveita para conferir se o site publicado esta no ar. */
+function mostrarVersoes() {
+    var box = document.getElementById("versoesPainel");
+    if (!box) return;
+    var painelV = (typeof VERSAO_APP !== "undefined") ? VERSAO_APP : "?";
+    var pedidos = 0, sync = 0;
+    try { pedidos = getPedidos().length; } catch (e) {}
+    try { sync = (JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").ultimaSync) || 0; } catch (e) {}
+    box.innerHTML = '<div style="background:var(--bg-alt);border:1px solid var(--borda);border-radius:12px;padding:12px;font-size:.86rem">'
+        + '<div class="resumo-linha"><span>Versão deste painel (seu APK)</span><b>' + painelV + '</b></div>'
+        + '<div class="resumo-linha"><span>Versão publicada do site</span><b id="versaoSite"> conferindo...</b></div>'
+        + '<div class="resumo-linha"><span>Pedidos neste painel</span><b>' + pedidos + '</b></div>'
+        + '<div class="resumo-linha"><span>Última sincronização com a nuvem</span><b>'
+        + (sync ? tempoDesde(sync) + " atrás" : "agora") + '</b></div>'
+        + '<div style="margin-top:8px;color:#6b7280">Cada lado tem a sua configuração (tema, letra, tabela, tempo de sincronização). '
+        + 'Os <b>pedidos</b> e os <b>preços</b> são os mesmos e chegam pela nuvem.</div></div>';
+    try {
+        fetch("versao.txt", { cache: "no-store" })
+            .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
+            .then(function (t) {
+                var el = document.getElementById("versaoSite");
+                if (el) el.innerHTML = (t || "?").trim() + ' <span style="color:#2e7d32">online</span>';
+            })
+            .catch(function () {
+                var el = document.getElementById("versaoSite");
+                if (el) el.innerHTML = '<span style="color:#c62828">sem resposta do site</span>';
+            });
+    } catch (e) {}
+}
 function setTemaVendedor(btn){
     try {
         var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
@@ -487,6 +635,15 @@ function carregarConfigVendedor(){
     var c = document.getElementById("cfgTGChat");
     if (c && document.activeElement !== c) c.value = p.cfgTelegramChatId || "";
     marcarTemaVendedor();
+    marcarConfigVendedor();
+}
+/* marca as opcoes do painel com o que esta salvo nele */
+function marcarConfigVendedor() {
+    var p = {};
+    try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch (e) {}
+    marcarOpcaoVendedor("opcoesFonteVendedor", p.cfgFonteTamanho || "normal");
+    marcarOpcaoVendedor("opcoesLeituraVendedor", p.cfgLeitura || "horizontal");
+    marcarOpcaoVendedor("opcoesSyncVendedor", String(p.cfgSyncMs || 60000));
 }
 
 function filtrarAdmin(f, btn) {
@@ -557,7 +714,7 @@ function tabelaPedidos(lista) {
     lista.forEach(function (p) {
         const aberto = (fichaAberta === p.id);
         h += '<tr class="linha-pedido" onclick="abrirFicha(\'' + p.id + '\')">'
-            + '<td data-label="Pedido" class="td-id">' + p.id + '<span class="sub">' + dataHora(p.criadoEm) + '</span></td>'
+            + '<td data-label="Pedido" class="td-id">' + p.id + '<span class="sub">' + (typeof tick === "function" ? tick(p.criadoEm) : dataHora(p.criadoEm)) + '</span></td>'
             + '<td data-label="Cliente" class="td-cliente">' + p.nome + '<span class="sub"><i class="fa fa-phone"></i> ' + p.tel + '</span></td>'
             + '<td data-label="Entrega">' + (p.bairro || "—") + '<span class="sub">' + (p.regiao || "") + '</span></td>'
             + '<td data-label="Pagamento">' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? '<span class="sub">troco p/ ' + p.troco + '</span>' : '') + '</td>'
@@ -596,7 +753,7 @@ function fichaPedido(p) {
     h += '<div>Cliente: <b>' + p.nome + '</b></div>';
     h += '<div>WhatsApp: <b>' + p.tel + '</b></div>';
     h += '<div>CPF: <b>' + (p.cpf || "não informado") + '</b></div>';
-    h += '<div>Data: <b>' + dataHora(p.criadoEm) + '</b></div>';
+    h += '<div>Data: <b>' + dataHora(p.criadoEm) + '</b> <span class="sub">(' + dataHoraSegundos(p.criadoEm) + ')</span></div>';
     h += '<div>Endereco: <b>' + p.end + (p.comp ? " (" + p.comp + ")" : "") + '</b></div>';
     h += '<div>Bairro / Regiao: <b>' + (p.bairro || "—") + ' / ' + (p.regiao || "—") + '</b></div>';
     h += '<div>Pagamento: <b>' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</b></div>';
@@ -608,10 +765,17 @@ function fichaPedido(p) {
     h += '<div class="ficha-linha"><b>Subtotal:</b> ' + formatBRL(p.subtotal)
         + ' &nbsp;&nbsp; <b>Total:</b> ' + formatBRL(p.total) + '</div>';
     if (p.historico && p.historico.length) {
-        h += '<div class="ficha-linha"><b>Acompanhamento:</b></div>';
+        h += '<div class="ficha-linha"><b>Acompanhamento:</b> <span class="sub">cada passo com a hora exata</span></div>';
         p.historico.slice().reverse().forEach(function (ev) {
-            h += '<div>' + (STATUS_LABEL[ev.status] || ev.status) + ' — ' + dataHora(ev.quando) + '</div>';
+            h += '<div class="ficha-tick"><i class="fa fa-circle"></i> ' + (STATUS_LABEL[ev.status] || ev.status)
+                + ' — ' + dataHoraSegundos(ev.quando)
+                + ' <span class="sub">(' + tempoDesde(ev.quando) + ')</span></div>';
         });
+        var ultimo = p.historico[p.historico.length - 1];
+        if (ultimo && ultimo.quando) {
+            h += '<div class="ficha-linha"><b>Parado em:</b> ' + (STATUS_LABEL[ultimo.status] || ultimo.status)
+                + ' há ' + tempoDesde(ultimo.quando) + '</div>';
+        }
     }
     h += '<div class="ficha-linha"><b>Comandos:</b> '
         + '<button class="btn-st b-copiar" onclick="copiarPedido(\'' + p.id + '\')"><i class="fa fa-copy"></i> Copiar</button> '
@@ -1016,9 +1180,83 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261015c"></script>
-<script src="firebase-appcheck.js?v=20261015c"></script>
-<script src="app-update.js?v=20261015c"></script>
+<script src="app.js?v=20261015d"></script>
+<script src="firebase-appcheck.js?v=20261015d"></script>
+<script src="app-update.js?v=20261015d">/* ============================================================
+   MINIMIZAR BLOCOS DO PAINEL
+   Vale so no painel do vendedor: o estado fica em
+   vendedorPrefs.miniCards e NUNCA chega ao site do cliente
+   (que usa refrigerantePrefs). O editor de precos ja vem
+   recolhido porque a lista de produtos e muito longa.
+   ============================================================ */
+var BLOCOS_MINI_PADRAO = ["editorPrecos"];
+var BLOCOS_MINI_MAP = {
+    editorPrecos: "editorPrecosCorpo",
+    caixaFerramentas: "corpoCaixaFerramentas",
+    caixaConfigVendedor: "corpoCaixaConfigVendedor",
+    caixaBot: "corpoCaixaBot",
+    caixaPrecosNuvem: "corpoCaixaPrecosNuvem"
+};
+function prefsPainel() {
+    try { return JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch (e) { return {}; }
+}
+function salvarPrefsPainel(p) {
+    try { localStorage.setItem("vendedorPrefs", JSON.stringify(p)); } catch (e) {}
+}
+function blocosMinimizados() {
+    var p = prefsPainel();
+    return Array.isArray(p.miniCards) ? p.miniCards : BLOCOS_MINI_PADRAO.slice();
+}
+function blocoMinimizado(chave) { return blocosMinimizados().indexOf(chave) >= 0; }
+function aplicarMini() {
+    Object.keys(BLOCOS_MINI_MAP).forEach(function (chave) {
+        var mini = blocoMinimizado(chave);
+        var corpo = document.getElementById(BLOCOS_MINI_MAP[chave]);
+        if (corpo) corpo.style.display = mini ? "none" : "";
+        var botoes = document.querySelectorAll('[data-mini-btn="' + chave + '"]');
+        for (var i = 0; i < botoes.length; i++) {
+            botoes[i].innerHTML = '<i class="fa fa-chevron-' + (mini ? "down" : "up") + '"></i> '
+                + (mini ? "Abrir" : "Minimizar");
+            botoes[i].setAttribute("aria-expanded", mini ? "false" : "true");
+        }
+    });
+}
+function alternarMini(chave) {
+    var p = prefsPainel();
+    var lista = (Array.isArray(p.miniCards) ? p.miniCards : BLOCOS_MINI_PADRAO.slice()).slice();
+    var i = lista.indexOf(chave);
+    if (i >= 0) lista.splice(i, 1); else lista.push(chave);
+    p.miniCards = lista;
+    salvarPrefsPainel(p);
+    aplicarMini();
+}
+/* embrulha o conteudo dos cards fixos do painel (uma vez so) */
+function prepararMini() {
+    ["caixaFerramentas", "caixaConfigVendedor", "caixaBot", "caixaPrecosNuvem"].forEach(function (id) {
+        var card = document.getElementById(id);
+        if (!card) return;
+        var corpoId = BLOCOS_MINI_MAP[id];
+        if (document.getElementById(corpoId)) return;
+        var cab = card.querySelector("h3");
+        if (!cab) return;
+        var corpo = document.createElement("div");
+        corpo.id = corpoId;
+        corpo.className = "card-corpo";
+        var irmao = cab.nextSibling;
+        while (irmao) { var proximo = irmao.nextSibling; corpo.appendChild(irmao); irmao = proximo; }
+        card.appendChild(corpo);
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "btn-mini-bloco";
+        b.setAttribute("data-mini-btn", id);
+        b.setAttribute("onclick", "alternarMini('" + id + "')");
+        cab.appendChild(b);
+    });
+}
+document.addEventListener("DOMContentLoaded", function () { prepararMini(); aplicarMini(); });
+if (document.readyState !== "loading") { prepararMini(); aplicarMini(); }
+
+</script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
@@ -1037,10 +1275,12 @@ if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
     var h = "";
     h += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:10px 0">';
     h += '  <h3 style="margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-tags"></i> Editar precos dos produtos</h3>';
+    h += '  <button type="button" class="btn-mini-bloco" data-mini-btn="editorPrecos" onclick="alternarMini(\'editorPrecos\')">Minimizar</button>';
     h += url
        ? '  <span style="font-size:.8rem;font-weight:700;color:#2e7d32;background:#e8f5e9;border-radius:10px;padding:5px 11px"><i class="fa fa-cloud"></i> Tempo real ligado: os clientes veem na hora</span>'
        : '  <a href="configuracoes.html" style="font-size:.8rem;font-weight:700;color:#8a6100;background:#fff8e1;border-radius:10px;padding:5px 11px;text-decoration:none"><i class="fa fa-exclamation-triangle"></i> Sem nuvem: vale so neste aparelho. Configurar</a>';
     h += '</div>';
+    h += '<div id="editorPrecosCorpo" class="card-corpo">';
     h += '<p style="font-size:.83rem;color:#777;margin:0 0 10px">Digite o valor com virgula (ex: 29,90). Depois clique em <b>Salvar e aplicar</b>.</p>';
 
     (typeof CT !== "undefined" ? CT : []).forEach(function(c){
@@ -1073,8 +1313,10 @@ if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
        + '  <button class="btn-st b-enviar" style="min-height:46px;padding:11px 20px" onclick="painelPrecos.recarregar(this)"><i class="fa fa-cloud-download-alt"></i> Recarregar da nuvem</button>'
        + '  <button class="btn-st b-cancelar" style="min-height:46px;padding:11px 20px" onclick="painelPrecos.restaurar(this)"><i class="fa fa-undo"></i> Restaurar originais</button>'
        + '</div>';
+    h += '</div>';
     h += '<div id="precosMsg" style="font-size:.86rem;font-weight:700;margin:6px 0 2px"></div>';
     el.innerHTML = h;
+    if (typeof aplicarMini === "function") aplicarMini();
   }
   function msg(texto, cor){
     var m = document.getElementById("precosMsg");
@@ -1188,9 +1430,11 @@ function salvarPrecosURLAdmin(btn){
   if(!inp) return;
   var url = inp.value.trim().replace(/\/+$/,"");
   try{
-    var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+    /* o painel guarda no vendedorPrefs: a config do cliente fica intacta */
+    var chave = (typeof chavePrefsLoja === "function") ? chavePrefsLoja() : "vendedorPrefs";
+    var p = JSON.parse(localStorage.getItem(chave) || "{}");
     p.cfgPrecosURL = url;
-    localStorage.setItem("refrigerantePrefs", JSON.stringify(p));
+    localStorage.setItem(chave, JSON.stringify(p));
   }catch(e){}
   if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Salvando...'; }
   setTimeout(function(){
@@ -1282,8 +1526,12 @@ document.addEventListener("DOMContentLoaded", function(){
   caixa.style.display = "";
   var inp = document.getElementById("cfgPrecosURL");
   try{
-    var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
-    if(inp) inp.value = p.cfgPrecosURL || "";
+    /* mostra a config do PAINEL (cai na do cliente se o painel ainda nao tem) */
+    if (typeof precosURLCfg === "function") { if (inp) inp.value = precosURLCfg(); }
+    else {
+      var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+      if(inp) inp.value = p.cfgPrecosURL || "";
+    }
   }catch(e){}
   setTimeout(function(){ if (typeof checarNuvemPrecos === "function") checarNuvemPrecos(); }, 400);
 });

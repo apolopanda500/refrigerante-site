@@ -69,6 +69,11 @@ Dá para escrever só o final: `/entregue 001`.
 
 ## 5. Ferramentas do painel
 
+Os blocos longos do painel (editar preços, ferramentas, anotações,
+configurações, bot) têm botão **Minimizar**. O **editor de preços já começa
+recolhido**, porque a lista de produtos é grande — toque em *Abrir* só
+quando for mudar algum preço.
+
 - **Resumo de hoje**: pedidos, aguardando, faturamento do dia, itens vendidos.
 - **Calculadora de preço e lucro**: digite o custo e a margem, e veja o preço
   de venda, o lucro e a margem real.
@@ -76,12 +81,24 @@ Dá para escrever só o final: `/entregue 001`.
 - **Anotações da loja**: lista de compras, combinados, telefones.
 - **Histórico de preços**: quem mudou, de quanto para quanto.
 - **Exportar pedidos**: baixa um arquivo que abre no Excel.
-- **Configurações do painel**: tema próprio (não afeta o site do cliente) e
-  conexão do bot (token e chat do Telegram).
+- **Configurações do painel**: tema, **tamanho da letra**, **leitura das
+  tabelas** (rolagem normal ou cartões), **tempo de sincronização** (1, 2 ou
+  5 minutos) e a conexão do bot (token e chat do Telegram).
+  Tudo isso vale **só no painel**: o cliente do site nunca é afetado.
+- **Versões e sincronização**: mostra a versão do seu painel, a versão do site
+  publicada (e se ele está no ar), quantos pedidos estão aqui e quando foi a
+  última sincronização. O botão **Sincronizar agora** busca na hora.
 - **Card de IA** (`Configurações → Inteligência Artificial`): escolha Local,
   Grátis (nuvem) ou Personalizada, e botão **Testar** para conferir na hora.
   *Fica guardado para você: o cliente do site só vê o botão de conversa (IA)
   no canto da tela, sem essas opções.*
+
+### Ver a hora de cada coisa
+
+Na tabela de pedidos, cada linha mostra **a hora exata** (com segundos) de
+quando o pedido entrou e **há quanto tempo** foi. Abrindo a ficha, o
+acompanhamento mostra cada mudança de status com a hora — e no fim, há quanto
+tempo o pedido está parado no último passo.
 
 ---
 

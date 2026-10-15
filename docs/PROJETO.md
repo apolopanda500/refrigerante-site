@@ -194,6 +194,23 @@ do cliente. O registro do menu no Telegram acontece **uma única vez** (botão
 "Ativar comandos" para tentar de novo) e um webhook antigo é removido
 automaticamente (evita o erro 409 do `getUpdates`).
 
+**Independência do painel:** o painel do vendedor grava **sempre** em
+`localStorage:vendedorPrefs` (tema, letra, leitura das tabelas, tempo de
+sincronização, token/chat do bot, URL do banco de preços, blocos recolhidos).
+O site do cliente grava em `refrigerantePrefs`. `theme.js` **não** copia mais a
+preferência do cliente para o painel: na primeira visita o painel nasce escuro e
+só aproveita do cliente o que não é visual (conexão do bot e URL do banco).
+Trocar o tema de um lado **nunca** mexe no outro; pedidos e preços continuam
+vindo pela nuvem para os dois.
+
+**Minimizar no painel:** os blocos longos (editar preços, ferramentas,
+configurações, bot, preços na nuvem) têm botão **Minimizar**; o editor de preços
+vem recolhido por padrão. Estado em `vendedorPrefs.miniCards`.
+
+**Hora detalhada:** `dataHoraSegundos()` (com segundos), `tempoDesde()` ("há 2 h")
+e `tick()` Mostram no painel, no cartão do cliente e na mensagem do Telegram
+exatamente quando o pedido chegou e cada mudança de status.
+
 **Requisitos:** o painel (`admin.html`) fica aberto — ele lê o Telegram a cada 20s
 e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 
@@ -269,6 +286,9 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - Frota: fotos dos dois caminhões (`img/608VERDE.jpg` e `img/608AZUL.jpeg`).
 - Avaliação: o cliente dá nota de 1 a 5 + comentário no pedido entregue (Meus Pedidos);
   `salvarAvaliacao()` em `script.js` grava no aparelho e envia para `/avaliacoes` no Firebase.
+- Painel do vendedor: botões **Minimizar** nos blocos longos (editor de preços já vem
+  recolhido), tamanho da letra, leitura das tabelas e tempo de sincronização (1/2/5 min)
+  — tudo gravado em `vendedorPrefs`, **sem** afetar o site do cliente.
 - Leitura das tabelas: horizontal (padrão) ou vertical (cartões), em Configurações do cliente.
 - Bairro fora da área de entrega: pedido **bloqueado** na finalização.
 - Bot: aviso de novo pedido + comandos (`/confirmar`, `/separacao`, `/enviado`, `/entregue`, `/cancelar`, `/ultimos`, `/status`, `/hoje`, `/ajuda`) + botões.

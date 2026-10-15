@@ -528,6 +528,7 @@ function mensagemPedidoTG(p) {
         + "\nCliente: " + p.nome
         + (p.cpf ? "\nCPF: " + p.cpf : "")
         + "\nWhatsApp: " + p.tel
+        + "\nRecebido em: " + dataHoraSegundos(p.criadoEm)
         + "\nEndereco: " + p.end + (p.comp ? " (" + p.comp + ")" : "") + " - " + p.bairro
         + "\nRegiao: " + p.regiao
         + "\nPagamento: " + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "")
@@ -603,9 +604,38 @@ function atualizarStatus(id, novoStatus) {
     }
     return p;
 }
+/* ---------- data e hora DETALHADAS ----------
+   O vendedor precisa ver o horario exato do pedido e de
+   cada mudanca de status (com os "ticks" do relogio). */
 function dataHora(ts) {
-    const d = new Date(ts);
+    const d = new Date(ts || Date.now());
     return d.toLocaleDateString("pt-BR") + " às " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+/* com segundos: 15/10/2026 14:12:37 */
+function dataHoraSegundos(ts) {
+    const d = new Date(ts || Date.now());
+    const p = (n) => ("0" + n).slice(-2);
+    return p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear()
+        + " " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+}
+/* quanto tempo ja passou: "agora", "3 min", "2 h 15 min", "6 dias" */
+function tempoDesde(ts) {
+    if (!ts) return "";
+    var s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 0) return "";
+    if (s < 60) return "agora";
+    var m = Math.floor(s / 60);
+    if (m < 60) return m + " min";
+    var h = Math.floor(m / 60), resto = m % 60;
+    if (h < 24) return h + " h" + (resto ? " " + resto + " min" : "");
+    var d = Math.floor(h / 24);
+    return d + (d === 1 ? " dia" : " dias");
+}
+/* hora exata + quanto tempo faz (o "tick" do painel) */
+function tick(ts) {
+    return '<span class="tick" title="' + dataHoraSegundos(ts) + '">'
+        + '<i class="fa fa-clock"></i> ' + dataHoraSegundos(ts)
+        + (tempoDesde(ts) ? ' <em>(' + tempoDesde(ts) + ')</em>' : '') + "</span>";
 }
 function statusBadge(status) {
     const cores = {

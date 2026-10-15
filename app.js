@@ -925,10 +925,25 @@ function aplicarPrecosSalvar(){
      Configuracoes, os precos editados no painel
      aparecem na hora na pagina de todos os clientes
    ============================================ */
+/* cada um guarda a propria configuracao:
+   o painel do vendedor usa vendedorPrefs, o site do
+   cliente usa refrigerantePrefs. Trocar o tema/tamanho
+   num nunca mexe no outro. */
+function chavePrefsLoja() {
+  try { return /admin\.html$/i.test(location.pathname || "") ? "vendedorPrefs" : "refrigerantePrefs"; }
+  catch (e) { return "refrigerantePrefs"; }
+}
 function precosURLCfg(){
   try{
-    var p = JSON.parse(localStorage.getItem("refrigerantePrefs")||"{}");
-    return String(p.cfgPrecosURL||"").trim().replace(/\/+$/,"");
+    var atual = chavePrefsLoja();
+    var p = JSON.parse(localStorage.getItem(atual)||"{}");
+    var url = String(p.cfgPrecosURL||"").trim();
+    /* o painel pode aproveitar a URL ja salva pelo cliente no mesmo aparelho */
+    if(!url && atual !== "refrigerantePrefs"){
+      try { url = String((JSON.parse(localStorage.getItem("refrigerantePrefs")||"{}").cfgPrecosURL)||"").trim(); }
+      catch(e){}
+    }
+    return url.replace(/\/+$/,"");
   }catch(e){ return ""; }
 }
 function precosLocais(){
@@ -960,8 +975,8 @@ function listaEnderecos(){
 }
 function lembrarEndereco(url){
   try{
-    var p = JSON.parse(localStorage.getItem("refrigerantePrefs")||"{}");
-    p.cfgPrecosURL = url; localStorage.setItem("refrigerantePrefs", JSON.stringify(p));
+    var p = JSON.parse(localStorage.getItem(chavePrefsLoja())||"{}");
+    p.cfgPrecosURL = url; localStorage.setItem(chavePrefsLoja(), JSON.stringify(p));
   }catch(e){}
 }
 

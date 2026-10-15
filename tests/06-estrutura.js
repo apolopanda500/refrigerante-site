@@ -161,5 +161,42 @@ const cfgHtml = fs.readFileSync(path.join(dir, "configuracoes.html"), "utf8");
 if (!/id="blocoIACliente" hidden/.test(cfgHtml)) falha("o bloco de IA do cliente nao esta escondido");
 else console.log("  ok  configuracao de IA nao aparece para o cliente");
 
+/* ---------- 9. painel do vendedor: independente e completo ---------- */
+console.log("\n=== 9. PAINEL DO VENDEDOR INDEPENDENTE ===");
+const adm9 = fs.readFileSync(path.join(dir, "admin.html"), "utf8");
+const sc9 = fs.readFileSync(path.join(dir, "script.js"), "utf8");
+["alternarMini", "aplicarMini", "prepararMini", "editorPrecosCorpo", "vendedorPrefs"].forEach(function (c) {
+    if (adm9.indexOf(c) < 0) falha("admin.html sem " + c + " (minimizar blocos do painel)");
+});
+if (!/btn-mini-bloco/.test(adm9)) falha("admin.html sem o botao de minimizar");
+else console.log("  ok  botao Minimizar nos blocos do painel (editor de precos ja vem recolhido)");
+/* o painel pode MENCIONAR refrigerantePrefs em comentario, mas nunca ler/gravar nele */
+if (/localStorage\.(get|set)Item\(\s*["']refrigerantePrefs/.test(adm9)) {
+    falha("o painel nao pode ler/gravar em refrigerantePrefs (e a preferencia do cliente)");
+} else console.log("  ok  painel so grava em vendedorPrefs");
+["setFonteVendedor", "setLeituraVendedor", "setSyncVendedor", "mostrarVersoes"].forEach(function (c) {
+    if (adm9.indexOf("function " + c) < 0) falha("admin.html sem " + c + " (configuracoes do painel)");
+});
+console.log("  ok  painel tem letra, leitura das tabelas, tempo de sincronizacao e versoes");
+["dataHoraSegundos", "tempoDesde", "tick"].forEach(function (c) {
+    if (sc9.indexOf("function " + c) < 0) falha("script.js sem " + c + " (hora detalhada do pedido)");
+});
+if (adm9.indexOf("tick(p.criadoEm)") < 0) falha("o painel nao mostra a hora detalhada do pedido");
+else console.log("  ok  hora exata (com segundos) e ha quanto tempo o pedido chegou");
+
+const th = fs.readFileSync(path.join(dir, "theme.js"), "utf8");
+const blocoMig = (th.split("function migrarPainel")[1] || "").split("function chavePrefs")[0];
+if (/localStorage\.setItem\(\s*"vendedorPrefs",\s*\n?\s*localStorage\.getItem\("refrigerantePrefs"/.test(blocoMig)) {
+    falha("o painel ainda copia a preferencia inteira do cliente");
+}
+/* a copia so pode trazer o que NAO e visual */
+const listaCopiada = (blocoMig.match(/\["cfgTelegramToken"[\s\S]*?\]/) || [""])[0];
+if (!listaCopiada) falha("nao achei a lista de preferencia herdada no theme.js");
+else if (/cfgTema|cfgFonteTamanho|cfgLeitura|cfgModoEscuro|cfgCompacto|cfgVerImagens/.test(listaCopiada)) {
+    falha("o painel ainda herda tema/letra/leitura do cliente: " + listaCopiada);
+} else console.log("  ok  painel nao herda tema, letra nem leitura do cliente");
+if (!/cfgTelegramToken/.test(listaCopiada)) falha("o painel deve aproveitar so a conexao do bot ja salva");
+else console.log("  ok  do cliente so aproveita a conexao do bot (nao a parte visual)");
+
 console.log("\n" + (erros === 0 ? "*** ESTRUTURA E SEGURANCA 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
 process.exit(erros ? 1 : 0);

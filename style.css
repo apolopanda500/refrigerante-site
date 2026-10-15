@@ -2385,3 +2385,10 @@ button{-webkit-user-select:none;user-select:none}
  margin-top:10px;padding-top:10px;border-top:1px dashed var(--borda,#eeeef4);font-size:.9rem;color:#5b6178}
 .avaliar-resumo .btn-detalhe{flex:0 0 auto}
 [data-theme="dark"] .avaliar-resumo{color:#a1a8c3;border-top-color:#353a5c}
+
+/* =====horario detalhado (tick) do pedido ===== */
+.tick{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tick em{font-style:normal;opacity:.75}
+.ficha-tick{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.92rem}
+.ficha-tick i{font-size:.5rem;color:var(--primary-color)}
+[data-theme="dark"] .ficha-tick i{color:#ffb822}

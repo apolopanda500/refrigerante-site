@@ -11,12 +11,23 @@
         try { return /admin\.html$/i.test(location.pathname || ""); }
         catch (e) { return false; }
     }
+    /* O PAINEL NAO HERDA A CARA DO CLIENTE.
+       Antes o painel copiava a preferencia do cliente na primeira
+       visita - ai mexer no tema/tamanho da loja mudava o painel
+       tambem. Agora o painel nasce com a configuracao dele
+       (escuro) e so aproveita do cliente o que NAO e visual:
+       conexao do bot e URL do banco de precos. */
     function migrarPainel() {
         if (!ehPainel()) return;
         try {
             if (localStorage.getItem("vendedorPrefs")) return;
-            localStorage.setItem("vendedorPrefs",
-                localStorage.getItem("refrigerantePrefs") || "{}");
+            var cliente = {};
+            try { cliente = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch (e) {}
+            var painel = { cfgTema: "dark", cfgFonteTamanho: "normal", cfgLeitura: "horizontal" };
+            ["cfgTelegramToken", "cfgTelegramChatId", "cfgBotComandos", "cfgPrecosURL"].forEach(function (k) {
+                if (cliente[k] !== undefined) painel[k] = cliente[k];
+            });
+            localStorage.setItem("vendedorPrefs", JSON.stringify(painel));
         } catch (e) {}
     }
     function chavePrefs() { return ehPainel() ? "vendedorPrefs" : "refrigerantePrefs"; }
