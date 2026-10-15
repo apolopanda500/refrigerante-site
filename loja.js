@@ -181,6 +181,23 @@ if (typeof precoSaneio !== "function") {
     };
 }
 
+/* ---------- DINHEIRO ---------- */
+/* precoTexto: o UNICO jeito de mostrar preco na tela.
+   Aceita numero (27.5) ou texto ("R$ 27,50") e devolve
+   sempre "R$ 27,50" - nunca "27.5" nem "27,5". */
+if (typeof precoTexto !== "function") {
+    var precoTexto = function (v) {
+        var n = precoNumero(v);
+        return "R$ " + n.toFixed(2).replace(".", ",");
+    };
+}
+/* sem o "R$ ", so o numero com centavos: "27,00" */
+if (typeof precoNumeroBR !== "function") {
+    var precoNumeroBR = function (v) {
+        return precoNumero(v).toFixed(2).replace(".", ",");
+    };
+}
+
 /* formatBRL: converte 27.5 -> "R$ 27,50" (NaN/null viram R$ 0,00)
    fica aqui porque a home NAO carrega o script.js */
 if (typeof formatBRL !== "function") {

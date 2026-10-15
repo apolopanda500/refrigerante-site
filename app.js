@@ -240,18 +240,39 @@ function mostrarModal(titulo, html){
     m.classList.add("aberto");
 }
 
-/* ---------- desenha os banners ---------- */
-function renderBanners(pos){
-    var lista = BANNERS.filter(function (b) { return b.pos === pos && b.ativo; });
-    if (!lista.length) return "";
-    return lista.map(function (b, i) {
-        return '<button type="button" class="bnr" data-b="' + pos + '-' + i + '" '
-             + 'style="background:' + b.cor + '" '
-             + 'onclick="executarBanner(BANNERS[' + BANNERS.indexOf(b) + '])">'
-             + '<i class="' + b.icone + ' bnr-ic"></i>'
-             + '<span class="bnr-tx"><b>' + b.titulo + '</b><small>' + b.texto + '</small></span>'
-             + '<i class="fa fa-chevron-right bnr-go"></i></button>';
-    }).join("");
+/* ---------- as ofertas, todas numa tabela so ---------- */
+function pintarTabelaOfertas() {
+    var el = document.getElementById("tabelaOfertas");
+    if (!el || typeof BANNERS === "undefined") return;
+
+    var acoes = {
+        carrinho: "Ir para o carrinho",
+        categoria: "Ver os produtos",
+        frete: "Calcular o frete",
+        regiao: "Ver dias de entrega",
+        resumo: "Acompanhar meus pedidos"
+    };
+
+    var h = '<div class="tab-wrap tab-ofertas"><table class="tabela-ofertas">'
+          + '<thead><tr><th class="tb-c1">Oferta</th><th class="tb-c3">Como funciona</th>'
+          + '<th class="acao">Vou querer</th></tr></thead><tbody>';
+    var n = 0;
+    BANNERS.forEach(function (b, i) {
+        if (!b.ativo) return;
+        n++;
+        h += '<tr>'
+           + '<td data-label="Oferta" class="tb-oferta"><span class="of-ic" style="background:' + b.cor + '">'
+           + '<i class="' + b.icone + '"></i></span><b>' + b.titulo + '</b></td>'
+           + '<td data-label="Detalhe">' + b.texto + '</td>'
+           + '<td data-label="Ação" class="acao"><button type="button" class="of-btn" style="border-color:' + b.cor + ';color:' + b.cor + '"'
+           + ' onclick="executarBanner(BANNERS[' + i + '])">'
+           + (acoes[b.acao] || "Abrir") + ' <i class="fa fa-chevron-right"></i></button></td>'
+           + '</tr>';
+    });
+    h += '</tbody></table></div>';
+
+    if (!n) { el.innerHTML = ""; return; }
+    el.innerHTML = '<div class="sec-titulo"><i class="fa fa-gift"></i> Ofertas e atalhos (' + n + ')</div>' + h;
 }
 
 function rT(){var h="";for(var i=0;i<CT.length;i++){var c=CT[i],n=0;
@@ -268,12 +289,10 @@ for(var m=0;m<ps.length;m++){var p=ps[m].o,gid=c.id+"."+ps[m].x;
 h+='<div class="pc" data-d="'+(p.nm+" "+p.ds).toLowerCase()+'" data-pid="'+gid+'">';
 h+='<div class="pch">'+p.nm+'</div>';
 h+='<div class="pib"><img class="pi" src="'+p.im+'" alt="p" loading="lazy" onerror="this.style.display=\'none\'"></div>';
-h+='<div class="pdd"><span class="pds">'+p.ds+'</span><span class="pp">'+p.pr+'</span></div>';
+h+='<div class="pdd"><span class="pds">'+p.ds+'</span><span class="pp">'+precoTexto(p.pr)+'</span></div>';
  h+='<div class="qr"><div class="qc"><button type="button" class="qb" onclick="mQ(this,-1)">-</button><span class="qv">0</span><button type="button" class="qb" onclick="mQ(this,1)">+</button></div><button class="qa" onclick="aC(this)">Adicionar</button></div></div>'}
 h+='</div></div></div>'}
-var w=document.getElementById("pwMain");if(w)w.innerHTML=h;
-var bt=document.getElementById("bnrTopo");if(bt)bt.innerHTML=renderBanners("topo");
-var bf=document.getElementById("bnrFim");if(bf)bf.innerHTML=renderBanners("fim")}
+var w=document.getElementById("pwMain");if(w)w.innerHTML=h}
 function tgG(id){var e=document.getElementById("g-"+id);if(e)e.classList.toggle("op")}
 function goG(id){var e=document.getElementById("g-"+id);if(!e)return;
 var t=e.getBoundingClientRect().top+window.pageYOffset-170;
@@ -542,13 +561,6 @@ function pintarLateral(){
             + '<i class="fa fa-box"></i>'
             + '<span><b>Meus pedidos</b><small>Acompanhe pelo site</small></span></a>';
     }
-    // banners do MEIO na lateral (os do topo ja aparecem no topo da pagina)
-    var b = document.getElementById("sideBanners");
-    if (b) {
-        var meio = renderBanners("meio");
-        b.innerHTML = meio ? '<h3><i class="fa fa-bullhorn"></i> Ofertas</h3>' + meio : "";
-        b.style.display = meio ? "" : "none";
-    }
     pintarHorario();
 }
 
@@ -606,42 +618,8 @@ function pintarRegioes(){
 
     el.innerHTML = '<h3><i class="fa fa-map-marker-alt"></i> Pedidos e entregas</h3>' + h;
 }
-
-function pintarCaminhoes(){
-    var el = document.getElementById("sideCaminhoes");
-    if (!el) return;
-    var h = "";
-    CAMINHOES.forEach(function (c) {
-        var foto = c.imagem
-            ? '<img class="cam-foto" src="' + c.imagem + '" alt="Caminhao ' + c.corNome + '" loading="lazy">'
-              + '<span class="cam-selo">' + c.modeloCurto + '</span>'
-            : '';
-        var zapMotorista = c.whatsapp
-            ? '<a href="https://wa.me/' + c.whatsapp + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none"><i class="fa fa-whatsapp" style="color:#25D366"></i> ' + c.telefone + '</a>'
-            : (c.telefone === "A INFORMAR" ? "Telefone a informar" : c.telefone);
-        h += '<div class="cam ' + c.cor + (foto ? ' com-foto' : '') + '">'
-           + foto
-           + '<div class="cam-corpo">'
-           + '<span class="cam-cam"><i class="fa fa-truck"></i></span>'
-           + '<span class="cam-tx"><b>' + c.corNome + ' - ' + c.modelo + '</b>'
-           + '<small>' + (c.motorista === "A INFORMAR" ? "Motorista a informar" : c.motorista) + '</small>'
-           + '<small>' + zapMotorista + '</small></span>'
-           + '<span class="cam-placa">' + c.placa + '</span>'
-           + '</div></div>';
-    });
-    el.innerHTML = '<h3><i class="fa fa-truck"></i> Nossa frota</h3>' + h;
-}
-
-function pintarConfianca(){
-    var el = document.getElementById("sideConfianca");
-    if (!el) return;
-    el.innerHTML = '<h3><i class="fa fa-shield-alt"></i> Compre tranquilo</h3>'
-      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Empresa <b>legalizada</b> com nota fiscal</span></div>'
-      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Entrega feita por <b>caminhões próprios</b> e identificados</span></div>'
-      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Motorista <b>identificado</b> com nome e telefone</span></div>'
-      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Você acompanha o pedido em <b>tempo real</b></span></div>'
-      + '<div class="selo-conf"><i class="fa fa-check-circle"></i> <span>Pagamento em <b>Pix ou dinheiro</b></span></div>';
-}
+
+
 
 function proximoDiaAtendente(){
     for (var i = 1; i <= 7; i++) {
@@ -761,12 +739,20 @@ function pintarTabelaGeral(){
             '<a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a>' + (pix ? ' · chave Pix: ' + pix : '')]
     ];
 
-    /* ---- 4. frota ---- */
-    var linhasFrota = CAMINHOES.map(function (c){
-        return ['<b class="tb-cam tb-cam-' + c.cor + '"><i class="fa fa-truck"></i> Caminhão ' + c.corNome + '</b>',
+    /* ---- 4. frota (com a foto do caminhao) ---- */
+    var linhasFrota = CAMINHOES.map(function (c) {
+        var foto = c.imagem
+            ? '<img class="tb-cam-foto" src="' + c.imagem + '" alt="Caminhão ' + c.corNome + '" loading="lazy" onerror="this.remove()">'
+            : '<span class="tb-cam-foto sem-foto"><i class="fa fa-truck"></i></span>';
+        var regioes = (c.regioes || []).map(function (id) {
+            var r = regiaoPorId(id);
+            return r ? r.nome : id;
+        }).join(", ");
+        return [foto + '<b class="tb-cam tb-cam-' + c.cor + '">' + c.corNome + '</b>',
                 '<span class="tb-passo">' + c.modelo + '</span>',
                 'Placa <b>' + c.placa + '</b> · ' + (c.motorista === "A INFORMAR" ? "motorista a informar" : c.motorista)
-                + (c.whatsapp ? ' · <a href="https://wa.me/' + c.whatsapp + '" target="_blank" rel="noopener">WhatsApp</a>' : '')];
+                + (c.whatsapp ? ' · <a href="https://wa.me/' + c.whatsapp + '" target="_blank" rel="noopener">WhatsApp</a>' : '')
+                + (regioes ? '<br>Atende: ' + regioes : '')];
     });
 
     /* ---- 5. garantia ---- */
@@ -798,10 +784,9 @@ function pintarTabelaGeral(){
 function ligarConfianca(){
     pintarCalendarioSemanal();
     pintarTabelaGeral();
+    pintarTabelaOfertas();
     pintarFaixaRegiao();
     pintarRegioes();
-    pintarCaminhoes();
-    pintarConfianca();
     // reavalia a regra de atendimento a cada minuto (abre 08:50 / fecha 15:00 em ponto)
     setInterval(function(){ pintarFaixaRegiao(); pintarTabelaGeral(); pintarCalendarioSemanal(); }, 60000);
 }
@@ -916,9 +901,10 @@ function aplicarPrecosOverride(){
   var ov = precosLocais();
   PD.forEach(function(p){
     var k = chavePreco(p);
-    if (ov[k] !== undefined) { p.pr = ov[k]; return; }
+    var original = p.pr;
+    if (ov[k] !== undefined) { p.pr = precoSaneio(ov[k], original); return; }
     var antiga = chavePrecoAntiga(p);
-    if (antiga && ov[antiga] !== undefined) p.pr = ov[antiga];
+    if (antiga && ov[antiga] !== undefined) p.pr = precoSaneio(ov[antiga], original);
   });
 }
 
