@@ -115,11 +115,13 @@ var BANNERS = [
         cor:"#1dc9b7", ativo:true
     },
     {
+        /* NAO repetir aqui: a caixa "Meus pedidos" da pagina ja faz isso.
+           Se duplicar, o cliente ve a mesma coisa duas vezes. */
         pos:"meio", acao:"resumo", alvo:"",
         icone:"fa fa-receipt",
         titulo:"Acompanhe seus pedidos",
         texto:"Veja o status, a data e a hora de tudo que você comprou.",
-        cor:"#646c9a", ativo:true
+        cor:"#646c9a", ativo:false
     },
     {
         pos:"fim", acao:"carrinho", alvo:"",
@@ -189,7 +191,10 @@ var t = (typeof horarioDeHoje === "function") ? horarioDeHoje() : null;
         '<p><b>Frete grátis</b> em pedidos a partir de <b>' + formatBRL(minimo) + '</b>.</p>'
         + '<p>Antes disso o frete varia por região: de <b>' + formatBRL(menor) + '</b> a <b>' + formatBRL(maior) + '</b>. '
         + 'Você escolhe a região na hora do pedido e o valor aparece antes de confirmar.</p>'
-        + '<p><b>Horário:</b> das 09:00 às 15:00, somente nos dias de cada região.</p>'
+        + '<p><b>Entrega nas ruas:</b> das ' + horaTexto(HORARIOS.entrega.abre, 0) + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0)
+        + ', somente nos dias de cada região. <b>Pedidos</b> das '
+        + horaTexto(horaDeMinutos(HORA_ABRE_PEDIDOS).h, horaDeMinutos(HORA_ABRE_PEDIDOS).m)
+        + ' às ' + horaTexto(horaDeMinutos(HORA_FECHA_PEDIDOS).h, horaDeMinutos(HORA_FECHA_PEDIDOS).m) + '.</p>'
         + (st ? '<p>Agora: ' + st + '</p>' : '')
         + '<h4>Regiões e dias</h4>' + linhas);
 }
@@ -402,11 +407,18 @@ function horaBrasil(){
 /* ============================================
    HORARIOS
    Loja (empresa): 09:00 as 15:00  - monta os pedidos
-   Entrega (rua): 06:00 as 18:00  - o freteiro entrega
+   Entrega (rua): 09:00 as 18:00  - o freteiro entrega
    O caminhao carrega UM DIA ANTES de sair
    ============================================ */
 function horaTexto(hh, mm) {
+    hh = Number(hh); mm = Number(mm) || 0;
     return (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+}
+
+/* "530" (minutos) -> { h: 8, m: 50 } */
+function horaDeMinutos(minutos) {
+    var m = Math.floor((Number(minutos) || 0) / 60);
+    return { h: m, m: Math.round((Number(minutos) || 0) - m * 60) };
 }
 
 function pintarHorario() {
@@ -458,7 +470,7 @@ function pintarHorario() {
     } else if (entregaOk) {
         statusEntrega = '<div class="wgt-status aberto"><i class="fa fa-truck"></i> Freteiro entregando agora</div>';
     } else if (a2.hh < HORARIOS.entrega.abre) {
-        statusEntrega = '<div class="wgt-status pedido"><i class="fa fa-sun"></i> Freteiro sai às ' + horaTexto(HORARIOS.entrega.abre, 0) + '</div>';
+        statusEntrega = '<div class="wgt-status pedido"><i class="fa fa-sun"></i> Entrega começa às ' + horaTexto(HORARIOS.entrega.abre, 0) + '</div>';
     } else {
         statusEntrega = '<div class="wgt-status fechado"><i class="fa fa-moon"></i> Entrega encerrada às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</div>';
     }
@@ -480,7 +492,7 @@ function pintarHorario() {
         + '<div class="hr-bloco">'
         + '  <div class="hr-titulo"><i class="fa fa-truck"></i> Entrega nas ruas</div>'
         + statusEntrega
-        + '  <div class="wgt-linha"><span>Freteiro sai</span><b>' + horaTexto(HORARIOS.entrega.abre, 0) + '</b></div>'
+        + '  <div class="wgt-linha"><span>Entrega das</span><b>' + horaTexto(HORARIOS.entrega.abre, 0) + '</b></div>'
         + '  <div class="wgt-linha"><span>Entrega até</span><b>' + horaTexto(HORARIOS.entrega.fecha, 0) + '</b></div>'
         + '</div>'
         + '<div class="hr-aviso"><i class="fa fa-box"></i> <span>O pedido é feito <b>um dia antes</b> da entrega: o caminhão carrega na véspera.</span></div>'
@@ -720,9 +732,12 @@ function pintarTabelaGeral(){
     var linhasHorario = [
         ['<b>A loja funciona</b>', '<span class="tb-passo"><i class="fa fa-calendar-check"></i> segunda a sexta</span>',
             'Sábado e domingo a loja fica fechada. No sábado sai <b>somente a entrega</b>.'],
-        ['<b>Pedidos</b>', '<span class="tb-passo"><i class="fa fa-clock"></i> 08:50 às 15:00</span>',
+['<b>Pedidos</b>', '<span class="tb-passo"><i class="fa fa-clock"></i> '
+            + horaTexto(horaDeMinutos(HORA_ABRE_PEDIDOS).h, horaDeMinutos(HORA_ABRE_PEDIDOS).m)
+            + ' às ' + horaTexto(horaDeMinutos(HORA_FECHA_PEDIDOS).h, horaDeMinutos(HORA_FECHA_PEDIDOS).m) + '</span>',
             'Fora desse horário os pedidos ficam pausados no site.'],
-        ['<b>Entrega nas ruas</b>', '<span class="tb-passo"><i class="fa fa-truck"></i> 9h às 15:00</span>',
+        ['<b>Entrega nas ruas</b>', '<span class="tb-passo"><i class="fa fa-truck"></i> '
+            + horaTexto(HORARIOS.entrega.abre, 0) + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</span>',
             'O pedido é feito <b>um dia antes</b>: o caminhão carrega na véspera.']
     ];
 

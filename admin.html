@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261014r">
+<link rel="manifest" href="manifest-vendedor.json?v=20261014s">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014r">
-<script src="theme.js?v=20261014r"></script>
+<link rel="stylesheet" href="style.css?v=20261014s">
+<script src="theme.js?v=20261014s"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -130,9 +130,36 @@
 .resumo-linha b{color:#3d4465;font-variant-numeric:tabular-nums}
 [data-theme="dark"] .resumo-linha b{color:#ffb822}
 [data-theme="dark"] .resumo-linha{border-bottom-color:#353a5c}
+
+/* ==========================================================
+   TIPOGRAFIA DO PAINEL DO VENDEDOR
+   As letras estavam finas e pequenas. Aqui o painel ganha
+   corpo, tamanho e contraste, sem mexer no site do cliente.
+   ========================================================== */
+body.admin{
+    font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    font-size:17px;line-height:1.5;font-weight:500;
+    -webkit-font-smoothing:antialiased;letter-spacing:.1px;
+}
+body.admin h1,body.admin h2,body.admin h3,body.admin h4{font-weight:700;letter-spacing:.2px;line-height:1.3}
+body.admin p,body.admin li,body.admin td,body.admin span,body.admin label{font-weight:500}
+body.admin table{font-size:.97rem}
+body.admin table td{padding:12px 16px;font-weight:500;color:#2c3252}
+body.admin table th{font-size:.78rem;font-weight:800;letter-spacing:.05em;padding:13px 16px}
+body.admin table td .sub,body.admin .sub{font-size:.82rem;font-weight:500;color:#767d95}
+body.admin small{font-size:.84rem;font-weight:500}
+body.admin input,body.admin select,body.admin textarea{
+    font-family:inherit;font-size:.97rem;font-weight:600;min-height:44px;
+}
+body.admin label{font-size:.9rem;font-weight:700;color:#3d4465}
+body.admin .btn-st,body.admin button{font-weight:700;font-size:.9rem}
+body.admin .painel-busca,body.admin .wgt,body.admin .box,body.admin .card{font-size:.95rem;line-height:1.55}
+body.admin .resumo-linha,body.admin .wgt-linha{font-size:.93rem;padding:11px 0}
+body.admin .resumo-linha b,body.admin .wgt-linha b{font-weight:700}
+body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 </style>
 </head>
-<body>
+<body class="admin">
 <header class="main-header"><div class="container"><nav>
 <div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
@@ -264,8 +291,8 @@
 
 </div></section>
 
-<script src="script.js?v=20261014r"></script>
-<script src="telegram.js?v=20261014r"></script>
+<script src="script.js?v=20261014s"></script>
+<script src="telegram.js?v=20261014s"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -731,9 +758,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261014r"></script>
-<script src="firebase-appcheck.js?v=20261014r"></script>
-<script src="app-update.js?v=20261014r"></script>
+<script src="app.js?v=20261014s"></script>
+<script src="firebase-appcheck.js?v=20261014s"></script>
+<script src="app-update.js?v=20261014s"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }

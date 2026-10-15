@@ -5,7 +5,7 @@
    Aqui conferimos a versao e, se houver versao nova,
    aparece uma barra para atualizar na hora.
    ============================================ */
-var VERSAO_APP = "20261014j";
+var VERSAO_APP = "20261014s";
 
 function barraAtualizar() {
     if (document.getElementById("barraAtualizar")) return;
@@ -26,14 +26,14 @@ function barraAtualizar() {
     btn.onclick = function () {
         btn.disabled = true;
         txt.textContent = "Atualizando...";
-        limparCacheApp().then(function () {
+        reiniciarCacheApp().then(function () {
             if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
                 navigator.serviceWorker.getRegistration().then(function (r) {
                     if (r) { r.update(); }
-                    setTimeout(function () { location.reload(); }, 700);
-                });
+                    setTimeout(function () { location.reload(); }, 900);
+                }).catch(function () { location.reload(); });
             } else {
-                location.reload(true);
+                location.reload();
             }
         });
     };
@@ -49,12 +49,31 @@ function barraAtualizar() {
     document.body.appendChild(box);
 }
 
-/* apaga o cache do service worker (nova versao limpa) */
+/* tira os caches ANTIGOS (o do service worker atual fica de pe:
+   se apagassemos tudo, o app ficaria sem nada offline) */
 function limparCacheApp() {
     if (typeof caches === "undefined") return Promise.resolve();
     return caches.keys().then(function (chaves) {
-        return Promise.all(chaves.map(function (c) { return caches.delete(c); }));
+        return Promise.all(chaves.map(function (c) {
+            if (c === "convencao-cache-v4") return null;   /* o cache ativo */
+            return caches.delete(c);
+        }));
     }).catch(function () { });
+}
+
+/* tira TUDO (so quando o usuario pede "atualizar agora") e
+   recarrega o service worker para ele repopular o cache */
+function reiniciarCacheApp() {
+    if (typeof caches === "undefined") return Promise.resolve();
+    return caches.keys().then(function (chaves) {
+        return Promise.all(chaves.map(function (c) { return caches.delete(c); }));
+    }).catch(function () { }).then(function () {
+        if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+            return navigator.serviceWorker.getRegistration().then(function (r) {
+                if (r) return r.update();
+            }).catch(function () { });
+        }
+    });
 }
 
 function iniciarApp() {
@@ -99,6 +118,15 @@ function iniciarApp() {
             } catch (e) { }
         })
         .catch(function () { });
+}
+
+/* ---------- o app se registra sozinho em toda pagina ---------- */
+if (typeof document !== "undefined") {
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", iniciarApp);
+    } else {
+        iniciarApp();
+    }
 }
 
 /* botao "Instalar app" igual ao da home */

@@ -77,7 +77,7 @@ var REGIOES = [
         nome: "Seropédica",
         dias: [5, 6],
         diasTexto: "Sexta e Sábado",
-        horario: "9h às 15h",
+        horario: "9h às 18h",
         frete: 8,
         obs: "Entrega sexta e sábado. Pedido na quinta (para sexta) e na sexta (para sábado)."
     },
@@ -86,7 +86,7 @@ var REGIOES = [
         nome: "Japeri",
         dias: [2, 3, 4, 5, 6],
         diasTexto: "Terça a Sábado",
-        horario: "9h às 15h",
+        horario: "9h às 18h",
         frete: 12,
         obs: "Entrega de terça a sábado. Pedido de segunda a sexta, sempre um dia antes da entrega."
     },
@@ -95,7 +95,7 @@ var REGIOES = [
         nome: "Engenho Pedreira",
         dias: [2, 3, 4, 5, 6],
         diasTexto: "Terça a Sábado",
-        horario: "9h às 15h",
+        horario: "9h às 18h",
         frete: 15,
         obs: "Entrega de terça a sábado. Pedido de segunda a sexta, sempre um dia antes da entrega."
     },
@@ -104,7 +104,7 @@ var REGIOES = [
         nome: "Paracambi",
         dias: [4, 5, 6],
         diasTexto: "Quinta, Sexta e Sábado",
-        horario: "9h às 15h",
+        horario: "9h às 18h",
         frete: 20,
         obs: "Entrega quinta, sexta e sábado. Pedido na quarta (para quinta), na quinta (para sexta) e na sexta (para sábado)."
     }
@@ -141,6 +141,17 @@ var HORA_ABRE_PEDIDOS = 8 * 60 + 50;   // 08:50 (abre 10 minutos antes)
 var HORA_FECHA_PEDIDOS = 15 * 60;      // 15:00 em ponto
 
 /* ---------- DINHEIRO ---------- */
+/* arredonda: dinheiro SEMPRE com 2 casas (10.10 + 20.20 nao pode dar
+   30.299999999999997 e gravar valor errado no pedido).
+   fica aqui porque loja.js e a camada base: nao depende de script.js */
+if (typeof arredonda !== "function") {
+    var arredonda = function (v) {
+        var n = parseFloat(v);
+        if (isNaN(n) || !isFinite(n)) return 0;
+        return Math.round((n + (n >= 0 ? 1e-9 : -1e-9)) * 100) / 100;
+    };
+}
+
 /* precoNumero: entende "R$ 27,50", "27.5", "2750", 27.5 ...
    (o mesmo cuidado do painel do vendedor, para todo mundo ler igual) */
 if (typeof precoNumero !== "function") {
@@ -259,11 +270,11 @@ var HORARIOS = {
         rotulo: "Loja / Empresa",
         obs: "Horario em que a loja monta e organiza os pedidos."
     },
-    entrega: {
-        abre: 6,          // 06:00 - o freteiro sai as 6h
+entrega: {
+        abre: 9,          // 09:00 - a entrega comeca as 9h
         fecha: 18,        // 18:00 - entrega ate as 18h
         rotulo: "Entrega nas ruas",
-        obs: "O freteiro sai a partir das 06:00 e entrega ate as 18:00."
+        obs: "A entrega nas ruas vai das 09:00 às 18:00."
     },
     carga: {
         antecedencia: 1,  // o caminhao carrega UM DIA ANTES de sair

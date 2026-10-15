@@ -91,6 +91,4 @@ var AppCheck = (function () {
 })();
 
 /* usado pelo app.js e pelo painel */
-function appCheckPronto() {
-    if (typeof AppCheck !== "undefined" && AppCheck.temChaves()) AppCheck.iniciar();
-}
+/* (cada script ja tem a sua copia local: nao deixamos nada global) */

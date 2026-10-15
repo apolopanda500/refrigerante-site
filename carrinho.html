@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014r">
+<link rel="manifest" href="manifest.json?v=20261014s">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014r">
-<script src="theme.js?v=20261014r"></script>
+<link rel="stylesheet" href="style.css?v=20261014s">
+<script src="theme.js?v=20261014s"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
@@ -91,10 +91,9 @@
         box-shadow:0 -4px 16px rgba(0,0,0,.1);gap:8px;margin:0}
     .acoes .btn{min-width:0;flex:1;padding:13px 6px;font-size:.82rem;border-radius:12px;gap:4px}
     .page{padding-bottom:104px !important}
-    .btn-limpar-mobile{display:none}
-    .caixa-limpar{margin-bottom:84px}
 }
-/* botao de limpar dentro da barra de acoes (sempre visivel) */
+/* ===== botao de limpar: dentro da barra de acoes (sempre visivel,
+   tanto com o carrinho cheio quanto vazio) ===== */
 .btn-limpar-item{
     background:#fff;color:#c62828;border:2px solid #f3c9c9;
     font-weight:700;
@@ -103,27 +102,6 @@
 [data-theme="dark"] .btn-limpar-item{background:#2a1a1c;color:#ff8a8a;border-color:#5a2a2e}
 [data-theme="dark"] .btn-limpar-item:hover{background:#c62828;color:#fff}
 .btn-limpar-item i{margin-right:6px}
-}
-.btn-limpar-mobile{display:none}
-
-/* ===== limpar carrinho: botao visivel dentro do carrinho ===== */
-.caixa-limpar{
-    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-    margin-top:18px;padding:14px 16px;border-radius:12px;
-    background:#fff8f8;border:1px solid #ffd6d6;
-}
-.caixa-limpar .cl-tx{font-size:.9rem;color:#8a3a3a;line-height:1.4}
-.caixa-limpar .cl-tx b{display:block;color:#c62828;font-size:.95rem;margin-bottom:2px}
-.btn-limpar-forte{
-    padding:12px 22px;min-height:44px;
-    background:#c62828;color:#fff;border:none;border-radius:10px;
-    font-weight:700;font-size:.92rem;cursor:pointer;font-family:inherit;
-    display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
-}
-.btn-limpar-forte:hover{background:#ad1f1f}
-[data-theme="dark"] .caixa-limpar{background:#2a1a1c;border-color:#5a2a2e}
-[data-theme="dark"] .caixa-limpar .cl-tx{color:#e6a3a3}
-[data-theme="dark"] .caixa-limpar .cl-tx b{color:#ff8a8a}
 
 /* ===== aviso de frete: usa o estilo global em style.css ===== */
 
@@ -194,28 +172,36 @@
 <div id="avisoAtendimento" class="regra-atendimento" style="display:none"></div>
 <div class="page-head">
   <h1><i class="fa fa-shopping-cart"></i> Meu Carrinho</h1>
-  <a class="link-voltar" href="index.html"><i class="fa fa-arrow-left"></i> Continuar comprando</a>
 </div>
 <div class="cart-box" id="cartBox"></div>
 <div class="resumo" id="resumoBox"></div>
 <div class="caixa-limpar" id="infoRegiao" style="background:var(--bg-alt);border-color:var(--borda)"></div>
+
+<div class="caixa-bairro" id="caixaBairro">
+  <div class="cb-cab"><i class="fa fa-map-marker-alt"></i> Onde você quer receber?</div>
+  <div class="cb-grade">
+    <label class="cb-rot">Seu bairro
+      <input type="text" id="bairroCarrinho" placeholder="Ex.: Centro" autocomplete="address-level3">
+    </label>
+    <label class="cb-rot">Região de entrega
+      <select id="regiaoCarrinho"></select>
+    </label>
+  </div>
+  <div class="cb-dias" id="diasCarrinho"></div>
+</div>
+
 <div class="acoes">
   <button class="btn btn-limpar-item" onclick="confirmarLimpar()" title="Esvaziar o carrinho"><i class="fa fa-trash"></i> Limpar carrinho</button>
   <a class="btn btn-secundario" href="index.html"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
   <a class="btn btn-primario" href="checkout.html" id="btnCheckout"><i class="fa fa-credit-card"></i> Entrega e Pagamento</a>
 </div>
-<div class="caixa-limpar" id="caixaLimpar">
-  <div class="cl-tx"><b>Quer esvaziar o carrinho?</b>Todos os itens ser&atilde;o removidos deste aparelho.</div>
-  <button class="btn-limpar-forte" onclick="confirmarLimpar()"><i class="fa fa-trash"></i> Limpar carrinho</button>
-</div>
 </div></section>
 
-<script src="conta.js?v=20261014r"></script>
-<script src="firebase-appcheck.js?v=20261014r"></script>
-<script src="app-update.js?v=20261014r"></script>
-<script src="atendimento.js?v=20261014r"></script>
-<script src="loja.js?v=20261014r"></script>
-<script src="script.js?v=20261014r"></script>
+<script src="conta.js?v=20261014s"></script>
+<script src="firebase-appcheck.js?v=20261014s"></script>
+<script src="app-update.js?v=20261014s"></script>
+<script src="loja.js?v=20261014s"></script>
+<script src="script.js?v=20261014s"></script>
 <script>
 cart = getCart();
 
@@ -226,7 +212,7 @@ function renderCarrinho() {
     updateCartCount();
 
     if (cart.length === 0) {
-        box.innerHTML = '<div class="cart-vazio"><i class="fa fa-shopping-cart"></i><p>Seu carrinho est&aacute; vazio.</p><a class="link-voltar" href="index.html">Ver produtos</a></div>';
+        box.innerHTML = '<div class="cart-vazio"><i class="fa fa-shopping-cart"></i><p>Seu carrinho est&aacute; vazio.</p></div>';
         res.innerHTML = "";
         btn.style.display = "none";
         return;
@@ -253,24 +239,44 @@ function renderCarrinho() {
 
     const subtotal = arredonda(calcSubtotal());
     const nItens = calcTotalItens();
-    const minimo = (typeof freteGratisMinimo === "function") ? freteGratisMinimo() : 150;
-    const menorFrete = (typeof freteMinimo === "function") ? freteMinimo() : 8;
 
-    let aviso = "";
+    /* ---- regiao escolhida: define o frete e o total final ---- */
+    const regiao = (typeof regiaoCarrinho === "function") ? regiaoCarrinho() : null;
+    const calc = (typeof calcularFrete === "function")
+        ? calcularFrete(subtotal, regiao ? regiao.id : null)
+        : { subtotal: subtotal, frete: 0, total: subtotal, gratis: false };
+    const minimo = (typeof freteGratisMinimo === "function") ? freteGratisMinimo() : 150;
+
+    /* aviso do frete: sempre com o mesmo visual */
+    let aviso;
     if (subtotal <= 0) {
         aviso = "";
-    } else if (subtotal < minimo) {
-        aviso = '<div class="aviso-frete"><i class="fa fa-truck"></i> Faltam <b>' + formatBRL(arredonda(minimo - subtotal))
-              + '</b> para o frete ficar <b>GRÁTIS</b></div>';
+    } else if (calc.gratis) {
+        aviso = '<div class="aviso aviso-ok"><i class="fa fa-check-circle"></i>'
+              + ' <span><b>Frete GRÁTIS!</b> Seu pedido passou de ' + formatBRL(minimo) + '.</span></div>';
     } else {
-        aviso = '<div class="aviso-frete"><i class="fa fa-check-circle"></i> <b>Frete GRÁTIS!</b> Seu pedido passou de '
-              + formatBRL(minimo) + '</div>';
+        aviso = '<div class="aviso aviso-info"><i class="fa fa-truck"></i>'
+              + ' <span>Faltam <b>' + formatBRL(arredonda(minimo - subtotal))
+              + '</b> para o frete ficar <b>GRÁTIS</b>.</span></div>';
     }
 
-    res.innerHTML = aviso
+    /* total final: depende da regiao escolhida */
+    const linhaFrete = regiao
+        ? '<div class="resumo-row"><span>Frete (' + regiao.nome + ')</span><span>'
+          + (calc.gratis ? '<b class="txt-ok">GRÁTIS</b>' : formatBRL(calc.frete)) + '</span></div>'
+        : '<div class="resumo-row"><span>Frete</span><span class="muted">escolha a região acima</span></div>';
+
+    const semAviso = !regiao
+        ? '<div class="aviso aviso-atencao"><i class="fa fa-circle-exclamation"></i>'
+          + ' <span>Escolha a <b>região</b> e digite seu <b>bairro</b> para ver o valor final e o dia de entrega.</span></div>'
+        : "";
+
+    res.innerHTML = aviso + semAviso
         + '<div class="resumo-row"><span>Subtotal (' + nItens + (nItens === 1 ? ' item' : ' itens') + ')</span><span>' + formatBRL(subtotal) + '</span></div>'
-        + '<div class="resumo-row"><span>Frete</span><span class="muted">calculado por região (de ' + formatBRL(menorFrete) + ')</span></div>'
-        + '<div class="resumo-row total"><span>Total dos produtos</span><span>' + formatBRL(subtotal) + '</span></div>';
+        + linhaFrete
+        + '<div class="resumo-row total"><span>Total final</span><span>' + formatBRL(calc.total) + '</span></div>';
+
+    atualizarDiasCarrinho(regiao);
 }
 
 function mudarQtdCarrinho(idx, delta) {
@@ -323,6 +329,109 @@ function confirmarLimpar(){
     limparCarrinho();
     if (typeof renderCarrinho === "function") renderCarrinho();
     alert("Carrinho esvaziado.");
+}
+
+/* ===== bairro e regiao: escolhidos aqui, usados no checkout ===== */
+const K_BAIRRO = "carrinhoBairro";
+const K_REGIAO = "carrinhoRegiao";
+
+function regiaoCarrinho() {
+    const sel = document.getElementById("regiaoCarrinho");
+    if (!sel || typeof REGIOES === "undefined") return null;
+    const id = sel.value;
+    let achada = null;
+    REGIOES.forEach(function (r) { if (r.id === id) achada = r; });
+    return achada;
+}
+
+function bairroCarrinho() {
+    const inp = document.getElementById("bairroCarrinho");
+    return inp ? inp.value.trim() : "";
+}
+
+/* guarda em 2 lugares: o checkout e o perfil leem do mesmo sitio */
+function salvarBairroRegiao() {
+    const b = bairroCarrinho(), r = regiaoCarrinho();
+    try {
+        if (b) localStorage.setItem(K_BAIRRO, b); else localStorage.removeItem(K_BAIRRO);
+        localStorage.setItem(K_REGIAO, r ? r.id : "");
+    } catch (e) { }
+    /* a conta do cliente tambem guarda (o checkout usa) */
+    try {
+        if (typeof Conta !== "undefined" && Conta.dados) {
+            const d = Conta.dados();
+            if (b && d.bairro !== b) Conta.salvar({ bairro: b });
+        }
+    } catch (e) { }
+}
+
+/* monta o <select> e ja deixa o que estava salvo */
+function montarSeletorBairro() {
+    const sel = document.getElementById("regiaoCarrinho");
+    const inp = document.getElementById("bairroCarrinho");
+    if (!sel || typeof REGIOES === "undefined") return;
+
+    let salvo = "";
+    try { salvo = localStorage.getItem(K_REGIAO) || ""; } catch (e) { }
+    /* se o cliente ja tem bairro no perfil, usa como bairro */
+    let bairroSalvo = "";
+    try { bairroSalvo = localStorage.getItem(K_BAIRRO) || ""; } catch (e) { }
+    if (!bairroSalvo) {
+        try { bairroSalvo = (typeof Conta !== "undefined" && Conta.dados) ? (Conta.dados().bairro || "") : ""; } catch (e) { }
+    }
+    /* se nao escolheu regiao antes, escolhe a do proprio bairro */
+    if (!salvo) {
+        try {
+            REGIOES.forEach(function (r) {
+                if (!salvo && (r.regioes || []).length) { /* nada a fazer aqui */ }
+            });
+            const peloNome = REGIOES.find(function (r) {
+                const b = semAcento(bairroSalvo);
+                return b && (semAcento(r.nome).indexOf(b) >= 0 || b.indexOf(semAcento(r.nome)) >= 0);
+            });
+            if (peloNome) salvo = peloNome.id;
+        } catch (e) { }
+    }
+
+    sel.innerHTML = '<option value="">Escolha a regiao...</option>'
+        + REGIOES.map(function (r) {
+            return '<option value="' + r.id + '"' + (salvo === r.id ? " selected" : "") + '>'
+                 + r.nome + ' - entrega ' + r.diasTexto + '</option>';
+        }).join("");
+
+    if (inp) inp.value = bairroSalvo;
+
+    sel.addEventListener("change", function () { salvarBairroRegiao(); renderCarrinho(); });
+    if (inp) {
+        inp.addEventListener("change", function () {
+            salvarBairroRegiao();
+            atualizarAvisoCarrinho();
+        });
+    }
+}
+
+/* mostra os dias de pedido e de entrega da regiao escolhida */
+function atualizarDiasCarrinho(r) {
+    const el = document.getElementById("diasCarrinho");
+    if (!el) return;
+    if (!r) { el.innerHTML = ""; return; }
+    const hoje = (typeof diaDeHoje === "function") ? diaDeHoje() : new Date().getDay();
+    const entregaHoje = r.dias.indexOf(hoje) >= 0;
+    const abre = (typeof pedidoAbreHoje === "function") ? pedidoAbreHoje(r) : false;
+
+    let classe = "aviso-info", icone = "fa fa-calendar-alt", texto;
+    if (entregaHoje) {
+        classe = "aviso-ok"; icone = "fa fa-truck";
+        texto = "<b>Hoje entregamos em " + r.nome + "</b>, das " + r.horario + ".";
+    } else if (abre) {
+        classe = "aviso-pedido"; icone = "fa fa-cart-plus";
+        texto = "<b>Hoje os pedidos de " + r.nome + " estão abertos.</b> A entrega sai " + r.diasTexto.toLowerCase() + ".";
+    } else {
+        classe = "aviso-atencao"; icone = "fa fa-clock";
+        texto = "Pedidos de <b>" + r.nome + "</b> na " + (typeof textoDiasPedido === "function" ? textoDiasPedido(r) : "-")
+              + ". Entrega " + r.diasTexto.toLowerCase() + ", das " + r.horario + ".";
+    }
+    el.innerHTML = '<div class="aviso ' + classe + '"><i class="' + icone + '"></i> <span>' + texto + '</span></div>';
 }
 
 /* ===== regiao e dia de entrega no carrinho ===== */
@@ -382,6 +491,13 @@ if (document.readyState === "loading") document.addEventListener("DOMContentLoad
 else atualizarAvisoCarrinho();
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintarRegiaoCarrinho);
 else pintarRegiaoCarrinho();
+
+/* monta o seletor de bairro/regiao e ja calcula o total final */
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () {
+    montarSeletorBairro();
+    renderCarrinho();
+});
+else { montarSeletorBairro(); renderCarrinho(); }
 
 </script>
 <script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};var box=document.createElement("div");box.style="max-width:720px;margin:20px auto;padding:14px;border:1px solid #ddd;border-radius:10px;background:#fff";box.innerHTML="<b>Endereço de entrega</b><br><small>"+(d.endereco||"Não informado")+" "+(d.bairro||"")+" "+(d.complemento||"")+"</small><br><a href=perfil.html style=color:#3d4465;font-weight:600>Editar endereço</a>";var main=document.querySelector("section.page .container");if(main)main.appendChild(box);});</script><script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};if(!d.nome||!d.tel){var b=document.createElement("div");b.style="max-width:720px;margin:10px auto;padding:12px;background:#fff3cd;border:2px solid #ffc107;border-radius:10px;color:#856404";b.innerHTML="<b>Atenção:</b> identifique-se (nome e WhatsApp no Perfil) antes de finalizar o pedido.";var m=document.querySelector("section.page .container");if(m)m.appendChild(b);}});</script></body>
