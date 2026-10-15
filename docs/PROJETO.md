@@ -39,6 +39,7 @@ tudo roda no navegador do cliente e os dados ficam em `localStorage`
               ▼                                             ▼
       localStorage (por aparelho)          Firebase Realtime Database
       - carrinho, pedidos, perfil,         precos.json   (precos sincronizados)
+         pedidos.json  (pedidos de TODO mundo)
         preferencias, tema                  https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com
               │
               ▼
@@ -53,9 +54,11 @@ tudo roda no navegador do cliente e os dados ficam em `localStorage`
 | `localStorage: refrigeranteCart` | — | itens do carrinho `{name, priceNum, qty}` |
 | `localStorage: convencao_pedidos` | `CV20261014-001` | pedidos (status, itens, histórico) |
 | `localStorage: convencao_usuario` / `refrigerantePerfil` | — | dados do cliente |
-| `localStorage: refrigerantePrefs` | — | tema, fonte, frete grátis, URL do Firebase |
+| `localStorage: refrigerantePrefs` | — | tema, fonte, frete grátis, URL do Firebase (cliente) |
+| `localStorage: vendedorPrefs` | — | preferências do PAINEL (tema, bot Telegram) — não mistura com o cliente |
 | `localStorage: productPriceOverrides` | `k:<código do produto>` | preço editado pelo vendedor |
 | Firebase `/precos.json` | `k:<código>` | mesma tabela, para todos os aparelhos |
+| Firebase `/pedidos.json` | `CV20261015-001` | pedidos de todos os aparelhos (o painel baixa e junta) |
 | `catalogo.json` (no repositório) | — | catálogo do dia, gerado pelo robô |
 
 **Regra de ouro do preço:** a chave é `k:` + o código do produto no site oficial.
@@ -83,9 +86,9 @@ Nunca usar o nome — se o nome mudar, o preço se perde. Nunca deixar a chave v
 |---|---|
 | `app.js` | catálogo (PD/CT), render da vitrine, temas, preços em tempo real, horários |
 | `loja.js` | regiões, dias de entrega, **cálculo de frete**, regra de atendimento |
-| `script.js` | carrinho, criação de pedido, histórico de status, aviso do Telegram |
+| `script.js` | carrinho, criação de pedido, histórico de status, aviso do Telegram, pedidos na nuvem (`enviarPedidoNuvem`/`sincronizarPedidosNuvem`) |
 | `conta.js` | perfil do cliente (fonte única de dados) |
-| `theme.js` | aplica tema/fonte/contraste antes da página pintar |
+| `theme.js` | aplica tema/fonte/contraste/leitura antes da página pintar; no painel usa `vendedorPrefs` |
 | `atendimento.js` | respostas automáticas + encaminhamento para vendedor/motorista |
 | `telegram.js` | comandos do bot (`/confirmar`, `/entregue`...) e botões da mensagem |
 | `app-update.js` | service worker, barra "Atualizar agora", botão instalar app |
@@ -108,7 +111,9 @@ Nunca usar o nome — se o nome mudar, o preço se perde. Nunca deixar a chave v
 
 - **Pedidos** só abrem das **08:50 às 15:00** (horário de São Paulo, `agoraSP()`).
 - **Bairros atendidos:** Japeri, Engenho Pedreira, Paracambi, Seropédica.
-  Bairro fora da lista gera **aviso**, não bloqueio (o robô/vendedor decide).
+  Bairro fora da lista **bloqueia** a finalização no checkout: o aviso aparece
+  no carrinho e no checkout e o pedido só sai depois que o cliente corrigir
+  o bairro no perfil.
 - **Pedido um dia antes da entrega.** O pedido pode ser feito em **qualquer dia que antecede
   uma entrega** — ou seja, no dia anterior de cada dia de entrega da região:
   | Região | Dias de pedido | Dias de entrega |
@@ -157,6 +162,11 @@ de propósito para não apagar o catálogo.
 
 - Banco: `https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com`
 - Arquivo: `/precos.json` (mapa `chave: "R$ 00,00"`)
+- Mesmo banco: `/pedidos.json` guarda os pedidos de **todos** os aparelhos —
+  o cliente faz o pedido, `enviarPedidoNuvem()` grava lá e o painel chama
+  `sincronizarPedidosNuvem()` (na abertura e a cada minuto) para baixar e
+  juntar com os locais. **Privacidade:** o banco está aberto (modo teste) —
+  reforce as regras do Firebase em produção.
 - O site tenta achar o banco sozinho (`PRECOS_ENDERECOS` em `app.js`).
 - Para publicar: painel do vendedor → editar preço → **Salvar e aplicar**.
 - Para conferir: painel → "Banco ligado! N preço(s) publicado(s)".
@@ -173,8 +183,15 @@ era digitado com ponto — isso já foi corrigido (`lerPreco()` em `admin.html`)
 (mensagem com botões: Confirmar / Separação / Enviado / Entregue / Cancelar).
 
 **Comandos** (digitados no chat do bot, pelo dono):
-`/confirmar`, `/separacao`, `/enviado`, `/entregue`, `/cancelar`, `/ultimos`, `/ajuda`.
+`/confirmar`, `/separacao`, `/enviado`, `/entregue`, `/cancelar`, `/ultimos`,
+`/status`, `/hoje`, `/ajuda`.
 Aceitam o número completo (`CV20261014-001`) ou só o fim (`001`).
+
+**Independência do painel:** as preferências do bot (token, chat, liga/desliga)
+e o tema do painel ficam em `vendedorPrefs` — mudar no painel não mexe no site
+do cliente. O registro do menu no Telegram acontece **uma única vez** (botão
+"Ativar comandos" para tentar de novo) e um webhook antigo é removido
+automaticamente (evita o erro 409 do `getUpdates`).
 
 **Requisitos:** o painel (`admin.html`) fica aberto — ele lê o Telegram a cada 20s
 e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
@@ -242,7 +259,11 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 
 - Catálogo: 45 produtos, 7 categorias, atualizado diariamente pelo robô.
 - Preços: sincronizados em tempo real pelo Firebase (tabela do dono).
-- Bot: aviso de novo pedido + comandos do vendedor + botões.
+- Pedidos: sincronizados na nuvem (`/pedidos.json`) — o painel vê os pedidos feitos em qualquer aparelho ou conta.
+- Painel: preferências próprias (`vendedorPrefs`), 5 temas, conexão do bot editável e sincronização de pedidos a cada minuto.
+- Leitura das tabelas: horizontal (padrão) ou vertical (cartões), em Configurações do cliente.
+- Bairro fora da área de entrega: pedido **bloqueado** na finalização.
+- Bot: aviso de novo pedido + comandos (`/confirmar`, `/separacao`, `/enviado`, `/entregue`, `/cancelar`, `/ultimos`, `/status`, `/hoje`, `/ajuda`) + botões.
 - App: PWA instalado + APK (cliente e vendedor) disponíveis para download.
 - Temas: claro, guaraná, rosa, vermelho e escuro.
 - Pagamento: Pix e Dinheiro.

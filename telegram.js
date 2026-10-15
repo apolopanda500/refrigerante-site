@@ -18,7 +18,9 @@
 var TelegramBot = (function () {
 
     var K_OFFSET = "convencao_tg_offset";
-    var K_PREFS  = "refrigerantePrefs";
+    /* preferencias PROPIAS do painel (nunca mistura com as do cliente) */
+    var K_PREFS  = "vendedorPrefs";
+    var K_CMDS   = "convencao_tg_cmds";   // "1" = menu ja registrado; "tentou" = ja tentou e falhou
     var TIMER = null;
     var LOG = [];
 
@@ -44,6 +46,8 @@ var TelegramBot = (function () {
         { command: "entregue",  description: "Marcar como entregue: /entregue CV20261014-001" },
         { command: "cancelar",  description: "Cancelar pedido: /cancelar CV20261014-001" },
         { command: "ultimos",   description: "Ver os ultimos pedidos" },
+        { command: "status",    description: "Ver um pedido: /status CV20261014-001" },
+        { command: "hoje",      description: "Resumo dos pedidos de hoje" },
         { command: "ajuda",     description: "Ver a lista de comandos" }
     ];
 
@@ -124,6 +128,8 @@ var TelegramBot = (function () {
             + "\n/entregue CV20261014-001 - marcar como entregue"
             + "\n/cancelar CV20261014-001 - cancelar pedido"
             + "\n/ultimos - ver os ultimos 5 pedidos"
+            + "\n/status CV20261014-001 - ver um pedido"
+            + "\n/hoje - resumo dos pedidos de hoje"
             + "\n/ajuda - ver esta lista"
             + "\n\nDica: na mensagem de cada pedido tem botoes. E so tocar para mudar o status.";
     }
@@ -140,20 +146,54 @@ var TelegramBot = (function () {
         return t;
     }
 
+    /* resumo do dia (mesmo painel de "Resumo de hoje") */
+    function resumoHoje() {
+        var hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+        var doDia = getPedidos().filter(function (p) { return (p.criadoEm || 0) >= hoje.getTime(); });
+        if (!doDia.length) return "Nenhum pedido hoje ainda.";
+        var abertos = doDia.filter(function (p) { return p.status === "aguardando"; }).length;
+        var fat = doDia.filter(function (p) { return p.status !== "cancelado"; })
+            .reduce(function (t, p) { return t + (p.total || 0); }, 0);
+        return "PEDIDOS DE HOJE\n"
+            + "\nTotal: " + doDia.length + " pedido(s)"
+            + "\nAguardando: " + abertos
+            + "\nFaturamento: " + formatBRL(fat)
+            + "\n\n(use /ultimos para ver os numeros)";
+    }
+
     /* ---------- 1) registra os comandos no menu do bot ---------- */
-    function registrarComandos(btn) {
-        var c = cfg();
-        status("ativando comandos...", "#8a6100");
+    function registrarComandos(btn, automatico) {
+        if (!automatico) status("ativando comandos...", "#8a6100");
         return api("setMyCommands", { commands: JSON.stringify(COMANDOS) })
             .then(function () {
-                status("Comandos ativados no bot. Abra o Telegram e toque no botao / para ver a lista.", "#2e7d32");
+                try { localStorage.setItem(K_CMDS, "1"); } catch (e) {}
                 log("Comandos registrados no menu do bot");
-                if (btn) { btn.innerHTML = '<i class="fa fa-check"></i> Comandos ativados'; }
+                if (!automatico) {
+                    status("Comandos ativados no bot. Abra o Telegram e toque no botao / para ver a lista.", "#2e7d32");
+                    if (btn) { btn.innerHTML = '<i class="fa fa-check"></i> Comandos ativados'; }
+                }
             })
             .catch(function (e) {
-                status("Nao foi possivel ativar: " + e.message + ". Veja se o chat do bot esta correto.", "#c62828");
-                log("Falha ao registrar comandos: " + e.message);
+                if (automatico) {
+                    /* nao deixa o painel piscando vermelho toda vez que abre:
+                       anota a tentativa e deixa o botao para o vendedor decidir */
+                    try { localStorage.setItem(K_CMDS, "tentou"); } catch (err) {}
+                    log("Menu de comandos nao registrado: " + e.message + " (use Ativar comandos)");
+                } else {
+                    try { localStorage.removeItem(K_CMDS); } catch (err) {}
+                    status("Nao foi possivel ativar: " + e.message + ". Confira o token e o chat do bot em Configurações do painel.", "#c62828");
+                    log("Falha ao registrar comandos: " + e.message);
+                }
             });
+    }
+    /* registro automatico: so na primeira abertura (depois nao repete erro) */
+    function registrarSePendente() {
+        try {
+            var feito = localStorage.getItem(K_CMDS);
+            if (feito === "1") { log("Menu de comandos ja registrado"); return Promise.resolve(); }
+            if (feito === "tentou") { log("Menu de comandos: use o botao Ativar comandos para tentar de novo"); return Promise.resolve(); }
+        } catch (e) {}
+        return registrarComandos(null, true);
     }
 
     /* ---------- 2) le as mensagens/comandos do vendedor ---------- */
@@ -179,16 +219,31 @@ var TelegramBot = (function () {
                     "#2e7d32");
             })
             .catch(function (e) {
-                status("Falha ao verificar: " + e.message, "#c62828");
-                log("Falha no getUpdates: " + e.message);
+                var msg = String(e.message || e);
+                if (/409|webhook/i.test(msg)) {
+                    status("O Telegram tem outra conexao ativa (webhook). Removendo...", "#8a6100");
+                    try { localStorage.removeItem("convencao_tg_hook"); } catch (err) {}
+                    api("deleteWebhook", {}).then(function () {
+                        try { localStorage.setItem("convencao_tg_hook", "1"); } catch (err) {}
+                        status("Webhook removido. Toque em Verificar novamente.", "#2e7d32");
+                    }).catch(function () {});
+                } else if (/fetch|network|failed/i.test(msg)) {
+                    status("Sem conexao com o Telegram agora - comandos ficam em espera.", "#8a6100");
+                } else {
+                    status("Falha ao verificar: " + msg, "#c62828");
+                }
+                log("Falha no getUpdates: " + msg);
             });
     }
 
-    /* so obedece o dono da loja */
+    /* so obedece o dono da loja (id numerico OU @usuario) */
     function doDono(quem) {
         var c = cfg();
         var id = String((quem && (quem.id || (quem.chat && quem.chat.id))) || "");
-        return id && id === c.chat;
+        if (id && id === String(c.chat || "")) return true;
+        var user = String((quem && quem.username) || "").toLowerCase();
+        var alvo = String(c.chat || "").replace(/^@/, "").toLowerCase();
+        return !!user && !!alvo && user === alvo;
     }
 
     /* ---------- 3) botoes da mensagem (Confirmar, Entregue...) ---------- */
@@ -249,6 +304,30 @@ var TelegramBot = (function () {
             enviar(listarUltimos()).then(function(){ log("Bot: /ultimos enviado"); });
             return;
         }
+        if (cmd === "hoje") {
+            enviar(resumoHoje()).then(function(){ log("Bot: /hoje enviado"); });
+            return;
+        }
+        if (cmd === "status") {
+            if (!arg) {
+                enviar("Falta o numero do pedido. Exemplo: /status CV20261014-001").catch(function(){});
+                return;
+            }
+            var detalhe = acharPedido(arg);
+            if (!detalhe) {
+                enviar("Nao encontrei o pedido \"" + arg + "\". Use /ultimos para ver os numeros.").catch(function(){});
+                return;
+            }
+            enviar("PEDIDO " + detalhe.id
+                 + "\nCliente: " + (detalhe.nome || "-")
+                 + "\nStatus: " + (STATUS_LABEL[detalhe.status] || detalhe.status)
+                 + "\nTotal: " + formatBRL(detalhe.total || 0)
+                 + "\nEntrega: " + (detalhe.end || "-") + " - " + (detalhe.bairro || "-")
+                 + "\nItens: " + (detalhe.itens || []).map(function(i){ return i.name + " x" + i.qty; }).join(", "))
+                .then(function(){ log("Bot: /status " + detalhe.id); })
+                .catch(function(){});
+            return;
+        }
 
         var novo = STATUS_CMD[cmd];
         if (!novo) {
@@ -277,6 +356,18 @@ var TelegramBot = (function () {
     function iniciar() {
         parar();
         if (!cfg().ligado) return;
+        /* webhook antigo derruba o getUpdates com erro 409:
+           remove uma vez e guarda que ja foi feito */
+        try {
+            if (!localStorage.getItem("convencao_tg_hook")) {
+                api("deleteWebhook", {})
+                    .then(function () {
+                        localStorage.setItem("convencao_tg_hook", "1");
+                        log("Webhook antigo removido (getUpdates livre)");
+                    })
+                    .catch(function () {});
+            }
+        } catch (e) {}
         TIMER = setInterval(function () {
             if (document.getElementById("painelTela") && document.getElementById("painelTela").style.display !== "none") {
                 verificarAgora();
@@ -296,7 +387,9 @@ var TelegramBot = (function () {
     return {
         iniciar: iniciar,
         parar: parar,
+        cfg: cfg,
         registrarComandos: registrarComandos,
+        registrarSePendente: registrarSePendente,
         verificarAgora: verificarAgora,
         ligadoMudou: ligadoMudou,
         status: status,

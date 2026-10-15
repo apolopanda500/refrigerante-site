@@ -278,6 +278,83 @@ function getPedidos() {
 function savePedidos(p) {
     localStorage.setItem(PEDIDOS_KEY, JSON.stringify(p));
 }
+
+/* ============================================
+   PEDIDOS NA NUVEM (Firebase Realtime Database)
+   Cada aparelho guarda os pedidos no proprio navegador.
+   Para o PAINEL ver os pedidos de TODO mundo (clientes
+   de outros aparelhos/contas), o pedido novo e enviado
+   para o banco e o painel baixa tudo e junta.
+   - enviarPedidoNuvem: grava (fogo e esquece: nunca
+     quebra o pedido local se a rede falhar)
+   - sincronizarPedidosNuvem: baixa e mescla (só o painel)
+   ============================================ */
+var NUVEM_ENDERECOS = [
+    "https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com",
+    "https://planning-with-ai-9b2c9.firebaseio.com"
+];
+function nuvemEnderecos() {
+    var out = [];
+    try {
+        var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+        var salvo = String(p.cfgPrecosURL || "").trim().replace(/\/+$/, "");
+        if (salvo) out.push(salvo);
+    } catch (e) {}
+    NUVEM_ENDERECOS.forEach(function (u) { if (out.indexOf(u) < 0) out.push(u); });
+    return out;
+}
+function enviarPedidoNuvem(pedido) {
+    if (!pedido || !pedido.id) return;
+    var corpo = JSON.stringify(pedido);
+    nuvemEnderecos().forEach(function (base) {
+        try {
+            fetch(base + "/pedidos/" + encodeURIComponent(pedido.id) + ".json",
+                { method: "PUT", body: corpo, mode: "cors" }).catch(function () {});
+        } catch (e) {}
+    });
+}
+/* junta aparelho + nuvem; para o mesmo id vence o que tem
+   mais historico (e, em empate, o mais recente) */
+function mesclarPedidos(locais, nuvem) {
+    var mapa = {};
+    (locais || []).forEach(function (p) {
+        if (p && p.id) mapa[p.id] = p;
+    });
+    (nuvem || []).forEach(function (p) {
+        if (!p || !p.id) return;
+        var atual = mapa[p.id];
+        if (!atual) { mapa[p.id] = p; return; }
+        var ha = (atual.historico || []).length, hb = (p.historico || []).length;
+        var ta = atual.atualizadoEm || atual.criadoEm || 0;
+        var tb = p.atualizadoEm || p.criadoEm || 0;
+        if (hb > ha || (hb === ha && tb > ta)) mapa[p.id] = p;
+    });
+    return Object.keys(mapa).map(function (k) { return mapa[k]; })
+        .sort(function (a, b) { return (b.criadoEm || 0) - (a.criadoEm || 0); });
+}
+/* baixa os pedidos de todos os aparelhos (primeiro banco responde vale);
+   salva a juncao e chama o callback com a lista (ou null se ninguem respondeu) */
+function sincronizarPedidosNuvem(callback) {
+    var bases = nuvemEnderecos();
+    var i = 0;
+    function tentar() {
+        if (i >= bases.length) { if (callback) callback(null); return; }
+        var base = bases[i++];
+        fetch(base + "/pedidos.json", { cache: "no-store" })
+            .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+            .then(function (dados) {
+                var nuvem = (dados && typeof dados === "object")
+                    ? Object.keys(dados).map(function (k) { return dados[k]; }).filter(Boolean)
+                    : [];
+                var atual = getPedidos();
+                var junto = mesclarPedidos(atual, nuvem);
+                if (JSON.stringify(junto) !== JSON.stringify(atual)) savePedidos(junto);
+                if (callback) callback(junto);
+            })
+            .catch(function () { tentar(); });
+    }
+    tentar();
+}
 function gerarId() {
     const d = new Date();
     const n = getPedidos().length + 1;
@@ -297,6 +374,8 @@ function criarPedido(dados) {
     };
     pedidos.unshift(pedido);
     savePedidos(pedidos);
+    /* manda para a nuvem: o painel do vendedor ve pedidos de TODO mundo */
+    if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(pedido); } catch (e) {} }
     return pedido;
 }
 
@@ -393,7 +472,10 @@ function atualizarStatus(id, novoStatus) {
     if (p) {
         p.status = novoStatus;
         p.historico.push({ status: novoStatus, quando: Date.now() });
+        p.atualizadoEm = Date.now();
         savePedidos(pedidos);
+        /* a mudanca tambem vai para a nuvem (outro aparelho enxerga na hora) */
+        if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(p); } catch (e) {} }
     }
     return p;
 }

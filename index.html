@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014t">
+<link rel="manifest" href="manifest.json?v=20261015a">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,8 +14,8 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="style.css?v=20261014t">
-<script src="theme.js?v=20261014t"></script>
+<link rel="stylesheet" href="style.css?v=20261015a">
+<script src="theme.js?v=20261015a"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 /* header da home e sticky: nao precisa do espaco do header fixo */
@@ -127,10 +127,8 @@ a{text-decoration:none;color:inherit}
 .qa.ok{background:#43a047;color:#fff}
 .ft{background:#1a1a2e;color:#ccc;text-align:center;padding:20px;font-size:.85rem;margin-top:40px}
 .ft a{color:#ECC400;font-weight:600}
-.fb2{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:#ECC400;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,.3);cursor:pointer;z-index:200;border:none}
-.fbb{position:absolute;top:-4px;right:-4px;background:#e53935;color:#fff;font-size:.65rem;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 @media(max-width:768px){.nl{display:none}.sw{top:48px}.tb{top:100px}}
-@media(max-width:480px){.bs-tx{display:none}.bs{padding:9px 12px;font-size:.9rem}.cb,.fbb{font-size:.6rem}}
+@media(max-width:480px){.bs-tx{display:none}.bs{padding:9px 12px;font-size:.9rem}.cb{font-size:.6rem}}
 
 /* === IDENTIDADE VISUAL OFICIAL (segue o tema escolhido) === */
 .hd{background:var(--primary-color,#3d4465)}
@@ -138,7 +136,7 @@ a{text-decoration:none;color:inherit}
 .nl a{color:rgba(255,255,255,.8)}
 .bs{background:var(--accent-color,#ffb822);color:#3d4465}
 .ci{color:#fff}
-.cb,.fbb{background:#fc0758}
+.cb{background:#fc0758}
 .gi{color:var(--accent-color,#ffb822)}
 .gc{background:rgba(255,255,255,.72);color:var(--primary-color,#646c9a)}
 .gv{color:var(--text-muted,#a1a8c3)}
@@ -148,7 +146,6 @@ a{text-decoration:none;color:inherit}
 .qa.ok{background:var(--sucesso,#1dc9b7);color:#fff}
 .ft{background:var(--primary-color,#3d4465);color:rgba(255,255,255,.82)}
 .ft a{color:var(--accent-color,#ffb822)}
-.fb2{background:var(--accent-color,#ffb822);color:#3d4465}
 .sw,.tb,.gb,.pc{background:#fff}
 
 /* === TEMA ESCURO (home) === */
@@ -395,9 +392,9 @@ a{text-decoration:none;color:inherit}
 <header class="hd"><nav>
 <div class="lg"><i class="fa fa-bottle-water"></i><span>Convenção</span></div>
 <ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
-<div class="ha"><button class="bs" id="btnInstalar" onclick="instalarApp()" style="display:none"><i class="fa fa-download"></i><span class="bs-tx">Instalar app</span></button>
+<div class="ha">
 <button class="bs" onclick="partilhar()"><i class="fa fa-share-alt"></i><span class="bs-tx">Compartilhar</span></button>
-<div class="ci" onclick="location.href='checkout.html'" title="Ver carrinho"><i class="fa fa-shopping-cart"></i><span class="cb" id="cBag">0</span></div></div>
+<div class="ci" onclick="location.href='carrinho.html'" title="Ver carrinho"><i class="fa fa-shopping-cart"></i><span class="cb" id="cBag">0</span></div></div>
 </nav></header>
 
 <div class="sw"><div class="si"><div class="sf"><i class="fa fa-search"></i><input type="text" placeholder="Buscar produto..." oninput="fs(this.value)"></div></div></div>
@@ -422,18 +419,16 @@ a{text-decoration:none;color:inherit}
   </aside>
 </div>
 
-<button class="fb2" onclick="location.href='checkout.html'" aria-label="Carrinho"><i class="fa fa-shopping-cart"></i><span class="fbb" id="fBag">0</span></button>
-
 <footer class="ft">
 <p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p>
-<p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Loja de segunda a sexta · pedidos das 08:50 às 15:00 · entrega nas ruas das 09:00 às 18:00 · sábado é só entrega</p>
+<p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Loja de segunda a sexta · pedidos das 08:50 às 15:00 · entrega nas ruas das 06:00 às 18:00 · sábado é só entrega</p>
 </footer>
 
-<script src="conta.js?v=20261014t"></script>
-<script src="loja.js?v=20261014t"></script>
-<script src="app.js?v=20261014t"></script>
-<script src="firebase-appcheck.js?v=20261014t"></script>
-<script src="app-update.js?v=20261014t"></script>
+<script src="conta.js?v=20261015a"></script>
+<script src="loja.js?v=20261015a"></script>
+<script src="app.js?v=20261015a"></script>
+<script src="firebase-appcheck.js?v=20261015a"></script>
+<script src="app-update.js?v=20261015a"></script>
 <script>
 (function(){
 /* a barra de navegacao e sempre visivel: destaca a pagina atual */

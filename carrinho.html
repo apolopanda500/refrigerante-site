@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014t">
+<link rel="manifest" href="manifest.json?v=20261015a">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014t">
-<script src="theme.js?v=20261014t"></script>
+<link rel="stylesheet" href="style.css?v=20261015a">
+<script src="theme.js?v=20261015a"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
@@ -197,11 +197,11 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261014t"></script>
-<script src="firebase-appcheck.js?v=20261014t"></script>
-<script src="app-update.js?v=20261014t"></script>
-<script src="loja.js?v=20261014t"></script>
-<script src="script.js?v=20261014t"></script>
+<script src="conta.js?v=20261015a"></script>
+<script src="firebase-appcheck.js?v=20261015a"></script>
+<script src="app-update.js?v=20261015a"></script>
+<script src="loja.js?v=20261015a"></script>
+<script src="script.js?v=20261015a"></script>
 <script>
 cart = getCart();
 
@@ -571,13 +571,13 @@ function atualizarAvisoCarrinho(){
         if (btn) btn.style.display = "none";
         return;
     }
-    /* bairro fora da area: so avisa */
+    /* bairro fora da area: avisa aqui; o checkout bloqueia o envio */
     if (fora) {
         box.className = "regra-atendimento";
         box.style.display = "flex";
         box.innerHTML = '<i class="fa fa-map-marker-alt"></i> <span><b>Atenção:</b> o bairro "' + bairro
             + '" não está na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
-            + '). Confira a região na próxima tela.</span>';
+            + '). O pedido será bloqueado na finalização: corrija o bairro no perfil.</span>';
         btnMostrar();
         return;
     }

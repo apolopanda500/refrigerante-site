@@ -32,6 +32,8 @@ O robô **nunca** muda seus preços.
 ## 3. Acompanhar pedidos
 
 - **Painel do vendedor** → tabela com todos os pedidos.
+- O painel baixa os pedidos da nuvem sozinho (na abertura e a cada minuto):
+  pedidos feitos em **outro celular ou outra conta** aparecem aqui também.
 - Botões de status: Confirmar, Em separação, Enviado, Entregue, Cancelar.
 - Clique na linha do pedido para abrir a **ficha completa**
   (itens, endereço, CPF, histórico, botões de WhatsApp).
@@ -54,6 +56,8 @@ Também dá para digitar:
 | `/entregue CV20261014-001` | entregue |
 | `/cancelar CV20261014-001` | cancela |
 | `/ultimos` | últimos 5 pedidos |
+| `/status CV20261014-001` | mostra o pedido inteiro |
+| `/hoje` | resumo do dia (total, aguardando, faturamento) |
 | `/ajuda` | lista de comandos |
 
 Dá para escrever só o final: `/entregue 001`.
@@ -72,6 +76,8 @@ Dá para escrever só o final: `/entregue 001`.
 - **Anotações da loja**: lista de compras, combinados, telefones.
 - **Histórico de preços**: quem mudou, de quanto para quanto.
 - **Exportar pedidos**: baixa um arquivo que abre no Excel.
+- **Configurações do painel**: tema próprio (não afeta o site do cliente) e
+  conexão do bot (token e chat do Telegram).
 
 ---
 
@@ -109,7 +115,9 @@ e você recebe aviso no Telegram.
 ## 9. Regras que o site segue
 
 - Pedidos abertos das **08:50 às 15:00**.
-- Entrega em **Japeri, Engenho Pedreira, Paracambi e Seropédica**.
+- Entrega em **Japeri, Engenho Pedreira, Paracambi e Seropédica** —
+  bairro fora dessa lista **não passa**: o site bloqueia o pedido na
+  finalização e o cliente precisa corrigir o bairro no perfil.
 - **O pedido é sempre um dia antes da entrega. Pode pedir em qualquer dia que antecede uma entrega:**
   - **Japeri e Engenho Pedreira** — entrega terça a sábado → pedido de segunda a sexta
   - **Paracambi** — entrega quinta, sexta e sábado → pedido na quarta, quinta e sexta

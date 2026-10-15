@@ -678,6 +678,31 @@ table td.acao{text-align:right;white-space:nowrap}
     }
 }
 
+/* ===== LEITURA VERTICAL (opcao em Configuracoes) =====
+   Em vez de deslizar a tabela para o lado, as linhas viram
+   cartoes empilhados de cima para baixo - em qualquer tela. */
+html[data-leitura="vertical"] .tab-wrap{overflow-x:visible}
+html[data-leitura="vertical"] .tab-wrap > table{min-width:0}
+html[data-leitura="vertical"] table thead{display:none}
+html[data-leitura="vertical"] table td{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:12px;padding:10px 15px;border-bottom:2px solid #eee;text-align:right;
+}
+html[data-leitura="vertical"] table td::before{
+    content:attr(data-label);
+    font-weight:bold;
+    color:var(--primary-color);
+    display:block;
+    text-align:left;
+    margin-bottom:0;
+    flex:none;
+}
+html[data-leitura="vertical"] table tbody tr:nth-child(even) td{background:#f7f8fc}
+html[data-leitura="vertical"] table tfoot td{display:flex;justify-content:space-between}
+html[data-leitura="vertical"][data-theme="dark"] table td{border-bottom-color:#2f3456}
+html[data-leitura="vertical"][data-theme="dark"] table tbody tr:nth-child(even) td{background:#222643}
+html[data-leitura="vertical"][data-theme="dark"] table td::before{color:#ffb822}
+
 /* ===== FORMS ===== */
 .form-group {
     margin-bottom: 20px;
@@ -1178,8 +1203,7 @@ table td.acao{text-align:right;white-space:nowrap}
 [data-theme="guara"] .bs { background: #ffd100; color: #12301f; }
 [data-theme="guara"] .btn-primario { background: #00752e !important; }
 [data-theme="guara"] .btn-enviar { background: #0f9d58 !important; }
-[data-theme="guara"] .fb2 { background: #ffd100; color: #12301f; }
-[data-theme="guara"] .cb, [data-theme="guara"] .fbb { background: #e03131 !important; }
+[data-theme="guara"] .cb { background: #e03131 !important; }
 [data-theme="guara"] .btn-buscar { background: #00752e !important; }
 
 /* ---------- 3. ROSA (para elas) ---------- */
@@ -1224,8 +1248,7 @@ table td.acao{text-align:right;white-space:nowrap}
 [data-theme="rosa"] .bs { background: #f8bbd0; color: #4a0e2a; }
 [data-theme="rosa"] .btn-primario { background: #c2185b !important; }
 [data-theme="rosa"] .btn-enviar { background: #e91e63 !important; }
-[data-theme="rosa"] .fb2 { background: #f8bbd0; color: #4a0e2a; }
-[data-theme="rosa"] .cb, [data-theme="rosa"] .fbb { background: #e03131 !important; }
+[data-theme="rosa"] .cb { background: #e03131 !important; }
 [data-theme="rosa"] .btn-buscar { background: #c2185b !important; }
 
 /* ---------- 4. VERMELHO ---------- */
@@ -1270,8 +1293,7 @@ table td.acao{text-align:right;white-space:nowrap}
 [data-theme="vermelho"] .bs { background: #ffcdd2; color: #4a0f0f; }
 [data-theme="vermelho"] .btn-primario { background: #c62828 !important; }
 [data-theme="vermelho"] .btn-enviar { background: #e53935 !important; }
-[data-theme="vermelho"] .fb2 { background: #ffcdd2; color: #4a0f0f; }
-[data-theme="vermelho"] .cb, [data-theme="vermelho"] .fbb { background: #e03131 !important; }
+[data-theme="vermelho"] .cb { background: #e03131 !important; }
 [data-theme="vermelho"] .btn-buscar { background: #c62828 !important; }
 
 /* ---------- 4. ESCURO (base ja existente) ---------- */
@@ -1683,6 +1705,16 @@ html{font-size:17px}
 [data-theme="dark"] .tabela-geral tbody tr:nth-child(even) td{background:#222643}
 [data-theme="dark"] .tabela-geral tbody tr:hover td,
 [data-theme="dark"] .tabela-ofertas tbody tr:hover td{background:#262c4d}
+
+/* tema escuro DENTRO de qualquer tabela: a zebra clara (#fafbfe) e o
+   fundo branco do <table> nao podem vazar e apagar as letras */
+[data-theme="dark"] table{background:#1e2138;box-shadow:none}
+[data-theme="dark"] table th{border-bottom-color:#3d4470}
+[data-theme="dark"] table td{border-bottom-color:#2f3456;color:#dfe2ef}
+[data-theme="dark"] table tbody tr:nth-child(even) td{background:#222643}
+[data-theme="dark"] table tbody tr:nth-child(even):hover td,
+[data-theme="dark"] table tbody tr:hover td{background:#262c4d}
+[data-theme="dark"] table tfoot td{background:#232742;color:#e6e8f2;border-top-color:#ffb822}
 [data-theme="dark"] .tb-assunto,
 [data-theme="dark"] .tb-oferta b{color:#e6e8f2}
 [data-theme="dark"] .tb-quando{color:#c3cae0}

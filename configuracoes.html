@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014t">
+<link rel="manifest" href="manifest.json?v=20261015a">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Configurações - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014t">
-<script src="theme.js?v=20261014t"></script>
+<link rel="stylesheet" href="style.css?v=20261015a">
+<script src="theme.js?v=20261015a"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -144,7 +144,7 @@
 <div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
 <ul class="nav-links" id="mainNav"><li><a href="index.html">Produtos</a></li><li><a href="meus-pedidos.html">Histórico</a></li><li><a href="configuracoes.html">Configurações</a></li><li><a href="perfil.html">Perfil</a></li></ul>
-<div class="header-actions"><div class="cart-icon" onclick="window.location.href='checkout.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div></div>
+<div class="header-actions"><div class="cart-icon" onclick="window.location.href='carrinho.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div></div>
 </nav></div></header>
 
 <section class="page"><div class="container">
@@ -262,6 +262,15 @@
       <button class="op-btn op-fonte" data-v="muitogrande" onclick="setOpcao('cfgFonteTamanho',this)"><span style="font-size:1.4rem">A</span><span style="font-size:1.4rem">++</span></button>
     </div>
   </div>
+  <div class="config-row config-col">
+    <div class="config-label">Leitura das tabelas
+      <small><b>Horizontal</b> (padrão): a tabela desliza para os lados. <b>Vertical</b>: as linhas viram cartões, um embaixo do outro, de cima para baixo.</small>
+    </div>
+    <div class="opcoes" id="cfgLeitura">
+      <button class="op-btn" data-v="horizontal" onclick="setOpcao('cfgLeitura',this)"><i class="fa fa-grip-lines"></i> Horizontal</button>
+      <button class="op-btn" data-v="vertical" onclick="setOpcao('cfgLeitura',this)"><i class="fa fa-grip-lines-vertical"></i> Vertical</button>
+    </div>
+  </div>
   <div class="config-row">
     <div class="config-label">Alto contraste<small>Bordas fortes e texto mais escuro</small></div>
     <label class="toggle"><input type="checkbox" id="cfgAltoContraste"><span class="slider"></span></label>
@@ -370,11 +379,11 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261014t"></script>
-<script src="firebase-appcheck.js?v=20261014t"></script>
-<script src="app-update.js?v=20261014t"></script>
-<script src="loja.js?v=20261014t"></script>
-<script src="script.js?v=20261014t"></script>
+<script src="conta.js?v=20261015a"></script>
+<script src="firebase-appcheck.js?v=20261015a"></script>
+<script src="app-update.js?v=20261015a"></script>
+<script src="loja.js?v=20261015a"></script>
+<script src="script.js?v=20261015a"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -446,6 +455,21 @@ function setOpcao(chave, btn){
     });
     if (typeof aplicarTema === 'function') aplicarTema();
 }
+
+/* ao abrir a pagina, marca os botoes que ja foram salvos
+   (tamanho da letra, leitura das tabelas, horario, pagamento) */
+document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(function(){
+        var p = carregarPrefs();
+        document.querySelectorAll(".opcoes[id]").forEach(function(box){
+            var v = p[box.id];
+            if (v === undefined || v === null || v === "") return;
+            box.querySelectorAll(".op-btn").forEach(function(b){
+                b.classList.toggle("ativo", b.dataset.v === v);
+            });
+        });
+    }, 60);
+});
 
 function carregarPrefs(){
     try { return JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); }

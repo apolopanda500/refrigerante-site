@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261014t">
+<link rel="manifest" href="manifest-vendedor.json?v=20261015a">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014t">
-<script src="theme.js?v=20261014t"></script>
+<link rel="stylesheet" href="style.css?v=20261015a">
+<script src="theme.js?v=20261015a"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -317,10 +317,30 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
     </div>
   </div>
 
+  <div class="card" id="caixaConfigVendedor" style="margin-top:12px">
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-sliders-h"></i> Configurações do painel</h3>
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Vale só para este painel: tema e comandos aqui não mexem nas preferências do site do cliente.</p>
+    <h4 style="margin:12px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-palette"></i> Tema do painel</h4>
+    <div class="temas" id="temasVendedor">
+      <button class="tema-btn tema-claro" data-tema="claro" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Claro</span></button>
+      <button class="tema-btn tema-guara" data-tema="guara" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Guaraná</span></button>
+      <button class="tema-btn tema-rosa" data-tema="rosa" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Rosa</span></button>
+      <button class="tema-btn tema-vermelho" data-tema="vermelho" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Vermelho</span></button>
+      <button class="tema-btn tema-escuro" data-tema="dark" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Escuro</span></button>
+    </div>
+    <h4 style="margin:16px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-key"></i> Conexão do bot (Telegram)</h4>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input id="cfgTGToken" type="text" placeholder="Token do bot (em branco = padrão)" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
+      <input id="cfgTGChat" type="text" placeholder="Chat ID do dono" style="width:190px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
+      <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarConfigBot(this)"><i class="fa fa-save"></i> Salvar</button>
+    </div>
+    <div id="configBotMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
+  </div>
+
   <div class="card" id="caixaBot" style="margin-top:12px">
     <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-robot"></i> Bot do Telegram - comandos do vendedor</h3>
     <p style="font-size:.84rem;color:#777;margin:0 0 10px">Além do aviso de novo pedido, o bot aceita comandos. Toque no botão <b>/</b> do Telegram para ver todos:
-      <b>/confirmar</b>, <b>/separacao</b>, <b>/enviado</b>, <b>/entregue</b>, <b>/cancelar</b>, <b>/ultimos</b> e <b>/ajuda</b>.
+      <b>/confirmar</b>, <b>/separacao</b>, <b>/enviado</b>, <b>/entregue</b>, <b>/cancelar</b>, <b>/ultimos</b>, <b>/status</b>, <b>/hoje</b> e <b>/ajuda</b>.
       Na mensagem de cada pedido também tem botões para mudar o status com um toque.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <label style="display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600;cursor:pointer">
@@ -338,8 +358,8 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261014t"></script>
-<script src="telegram.js?v=20261014t"></script>
+<script src="script.js?v=20261015a"></script>
+<script src="telegram.js?v=20261015a"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -406,14 +426,66 @@ function mostrarPainel() {
     renderAdmin();
     var chk = document.getElementById("cfgBotComandos");
     if (chk) {
-        try { chk.checked = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}").cfgBotComandos !== false; } catch (e) {}
+        try { chk.checked = (typeof TelegramBot !== "undefined") ? TelegramBot.cfg().ligado : true; } catch (e) {}
     }
-    /* ferramentas */
+    /* ferramentas + config do painel */
     try { resumoDoDia(); carregarNotas(); historicoPrecos(); } catch (e) { }
+    try { carregarConfigVendedor(); } catch (e) { }
     var bv = document.getElementById("btnInstalarVendedor");
     if (bv && window.__promptInstalacao) bv.style.display = "inline-flex";
-    if (typeof TelegramBot !== "undefined") { TelegramBot.log("Painel aberto - comandos do bot em espera"); TelegramBot.iniciar(); TelegramBot.registrarComandos(); }
+    /* pedidos de TODOS os aparelhos (nuvem), renovados de 1 em 1 minuto */
+    if (typeof sincronizarPedidosNuvem === "function") {
+        sincronizarPedidosNuvem(function (ok) { if (ok) renderAdmin(); });
+        if (!window._syncPedidosTimer) {
+            window._syncPedidosTimer = setInterval(function () {
+                if (sessionStorage.getItem("adminLogado") === "1") {
+                    sincronizarPedidosNuvem(function (ok) { if (ok) renderAdmin(); });
+                }
+            }, 60000);
+        }
+    }
+    if (typeof TelegramBot !== "undefined") { TelegramBot.log("Painel aberto - comandos do bot em espera"); TelegramBot.iniciar(); TelegramBot.registrarSePendente(); }
 }
+/* ===== configuracoes PROPIAS do painel (independente do cliente) ===== */
+function setTemaVendedor(btn){
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        p.cfgTema = btn.dataset.tema;
+        localStorage.setItem("vendedorPrefs", JSON.stringify(p));
+    } catch(e){}
+    marcarTemaVendedor();
+    if (typeof aplicarTema === "function") aplicarTema();
+}
+function marcarTemaVendedor(){
+    var tema = "claro";
+    try { tema = (JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").cfgTema) || "claro"; } catch(e){}
+    document.querySelectorAll("#temasVendedor .tema-btn").forEach(function(b){
+        b.classList.toggle("ativo", b.dataset.tema === tema);
+    });
+}
+function salvarConfigBot(btn){
+    var tok = (document.getElementById("cfgTGToken") || {}).value || "";
+    var chat = (document.getElementById("cfgTGChat") || {}).value || "";
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        p.cfgTelegramToken = tok.trim();
+        p.cfgTelegramChatId = chat.trim();
+        localStorage.setItem("vendedorPrefs", JSON.stringify(p));
+    } catch(e){}
+    var msg = document.getElementById("configBotMsg");
+    if (msg) { msg.style.color = "#2e7d32"; msg.textContent = "Salvo neste painel (não afeta o site do cliente)."; }
+    if (btn) { btn.innerHTML = '<i class="fa fa-check"></i> Salvo'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-save"></i> Salvar'; }, 1500); }
+}
+function carregarConfigVendedor(){
+    var p = {};
+    try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch(e){}
+    var t = document.getElementById("cfgTGToken");
+    if (t && document.activeElement !== t) t.value = p.cfgTelegramToken || "";
+    var c = document.getElementById("cfgTGChat");
+    if (c && document.activeElement !== c) c.value = p.cfgTelegramChatId || "";
+    marcarTemaVendedor();
+}
+
 function filtrarAdmin(f, btn) {
     filtroAdminAtual = f;
     document.querySelectorAll(".filtro").forEach(b => b.classList.remove("ativo"));
@@ -919,9 +991,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261014t"></script>
-<script src="firebase-appcheck.js?v=20261014t"></script>
-<script src="app-update.js?v=20261014t"></script>
+<script src="app.js?v=20261015a"></script>
+<script src="firebase-appcheck.js?v=20261015a"></script>
+<script src="app-update.js?v=20261015a"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }

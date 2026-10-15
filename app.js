@@ -245,6 +245,14 @@ function mostrarModal(titulo, html){
     m.classList.add("aberto");
 }
 
+/* clique na foto/informacao do caminhao: abre a imagem bem maior */
+function ampliarCaminhao(src, nome) {
+    if (!src) return;
+    mostrarModal("Caminhão " + (nome || ""),
+        '<img src="' + src + '" alt="Caminhão ' + (nome || "") + '"'
+        + ' style="width:100%;display:block;border-radius:10px">');
+}
+
 /* ---------- as ofertas, todas numa tabela so ---------- */
 function pintarTabelaOfertas() {
     var el = document.getElementById("tabelaOfertas");
@@ -747,7 +755,7 @@ function pintarTabelaGeral(){
         ['<b>Formas de pagamento</b>', '<span class="tb-passo"><i class="fa fa-qrcode"></i> Pix</span> <span class="tb-passo"><i class="fa fa-money-bill-wave"></i> Dinheiro</span>',
             'Sem cartão de crédito. O Pix é confirmado na hora.'],
         ['<b>Bairros atendidos</b>', '<span class="tb-passo">' + BAIRROS_ATENDIDOS_TEXTO + '</span>',
-            'Bairro fora da lista gera aviso, não bloqueio.'],
+            'Bairro fora da lista é bloqueado na finalização do pedido.'],
         ['<b>Frete grátis</b>', '<span class="tb-passo"><i class="fa fa-gift"></i> a partir de ' + formatBRL(freteGratisMinimo()) + '</span>',
             'Acima disso o frete cai para R$ 0,00 no carrinho.'],
         ['<b>Contato</b>', '<a href="https://wa.me/5521983158911" target="_blank" rel="noopener"><i class="fa fa-whatsapp"></i> (21) 9-8315-8911</a>',
@@ -756,14 +764,17 @@ function pintarTabelaGeral(){
 
     /* ---- 4. frota (com a foto do caminhao) ---- */
     var linhasFrota = CAMINHOES.map(function (c) {
+        var zoom = c.imagem
+            ? ' onclick="ampliarCaminhao(\'' + c.imagem + '\',\'' + c.corNome + '\')" style="cursor:zoom-in" title="Clique para ver a foto maior"'
+            : '';
         var foto = c.imagem
-            ? '<img class="tb-cam-foto" src="' + c.imagem + '" alt="Caminhão ' + c.corNome + '" loading="lazy" onerror="this.remove()">'
+            ? '<img class="tb-cam-foto" src="' + c.imagem + '" alt="Caminhão ' + c.corNome + '" loading="lazy" onerror="this.remove()"' + zoom + '>'
             : '<span class="tb-cam-foto sem-foto"><i class="fa fa-truck"></i></span>';
         var regioes = (c.regioes || []).map(function (id) {
             var r = regiaoPorId(id);
             return r ? r.nome : id;
         }).join(", ");
-        return [foto + '<b class="tb-cam tb-cam-' + c.cor + '">' + c.corNome + '</b>',
+        return [foto + '<b class="tb-cam tb-cam-' + c.cor + '"' + zoom + '>' + c.corNome + '</b>',
                 '<span class="tb-passo">' + c.modelo + '</span>',
                 'Placa <b>' + c.placa + '</b> · ' + (c.motorista === "A INFORMAR" ? "motorista a informar" : c.motorista)
                 + (c.whatsapp ? ' · <a href="https://wa.me/' + c.whatsapp + '" target="_blank" rel="noopener">WhatsApp</a>' : '')

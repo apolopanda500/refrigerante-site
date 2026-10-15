@@ -3,8 +3,26 @@
 //  Roda antes da pagina pintar, para nao piscar
 // ============================================
 (function () {
+    /* o PAINEL DO VENDEDOR tem preferencias PROPIAS (vendedorPrefs):
+       tema/comandos escolhidos no painel nunca mexem no site do
+       cliente e vice-versa. Na primeira visita o painel copia o que
+       ja existia, para nao mudar de cara. */
+    function ehPainel() {
+        try { return /admin\.html$/i.test(location.pathname || ""); }
+        catch (e) { return false; }
+    }
+    function migrarPainel() {
+        if (!ehPainel()) return;
+        try {
+            if (localStorage.getItem("vendedorPrefs")) return;
+            localStorage.setItem("vendedorPrefs",
+                localStorage.getItem("refrigerantePrefs") || "{}");
+        } catch (e) {}
+    }
+    function chavePrefs() { return ehPainel() ? "vendedorPrefs" : "refrigerantePrefs"; }
     function prefs() {
-        try { return JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); }
+        migrarPainel();
+        try { return JSON.parse(localStorage.getItem(chavePrefs()) || "{}"); }
         catch (e) { return {}; }
     }
 
@@ -27,6 +45,10 @@
         var tam = p.cfgFonteTamanho || "normal";
         if (tam !== "normal") h.setAttribute("data-fonte", tam);
         else h.removeAttribute("data-fonte");
+
+        // Leitura das tabelas: horizontal (padrao) ou vertical (empilhada)
+        if ((p.cfgLeitura || "horizontal") === "vertical") h.setAttribute("data-leitura", "vertical");
+        else h.removeAttribute("data-leitura");
 
         // Alto contraste
         if (p.cfgAltoContraste) h.setAttribute("data-contraste", "alto");

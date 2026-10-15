@@ -254,7 +254,7 @@ function pedidosLiberados(bairro) {
     return { liberado: true, motivo: "ok", texto: "" };
 }
 
-/* bairro digitado esta FORA da area de entrega? (aviso, nao trava o pedido) */
+/* bairro digitado esta FORA da area de entrega? (o checkout BLOQUEIA o envio) */
 function bairroForaDaArea(bairro) {
     var b = String(bairro || "").trim();
     if (!b) return false;
