@@ -571,6 +571,14 @@ p { margin-bottom: 1rem; }
 }
 
 /* ===== TABLES ===== */
+/* container: permite rolagem horizontal sem quebrar o layout */
+.tab-wrap{
+    width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    margin-bottom:24px;border-radius:var(--border-radius-lg);
+    box-shadow:var(--card-shadow);
+}
+.tab-wrap > table{margin-bottom:0;min-width:640px}
+
 table {
     width: 100%;
     border-collapse: separate;
@@ -580,28 +588,38 @@ table {
     overflow: hidden;
     margin-bottom: 24px;
     box-shadow: var(--card-shadow);
+    font-size: 0.9rem;
 }
 
 table th {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: var(--white);
-    padding: 16px 20px;
+    padding: 12px 16px;
     text-align: left;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 3;
 }
 
 table th:first-child { border-top-left-radius: var(--border-radius-lg); }
 table th:last-child { border-top-right-radius: var(--border-radius-lg); }
 
 table td {
-    padding: 14px 20px;
+    padding: 10px 16px;
     border-bottom: 1px solid #f0f0f0;
     color: var(--text-color);
     transition: background var(--transition-fast);
+    vertical-align: middle;
 }
+
+/* zebra: ajuda a seguir a linha em linhas longas */
+table tbody tr:nth-child(even) td { background: #fafbfe; }
+table tbody tr:nth-child(even):hover td { background: rgba(229,57,53,0.03); }
 
 table tbody tr:hover td {
     background: rgba(229,57,53,0.03);
@@ -609,6 +627,8 @@ table tbody tr:hover td {
 
 table tbody tr { transition: all var(--transition-fast) ease; }
 
+/* separador entre grupos de dados */
+table tbody tr td:first-child{font-weight:600}
 table tfoot td {
     font-weight: bold;
     background: var(--light-bg);
@@ -617,16 +637,25 @@ table tfoot td {
     color: var(--text-color);
 }
 
+/* celulas numericas alinhadas a direita */
+table td.num, table th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table td.acao{text-align:right;white-space:nowrap}
+
 /* ===== RESPONSIVE TABLE ===== */
 @media (max-width: 768px) {
+    /* no celular as tabelas viram listas empilhadas (vertical) */
     table thead {
         display: none;
     }
     
     table td {
-        display: block;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
         padding: 10px 15px;
         border-bottom: 2px solid #eee;
+        text-align: right;
     }
     
     table td::before {
@@ -634,11 +663,16 @@ table tfoot td {
         font-weight: bold;
         color: var(--primary-color);
         display: block;
-        margin-bottom: 5px;
+        text-align: left;
+        margin-bottom: 0;
+        flex: none;
     }
     
+    table tbody tr:nth-child(even) td { background: #f7f8fc; }
+    
     table tfoot td {
-        display: block;
+        display: flex;
+        justify-content: space-between;
     }
 }
 
@@ -1325,6 +1359,55 @@ body{font-size:16.5px}
 }
 .reg-tag.fecho{background:#f1f3f5;color:#6b7280}
 .reg-tag.hoje{background:#fff3cd;color:#8a6100}
+.reg-tag.pedido{background:#e3f0ff;color:#0b4fa8}
+
+/* --- TABELA DE PEDIDOS x ENTREGAS (horizontal no PC / vertical no celular) --- */
+.reg-grade{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+    gap:8px;
+    margin-top:6px;
+}
+.reg-cel{
+    border:1px solid #e6e8f0;border-radius:10px;padding:9px 10px;
+    background:#fbfcfe;display:flex;flex-direction:column;gap:7px;
+    min-width:0;
+}
+.reg-cel.cel-hoje{border-color:#ffc107;background:#fffdf5}
+.reg-cel.cel-pedido{border-color:#3b82f6;background:#f6faff}
+.reg-cab{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.reg-cab b{font-size:.85rem;color:var(--primary-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reg-cab .reg-tag{padding:3px 7px;font-size:.66rem}
+
+.reg-linha-tempo{display:flex;align-items:center;gap:6px}
+.etapa{
+    flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;
+    padding:5px 3px;border-radius:8px;background:#eef0f5;border:1px dashed #d3d7e2;
+}
+.etapa.on{background:#fff;border:1px solid var(--primary-color);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.etapa .et-dia{
+    font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.02em;
+    color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+}
+.etapa.on .et-dia{color:var(--primary-color)}
+.etapa .et-txt{font-size:.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
+.etapa.on .et-txt{color:var(--primary-color);font-weight:700}
+.seta{font-size:.7rem;color:#b6bccd;flex:none}
+
+.reg-detalhe{font-size:.75rem;color:var(--text-muted);line-height:1.35}
+.reg-detalhe b{color:var(--text-color)}
+.reg-obs{font-size:.72rem;color:#8b93a8;line-height:1.35;margin-top:auto}
+.reg-nota{
+    margin-top:9px;padding:8px 10px;border-radius:9px;
+    background:#f2f6ff;color:#2f4a7d;font-size:.76rem;line-height:1.45;
+}
+.reg-nota b{color:#123a72}
+
+/* celular: vira lista vertical, uma regiao por linha */
+@media(max-width:620px){
+    .reg-grade{grid-template-columns:1fr}
+    .reg-cel{flex-direction:column}
+}
 
 /* ===== CAMINHOES / CONFIANCA ===== */
 .cam{

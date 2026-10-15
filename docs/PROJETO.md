@@ -109,7 +109,16 @@ Nunca usar o nome — se o nome mudar, o preço se perde. Nunca deixar a chave v
 - **Pedidos** só abrem das **08:50 às 15:00** (horário de São Paulo, `agoraSP()`).
 - **Bairros atendidos:** Japeri, Engenho Pedreira, Paracambi, Seropédica.
   Bairro fora da lista gera **aviso**, não bloqueio (o robô/vendedor decide).
-- **Segunda-feira** não tem entrega: é o dia de montar os pedidos.
+- **Pedido um dia antes da entrega.** Cada região tem seu dia de pedidos:
+  | Região | Pedido (abre) | Entrega |
+  |---|---|---|
+  | Japeri | Segunda | Terça a Sábado |
+  | Engenho Pedreira | Segunda | Terça a Sábado |
+  | Paracambi | Quarta | Quinta, Sexta e Sábado |
+  | Seropédica | Quinta | Sexta e Sábado |
+  Fonte: `REGIOES[].pedidoDia` em `loja.js` (sempre `primeiraEntrega - 1`).
+  Quando hoje não é o dia de pedidos da região, o checkout **avisa** (não bloqueia).
+- **Segunda-feira** não tem entrega: é o dia de pedidos do Japeri e Engenho Pedreira.
 - **Frete:** `calcularFrete(subtotal, regiaoId)` em `loja.js` é a fonte única.
   Grátis a partir de `freteGratisMinimo()` (padrão R$ 150, ajustável em Configurações).
   Sem região selecionada, cobra-se a menor região — **nunca** frete grátis por engano.

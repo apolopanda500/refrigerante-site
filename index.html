@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014j">
+<link rel="manifest" href="manifest.json?v=20261014k">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,8 +14,8 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="style.css?v=20261014j">
-<script src="theme.js?v=20261014j"></script>
+<link rel="stylesheet" href="style.css?v=20261014k">
+<script src="theme.js?v=20261014k"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 /* header da home e sticky: nao precisa do espaco do header fixo */
@@ -412,10 +412,8 @@ a{text-decoration:none;color:inherit}
     <div class="wgt" id="sideHorario"></div>
     <div class="wgt" id="sideRegioes"></div>
     <div class="wgt" id="sideCaminhoes"></div>
-    <div class="wgt" id="sideConfianca"></div>
     <div class="wgt" id="sideSobre"></div>
     <div class="wgt" id="sideBanners"></div>
-<div class="wgt" id="caixaAtendimento"></div>
 <div class="wgt">
 <h3><i class="fa fa-shield-alt"></i> Nossa garantia</h3>
       <div class="wgt-selos">
@@ -434,15 +432,15 @@ a{text-decoration:none;color:inherit}
 
 <footer class="ft">
 <p>Vendas: <a href="https://wa.me/5521983158911">(21) 9-8315-8911</a> | <a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a></p>
-<p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Seg a sex 9h às 15h - Horário de São Paulo</p>
+<p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Pedidos das 08:50 às 15:00 · entrega um dia depois<br>Seg: Japeri e Engenho Pedreira · Qua: Paracambi · Qui: Seropédica</p>
 </footer>
 
-<script src="conta.js?v=20261014j"></script>
-<script src="loja.js?v=20261014j"></script>
-<script src="app.js?v=20261014j"></script>
-<script src="firebase-appcheck.js?v=20261014j"></script>
-<script src="app-update.js?v=20261014j"></script>
-<script src="atendimento.js?v=20261014j"></script>
+<script src="conta.js?v=20261014k"></script>
+<script src="loja.js?v=20261014k"></script>
+<script src="app.js?v=20261014k"></script>
+<script src="firebase-appcheck.js?v=20261014k"></script>
+<script src="app-update.js?v=20261014k"></script>
+<script src="atendimento.js?v=20261014k"></script>
 <script>
 (function(){
 /* a barra de navegacao e sempre visivel: destaca a pagina atual */
@@ -451,10 +449,6 @@ document.querySelectorAll('.nav-links a').forEach(function(a){
 var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
 if (alvo === atual) a.classList.add('ativo');
 });
-
-/* atendimento automatico: monta a caixa de ajuda */
-var caixinha = document.getElementById('caixaAtendimento');
-if (caixinha && typeof Atendimento !== 'undefined') Atendimento.montar(caixinha);
 })();
 </script>
 

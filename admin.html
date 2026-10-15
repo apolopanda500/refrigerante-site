@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261014j">
+<link rel="manifest" href="manifest-vendedor.json?v=20261014k">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014j">
-<script src="theme.js?v=20261014j"></script>
+<link rel="stylesheet" href="style.css?v=20261014k">
+<script src="theme.js?v=20261014k"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -264,8 +264,8 @@
 
 </div></section>
 
-<script src="script.js?v=20261014j"></script>
-<script src="telegram.js?v=20261014j"></script>
+<script src="script.js?v=20261014k"></script>
+<script src="telegram.js?v=20261014k"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -403,19 +403,19 @@ function renderAdmin() {
 function tabelaPedidos(lista) {
     let h = '<div class="tab-wrap"><table class="tabela-pedidos"><thead><tr>'
         + '<th>Pedido</th><th>Cliente</th><th>Entrega</th><th>Pagamento</th>'
-        + '<th style="text-align:right">Frete</th><th style="text-align:right">Total</th>'
-        + '<th>Status</th><th>Ações</th></tr></thead><tbody>';
+        + '<th class="num">Frete</th><th class="num">Total</th>'
+        + '<th>Status</th><th class="acao">Ações</th></tr></thead><tbody>';
     lista.forEach(function (p) {
         const aberto = (fichaAberta === p.id);
         h += '<tr class="linha-pedido" onclick="abrirFicha(\'' + p.id + '\')">'
-            + '<td class="td-id">' + p.id + '<span class="sub">' + dataHora(p.criadoEm) + '</span></td>'
-            + '<td class="td-cliente">' + p.nome + '<span class="sub"><i class="fa fa-phone"></i> ' + p.tel + '</span></td>'
-            + '<td>' + (p.bairro || "—") + '<span class="sub">' + (p.regiao || "") + '</span></td>'
-            + '<td>' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? '<span class="sub">troco p/ ' + p.troco + '</span>' : '') + '</td>'
-            + '<td class="td-num">' + (p.frete === 0 ? '<b style="color:#2e7d32">GRÁTIS</b>' : formatBRL(p.frete)) + '</td>'
-            + '<td class="td-num td-total">' + formatBRL(p.total) + '</td>'
-            + '<td>' + statusBadge(p.status) + '</td>'
-            + '<td class="td-acoes" onclick="event.stopPropagation()">' + botoesStatus(p) + '</td>'
+            + '<td data-label="Pedido" class="td-id">' + p.id + '<span class="sub">' + dataHora(p.criadoEm) + '</span></td>'
+            + '<td data-label="Cliente" class="td-cliente">' + p.nome + '<span class="sub"><i class="fa fa-phone"></i> ' + p.tel + '</span></td>'
+            + '<td data-label="Entrega">' + (p.bairro || "—") + '<span class="sub">' + (p.regiao || "") + '</span></td>'
+            + '<td data-label="Pagamento">' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? '<span class="sub">troco p/ ' + p.troco + '</span>' : '') + '</td>'
+            + '<td data-label="Frete" class="td-num">' + (p.frete === 0 ? '<b style="color:#2e7d32">GRÁTIS</b>' : formatBRL(p.frete)) + '</td>'
+            + '<td data-label="Total" class="td-num td-total">' + formatBRL(p.total) + '</td>'
+            + '<td data-label="Status">' + statusBadge(p.status) + '</td>'
+            + '<td data-label="Ações" class="td-acoes" onclick="event.stopPropagation()">' + botoesStatus(p) + '</td>'
             + '</tr>';
         if (aberto) h += '<tr><td colspan="8" style="padding:0 6px 10px">' + fichaPedido(p) + '</td></tr>';
     });
@@ -731,9 +731,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261014j"></script>
-<script src="firebase-appcheck.js?v=20261014j"></script>
-<script src="app-update.js?v=20261014j"></script>
+<script src="app.js?v=20261014k"></script>
+<script src="firebase-appcheck.js?v=20261014k"></script>
+<script src="app-update.js?v=20261014k"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }

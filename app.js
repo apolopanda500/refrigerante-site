@@ -400,18 +400,29 @@ function pintarHorario() {
     var rs = (typeof regioesDoDia === "function") ? regioesDoDia(a2.dia) : [];
     var soPedidos = (typeof somentePedidos === "function") && somentePedidos(a2.dia);
 
+    var hoje = rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "Nenhuma";
+    var prox = (typeof proximoDiaAtendente === "function") ? proximoDiaAtendente() : 2;
+    var abrindo = (typeof regioesPedidoHoje === "function") ? regioesPedidoHoje(a2.dia) : [];
+    var pedidoHoje = abrindo.length ? abrindo.map(function (r) { return r.nome; }).join(", ") : "Nenhuma";
+
     /* ---- status da LOJA ---- */
     var statusLoja;
-    if (soPedidos) {
-        statusLoja = '<div class="wgt-status pedido"><i class="fa fa-clipboard-list"></i> Dia de montar pedidos</div>';
-    } else if (lojaOk) {
+    if (lojaOk) {
         statusLoja = '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Loja aberta agora</div>';
-    } else if (rs.length === 0) {
-        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> Loja fechada hoje</div>';
     } else if (a2.hh < HORARIOS.loja.abre) {
         statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja abre ' + horaTexto(HORARIOS.loja.abre, 0) + '</div>';
     } else {
         statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja fechou às ' + horaTexto(HORARIOS.loja.fecha, 0) + '</div>';
+    }
+
+    /* ---- status dos PEDIDOS ---- */
+    var statusPedido;
+    if (soPedidos) {
+        statusPedido = '<div class="wgt-status pedido"><i class="fa fa-calendar-check"></i> Dia de pedidos: ' + pedidoHoje + '</div>';
+    } else if (abrindo.length) {
+        statusPedido = '<div class="wgt-status pedido"><i class="fa fa-cart-plus"></i> Pedidos abertos: ' + pedidoHoje + '</div>';
+    } else {
+        statusPedido = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> Hoje não abrem pedidos</div>';
     }
 
     /* ---- status da ENTREGA ---- */
@@ -436,13 +447,18 @@ function pintarHorario() {
         + '  <div class="wgt-linha"><span>Atende</span><b>' + textoHorario("loja") + '</b></div>'
         + '</div>'
         + '<div class="hr-bloco">'
+        + '  <div class="hr-titulo"><i class="fa fa-cart-plus"></i> Pedidos</div>'
+        + statusPedido
+        + '  <div class="wgt-linha"><span>Regiões hoje</span><b>' + pedidoHoje + '</b></div>'
+        + '</div>'
+        + '<div class="hr-bloco">'
         + '  <div class="hr-titulo"><i class="fa fa-truck"></i> Entrega nas ruas</div>'
         + statusEntrega
         + '  <div class="wgt-linha"><span>Freteiro sai</span><b>' + horaTexto(HORARIOS.entrega.abre, 0) + '</b></div>'
         + '  <div class="wgt-linha"><span>Entrega até</span><b>' + horaTexto(HORARIOS.entrega.fecha, 0) + '</b></div>'
         + '</div>'
-        + '<div class="hr-aviso"><i class="fa fa-box"></i> <span>' + HORARIOS.carga.obs + '</span></div>'
-        + '<div class="wgt-linha"><span>Hoje (' + NOMES_DIA_LONGOS[a2.dia] + ')</span><b>' + hoje + '</b></div>'
+        + '<div class="hr-aviso"><i class="fa fa-box"></i> <span>O pedido é feito <b>um dia antes</b> da entrega: o caminhão carrega na véspera.</span></div>'
+        + '<div class="wgt-linha"><span>Entrega hoje (' + NOMES_DIA_LONGOS[a2.dia] + ')</span><b>' + hoje + '</b></div>'
         + (rs.length ? '' : '<div class="wgt-linha"><span>Próxima entrega</span><b>' + NOMES_DIA_LONGOS[prox] + '</b></div>');
 }
 
@@ -455,36 +471,47 @@ function pintarFaixaRegiao() {
     var t = agoraSP();
     var soPedidos = (typeof somentePedidos === "function") && somentePedidos(t.dia);
     var rs = regioesDoDia(t.dia);
+    var abrindo = (typeof regioesPedidoHoje === "function") ? regioesPedidoHoje(t.dia) : [];
 
     /* REGRA: fora do horario (08:50 as 15:00) os pedidos ficam pausados */
     var regra = (typeof pedidosLiberados === "function") ? pedidosLiberados("") : { liberado: true };
     if (!regra.liberado) {
         el.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> '
             + regra.texto
-            + ' Atendemos <b>' + BAIRROS_ATENDIDOS_TEXTO + '</b>, das <b>08:50</b> às <b>15:00</b>.</span>';
+            + ' Atendemos das <b>08:50</b> às <b>15:00</b>.</span>';
         return;
     }
 
     if (soPedidos) {
-        el.innerHTML = '<i class="fa fa-clipboard-list"></i> <span><b>Segunda é dia de montar pedidos.</b> '
-            + 'O caminhão carrega amanhã e a entrega começa na '
-            + NOMES_DIA_LONGOS[proximoDiaAtendente()] + ', das '
-            + horaTexto(HORARIOS.entrega.abre, 0) + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '.</span>';
-    } else if (lojaAberta(t)) {
-        el.innerHTML = '<i class="fa fa-truck"></i> <span>Pedidos abertos para <b>'
+        el.innerHTML = '<i class="fa fa-clipboard-list"></i> <span><b>Hoje é dia de pedidos.</b> '
+            + 'Sem entrega hoje. O pedido é feito um dia antes da entrega.'
+            + (abrindo.length ? ' Abrindo agora para: <b>' + abrindo.map(function (r) { return r.nome; }).join(", ") + '</b>.' : '')
+            + '</span>';
+        return;
+    }
+    if (abrindo.length) {
+        el.innerHTML = '<i class="fa fa-calendar-check"></i> <span><b>Pedidos abertos para '
+            + abrindo.map(function (r) { return r.nome; }).join(", ")
+            + '</b>. A entrega é um dia depois ('
+            + (rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "próximo dia útil")
+            + ').</span>';
+        return;
+    }
+    if (rs.length) {
+        el.innerHTML = '<i class="fa fa-truck"></i> <span>Entrega hoje para <b>'
             + rs.map(function (r) { return r.nome; }).join(", ")
-            + '</b>. O caminhão carrega amanhã e o freteiro entrega das '
-            + horaTexto(HORARIOS.entrega.abre, 0) + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '.</span>';
-    } else if (rs.length === 0) {
-        el.innerHTML = '<i class="fa fa-info-circle"></i> <span>Hoje não entregamos. '
-            + 'A partir de <b>' + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '</b> os pedidos abrem. '
-            + 'Você pode deixar o pedido agendado.</span>';
-    } else if (t.hh < HORARIOS.loja.abre) {
+            + '</b>. O pedido da próxima entrega abre '
+            + (typeof diaPedidoDaRegiao === "function" && rs[0] && typeof NOMES_DIA_LONGOS !== "undefined"
+                ? NOMES_DIA_LONGOS[diaPedidoDaRegiao(rs[0])] : "no próximo dia útil")
+            + '.</span>';
+        return;
+    }
+    if (t.hh < HORARIOS.loja.abre) {
         el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja abre às <b>'
             + horaTexto(HORARIOS.loja.abre, 0) + '</b>. Enquanto isso monte o carrinho e agende.</span>';
     } else {
         el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja fecha às <b>'
-            + horaTexto(HORARIOS.loja.fecha, 0) + '</b>. Seu pedido de hoje sai na entrega de <b>'
+            + horaTexto(HORARIOS.loja.fecha, 0) + '</b>. Os pedidos de hoje saem na entrega de <b>'
             + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '</b>.</span>';
     }
 }
@@ -527,17 +554,37 @@ function pintarRegioes(){
     if (!el) return;
     var d = new Date().getDay();
     var h = "";
+
+    /* grade horizontal: uma coluna por regiao, cabe tudo lado a lado */
+    h += '<div class="reg-grade">';
     REGIOES.forEach(function(r){
-        var atende = r.dias.indexOf(d) >= 0;
-        var tag = atende
-            ? '<span class="reg-tag hoje"><i class="fa fa-check"></i> Hoje</span>'
-            : '<span class="reg-tag fecho">' + (r.diasTexto.length > 14 ? "Fora do dia" : "Fora do dia") + '</span>';
-        h += '<div class="reg-linha"><div>'
-           + '<div class="reg-nome">' + r.nome + '</div>'
-           + '<div class="reg-dias">' + r.diasTexto + ' - ' + r.horario + '</div>'
-           + '</div>' + tag + '</div>';
+        var entregaHoje = r.dias.indexOf(d) >= 0;
+        var abreHoje = (typeof pedidoAbreHoje === "function") ? pedidoAbreHoje(r) : false;
+        var pd = (typeof diaPedidoDaRegiao === "function") ? diaPedidoDaRegiao(r) : -1;
+        var nomePedido = pd >= 0 && typeof NOMES_DIA_LONGOS !== "undefined" ? NOMES_DIA_LONGOS[pd] : "-";
+
+        var tag = '<span class="reg-tag fecha"><i class="fa fa-times"></i> fechado</span>';
+        if (entregaHoje) tag = '<span class="reg-tag hoje"><i class="fa fa-truck"></i> entrega hoje</span>';
+        else if (abreHoje) tag = '<span class="reg-tag pedido"><i class="fa fa-cart-plus"></i> pedidos abertos</span>';
+
+        h += '<div class="reg-cel' + (entregaHoje ? " cel-hoje" : (abreHoje ? " cel-pedido" : "")) + '">'
+           +   '<div class="reg-cab"><b>' + r.nome + '</b>' + tag + '</div>'
+           +   '<div class="reg-linha-tempo">'
+           +     '<div class="etapa' + (abreHoje ? " on" : "") + '"><span class="et-dia">' + nomePedido.split("-")[0] + '</span><span class="et-txt">Pedido</span></div>'
+           +     '<i class="fa fa-arrow-right seta"></i>'
+           +     '<div class="etapa' + (entregaHoje ? " on" : "") + '"><span class="et-dia">' + r.diasTexto.split(" ")[0] + '</span><span class="et-txt">Entrega</span></div>'
+           +   '</div>'
+           +   '<div class="reg-detalhe">entrega <b>' + r.diasTexto.toLowerCase() + '</b> · ' + r.horario + '</div>'
+           +   '<div class="reg-obs">' + r.obs + '</div>'
+           + '</div>';
     });
-    el.innerHTML = '<h3><i class="fa fa-map-marker-alt"></i> Regiões e dias</h3>' + h;
+    h += '</div>';
+
+    h += '<div class="reg-nota"><i class="fa fa-info-circle"></i> '
+       + 'O pedido é sempre <b>um dia antes</b> da entrega. Você pode registrar o pedido '
+       + 'fora do dia e o vendedor agenda para a próxima carga.</div>';
+
+    el.innerHTML = '<h3><i class="fa fa-map-marker-alt"></i> Pedidos e entregas</h3>' + h;
 }
 
 function pintarCaminhoes(){

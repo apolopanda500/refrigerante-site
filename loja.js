@@ -60,53 +60,63 @@ function calcularFrete(subtotal, regiaoId) {
     };
 }
 
-/* ---------- REGIOES DE ATENDIMENTO ---------- */
-/* dias: 0=Dom 1=Seg 2=Ter 3=Qua 4=Qui 5=Sex 6=Sab */
-/* Segunda-feira NAO tem entrega: e o dia de montar os pedidos. */
+/* ---------- REGIOES DE ATENDIMENTO ----------
+   dias       = dias de ENTREGA (0=Dom 1=Seg 2=Ter 3=Qua 4=Qui 5=Sex 6=Sab)
+   pedidoDia  = dia em que os pedidos ABREM para aquela regiao
+                (sempre UM DIA ANTES da primeira entrega do dia)
+   pedidoTexto= como o cliente ve essa regra                        */
 var REGIOES = [
     {
         id: "seropedica",
         nome: "Seropédica",
         dias: [5, 6],
         diasTexto: "Sexta e Sábado",
+        pedidoDia: 4,                       /* quinta abre os pedidos */
+        pedidoTexto: "Quinta",
         horario: "9h às 15h",
         frete: 8,
-        obs: "Entregamos sexta e sábado. Faça seu pedido até quinta para sexta."
+        obs: "Entrega sexta e sábado. O pedido é feito na quinta, um dia antes."
     },
     {
         id: "japeri",
         nome: "Japeri",
         dias: [2, 3, 4, 5, 6],
         diasTexto: "Terça a Sábado",
+        pedidoDia: 1,                       /* segunda abre os pedidos */
+        pedidoTexto: "Segunda",
         horario: "9h às 15h",
         frete: 12,
-        obs: "Terça, quarta, quinta, sexta e sábado. Pedidos até quarta para quinta e sexta."
+        obs: "Entrega de terça a sábado. O pedido é feito no dia anterior à entrega."
     },
     {
         id: "engenhopedreira",
         nome: "Engenho Pedreira",
         dias: [2, 3, 4, 5, 6],
         diasTexto: "Terça a Sábado",
+        pedidoDia: 1,
+        pedidoTexto: "Segunda",
         horario: "9h às 15h",
         frete: 15,
-        obs: "Mesma agenda do Japeri: terça, quarta, quinta, sexta e sábado."
+        obs: "Entrega de terça a sábado. O pedido é feito no dia anterior à entrega."
     },
     {
         id: "paracambi",
         nome: "Paracambi",
         dias: [4, 5, 6],
         diasTexto: "Quinta, Sexta e Sábado",
+        pedidoDia: 3,                       /* quarta abre os pedidos */
+        pedidoTexto: "Quarta",
         horario: "9h às 15h",
         frete: 20,
-        obs: "Entregamos quinta, sexta e sábado. Segunda é só para montar pedidos, sem entrega."
+        obs: "Entrega quinta, sexta e sábado. O pedido é feito na quarta, um dia antes."
     }
 ];
 
-/* Segunda-feira: dia de montar pedidos, sem entrega */
+/* segunda-feira: dia de montar os pedidos */
 var DIA_SOMENTE_PEDIDOS = 1;
 var TEXTO_SOMENTE_PEDIDOS = "Segunda-feira é o dia de montar os pedidos. A entrega começa na terça.";
 
-var OBS_CARGA = "O caminhão carrega um dia antes para sair na entrega.";
+var OBS_CARGA = "O pedido é feito um dia antes da entrega. O caminhão carrega na véspera.";
 
 /* ============================================
    REGRA DE OURO DO ATENDIMENTO
@@ -299,10 +309,49 @@ var NOMES_DIA = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "S
 var NOMES_DIA_LONGOS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira",
                         "Quinta-feira", "Sexta-feira", "Sábado"];
 
-/* ---------- REGIAO DE UM DIA ---------- */
+/* ---------- REGIAO: DIA DE PEDIDO (um dia antes da entrega) ---------- */
+function regiaoPorId(regiaoId) {
+    if (typeof REGIOES === "undefined") return null;
+    var achada = null;
+    REGIOES.forEach(function (r) { if (r.id === regiaoId) achada = r; });
+    return achada;
+}
+
+/* dia em que os pedidos desta regiao abrem (padrao: dia anterior a 1a entrega) */
+function diaPedidoDaRegiao(regiao) {
+    if (!regiao) return -1;
+    if (typeof regiao.pedidoDia === "number") return regiao.pedidoDia;
+    var primeira = regiao.dias && regiao.dias.length ? Math.min.apply(null, regiao.dias) : -1;
+    if (primeira < 0) return -1;
+    return (primeira + 6) % 7;         /* um dia antes */
+}
+
+/* os pedidos desta regiao abrem hoje? */
+function pedidoAbreHoje(regiao) {
+    var alvo = diaPedidoDaRegiao(regiao);
+    if (alvo < 0) return true;
+    var hoje = (typeof agoraSP === "function") ? agoraSP().dia : new Date().getDay();
+    return hoje === alvo;
+}
+
+/* texto pronto para o cliente entender a agenda da regiao */
+function textoAgendaRegiao(regiao) {
+    if (!regiao) return "";
+    var pd = diaPedidoDaRegiao(regiao);
+    var nomePedido = (typeof NOMES_DIA_LONGOS !== "undefined" && pd >= 0) ? NOMES_DIA_LONGOS[pd] : "";
+    return "Pedidos na " + nomePedido + " · entrega " + regiao.diasTexto.toLowerCase();
+}
+
+/* ---------- REGIAO: DIA DE ENTREGA ---------- */
 function regioesDoDia(diaSemana) {
     if (diaSemana === DIA_SOMENTE_PEDIDOS) return [];
     return REGIOES.filter(function (r) { return r.dias.indexOf(diaSemana) >= 0; });
+}
+
+/* regioes cujos pedidos abrem hoje */
+function regioesPedidoHoje(diaSemana) {
+    if (typeof diaSemana === "undefined") diaSemana = (typeof agoraSP === "function") ? agoraSP().dia : new Date().getDay();
+    return REGIOES.filter(function (r) { return diaPedidoDaRegiao(r) === diaSemana; });
 }
 
 /* ---------- VERIFICA SE ATENDE HOJE ---------- */
