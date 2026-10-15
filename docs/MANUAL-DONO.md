@@ -110,9 +110,10 @@ e você recebe aviso no Telegram.
 
 - Pedidos abertos das **08:50 às 15:00**.
 - Entrega em **Japeri, Engenho Pedreira, Paracambi e Seropédica**.
-- **O pedido é sempre um dia antes da entrega:**
-  - **Segunda** → pedidos para Japeri e Engenho Pedreira (entrega de terça a sábado)
-  - **Quarta** → pedidos para Paracambi (entrega quinta, sexta e sábado)
-  - **Quinta** → pedidos para Seropédica (entrega sexta e sábado)
-  - Terça, sexta e sábado são dias de entrega, sem abertura de pedidos.
+- **O pedido é sempre um dia antes da entrega. Pode pedir em qualquer dia que antecede uma entrega:**
+  - **Japeri e Engenho Pedreira** — entrega terça a sábado → pedido de segunda a sexta
+  - **Paracambi** — entrega quinta, sexta e sábado → pedido na quarta, quinta e sexta
+  - **Seropédica** — entrega sexta e sábado → pedido na quinta e sexta
+  - Sábado e domingo não abrem pedidos.
+  - No mesmo dia pode ser dia de pedido e dia de entrega ao mesmo tempo.
 - Pagamento em **Pix ou Dinheiro** na entrega.

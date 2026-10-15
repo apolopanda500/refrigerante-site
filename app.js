@@ -492,17 +492,19 @@ function pintarFaixaRegiao() {
     if (abrindo.length) {
         el.innerHTML = '<i class="fa fa-calendar-check"></i> <span><b>Pedidos abertos para '
             + abrindo.map(function (r) { return r.nome; }).join(", ")
-            + '</b>. A entrega é um dia depois ('
-            + (rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "próximo dia útil")
+            + '</b>. A entrega sai no dia seguinte ('
+            + (rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "próximo dia de entrega")
             + ').</span>';
         return;
     }
     if (rs.length) {
+        var proxDia = (t.dia + 1) % 7;
+        var abreAmanha = (typeof regioesPedidoHoje === "function") ? regioesPedidoHoje(proxDia) : [];
         el.innerHTML = '<i class="fa fa-truck"></i> <span>Entrega hoje para <b>'
             + rs.map(function (r) { return r.nome; }).join(", ")
-            + '</b>. O pedido da próxima entrega abre '
-            + (typeof diaPedidoDaRegiao === "function" && rs[0] && typeof NOMES_DIA_LONGOS !== "undefined"
-                ? NOMES_DIA_LONGOS[diaPedidoDaRegiao(rs[0])] : "no próximo dia útil")
+            + '</b>. Pedidos de hoje saem <b>'
+            + (typeof NOMES_DIA_LONGOS !== "undefined" ? NOMES_DIA_LONGOS[proxDia] : "amanhã")
+            + '</b>' + (abreAmanha.length ? ' para ' + abreAmanha.map(function (r) { return r.nome; }).join(", ") : '')
             + '.</span>';
         return;
     }
@@ -560,19 +562,21 @@ function pintarRegioes(){
     REGIOES.forEach(function(r){
         var entregaHoje = r.dias.indexOf(d) >= 0;
         var abreHoje = (typeof pedidoAbreHoje === "function") ? pedidoAbreHoje(r) : false;
-        var pd = (typeof diaPedidoDaRegiao === "function") ? diaPedidoDaRegiao(r) : -1;
-        var nomePedido = pd >= 0 && typeof NOMES_DIA_LONGOS !== "undefined" ? NOMES_DIA_LONGOS[pd] : "-";
+        var abreAmanha = (typeof regioesPedidoHoje === "function")
+            ? regioesPedidoHoje((d + 1) % 7).some(function (x) { return x.id === r.id; })
+            : false;
 
         var tag = '<span class="reg-tag fecha"><i class="fa fa-times"></i> fechado</span>';
         if (entregaHoje) tag = '<span class="reg-tag hoje"><i class="fa fa-truck"></i> entrega hoje</span>';
         else if (abreHoje) tag = '<span class="reg-tag pedido"><i class="fa fa-cart-plus"></i> pedidos abertos</span>';
+        else if (abreAmanha) tag = '<span class="reg-tag amanha"><i class="fa fa-clock"></i> amanhã</span>';
 
         h += '<div class="reg-cel' + (entregaHoje ? " cel-hoje" : (abreHoje ? " cel-pedido" : "")) + '">'
            +   '<div class="reg-cab"><b>' + r.nome + '</b>' + tag + '</div>'
            +   '<div class="reg-linha-tempo">'
-           +     '<div class="etapa' + (abreHoje ? " on" : "") + '"><span class="et-dia">' + nomePedido.split("-")[0] + '</span><span class="et-txt">Pedido</span></div>'
+           +     '<div class="etapa' + (abreHoje ? " on" : "") + '"><span class="et-dia">' + (typeof textoDiasPedido === "function" ? textoDiasPedido(r) : "-") + '</span><span class="et-txt">Pedido</span></div>'
            +     '<i class="fa fa-arrow-right seta"></i>'
-           +     '<div class="etapa' + (entregaHoje ? " on" : "") + '"><span class="et-dia">' + r.diasTexto.split(" ")[0] + '</span><span class="et-txt">Entrega</span></div>'
+           +     '<div class="etapa' + (entregaHoje ? " on" : "") + '"><span class="et-dia">' + r.diasTexto + '</span><span class="et-txt">Entrega</span></div>'
            +   '</div>'
            +   '<div class="reg-detalhe">entrega <b>' + r.diasTexto.toLowerCase() + '</b> · ' + r.horario + '</div>'
            +   '<div class="reg-obs">' + r.obs + '</div>'
@@ -658,13 +662,12 @@ function pintarTabelaGeral(){
 
     /* ---- 1. pedidos e entregas por regiao ---- */
     var linhasRegioes = REGIOES.map(function (r){
-        var pd = (typeof diaPedidoDaRegiao === "function") ? diaPedidoDaRegiao(r) : -1;
-        var nomePedido = pd >= 0 ? NOMES_DIA_LONGOS[pd] : "-";
         var entregaHoje = r.dias.indexOf(d) >= 0;
+        var abreHoje = (typeof pedidoAbreHoje === "function") ? pedidoAbreHoje(r) : false;
         var marca = '<b class="tb-ok">' + r.nome + '</b>';
         if (entregaHoje) marca += ' <span class="tb-tag t-agora"><i class="fa fa-truck"></i> entrega hoje</span>';
-        else if ((typeof pedidoAbreHoje === "function") && pedidoAbreHoje(r)) marca += ' <span class="tb-tag t-abre"><i class="fa fa-cart-plus"></i> abre hoje</span>';
-        var quando = '<span class="tb-passo"><i class="fa fa-cart-plus"></i> ' + nomePedido + '</span>'
+        else if (abreHoje) marca += ' <span class="tb-tag t-abre"><i class="fa fa-cart-plus"></i> pedidos abertos</span>';
+        var quando = '<span class="tb-passo"><i class="fa fa-cart-plus"></i> ' + textoDiasPedido(r) + '</span>'
                    + '<i class="fa fa-arrow-right tb-seta"></i>'
                    + '<span class="tb-passo"><i class="fa fa-truck"></i> ' + r.diasTexto + '</span>';
         var detalhe = r.horario + ' · frete <b>' + formatBRL(r.frete) + '</b>';
