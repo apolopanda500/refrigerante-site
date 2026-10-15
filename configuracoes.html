@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261015b">
+<link rel="manifest" href="manifest.json?v=20261015c">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,11 +11,11 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Configurações - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015b">
-<script src="theme.js?v=20261015b"></script>
+<link rel="stylesheet" href="style.css?v=20261015c">
+<script src="theme.js?v=20261015c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-.page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
+.page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
 .page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
 .page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }
 .config-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:22px; margin-bottom:18px; }
@@ -102,7 +102,7 @@
 [data-theme="dark"] .btn-mini.neutro{background:#353a5c !important;color:#ff8a8a !important}
 
 /* ===== NAVEGACAO HORIZONTAL (igual a home) ===== */
-.main-header{background:var(--primary-color,#3d4465)!important;position:sticky;top:0;z-index:100}
+.main-header{background:var(--primary-color,#3d4465)!important;position:fixed;top:0;left:0;right:0;z-index:100}
 .main-header .container{max-width:1600px;width:100%;padding:0 12px}
 .main-header nav{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;min-height:60px}
 .main-header .logo{
@@ -162,6 +162,15 @@
     <div class="config-label">Notificações de pedido<small>Avisos quando o pedido mudar de status</small></div>
     <label class="toggle"><input type="checkbox" id="cfgNotifPedido" checked><span class="slider"></span></label>
   </div>
+  <div class="config-row config-col">
+    <div class="config-label">Aviso no aparelho
+      <small>Com o aviso ligado, o site pergunta uma vez se pode mostrar a mensagem no seu celular (fora do site também).</small>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn-mini" onclick="pedirNotificacao(this)"><i class="fa fa-bell"></i> Ativar aviso no aparelho</button>
+      <span id="notifPermMsg" style="font-size:.82rem;font-weight:700"></span>
+    </div>
+  </div>
   <div class="config-row">
     <div class="config-label">Promoções e ofertas<small>Novidades e descontos</small></div>
     <label class="toggle"><input type="checkbox" id="cfgNotifPromo"><span class="slider"></span></label>
@@ -176,8 +185,7 @@
       <small>Instalar no Android deixa o site com ícone próprio, tela cheia e mais rápido.</small>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <a class="btn-mini" href="apk/convencao-cliente.apk" download style="text-decoration:none"><i class="fa fa-download"></i> Baixar aplicativo (APK)</a>
-      <button class="btn-mini" onclick="instalarApp()"><i class="fa fa-plus-square"></i> Instalar sem baixar</button>
+      <a class="btn-mini" href="apk/convencao-cliente.apk" download style="text-decoration:none"><i class="fa fa-android"></i> Baixar aplicativo (APK)</a>
     </div>
     <p style="font-size:.8rem;color:#8a8a8a;margin:10px 0 0">
       <b>Como instalar:</b> baixe o arquivo, abra ele e toque em <b>Instalar</b>. O celular vai pedir autorização para instalar de fontes desconhecidas — libere para o navegador que fez o download.
@@ -347,7 +355,10 @@
   </div>
 </div>
 
-<div class="config-card">
+<!-- IA do cliente: SO o botao flutuante do canto da tela.
+     Este bloco (provedor, URL, chave, modelo e o botao Testar)
+     fica guardado para o painel do dono - o cliente nao ve. -->
+<div class="config-card" id="blocoIACliente" hidden>
   <h2><i class="fa fa-robot"></i> Inteligência Artificial</h2>
   <div class="config-row config-col">
     <div class="config-label">Assistente do site
@@ -406,12 +417,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261015b"></script>
-<script src="firebase-appcheck.js?v=20261015b"></script>
-<script src="app-update.js?v=20261015b"></script>
-<script src="ia.js?v=20261015b"></script>
-<script src="loja.js?v=20261015b"></script>
-<script src="script.js?v=20261015b"></script>
+<script src="conta.js?v=20261015c"></script>
+<script src="firebase-appcheck.js?v=20261015c"></script>
+<script src="app-update.js?v=20261015c"></script>
+<script src="ia.js?v=20261015c"></script>
+<script src="central.js?v=20261015c"></script>
+<script src="loja.js?v=20261015c"></script>
+<script src="script.js?v=20261015c"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -499,8 +511,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }, 60);
 });
 
-/* ===== IA: URL/chave/modelo ficam so neste aparelho ===== */
-function salvarIA(btn){
+/* ===== IA: URL/chave/modelo ficam so neste aparelho ===== */function salvarIA(btn){
     var p = carregarPrefs();
     p.cfgIAURL = ((document.getElementById("cfgIAURL") || {}).value || "").trim();
     p.cfgIAChave = ((document.getElementById("cfgIAChave") || {}).value || "").trim();
@@ -522,6 +533,24 @@ function testarIA(btn){
         var curto = String(txt).slice(0, 130) + (String(txt).length > 130 ? "..." : "");
         if (m){ m.style.color = "#2e7d32"; m.textContent = "Funcionando (" + fonte + "): " + curto; }
         if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> OK'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-flask"></i> Testar'; }, 2500); }
+    });
+}
+/* ===== aviso no aparelho (permissao de verdade) ===== */
+function pedirNotificacao(btn){
+    var m = document.getElementById("notifPermMsg");
+    function diz(txt, cor){ if (m){ m.style.color = cor; m.textContent = txt; } }
+    if (typeof notifPedirPermissao !== "function") { diz("Assistente de avisos indisponível nesta página.", "#c62828"); return; }
+    diz("Pedindo permissão ao aparelho...", "#8a6100");
+    notifPedirPermissao(function (r) {
+        if (r === "ok") {
+            diz("Ativado! Você recebe o status do pedido em tempo real.", "#2e7d32");
+            if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> Ativado'; }
+            try { notifIniciar(); } catch (e) {}
+        } else if (r === "negado") {
+            diz("Bloqueado no aparelho: libere nas configurações do navegador > notificações.", "#c62828");
+        } else {
+            diz("Este aparelho não mostra aviso fora do site (vale o aviso dentro do site).", "#8a6100");
+        }
     });
 }
 document.addEventListener("DOMContentLoaded", function(){

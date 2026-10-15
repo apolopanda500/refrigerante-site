@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261015b">
+<link rel="manifest" href="manifest.json?v=20261015c">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,11 +11,11 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Perfil - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015b">
-<script src="theme.js?v=20261015b"></script>
+<link rel="stylesheet" href="style.css?v=20261015c">
+<script src="theme.js?v=20261015c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-.page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
+.page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
 .page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
 .page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }
 .perfil-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:22px; margin-bottom:18px; }
@@ -37,7 +37,17 @@
 .btn-perigo { padding:12px 30px; background:#ff5252; color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:1rem; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
 .btn-perigo:hover { background:#d32f2f; }
 .status-msg { display:none; padding:12px 16px; border-radius:10px; margin-bottom:16px; font-weight:600; }
-.status-msg.ok { display:block; background:#e8f5e9; color:#2e7d32; border-left:4px solid #43a047; }
+.status-msg.ok { background:#e8f5e9; color:#2e7d32; border-left:4px solid #43a047; }
+.perfil-card h2 small { font-weight:600; font-size:.8rem; color:#6b7280; }
+#tabelaPedidosPerfil .vazio-tabela { padding:18px 4px; color:#6b7280; font-size:.95rem; text-align:center; }
+#tabelaPedidosPerfil .resumo-linha { display:flex; justify-content:space-between; gap:12px; padding:12px 14px; background:#f7f8fc; border-radius:10px; margin-top:12px; font-weight:700; }
+#tabelaPedidosPerfil .mini-conteudo { display:inline-block; text-align:right; }
+#tabelaPedidosPerfil .mini-item { display:block; font-size:.86rem; color:#555; }
+[data-theme="dark"] .perfil-card h2 small{color:#a1a8c3}
+[data-theme="dark"] #tabelaPedidosPerfil .vazio-tabela{color:#a1a8c3}
+[data-theme="dark"] #tabelaPedidosPerfil .resumo-linha{background:#222643}
+[data-theme="dark"] #tabelaPedidosPerfil .mini-item{color:#a1a8c3}
+[data-theme="dark"] .status-msg.ok{background:#1c331f;color:#8fe39a;border-left-color:#43a047}
 .stats-row { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px; }
 .stat-box { flex:1; min-width:140px; background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:20px; text-align:center; }
 .stat-box .stat-icon { font-size:1.8rem; color:var(--primary-color); margin-bottom:8px; }
@@ -71,7 +81,7 @@
 [data-theme="dark"] .perfil-dados small{color:#a1a8c3}
 
 /* ===== NAVEGACAO HORIZONTAL (igual a home) ===== */
-.main-header{background:var(--primary-color,#3d4465)!important;position:sticky;top:0;z-index:100}
+.main-header{background:var(--primary-color,#3d4465)!important;position:fixed;top:0;left:0;right:0;z-index:100}
 .main-header .container{max-width:1600px;width:100%;padding:0 12px}
 .main-header nav{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;min-height:60px}
 .main-header .logo{
@@ -123,7 +133,7 @@
 <div class="perfil-avatar-wrap">
   <button class="perfil-avatar" id="perfilAvatar" data-conta-foto onclick="document.getElementById('fotoPerfil').click()" title="Trocar foto">
     <img id="fotoImg" alt="" />
-    <span class="pa-texto" id="fotoInicial" class="pa-texto">C</span>
+    <span class="pa-texto" id="fotoInicial">C</span>
     <span class="pa-lapis"><i class="fa fa-camera"></i></span>
   </button>
   <div class="perfil-dados">
@@ -143,17 +153,24 @@
   <div class="stat-box"><div class="stat-icon"><i class="fa fa-dollar-sign"></i></div><div class="stat-num" id="statGasto">R$ 0</div><div class="stat-label">Total gasto</div></div>
 </div>
 
+<div class="perfil-card" id="cardPedidosPerfil">
+  <h2><i class="fa fa-receipt"></i> Meus pedidos <small id="qtdPedidosPerfil"></small></h2>
+  <div id="tabelaPedidosPerfil"></div>
+  <a href="meus-pedidos.html" style="display:inline-block;margin-top:14px;color:var(--primary-color);font-weight:700"><i class="fa fa-arrow-right"></i> Ver histórico completo</a>
+</div>
+
 
 
 
 <div class="perfil-card">
   <h2><i class="fa fa-id-card"></i> Dados Pessoais</h2>
-  <div class="status-msg ok" id="msgSalvo"><i class="fa fa-check-circle"></i> Dados salvos com sucesso!</div>
+  <div class="status-msg ok" id="msgSalvo" style="display:none"><i class="fa fa-check-circle"></i> Dados salvos com sucesso!</div>
   <div class="form-row">
     <div class="form-group"><label>Nome completo</label><input type="text" id="pNome" data-conta="nome" placeholder="Seu nome"></div>
     <div class="form-group"><label>WhatsApp</label><input type="tel" id="pTel" data-conta="tel" placeholder="(21) 99999-9999"></div>
   </div>
   <div class="form-group"><label>CPF</label><input type="text" id="pCpf" data-conta="cpf" placeholder="000.000.000-00"></div>
+  <div class="form-group"><label>E-mail</label><input type="email" id="pEmail" data-conta="email" placeholder="seu@email.com"></div>
   <div class="form-group"><label>Endereço padrão</label><input type="text" id="pEndereco" data-conta="endereco" placeholder="Rua, número"></div>
   <div class="form-row">
     <div class="form-group"><label>Bairro</label><input type="text" id="pBairro" data-conta="bairro" placeholder="Seu bairro"></div>
@@ -176,12 +193,13 @@
 </div></section>
 
 
-<script src="conta.js?v=20261015b"></script>
-<script src="firebase-appcheck.js?v=20261015b"></script>
-<script src="app-update.js?v=20261015b"></script>
-<script src="ia.js?v=20261015b"></script>
-<script src="loja.js?v=20261015b"></script>
-<script src="script.js?v=20261015b"></script>
+<script src="conta.js?v=20261015c"></script>
+<script src="firebase-appcheck.js?v=20261015c"></script>
+<script src="app-update.js?v=20261015c"></script>
+<script src="ia.js?v=20261015c"></script>
+<script src="central.js?v=20261015c"></script>
+<script src="loja.js?v=20261015c"></script>
+<script src="script.js?v=20261015c"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -203,33 +221,109 @@
     }
 </script>
 <script>
+/* ============================================
+   PERFIL: numeros reais + tabela de pedidos
+   (o formulario e preenchido pelo Conta.aplicarEmTodos)
+   ============================================ */
 (function() {
-    var perfil = {};
-    try { perfil = JSON.parse(localStorage.getItem("refrigerantePerfil") || "{}"); } catch(e) {}
-    if (perfil.nome) document.getElementById("pNome").value = perfil.nome;
-    if (perfil.tel) document.getElementById("pTel").value = perfil.tel;
-    if (perfil.email) document.getElementById("pEmail").value = perfil.email;
-    if (perfil.endereco) document.getElementById("pEndereco").value = perfil.endereco;
-    if (perfil.bairro) document.getElementById("pBairro").value = perfil.bairro;
-    if (perfil.complemento) document.getElementById("pComplemento").value = perfil.complemento;
-    if (perfil.numero) document.getElementById("pNumero").value = perfil.numero;
-    if (perfil.rua) document.getElementById("pRua").value = perfil.rua;
-    if (perfil.cep) document.getElementById("pCep").value = perfil.cep;
-    if (perfil.observacao) document.getElementById("pObs").value = perfil.observacao;
-    if (perfil.cpf) document.getElementById("pCpf").value = perfil.cpf;
-    if (perfil.nome) document.getElementById("avatarNome").textContent = perfil.nome;
-    if (perfil.tel) document.getElementById("avatarTel").textContent = perfil.tel;
-    var tp = 0, ti = 0, tg = 0;
-    try { Object.keys(localStorage).forEach(function(k) {
-        if (k.indexOf("pedidos_") === 0) {
-            var l = JSON.parse(localStorage.getItem(k) || "[]");
-            if (Array.isArray(l)) l.forEach(function(p) { tp++; if (Array.isArray(p.itens)) p.itens.forEach(function(i){ ti += (i.qty||0); }); tg += (p.total||0); });
-        }
-    }); } catch(e) {}
-    document.getElementById("statPedidos").textContent = tp;
-    document.getElementById("statItens").textContent = ti;
-    document.getElementById("statGasto").textContent = "R$ " + tg.toFixed(2).replace(".", ",");
+    if (typeof Conta !== "undefined") Conta.aplicarEmTodos();
 })();
+
+/* pedidos do cliente: filtra pelo WhatsApp quando da,
+   senao mostra tudo que este aparelho tem (mesma regra
+   do Meus Pedidos, para o cliente nunca ver "0 pedidos"
+   quando o pedido esta salvo aqui) */
+function pedidosDoPerfil() {
+    var todos = (typeof getPedidos === "function") ? getPedidos() : [];
+    var tel = "";
+    try { tel = (typeof Conta !== "undefined" ? Conta.dados().tel : ""); } catch (e) {}
+    var lista = todos.slice();
+    if (tel && typeof mesmoTelefone === "function") {
+        var meus = todos.filter(function (p) { return mesmoTelefone(p.tel, tel); });
+        if (meus.length) lista = meus;
+    }
+    return lista;
+}
+
+function renderPedidosPerfil() {
+    var box = document.getElementById("tabelaPedidosPerfil");
+    if (!box) return;
+    var lista = pedidosDoPerfil();
+
+    var tp = 0, ti = 0, tg = 0;
+    lista.forEach(function (p) {
+        tp++;
+        if (Array.isArray(p.itens)) p.itens.forEach(function (i) { ti += (i.qty || 0); });
+        if (p.status !== "cancelado") tg += (p.total || 0);
+    });
+
+    var setTxt = function (id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; };
+    setTxt("statPedidos", String(tp));
+    setTxt("statItens", String(ti));
+    setTxt("statGasto", (typeof formatBRL === "function" ? formatBRL(tg) : "R$ " + tg.toFixed(2).replace(".", ",")));
+    setTxt("qtdPedidosPerfil", tp ? "(" + tp + ")" : "");
+
+    /* tabela so e desenhada se houver pedidos */
+    if (!lista.length) {
+        box.innerHTML = '<div class="vazio-tabela"><i class="fa fa-receipt"></i> Você ainda não fez pedidos neste aparelho.</div>';
+        return;
+    }
+
+    var badge = (typeof statusBadge === "function")
+        ? function (s) { return statusBadge(s); }
+        : function (s) { return STATUS_LABEL[s] || s; };
+    var quando = (typeof dataHora === "function")
+        ? function (ts) { return dataHora(ts); }
+        : function (ts) { return new Date(ts || Date.now()).toLocaleString("pt-BR"); };
+    var reais = (typeof formatBRL === "function")
+        ? function (n) { return formatBRL(n); }
+        : function (n) { return "R$ " + Number(n || 0).toFixed(2).replace(".", ","); };
+
+    var h = '<div class="tab-wrap"><table><thead><tr>'
+          + '<th>Pedido</th><th>Data</th><th>Itens</th><th>Status</th><th>Total</th>'
+          + '</tr></thead><tbody>';
+    lista.slice(0, 20).forEach(function (p) {
+        var nItens = 0;
+        var resumo = "";
+        (p.itens || []).forEach(function (i) {
+            nItens += (i.qty || 0);
+            resumo += '<span class="mini-item">' + (i.name || "item") + " &times;" + (i.qty || 0) + "</span>";
+        });
+        h += "<tr>"
+           + '<td data-label="Pedido"><b>' + (p.id || "—") + "</b></td>"
+           + '<td data-label="Data">' + quando(p.criadoEm) + "</td>"
+           + '<td data-label="Itens"><span class="mini-conteudo"><b>' + nItens + "</b>" + resumo + "</span></td>"
+           + '<td data-label="Status">' + badge(p.status) + "</td>"
+           + '<td data-label="Total"><b>' + reais(p.total) + "</b></td>"
+           + "</tr>";
+    });
+    h += "</tbody></table></div>";
+
+    h += '<div class="resumo-linha"><span>Total gasto (sem cancelados)</span><span>'
+       + reais(tg) + "</span></div>";
+    if (lista.length > 20) h += '<div class="vazio-tabela">Mostrando os 20 pedidos mais recentes de ' + lista.length + ".</div>";
+    box.innerHTML = h;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    renderPedidosPerfil();
+    if (typeof Conta !== "undefined") Conta.aplicarEmTodos();
+});
+if (document.readyState !== "loading") { renderPedidosPerfil(); }
+/* pedido novo (em outra aba) atualiza os numeros do perfil */
+window.addEventListener("storage", function (e) {
+    if (e.key === "convencao_pedidos") renderPedidosPerfil();
+});
+
+function mostrarMsgSalvo(texto) {
+    var msg = document.getElementById("msgSalvo");
+    if (!msg) return;
+    msg.innerHTML = '<i class="fa fa-check-circle"></i> ' + texto;
+    msg.style.display = "block";
+    clearTimeout(mostrarMsgSalvo._t);
+    mostrarMsgSalvo._t = setTimeout(function () { msg.style.display = "none"; }, 4000);
+}
+
 function salvarPerfil() {
     var cpfVal = (document.getElementById("pCpf") || {}).value || "";
     cpfVal = cpfVal.replace(/\D/g, "");
@@ -274,18 +368,9 @@ function salvarPerfil() {
     if (!confirm("Confirmar as alterações?\n\n" + resumo + "\n\nOs dados ficam salvos neste aparelho.")) return;
 
     Conta.salvar(dados);
-
-    var msg = document.getElementById("msgSalvo");
-    if (msg) {
-        msg.innerHTML = '<i class="fa fa-check-circle"></i> Alterações salvas em todas as telas!';
-        msg.style.display = "block";
-        setTimeout(function () { msg.style.display = "none"; }, 4000);
-    }
-    var av = document.getElementById("avatarNome");
-    if (av) av.textContent = dados.nome || "Cliente";
-    var at = document.getElementById("avatarTel");
-    if (at) at.textContent = dados.tel || "WhatsApp não informado";
     Conta.aplicarEmTodos();
+    mostrarMsgSalvo("Dados salvos com sucesso!");
+    renderPedidosPerfil();
 }
 </script>
 <script>
@@ -295,12 +380,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if (arq) arq.addEventListener("change", function () {
         Conta.escolherArquivo(this, function () {
             Conta.aplicarEmTodos();
-            var msg = document.getElementById("msgSalvo");
-            if (msg) {
-                msg.innerHTML = '<i class="fa fa-check-circle"></i> Foto atualizada em todas as telas!';
-                msg.style.display = "block";
-                setTimeout(function () { msg.style.display = "none"; }, 3000);
-            }
+            mostrarMsgSalvo("Foto atualizada!");
         });
     });
     Conta.aplicarEmTodos();

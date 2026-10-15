@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261015b">
+<link rel="manifest" href="manifest.json?v=20261015c">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,11 +11,11 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Finalizar Pedido - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015b">
-<script src="theme.js?v=20261015b"></script>
+<link rel="stylesheet" href="style.css?v=20261015c">
+<script src="theme.js?v=20261015c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-.page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
+.page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
 .page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; margin-bottom:24px; }
 .checkout-grid { display:grid; grid-template-columns: 1.4fr 1fr; gap:24px; align-items:start; }
 .card-section { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:22px; margin-bottom:20px; }
@@ -104,7 +104,7 @@
 [data-theme="dark"] .je-obs{color:#a1a8c3}
 
 /* ===== NAVEGACAO HORIZONTAL (igual a home) ===== */
-.main-header{background:var(--primary-color,#3d4465)!important;position:sticky;top:0;z-index:100}
+.main-header{background:var(--primary-color,#3d4465)!important;position:fixed;top:0;left:0;right:0;z-index:100}
 .main-header .container{max-width:1600px;width:100%;padding:0 12px}
 .main-header nav{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;min-height:60px}
 .main-header .logo{
@@ -191,12 +191,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261015b"></script>
-<script src="firebase-appcheck.js?v=20261015b"></script>
-<script src="app-update.js?v=20261015b"></script>
-<script src="ia.js?v=20261015b"></script>
-<script src="loja.js?v=20261015b"></script>
-<script src="script.js?v=20261015b"></script>
+<script src="conta.js?v=20261015c"></script>
+<script src="firebase-appcheck.js?v=20261015c"></script>
+<script src="app-update.js?v=20261015c"></script>
+<script src="ia.js?v=20261015c"></script>
+<script src="central.js?v=20261015c"></script>
+<script src="loja.js?v=20261015c"></script>
+<script src="script.js?v=20261015c"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');

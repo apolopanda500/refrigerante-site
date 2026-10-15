@@ -261,6 +261,23 @@ function bairroForaDaArea(bairro) {
     return !bairroAtendido(b);
 }
 
+/* qual regiao atende um bairro? (id da regiao ou "")
+   compara normalizado: nome exato, contido no bairro ou bairro na regiao */
+function regiaoDoBairro(bairro) {
+    var b = semAcento(String(bairro || "").trim().toLowerCase());
+    if (!b) return "";
+    for (var i = 0; i < REGIOES.length; i++) {
+        var r = REGIOES[i];
+        var id = semAcento(String(r.id || "").toLowerCase());
+        var nome = semAcento(String(r.nome || "").toLowerCase());
+        if (!nome) continue;
+        if (b === nome || b === id) return r.id;
+        if (b.indexOf(nome) >= 0 || (nome.length >= 4 && id && b.indexOf(id) >= 0)) return r.id;
+        if (nome.indexOf(b) >= 0 && b.length >= 4) return r.id;
+    }
+    return "";
+}
+
 /* ---------- HORARIOS: EMPRESA e ENTREGA sao diferentes ---------- */
 /* A LOJA abre para montar pedidos. O CAMINHAO entrega em outro horario. */
 var HORARIOS = {
@@ -397,7 +414,7 @@ var CAMINHOES = [
         motorista: "A INFORMAR",
         telefone: "A INFORMAR",
         whatsapp: "",
-        imagem: "",
+        imagem: "img/608AZUL.jpeg",
         regioes: ["paracambi"]
     }
 ];

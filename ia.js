@@ -225,6 +225,26 @@ function iaRespostaLocal(pergunta) {
         return res("Monte o carrinho na vitrine (toque em Adicionar) e finalize em Finalizar pedido. O site calcula o frete e o dia de entrega da sua regiao.", "comprar", 0.8, false);
     }
 
+    /* 13) oferta do dia (atualiza sozinha todo dia com o catalogo) */
+    if (/oferta do dia|oferta de hoje|promocao de hoje|promocao do dia|desconto de hoje/.test(q)) {
+        var od = (typeof iaOfertaDoDia === "function") ? iaOfertaDoDia() : null;
+        if (od && od.nm) {
+            return res("Oferta de hoje (" + od.quando + "):\n- " + od.nm + ": " + od.pr +
+                (od.motivo ? " (" + od.motivo + ")" : ""), "ofertaDia", 0.97, true);
+        }
+        return res("Olhe a faixa \"Oferta da semana\" na pagina inicial e as \"Escolhas para voce\" (IA).", "ofertaDia", 0.8, false);
+    }
+
+    /* 14) falar com humano: vendedor x motorista (redirecionamento real) */
+    if (/falar com|atendente|humano|alguem|reclamacao|reclamar|problema com|ajuda com|ligar/.test(q)) {
+        var alvo = (typeof iaHumanoPara === "function") ? iaHumanoPara(bruto) : null;
+        if (alvo && alvo.numero) {
+            return res(alvo.quem + ": " + alvo.numeroFmtado + "\n" + alvo.link +
+                (alvo.motivo ? "\n(" + alvo.motivo + ")" : ""), "humano", 0.96, true);
+        }
+        return res("Posso chamar o vendedor: WhatsApp (21) 9-8315-8911.", "humano", 0.8, false);
+    }
+
     /* fallback: baixa confianca (candidato a IA da nuvem) */
     return res("Nao tenho essa resposta no motor local. Posso ajudar com precos, entrega, frete, pagamento e pedidos - ou fale com o vendedor: WhatsApp (21) 9-8315-8911.", "fallback", 0.35, false);
 }
@@ -397,8 +417,27 @@ function recomendarProdutos(n, cat, historico) {
     return variedadeCatalogo(cat, n, []);
 }
 
+/* ============================================
+   O CLIENTE VEE SO O BOTAO FLUTUANTE
+   A secao "Escolhas para voce (IA)", o bloco de
+   configuracao da IA e o resto da interface de IA
+   nao sao mostrados ao cliente: ficam guardados
+   para o painel do dono. O chat flutuante continua.
+   ============================================ */
+function iaRecomendacoesAtivas() {
+    try {
+        var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+        return p.cfgIARecs === true;
+    } catch (e) { return false; }
+}
+
 function pintarRecomendados() {
     if (typeof document === "undefined") return;
+    if (!iaRecomendacoesAtivas()) {
+        var fora = document.getElementById("recomendados");
+        if (fora) fora.innerHTML = "";
+        return;
+    }
     var el = document.getElementById("recomendados");
     if (!el) return;
     var cat = iaCatalogo();
@@ -422,6 +461,66 @@ function pintarRecomendados() {
 }
 function iaRepintarRecomendados() {
     try { pintarRecomendados(); } catch (e) {}
+}
+
+/* ---------- ATENDIMENTO ROBOTICO + HUMANO REAL ----------
+   - iaOfertaDoDia: escolhe todo dia um produto do catalogo de
+     forma deterministica (data = semente). Atualiza sozinha.
+   - iaHumanoPara: decide VENDEDOR ou MOTORISTA pelo assunto:
+     entrega/atraso/caminhao -> motorista da regiao do cliente;
+     preco/pedido/pagamento -> vendedor. Responde com WhatsApp. */
+function iaSementeDia() {
+    var d = new Date();
+    return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+function iaOfertaDoDia(cat) {
+    cat = cat || iaCatalogo();
+    if (!Array.isArray(cat) || !cat.length) return null;
+    var ordem = iaSementeDia();
+    var i = ordem % cat.length;
+    var p = cat[i] || cat[0];
+    if (!p) return null;
+    var d = new Date(ordem.toString().slice(0, 4) + "-" + ordem.toString().slice(4, 6) + "-" + ordem.toString().slice(6, 8) + "T12:00:00");
+    var quando = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2);
+    return { nm: p.nm, pr: p.pr, ct: p.ct, quando: quando, motivo: "escolha automatica da IA" };
+}
+function iaZapLink(numero, texto) {
+    return "https://wa.me/" + numero + (texto ? "?text=" + encodeURIComponent(texto) : "");
+}
+function iaHumanoPara(textoLivre) {
+    var q = iaNormal(textoLivre);
+    var vendedorNum = "5521983158911";
+    var vendedorFmt = "(21) 9-8315-8911";
+    /* motorista: entrega, atraso, caminhao, troca na hora */
+    var eLogistica = /entrega|entregador|atras|atraso|demor|caminhao|motorista|rota|troca|devolu|erra(d|o)|faltan/.test(q);
+    if (eLogistica && typeof CAMINHOES !== "undefined" && typeof caminhaoDaRegiao === "function") {
+        var regiaoId = "";
+        try {
+            var bairro = "";
+            if (typeof Conta !== "undefined") bairro = (Conta.dados().bairro || "");
+            regiaoId = (typeof regiaoDoBairro === "function") ? (regiaoDoBairro(bairro) || "") : "";
+        } catch (e) {}
+        var cam = null;
+        try { cam = regiaoId ? caminhaoDaRegiao(regiaoId) : null; } catch (e) {}
+        if (!cam && CAMINHOES.length) cam = CAMINHOES[0];
+        if (cam && cam.whatsapp) {
+            return {
+                quem: "Motorista " + (cam.motorista || "") + " (" + (cam.corNome || "frota") + ")",
+                numero: cam.whatsapp,
+                numeroFmtado: cam.telefone || cam.whatsapp,
+                link: iaZapLink(cam.whatsapp, "Ola, sou cliente da Convencao - preciso de ajuda com a entrega."),
+                motivo: "assunto de entrega: encaminhei para o motorista"
+            };
+        }
+    }
+    /* padrao: vendedor */
+    return {
+        quem: "Vendedor",
+        numero: vendedorNum,
+        numeroFmtado: vendedorFmt,
+        link: iaZapLink(vendedorNum, "Ola, preciso de ajuda com meu pedido."),
+        motivo: eLogistica ? "motorista sem WhatsApp cadastrado: encaminhei para o vendedor" : ""
+    };
 }
 
 /* ---------- WIDGET (chat flutuante, todas as paginas do cliente) ---------- */

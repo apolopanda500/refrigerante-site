@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261015b">
+<link rel="manifest" href="manifest.json?v=20261015c">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,11 +11,11 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015b">
-<script src="theme.js?v=20261015b"></script>
+<link rel="stylesheet" href="style.css?v=20261015c">
+<script src="theme.js?v=20261015c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-.page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
+.page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
 .page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
 .page-head h1 { color: var(--primary-color); font-size:1.8rem; display:flex; align-items:center; gap:10px; }
 .link-voltar { color:#666; font-size:0.95rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
@@ -120,7 +120,7 @@
 [data-theme="dark"] .vend-dia .reg-dias b{color:#8fe0a8}
 
 /* ===== NAVEGACAO HORIZONTAL (igual a home) ===== */
-.main-header{background:var(--primary-color,#3d4465)!important;position:sticky;top:0;z-index:100}
+.main-header{background:var(--primary-color,#3d4465)!important;position:fixed;top:0;left:0;right:0;z-index:100}
 .main-header .container{max-width:1600px;width:100%;padding:0 12px}
 .main-header nav{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;min-height:60px}
 .main-header .logo{
@@ -146,8 +146,23 @@
     border-radius:50%;background:rgba(255,255,255,.14);color:#fff!important;font-size:1.15rem;
 }
 .main-header .cart-count{background:#fc0758;color:#fff;font-size:.7rem;font-weight:800;padding:2px 7px;border-radius:10px}
+.main-header .share-btn{
+    display:inline-flex;align-items:center;gap:7px;min-height:44px;white-space:nowrap;cursor:pointer;
+    padding:9px 14px;border-radius:20px;text-decoration:none;
+    background:var(--accent-color,#ffb822);color:var(--primary-color,#3d4465);font-weight:800;font-size:.82rem;
+}
+.main-header .share-btn:hover{filter:brightness(1.08)}
 .main-header .mobile-menu-btn{display:none!important}
 [data-theme="dark"] .main-header{background:#232742!important}
+[data-theme="dark"] .main-header .cart-item,.main-header .cart-box{background:#232742!important}
+[data-theme="dark"] .main-header .cart-item .ci-name{color:#f5f5f5!important}
+[data-theme="dark"] .main-header .cart-item .ci-qtd{color:#f5f5f5!important}
+[data-theme="dark"] .main-header .cart-item .ci-rem{color:#f5f5f5!important}
+[data-theme="dark"] .main-header .cart-item .ci-preco{color:#f5f5f5!important}
+[data-theme="dark"] .main-header .resumo{background:#232742!important}
+[data-theme="dark"] .main-header .resumo-row{background:#2a2e44!important}
+[data-theme="dark"] .main-header .resumo-row.total{background:#fc0758;color:#fff!important}
+[data-theme="dark"] .main-header .acao.btn-primario{background:#fc0758!important;color:#fff!important}
 [data-theme="dark"] .main-header .nav-links a.ativo{background:#ffb822!important;color:#3d4465!important}
 @media(max-width:640px){
     .main-header .logo span{display:none}
@@ -163,8 +178,11 @@
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
 <ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-box"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Histórico de Pedidos</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configurações</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="header-actions">
-<a class="share-btn" href="#" onclick="compartilharSite();return false;" title="Compartilhar"><i class="fa fa-share-alt"></i> Compartilhar</a>
-<div class="cart-icon" title="Itens no carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
+  <a class="share-btn" href="#" onclick="compartilharSite();return false;" title="Compartilhar"><i class="fa fa-share-alt"></i> Compartilhar</a>
+  <button type="button" class="cart-icon" onclick="window.location.href='carrinho.html'" aria-label="Ver carrinho">
+    <i class="fa fa-shopping-cart"></i>
+    <span class="cart-count" id="cBag" style="display:inline-block;margin-left:4px;"></span>
+  </button>
 </div>
 </nav></div></header>
 
@@ -197,12 +215,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261015b"></script>
-<script src="firebase-appcheck.js?v=20261015b"></script>
-<script src="app-update.js?v=20261015b"></script>
-<script src="ia.js?v=20261015b"></script>
-<script src="loja.js?v=20261015b"></script>
-<script src="script.js?v=20261015b"></script>
+<script src="conta.js?v=20261015c"></script>
+<script src="firebase-appcheck.js?v=20261015c"></script>
+<script src="app-update.js?v=20261015c"></script>
+<script src="ia.js?v=20261015c"></script>
+<script src="central.js?v=20261015c"></script>
+<script src="loja.js?v=20261015c"></script>
+<script src="script.js?v=20261015c"></script>
 <script>
 cart = getCart();
 

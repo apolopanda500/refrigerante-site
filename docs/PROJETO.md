@@ -90,6 +90,7 @@ Nunca usar o nome — se o nome mudar, o preço se perde. Nunca deixar a chave v
 | `conta.js` | perfil do cliente (fonte única de dados) |
 | `theme.js` | aplica tema/fonte/contraste/leitura antes da página pintar; no painel usa `vendedorPrefs` |
 | `ia.js` | assistente de IA (motor local + nuvem opcional) e recomendações |
+| `central.js` | avisos reais no aparelho (`Notification`) quando o status do pedido muda (ligado em Configurações) |
 | `telegram.js` | comandos do bot (`/confirmar`, `/entregue`...) e botões da mensagem |
 | `app-update.js` | service worker, barra "Atualizar agora", botão instalar app |
 | `firebase-appcheck.js` | proteção (App Check) do banco de preços |
@@ -260,8 +261,14 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - Catálogo: 45 produtos, 7 categorias, atualizado diariamente pelo robô.
 - Preços: sincronizados em tempo real pelo Firebase (tabela do dono).
 - Pedidos: sincronizados na nuvem (`/pedidos.json`) — o painel vê os pedidos feitos em qualquer aparelho ou conta.
-- IA: assistente no site (chat) com motor local garantido + nuvem opcional, recomendações e portão automático de testes a cada push.
+- IA: assistente no site (só o botão flutuante para o cliente) com motor local garantido + nuvem opcional e portão automático de testes a cada push.
 - Painel: preferências próprias (`vendedorPrefs`), 5 temas, conexão do bot editável e sincronização de pedidos a cada minuto.
+- Celular em pé: header **fixo** no topo em todas as páginas, menu sempre visível (faixa rolável) e tabelas com `height:100%` para não colapsar.
+- Tabela de informações da home (pedidos e entregas, horários, pagamento/frete/contato, frota, garantia) tem botão **Minimizar** — no celular ela já vem recolhida (lembra em `localStorage:tabelaInfoMini`).
+- Perfil: tabela real com os pedidos do cliente (data, itens, status, total) e "Dados salvos" só depois de salvar de verdade.
+- Frota: fotos dos dois caminhões (`img/608VERDE.jpg` e `img/608AZUL.jpeg`).
+- Avaliação: o cliente dá nota de 1 a 5 + comentário no pedido entregue (Meus Pedidos);
+  `salvarAvaliacao()` em `script.js` grava no aparelho e envia para `/avaliacoes` no Firebase.
 - Leitura das tabelas: horizontal (padrão) ou vertical (cartões), em Configurações do cliente.
 - Bairro fora da área de entrega: pedido **bloqueado** na finalização.
 - Bot: aviso de novo pedido + comandos (`/confirmar`, `/separacao`, `/enviado`, `/entregue`, `/cancelar`, `/ultimos`, `/status`, `/hoje`, `/ajuda`) + botões.
@@ -275,6 +282,10 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 ### Assistente do site (ia.js)
 - Chat flutuante em todas as paginas do cliente (menos no painel do vendedor,
   que e independente). Botao "IA" no canto inferior direito.
+- **O cliente ve SO o botao flutuante**: a secao "Escolhas para voce (IA)" e o
+  bloco de configuracao da IA (provedor, URL, chave, modelo) ficam guardados
+  para o dono — `iaRecomendacoesAtivas()` so liga as recomendacoes com
+  `cfgIARecs` ligado, e o bloco de Configuracoes esta com `hidden`.
 - Motor local (padrao): 12 intents (preco, horario, frete, dias de entrega,
   bairros, pagamento, status do pedido, contato, app, saudacao, compra,
   fallback), usando o catalogo do dia, regioes, horarios e pedidos do aparelho.
@@ -288,6 +299,7 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - Recomendacoes: "Escolhas para voce" na home - historico de compras do
   aparelho ("quem levou X levou Y") ou variedade por categoria. Repinta
   quando o catalogo novo chega (iaRepintarRecomendados em app.js).
+  **Desligadas por padrao para o cliente** (so o painel liga com `cfgIARecs`).
 - Widget, historico de 20 mensagens, atalhos rapidos, cache de respostas.
 
 ### Motores automaticos (o site trabalhar de verdade)

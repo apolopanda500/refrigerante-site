@@ -125,5 +125,41 @@ cliente.concat(["admin.html"]).forEach(function (p) {
 console.log("  versoes encontradas: " + [...versoes].join(", "));
 if (versoes.size > 1) falha("as paginas usam versoes diferentes (cache velho vai sobrar no celular)");
 
+/* ---------- 7. celular vertical: header fixo e menu na tela ---------- */
+console.log("\n=== 7. CELULAR VERTICAL (HEADER FIXO, MENU VISIVEL) ===");
+const css = fs.readFileSync(path.join(dir, "style.css"), "utf8");
+if (!/orientation\s*:\s*portrait/.test(css)) falha("style.css sem a regra do modo mobile vertical (orientation:portrait)");
+else console.log("  ok  regra do modo mobile vertical existe");
+if (!/height\s*:\s*100%/.test(css.split("orientation:portrait")[1] || "")) {
+    falha("as tabelas nao ganharam height:100% no modo vertical (evita colapso)");
+} else console.log("  ok  tabelas com height:100% no modo vertical");
+if (!/body\.admin\s+\.nav-links/.test(css)) falha("o menu fora da tela deve valer so para o painel (body.admin)");
+else console.log("  ok  menu fora da tela restrito ao painel");
+if (!/body:not\(\.admin\)\s+\.main-header\s+\.nav-links/.test(css)) falha("o menu do cliente precisa ser faixa rolavel dentro do header");
+else console.log("  ok  menu do cliente continua no cabecalho (nao some no celular)");
+
+/* cada pagina do cliente: header fixo, com nav dentro do <header> */
+cliente.forEach(function (p) {
+    const t = fs.readFileSync(path.join(dir, p), "utf8");
+    const ehHome = (p === "index.html");            /* a home usa header.hd, ja sticky por desenho */
+    if (!ehHome && /position:sticky;top:0;z-index:100/.test(t)) falha(p + ": header ainda e sticky (perde o topo no celular vertical)");
+    const head = (t.match(/<header class="(?:main-header|hd)">[\s\S]*?<\/header>/) || [""])[0];
+    if (!head) { falha(p + ": header nao encontrado"); return; }
+    if (head.indexOf('id="mainNav"') < 0) falha(p + ": o menu de navegacao esta fora do header");
+    if ((t.match(/id="mainNav"/g) || []).length !== 1) falha(p + ": id mainNav duplicado");
+    if ((t.match(/id="cartCount"/g) || []).length > 1) falha(p + ": id cartCount duplicado");
+    if ((t.match(/<\/nav>/g) || []).length !== (t.match(/<nav[\s>]/g) || []).length) falha(p + ": tag nav nao balanceada");
+});
+console.log("  ok  " + cliente.length + " paginas: header fixo, um so menu, sem header orfao");
+
+/* ---------- 8. IA: cliente ve so o botao flutuante ---------- */
+console.log("\n=== 8. IA SO NO FLUTUANTE PARA O CLIENTE ===");
+const iaJs = fs.readFileSync(path.join(dir, "ia.js"), "utf8");
+if (!/function iaRecomendacoesAtivas/.test(iaJs)) falha("ia.js sem o controle das recomendacoes (cliente nao deve ver)");
+else console.log("  ok  recomendacoes da IA desligadas por padrao para o cliente");
+const cfgHtml = fs.readFileSync(path.join(dir, "configuracoes.html"), "utf8");
+if (!/id="blocoIACliente" hidden/.test(cfgHtml)) falha("o bloco de IA do cliente nao esta escondido");
+else console.log("  ok  configuracao de IA nao aparece para o cliente");
+
 console.log("\n" + (erros === 0 ? "*** ESTRUTURA E SEGURANCA 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
 process.exit(erros ? 1 : 0);

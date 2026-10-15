@@ -28,10 +28,8 @@ sandbox.window = sandbox;
 vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync(path.join(dir, "loja.js"), "utf8"), sandbox, { filename: "loja.js" });
 vm.runInContext([
-    "var CAMINHOES = [",
-    " {id:'verde',cor:'verde',corNome:'Verde',modelo:'Mercedes-Benz L-608 D',placa:'LKC5610',motorista:'LEANDRO',whatsapp:'5521965667468',telefone:'(21) 9-965667468',imagem:'img/608VERDE.jpg',regioes:['seropedica','japeri']},",
-    " {id:'azul',cor:'azul',corNome:'Azul',modelo:'Mercedes-Benz L-608 E',placa:'A INFORMAR',motorista:'A INFORMAR',whatsapp:'',telefone:'A INFORMAR',imagem:'',regioes:['paracambi']}",
-    "];",
+    /* CAMINHOES vem do loja.js de verdade (sem copia aqui):
+       assim o teste acusa se a foto de algum caminhao sumir */
     /* helpers que o app.js usa e que vivem no proprio app.js */
     "function horaTexto(hh,mm){hh=Number(hh);mm=Number(mm)||0;return (hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;}",
     "function horaDeMinutos(m){m=Math.floor((Number(m)||0)/60);return {h:m,m:Math.round((Number(m)||0)-m*60)};}",
@@ -44,7 +42,8 @@ vm.runInContext([
     " {pos:'fim',acao:'categoria',alvo:'35',icone:'fa fa-mug-hot',titulo:'Refrigerantes 350ml',texto:'Pack 6.',cor:'#00752e',ativo:true}",
     "];",
     "var NOMES_CURTOS = { seropedica:'SER', japeri:'JAP', engenhopedreira:'ENG', paracambi:'PAR' };",
-    extrair("pintarCalendarioSemanal"), extrair("pintarTabelaGeral"), extrair("pintarTabelaOfertas")
+    extrair("pintarCalendarioSemanal"), extrair("pintarTabelaGeral"), extrair("pintarTabelaOfertas"),
+    extrair("tabelaInfoMiniSalvo"), extrair("aplicarEstadoTabelaInfo"), extrair("alternarTabelaInfo")
 ].join("\n"), sandbox, { filename: "partes.js" });
 
 sandbox.pintarCalendarioSemanal();
@@ -81,8 +80,12 @@ if (t.indexOf("undefined") >= 0 || t.indexOf("NaN") >= 0) {
 } else console.log("  sem undefined/NaN");
 if (t.indexOf("608VERDE.jpg") < 0) falha("a foto do caminhao sumiu");
 else console.log("  foto do caminhao verde presente");
+if (t.indexOf("608AZUL.jpeg") < 0) falha("a foto do caminhao azul sumiu");
+else console.log("  foto do caminhao azul presente");
+if ((t.match(/<img class="tb-cam-foto"/g) || []).length !== 2) falha("os dois caminhoes deviam ter foto");
+else console.log("  os dois caminhoes tem foto");
 if ((t.match(/tb-cam-foto/g) || []).length !== 2) falha("esperava 2 espacos de foto na frota");
-else console.log("  espaco reservado para o caminhao sem foto");
+else console.log("  2 espacos de foto na frota");
 if (t.indexOf("Hoje (") >= 0) falha("a tabela repete o dia de hoje (o calendario ja mostra)");
 else console.log("  nao repete o dia de hoje");
 

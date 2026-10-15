@@ -26,6 +26,8 @@ console.log("\n=== 2. CACHE OFFLINE E PORTAO AUTOMATICO ===");
 const sw = fs.readFileSync(path.join(dir, "sw.js"), "utf8");
 if (sw.indexOf("\"ia.js\"") < 0) falha("sw.js nao guarda ia.js no cache offline");
 else console.log("  ok  ia.js no cache offline (funciona sem internet)");
+if (sw.indexOf("\"central.js\"") < 0) falha("sw.js nao guarda central.js (as notificacoes real do site dependem dele)");
+else console.log("  ok  central.js (notificacoes) no cache offline");
 if (sw.indexOf("atendimento.js") >= 0) falha("sw.js ainda referencia atendimento.js (arquivo que nao existe)");
 else console.log("  ok  atendimento.js fantasma fora do cache");
 const check = fs.readFileSync(path.join(dir, ".github", "workflows", "check.yml"), "utf8");
@@ -135,7 +137,21 @@ const cfg = fs.readFileSync(path.join(dir, "configuracoes.html"), "utf8");
 });
 console.log("  ok  provedor, URL, chave, modelo e botao Testar");
 
-console.log("\n=== 9. MCP (agentes de IA no repositorio) ===");
+console.log("\n=== 9. AVALIACAO DE ESTRELAS ===");
+const sc = fs.readFileSync(path.join(dir, "script.js"), "utf8");
+["salvarAvaliacao", "enviarAvaliacaoNuvem", "estrelasHTML", "mediaEstrelas"].forEach(function (f) {
+    if (sc.indexOf("function " + f) < 0) falha("script.js sem " + f + " (nota das estrelas)");
+});
+if (sc.indexOf("/avaliacoes/") < 0) falha("a avaliacao nao vai para o Firebase");
+else console.log("  ok  avaliacao gravada local e enviada ao Firebase");
+const mp = fs.readFileSync(path.join(dir, "meus-pedidos.html"), "utf8");
+["caixaAvaliar", "salvarVoto", "toggleAvaliar"].forEach(function (f) {
+    if (mp.indexOf("function " + f) < 0) falha("meus-pedidos.html sem " + f + " (o cliente nao consegue avaliar)");
+});
+if (css.indexOf(".avaliar-box") < 0) falha("CSS do voto de estrelas ausente");
+else console.log("  ok  cliente avalia o pedido entregue (1 a 5 + comentario)");
+
+console.log("\n=== 10. MCP (agentes de IA no repositorio) ===");
 try {
     const mcp = JSON.parse(fs.readFileSync(path.join(dir, "mcp.json"), "utf8"));
     if (!mcp.mcpServers || !mcp.mcpServers.filesystem) falha("mcp.json sem mcpServers.filesystem");

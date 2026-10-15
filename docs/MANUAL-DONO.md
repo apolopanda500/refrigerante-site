@@ -80,6 +80,8 @@ Dá para escrever só o final: `/entregue 001`.
   conexão do bot (token e chat do Telegram).
 - **Card de IA** (`Configurações → Inteligência Artificial`): escolha Local,
   Grátis (nuvem) ou Personalizada, e botão **Testar** para conferir na hora.
+  *Fica guardado para você: o cliente do site só vê o botão de conversa (IA)
+  no canto da tela, sem essas opções.*
 
 ---
 
@@ -111,6 +113,10 @@ o cliente escreve a dúvida e a resposta sai na hora.
 Se não tiver resposta automática, ele toca em **Falar com o vendedor**
 ou **Falar com o motorista** — abre o WhatsApp com a mensagem pronta
 e você recebe aviso no Telegram.
+
+A tabela de informações (dias de entrega, horários, pagamento, frete,
+frota e garantia) tem um botão **Minimizar**: no celular ela já começa
+recolhida e o cliente abre quando quiser.
 
 ---
 

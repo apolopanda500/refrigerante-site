@@ -34,12 +34,15 @@ var ESSENCIAL = [
     "app.js",
     "app-update.js",
     "ia.js",
+    "central.js",
     "firebase-appcheck.js",
     "versao.txt",
     "catalogo.json",
     "manifest.json",
     "img/icon-192.png",
-    "img/icon-512.png"
+    "img/icon-512.png",
+    "img/608VERDE.jpg",
+    "img/608AZUL.jpeg"
 ];
 
 /*paginas que NAO entram no app do cliente

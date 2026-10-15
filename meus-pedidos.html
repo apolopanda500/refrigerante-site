@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261015b">
+<link rel="manifest" href="manifest.json?v=20261015c">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,11 +11,11 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meus Pedidos - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015b">
-<script src="theme.js?v=20261015b"></script>
+<link rel="stylesheet" href="style.css?v=20261015c">
+<script src="theme.js?v=20261015c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-.page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
+.page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
 .page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
 .page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }
 .busca-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:22px; margin-bottom:22px; }
@@ -116,7 +116,7 @@
 [data-theme="dark"] .filtro{font-size:1rem !important}
 
 /* ===== NAVEGACAO HORIZONTAL (igual a home) ===== */
-.main-header{background:var(--primary-color,#3d4465)!important;position:sticky;top:0;z-index:100}
+.main-header{background:var(--primary-color,#3d4465)!important;position:fixed;top:0;left:0;right:0;z-index:100}
 .main-header .container{max-width:1600px;width:100%;padding:0 12px}
 .main-header nav{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;min-height:60px}
 .main-header .logo{
@@ -186,12 +186,13 @@
 <div id="listaPedidos"></div>
 </div></section>
 
-<script src="conta.js?v=20261015b"></script>
-<script src="firebase-appcheck.js?v=20261015b"></script>
-<script src="app-update.js?v=20261015b"></script>
-<script src="ia.js?v=20261015b"></script>
-<script src="loja.js?v=20261015b"></script>
-<script src="script.js?v=20261015b"></script>
+<script src="conta.js?v=20261015c"></script>
+<script src="firebase-appcheck.js?v=20261015c"></script>
+<script src="app-update.js?v=20261015c"></script>
+<script src="ia.js?v=20261015c"></script>
+<script src="central.js?v=20261015c"></script>
+<script src="loja.js?v=20261015c"></script>
+<script src="script.js?v=20261015c"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -327,11 +328,64 @@ function render(){
     h += '<div><b>Subtotal:</b> ' + formatBRL(p.subtotal) + '</div>';
     h += '<div class="timeline"><b>Acompanhamento:</b>';
     p.historico.forEach(function(ev){
-      h += '<div class="timeline-item"><i class="fa fa-circle"></i> ' + (STATUS_LABEL[ev.status] || ev.status) + " — " + dataHora(ev.quando) + '</div>';
+        h += '<div class="timeline-item"><i class="fa fa-circle"></i> ' + (STATUS_LABEL[ev.status] || ev.status) + " — " + dataHora(ev.quando) + '</div>';
     });
-    h += '</div></div></div>';
+    h += '</div></div>';
+    /* avaliacao de estrelas: so no pedido entregue */
+    if (p.status === "entregue") {
+        var av = (typeof avaliacaoDoPedido === "function") ? avaliacaoDoPedido(p.id) : null;
+        h += '<div class="avaliar-resumo">' + (av
+            ? '<span>' + (typeof estrelasHTML === "function" ? estrelasHTML(av.estrelas, 1) : av.estrelas + " estrelas") + '</span>'
+            : '<span>Avalie a entrega deste pedido</span>')
+          + '<button type="button" class="btn-detalhe" onclick="toggleAvaliar(\'' + p.id + '\')">'
+          + '<i class="fa fa-star"></i> ' + (av ? "Mudar nota" : "Avaliar") + '</button></div>';
+        h += '<div class="avaliar-box" id="av-' + p.id + '" style="display:none">' + caixaAvaliar(p, av) + '</div>';
+    }
+    h += '</div>';
   });
   box.innerHTML = h;
+}
+
+/* ---------- avaliacao de estrelas (1 a 5 + comentario) ---------- */
+var votoEstrelas = {};
+function caixaAvaliar(p, av) {
+    var h = '<b><i class="fa fa-star"></i> Sua nota para este pedido</b><div class="voto">';
+    for (var i = 1; i <= 5; i++) {
+        h += '<button type="button" class="' + (av && av.estrelas >= i ? "on" : "")
+           + '" onclick="votarEstrela(\'' + p.id + '\',' + i + ')" aria-label="' + i + ' estrela'
+           + (i > 1 ? "s" : "") + '"><i class="fa fa-star"></i></button>';
+    }
+    h += '</div><textarea id="avTexto-' + p.id + '" maxlength="500" placeholder="Comentário (opcional)">'
+       + (av && av.texto ? String(av.texto).replace(/</g, "&lt;") : "") + '</textarea>'
+       + '<button type="button" class="btn-detalhe" onclick="salvarVoto(\'' + p.id + '\')">'
+       + '<i class="fa fa-check"></i> Enviar avaliação</button></div>';
+    return h;
+}
+function toggleAvaliar(id) {
+    var el = document.getElementById("av-" + id);
+    if (!el) return;
+    var abriu = (el.style.display !== "block");
+    el.style.display = abriu ? "block" : "none";
+    if (abriu && votoEstrelas[id] === undefined) {
+        var av = (typeof avaliacaoDoPedido === "function") ? avaliacaoDoPedido(id) : null;
+        votoEstrelas[id] = av ? av.estrelas : 0;
+    }
+    if (abriu && votoEstrelas[id]) votarEstrela(id, votoEstrelas[id]);
+}
+function votarEstrela(id, n) {
+    votoEstrelas[id] = n;
+    var box = document.getElementById("av-" + id);
+    if (!box) return;
+    box.querySelectorAll(".voto button").forEach(function (b, i) {
+        b.classList.toggle("on", i < n);
+    });
+}
+function salvarVoto(id) {
+    var n = votoEstrelas[id] || 0;
+    if (!n) { alert("Toque nas estrelas para dar a nota (1 a 5)."); return; }
+    var texto = (document.getElementById("avTexto-" + id) || {}).value || "";
+    if (typeof salvarAvaliacao === "function") salvarAvaliacao(id, n, texto);
+    render();
 }
 
 function toggleDetalhe(id){

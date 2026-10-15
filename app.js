@@ -337,7 +337,8 @@ localStorage.setItem("refrigeranteCart",JSON.stringify(ct));
  setTimeout(function(){bt.classList.remove("ok");bt.textContent="Adicionar"},1500);uC()}catch(e){}}
 function partilhar(){try{var u=location.href.split("#")[0];
 if(navigator.share){navigator.share({title:"Convencao",text:"Confira!",url:u}).catch(function(){})}
-else if(navigator.clipboard){navigator.clipboard.writeText(u);alert("Link copiado!")}}catch(e){}}
+else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(function(){alert("Link copiado!")}).catch(function(){alert(u)})}
+else{alert(u)}}catch(e){}}
 /* ============================================
    CATALOGO DO SITE OFICIAL (atualizado todo dia)
    O robo .github/scripts/sync-catalogo.js grava
@@ -793,7 +794,13 @@ function pintarTabelaGeral(){
             'Se algo vier errado, trocamos antes de sair do ponto.']
     ];
 
-    var h = '<div class="tab-wrap tab-graud"><table class="tabela-geral">'
+    var h = '<div class="tb-mini">'
+          + '<button type="button" class="tb-mini-btn" onclick="alternarTabelaInfo()" aria-expanded="true">'
+          + '<i class="fa fa-chevron-up" id="tbMiniIcon"></i>'
+          + '<span id="tbMiniTexto">Minimizar informações</span>'
+          + '</button></div>'
+          + '<div id="tbInfoCorpo" class="tb-info-corpo">'
+          + '<div class="tab-wrap tab-graud"><table class="tabela-geral">'
           + '<thead><tr>'
           + '<th class="tb-c1">Assunto</th>'
           + '<th class="tb-c2">Quando</th>'
@@ -804,9 +811,45 @@ function pintarTabelaGeral(){
           + secao("Pagamento, frete e contato", "fa-file-invoice-dollar", linhasPAG)
           + secao("Nossa frota", "fa-truck", linhasFrota)
           + secao("Garantia", "fa-shield-alt", linhasGarantia)
-          + '</tbody></table></div>';
+          + '</tbody></table></div></div>';
 
     el.innerHTML = h;
+    if (typeof aplicarEstadoTabelaInfo === "function") aplicarEstadoTabelaInfo();
+}
+
+/* ============================================
+   BOTAO MINIMIZAR (igual ao catalogo)
+   No celular em pe as 5 secoes viram cartoes e
+   ficam longas demais: o cliente abre uma vez e
+   fica guardado. No PC a tabela fica sempre aberta.
+   ============================================ */
+function tabelaInfoMiniSalvo() {
+    try {
+        var v = localStorage.getItem("tabelaInfoMini");
+        if (v === "1") return true;
+        if (v === "0") return false;
+    } catch (e) {}
+    /* sem escolha do cliente: no celular em pe ja vem minimizado */
+    try {
+        return !!(window.matchMedia && window.matchMedia("(max-width:768px) and (orientation:portrait)").matches);
+    } catch (e) { return false; }
+}
+
+function aplicarEstadoTabelaInfo() {
+    var mini = tabelaInfoMiniSalvo();
+    var corpo = document.getElementById("tbInfoCorpo");
+    var icone = document.getElementById("tbMiniIcon");
+    var texto = document.getElementById("tbMiniTexto");
+    var botao = (document.querySelector ? document.querySelector(".tb-mini-btn") : null);
+    if (corpo) corpo.style.display = mini ? "none" : "";
+    if (icone) icone.className = "fa " + (mini ? "fa-chevron-down" : "fa-chevron-up");
+    if (texto) texto.textContent = mini ? "Ver informações da loja" : "Minimizar informações";
+    if (botao) botao.setAttribute("aria-expanded", mini ? "false" : "true");
+}
+
+function alternarTabelaInfo() {
+    try { localStorage.setItem("tabelaInfoMini", tabelaInfoMiniSalvo() ? "0" : "1"); } catch (e) {}
+    aplicarEstadoTabelaInfo();
 }
 
 function ligarConfianca(){

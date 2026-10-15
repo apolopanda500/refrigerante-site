@@ -355,6 +355,130 @@ function sincronizarPedidosNuvem(callback) {
     }
     tentar();
 }
+/* baixa da nuvem SO os pedidos do telefone do cliente e junta com os locais.
+   Para a notificacao acompanhar o status que o vendedor mudou. */
+function sincronizarPedidosCliente(callback) {
+    if (typeof Conta === "undefined") { if (callback) callback(getPedidos()); return; }
+    var tels = [];
+    try { (Conta.dados().tel || "").toString(); } catch (e) {}
+    try {
+        var d = Conta.dados();
+        if (d && d.tel) tels.push(String(d.tel).replace(/\D/g, ""));
+        var perfil = JSON.parse(localStorage.getItem("refrigerantePerfil") || "{}");
+        if (perfil.tel) tels.push(String(perfil.tel).replace(/\D/g, ""));
+    } catch (e) {}
+    tels = tels.filter(function (t, i) { return t && tels.indexOf(t) === i; });
+    if (!tels.length) { if (callback) callback(getPedidos()); return; }
+    var bases = nuvemEnderecos();
+    var i = 0;
+    function tentar() {
+        if (i >= bases.length) { if (callback) callback(getPedidos()); return; }
+        var base = bases[i++];
+        fetch(base + "/pedidos.json", { cache: "no-store" })
+            .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+            .then(function (dados) {
+                var nuvem = (dados && typeof dados === "object")
+                    ? Object.keys(dados).map(function (k) { return dados[k]; }).filter(function (p) {
+                        return p && p.id && tels.some(function (t) {
+                            return String(p.tel || "").replace(/\D/g, "").slice(-8) === t.slice(-8);
+                        });
+                    })
+                    : [];
+                var atual = getPedidos();
+                var junto = mesclarPedidos(atual, nuvem);
+                if (JSON.stringify(junto) !== JSON.stringify(atual)) savePedidos(junto);
+                if (callback) callback(junto);
+            })
+            .catch(function () { tentar(); });
+    }
+    tentar();
+}
+
+/* ============================================================
+   AVALIACOES (notas e estrelas)
+   O cliente avalia o pedido entregue (1 a 5 estrelas + texto).
+   Vai para a nuvem junto do pedido: o vendedor ve a media.
+   ============================================================ */
+var AVALIACOES_KEY = "convencao_avaliacoes";
+function getAvaliacoesLocais() {
+    try { return JSON.parse(localStorage.getItem(AVALIACOES_KEY) || "[]"); }
+    catch (e) { return []; }
+}
+function saveAvaliacoesLocais(lista) {
+    try { localStorage.setItem(AVALIACOES_KEY, JSON.stringify(lista)); } catch (e) {}
+}
+function enviarAvaliacaoNuvem(av) {
+    if (!av || !av.id) return;
+    var corpo = JSON.stringify(av);
+    nuvemEnderecos().forEach(function (base) {
+        try {
+            fetch(base + "/avaliacoes/" + encodeURIComponent(av.id) + ".json",
+                { method: "PUT", body: corpo, mode: "cors" }).catch(function () {});
+        } catch (e) {}
+    });
+}
+/* grava avaliacao (nova ou substitui a do mesmo pedido) */
+function salvarAvaliacao(pedidoId, estrelas, texto) {
+    estrelas = Math.max(1, Math.min(5, parseInt(estrelas, 10) || 0));
+    if (!pedidoId || !estrelas) return null;
+    var av = {
+        id: pedidoId + "-" + Date.now(),
+        pedidoId: pedidoId,
+        estrelas: estrelas,
+        texto: String(texto || "").slice(0, 500),
+        criadoEm: Date.now()
+    };
+    try {
+        var p = null;
+        if (typeof Conta !== "undefined") {
+            try { p = Conta.dados(); } catch (e) {}
+        }
+        if (p) av.nome = p.nome || "";
+    } catch (e) {}
+    var lista = getAvaliacoesLocais().filter(function (a) { return a.pedidoId !== pedidoId; });
+    lista.unshift(av);
+    saveAvaliacoesLocais(lista);
+    enviarAvaliacaoNuvem(av);
+    return av;
+}
+function avaliacaoDoPedido(pedidoId) {
+    return getAvaliacoesLocais().find(function (a) { return a.pedidoId === pedidoId; }) || null;
+}
+function mediaEstrelas(lista) {
+    lista = (lista || []).filter(function (a) { return a && a.estrelas >= 1 && a.estrelas <= 5; });
+    if (!lista.length) return { media: 0, total: 0 };
+    var soma = lista.reduce(function (t, a) { return t + a.estrelas; }, 0);
+    return { media: Math.round((soma / lista.length) * 10) / 10, total: lista.length };
+}
+/* baixa TODAS as avaliacoes da nuvem (o vendedor ve a media de todo mundo) */
+function sincronizarAvaliacoesNuvem(callback) {
+    var bases = nuvemEnderecos();
+    var i = 0;
+    function tentar() {
+        if (i >= bases.length) { if (callback) callback(null); return; }
+        var base = bases[i++];
+        fetch(base + "/avaliacoes.json", { cache: "no-store" })
+            .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+            .then(function (dados) {
+                var lista = (dados && typeof dados === "object")
+                    ? Object.keys(dados).map(function (k) { return dados[k]; }).filter(Boolean)
+                    : [];
+                if (callback) callback(lista);
+            })
+            .catch(function () { tentar(); });
+    }
+    tentar();
+}
+/* estrelas em HTML (so leitura na loja; voto so no pedido) */
+function estrelasHTML(media, total) {
+    var h = '<span class="estrelas" title="' + media + ' de 5 (' + total + ' votos)">';
+    for (var i = 1; i <= 5; i++) {
+        h += '<i class="fa ' + (i <= Math.round(media) ? "fa-star" : "fa-star-o") + '"></i>';
+    }
+    h += '</span>';
+    if (total) h += ' <span class="estrelas-num">' + String(media).replace(".", ",") + " (" + total + ")</span>";
+    return h;
+}
 function gerarId() {
     const d = new Date();
     const n = getPedidos().length + 1;
