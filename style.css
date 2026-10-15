@@ -1361,9 +1361,61 @@ body{font-size:16.5px}
 .reg-tag.hoje{background:#fff3cd;color:#8a6100}
 .reg-tag.pedido{background:#e3f0ff;color:#0b4fa8}
 
-/* --- TABELA DE PEDIDOS x ENTREGAS (horizontal no PC / vertical no celular) --- */
-/* ocupa a linha inteira: as 4 regioes ficam lado a lado, sem sobra a direita */
-#sideRegioes{grid-column:1 / -1}
+/* --- TABELA GERAL (todas as informacoes em um lugar so) --- */
+.tb-info{
+    width:100%;max-width:1780px;margin:14px auto 20px;padding:0 14px;
+}
+.tab-graud{max-width:100%;box-shadow:0 0 16px 0 rgba(82,63,105,.07)}
+.tabela-geral{font-size:.9rem;margin:0}
+.tabela-geral th.tb-c1{width:24%}
+.tabela-geral th.tb-c2{width:34%}
+.tabela-geral th.tb-c3{width:42%}
+
+/* linha de secao: agrupa os assuntos */
+.tabela-geral tr.tb-secao th{
+    background:#3d4465;font-size:.78rem;letter-spacing:.06em;
+    padding:9px 16px;text-transform:uppercase;
+}
+.tabela-geral tr.tb-secao th i{margin-right:6px;color:#ffd166}
+
+.tabela-geral td{border-bottom:1px solid #f0f1f6}
+.tabela-geral tbody tr:hover td{background:#f7f9ff}
+.tab-assunto{font-size:.9rem;color:#2c3252;font-weight:600}
+.tab-quando{color:#3d4465}
+.tab-detalhe{color:var(--text-muted);font-size:.85rem}
+
+/* etiqueta de status: entrega hoje / abre hoje */
+.tb-tag{
+    display:inline-flex;align-items:center;gap:4px;margin-left:6px;
+    padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:800;
+    white-space:nowrap;
+}
+.tb-tag.t-agora{background:#fff3cd;color:#8a6100}
+.tb-tag.t-abre{background:#e3f0ff;color:#0b4fa8}
+
+/* linha do tempo: pedido -> entrega */
+.tb-passo{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:4px 10px;margin:2px 3px 2px 0;border-radius:8px;
+    background:#f2f4fb;border:1px solid #e4e7f2;
+    font-size:.83rem;font-weight:600;color:#3d4465;white-space:nowrap;
+}
+.tb-passo.tb-off{background:#f4f4f6;color:#8b93a8;text-decoration:line-through}
+.tb-seta{color:#b6bccd;font-size:.72rem;margin:0 2px}
+
+.tb-ok{color:var(--primary-color)}
+.tb-cam{display:inline-flex;align-items:center;gap:6px}
+.tb-cam-vermelho{color:#c62828}
+.tb-cam-azul{color:#1565c0}
+.tabela-geral a{color:var(--primary-color);font-weight:600}
+
+/* no celular a tabela geral vira lista vertical */
+@media(max-width:768px){
+    .tabela-geral tr.tb-secao th{padding:10px 14px}
+    .tabela-geral td{flex-wrap:wrap;justify-content:flex-start;text-align:left}
+    .tabela-geral td::before{width:100%;margin-bottom:2px}
+    .tb-passo{white-space:normal}
+}
 #sideRegioes .reg-grade{
     grid-template-columns:repeat(4,minmax(0,1fr));
 }

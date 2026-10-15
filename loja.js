@@ -128,6 +128,17 @@ var BAIRROS_ATENDIDOS_TEXTO = "Japeri, Engenho Pedreira, Paracambi e Seropédica
 var HORA_ABRE_PEDIDOS = 8 * 60 + 50;   // 08:50 (abre 10 minutos antes)
 var HORA_FECHA_PEDIDOS = 15 * 60;      // 15:00 em ponto
 
+/* ---------- DINHEIRO ---------- */
+/* formatBRL: converte 27.5 -> "R$ 27,50" (NaN/null viram R$ 0,00)
+   fica aqui porque a home NAO carrega o script.js */
+if (typeof formatBRL !== "function") {
+    var formatBRL = function (n) {
+        var v = parseFloat(n);
+        if (isNaN(v) || !isFinite(v)) return "R$ 0,00";
+        return "R$ " + v.toFixed(2).replace(".", ",");
+    };
+}
+
 function semAcento(t) {
     return String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 }

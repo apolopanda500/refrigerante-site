@@ -31,11 +31,21 @@ const PASTA_IMG = path.join(RAIZ, "img", "cat");
 const GRUPOS = [
     { id: "2l", nm: "Refrigerantes 2L", ic: "fa-bottle-water", chaves: ["2l", "2 litros"] },
     { id: "60", nm: "Refrigerantes 600ml", ic: "fa-glass-water", chaves: ["600ml", "600 ml"] },
-    { id: "35", nm: "Refrigerantes Latas", ic: "fa-mug-hot", chaves: ["350ml", "350 ml", "269ml", "269 ml", "lata"] },
-    { id: "re", nm: "Refrescos e Chinotto", ic: "fa-lemon", chaves: ["chinotto", "refresco"] },
+    { id: "35", nm: "Refrigerantes Latas", ic: "fa-mug-hot", chaves: ["350ml", "350 ml", "lata"] },
+    { id: "re", nm: "Refrescos e Chinotto", ic: "fa-lemon",
+      chaves: ["chinotto", "refresco",
+               /* guarana zero ACUCAR em lata entra junto com o chinotto */
+               "guarana zero acucar lata", "guarana convencional zero acucar lata",
+               "guarana zero acucar 269", "guarana convencional zero acucar 269"] },
     { id: "mx", nm: "MSX Energético", ic: "fa-bolt", chaves: ["msx", "energetico", "energético"] },
     { id: "ag", nm: "Água", ic: "fa-tint", chaves: ["agua", "água"] },
     { id: "ch", nm: "Chopp Ravache", ic: "fa-beer-mug-empty", chaves: ["chopp", "barril"] }
+];
+
+/* regra pontual: o guarana zero acucar LATA (269ml) fica na classe do
+   chinotto, e nao em "Refrigerantes Latas". o 2L continua em Refrigerantes 2L */
+const EXCECAO_CLASSE = [
+    { id: "500000113", classe: "re" }
 ];
 
 /* ordem de checagem: mais especifico primeiro (chopp, msx e agua
@@ -208,12 +218,19 @@ function nomeLimpo(nome) {
 
 /* ---------- categoria pelo NOME do produto (ignora o grupo DESTAQUES do site) ---------- */
 function categoriaPeloNome(nome, descricao, grupoNome) {
-    const bruto = (nome + " " + descricao + " " + (grupoNome || "")).toLowerCase();
+    /* sem acento: assim "acucar" acha "Açúcar" e "energetico" acha "energético" */
+    const bruto = semAcento(nome + " " + descricao + " " + (grupoNome || "")).toLowerCase();
     for (let i = 0; i < ORDEM_CATEGORIA.length; i++) {
         const g = GRUPOS.find(function (x) { return x.id === ORDEM_CATEGORIA[i]; });
-        if (g && g.chaves.some(function (c) { return bruto.indexOf(c) >= 0; })) return g.id;
+        if (g && g.chaves.some(function (c) { return bruto.indexOf(semAcento(c).toLowerCase()) >= 0; })) return g.id;
     }
     return "2l";
+}
+
+/* excecao por codigo oficial: tem prioridade sobre o nome */
+function classeDaExcecao(codigo) {
+    const e = EXCECAO_CLASSE.find(function (x) { return x.id === codigo; });
+    return e ? e.classe : null;
 }
 
 /* ---------- 2) produtos ---------- */
@@ -233,7 +250,7 @@ function extrairProdutos(html, gruposOficiais) {
         /* categoria pelo proprio produto (o grupo DESTAQUES do site oficial
            nao define a classe real: Chinotto e MSX voltam para suas classes) */
         const grupoNome = gruposOficiais[grupo] || "";
-        const catId = categoriaPeloNome(nome, descricao, grupoNome);
+        const catId = classeDaExcecao(key) || categoriaPeloNome(nome, descricao, grupoNome);
 
         /* nome limpo + descricao curta */
         const nm = nomeLimpo(nome);

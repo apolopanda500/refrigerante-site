@@ -10,7 +10,7 @@ var CT=[
 var PD=[];
 function addP(c,n,d,p,i){PD.push({ct:c,nm:n,ds:d,pr:p,im:i,key:""})}
 // ===== REFRIGERANTES Latas =====
-addP("35","Guarana Zero 269ml Pct c12","Zero - Pack 12","R$ 33,40","img/p03.jpg");
+addP("re","Guarana Zero 269ml Pct c12","Zero - Pack 12","R$ 33,40","img/p03.jpg");
 
 // ===== REFRIGERANTES 2L - pacotes c6 =====
 addP("2l","Guarana 2L Pct c6","Pack 6 garrafas","R$ 27,00","img/p06.jpg");
@@ -630,13 +630,115 @@ function proximoDiaAtendente(){
     return 1;
 }
 
+/* ============================================
+   TABELA GERAL: todas as informacoes em um
+   unico lugar, organizada. O catalogo fica
+   logo abaixo dessa tabela.
+   ============================================ */
+function pintarTabelaGeral(){
+    var el = document.getElementById("tabelaInfo");
+    if (!el) return;
+
+    var d = new Date().getDay();
+    var rs = (typeof regioesDoDia === "function") ? regioesDoDia(d) : [];
+    var abrindo = (typeof regioesPedidoHoje === "function") ? regioesPedidoHoje(d) : [];
+    var nomeHoje = (typeof NOMES_DIA_LONGOS !== "undefined") ? NOMES_DIA_LONGOS[d] : "-";
+
+    function secao(titulo, icone, linhas){
+        var h = '<tr class="tb-secao"><th colspan="3"><i class="fa ' + icone + '"></i> ' + titulo + '</th></tr>';
+        linhas.forEach(function (l){
+            h += '<tr>'
+               + '<td data-label="Assunto" class="tb-assunto">' + l[0] + '</td>'
+               + '<td data-label="Quando" class="tb-quando">' + l[1] + '</td>'
+               + '<td data-label="Detalhe" class="tb-detalhe">' + l[2] + '</td>'
+               + '</tr>';
+        });
+        return h;
+    }
+
+    /* ---- 1. pedidos e entregas por regiao ---- */
+    var linhasRegioes = REGIOES.map(function (r){
+        var pd = (typeof diaPedidoDaRegiao === "function") ? diaPedidoDaRegiao(r) : -1;
+        var nomePedido = pd >= 0 ? NOMES_DIA_LONGOS[pd] : "-";
+        var entregaHoje = r.dias.indexOf(d) >= 0;
+        var marca = '<b class="tb-ok">' + r.nome + '</b>';
+        if (entregaHoje) marca += ' <span class="tb-tag t-agora"><i class="fa fa-truck"></i> entrega hoje</span>';
+        else if ((typeof pedidoAbreHoje === "function") && pedidoAbreHoje(r)) marca += ' <span class="tb-tag t-abre"><i class="fa fa-cart-plus"></i> abre hoje</span>';
+        var quando = '<span class="tb-passo"><i class="fa fa-cart-plus"></i> ' + nomePedido + '</span>'
+                   + '<i class="fa fa-arrow-right tb-seta"></i>'
+                   + '<span class="tb-passo"><i class="fa fa-truck"></i> ' + r.diasTexto + '</span>';
+        var detalhe = r.horario + ' · frete <b>' + formatBRL(r.frete) + '</b>';
+        return [marca, quando, detalhe];
+    });
+
+    /* ---- 2. horarios ---- */
+    var linhasHorario = [
+        ['<b>Pedidos</b>', '<span class="tb-passo"><i class="fa fa-clock"></i> 08:50 às 15:00</span>',
+            'Fora desse horário os pedidos ficam pausados no site.'],
+        ['<b>Entrega nas ruas</b>', '<span class="tb-passo"><i class="fa fa-truck"></i> 9h às 15h</span>',
+            'O pedido é feito <b>um dia antes</b>: o caminhão carrega na véspera.'],
+        ['<b>Hoje (' + nomeHoje + ')</b>',
+            rs.length ? '<span class="tb-passo"><i class="fa fa-check-circle"></i> ' + rs.map(function(r){return r.nome;}).join(", ") + '</span>'
+                      : '<span class="tb-passo tb-off"><i class="fa fa-times"></i> sem entrega</span>',
+            abrindo.length ? 'Pedidos abertos hoje para <b>' + abrindo.map(function(r){return r.nome;}).join(", ") + '</b>.'
+                           : 'Hoje não abrem pedidos novos.']
+    ];
+
+    /* ---- 3. pagamento e entrega ---- */
+    var pix = (typeof PIX_CHAVE !== "undefined") ? PIX_CHAVE : "";
+    var linhasPAG = [
+        ['<b>Formas de pagamento</b>', '<span class="tb-passo"><i class="fa fa-qrcode"></i> Pix</span> <span class="tb-passo"><i class="fa fa-money-bill-wave"></i> Dinheiro</span>',
+            'Sem cartão de crédito. O Pix é confirmado na hora.'],
+        ['<b>Bairros atendidos</b>', '<span class="tb-passo">' + BAIRROS_ATENDIDOS_TEXTO + '</span>',
+            'Bairro fora da lista gera aviso, não bloqueio.'],
+        ['<b>Frete grátis</b>', '<span class="tb-passo"><i class="fa fa-gift"></i> a partir de ' + formatBRL(freteGratisMinimo()) + '</span>',
+            'Acima disso o frete cai para R$ 0,00 no carrinho.'],
+        ['<b>Contato</b>', '<a href="https://wa.me/5521983158911" target="_blank" rel="noopener"><i class="fa fa-whatsapp"></i> (21) 9-8315-8911</a>',
+            '<a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a>' + (pix ? ' · chave Pix: ' + pix : '')]
+    ];
+
+    /* ---- 4. frota ---- */
+    var linhasFrota = CAMINHOES.map(function (c){
+        return ['<b class="tb-cam tb-cam-' + c.cor + '"><i class="fa fa-truck"></i> Caminhão ' + c.corNome + '</b>',
+                '<span class="tb-passo">' + c.modelo + '</span>',
+                'Placa <b>' + c.placa + '</b> · ' + (c.motorista === "A INFORMAR" ? "motorista a informar" : c.motorista)
+                + (c.whatsapp ? ' · <a href="https://wa.me/' + c.whatsapp + '" target="_blank" rel="noopener">WhatsApp</a>' : '')];
+    });
+
+    /* ---- 5. garantia ---- */
+    var linhasGarantia = [
+        ['<b>Embalagem</b>', '<span class="tb-passo"><i class="fa fa-box"></i> conferida na saída</span>',
+            'Produto fechado e identificado na hora da separação.'],
+        ['<b>Nota fiscal</b>', '<span class="tb-passo"><i class="fa fa-receipt"></i> simplicada</span>',
+            'Comprovante entregue junto com a mercadoria.'],
+        ['<b>Troca</b>', '<span class="tb-passo"><i class="fa fa-undo"></i> na hora da entrega</span>',
+            'Se algo vier errado, trocamos antes de sair do ponto.']
+    ];
+
+    var h = '<div class="tab-wrap tab-graud"><table class="tabela-geral">'
+          + '<thead><tr>'
+          + '<th class="tb-c1">Assunto</th>'
+          + '<th class="tb-c2">Quando</th>'
+          + '<th class="tb-c3">Detalhe</th>'
+          + '</tr></thead><tbody>'
+          + secao("Pedidos e entregas", "fa-map-marker-alt", linhasRegioes)
+          + secao("Horários de hoje", "fa-clock", linhasHorario)
+          + secao("Pagamento, frete e contato", "fa-file-invoice-dollar", linhasPAG)
+          + secao("Nossa frota", "fa-truck", linhasFrota)
+          + secao("Garantia", "fa-shield-alt", linhasGarantia)
+          + '</tbody></table></div>';
+
+    el.innerHTML = h;
+}
+
 function ligarConfianca(){
+    pintarTabelaGeral();
+    pintarFaixaRegiao();
     pintarRegioes();
     pintarCaminhoes();
     pintarConfianca();
-    pintarFaixaRegiao();
     // reavalia a regra de atendimento a cada minuto (abre 08:50 / fecha 15:00 em ponto)
-    setInterval(function(){ pintarFaixaRegiao(); }, 60000);
+    setInterval(function(){ pintarFaixaRegiao(); pintarTabelaGeral(); }, 60000);
 }
 
 if (document.readyState === "loading") {

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014l">
+<link rel="manifest" href="manifest.json?v=20261014n">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,8 +14,8 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="style.css?v=20261014l">
-<script src="theme.js?v=20261014l"></script>
+<link rel="stylesheet" href="style.css?v=20261014n">
+<script src="theme.js?v=20261014n"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 /* header da home e sticky: nao precisa do espaco do header fixo */
@@ -403,28 +403,21 @@ a{text-decoration:none;color:inherit}
 <div class="sw"><div class="si"><div class="sf"><i class="fa fa-search"></i><input type="text" placeholder="Buscar produto..." oninput="fs(this.value)"></div></div></div>
 
 <div id="faixaRegiao" class="faixa-regiao"></div>
-<div class="tb"><div class="tr2" id="trRow"></div></div>
 
+<!-- 1) TABELA GERAL com todas as informacoes -->
+<div id="tabelaInfo" class="tb-info"></div>
+
+<!-- 2) CATALOGO logo abaixo da tabela -->
+<div class="tb"><div class="tr2" id="trRow"></div></div>
+<main class="pw-main" id="pwMain"></main>
+
+<!-- 3) avisos e divulgacao -->
 <div class="pw" id="bnrTopo"></div>
 <div class="pw-layout">
   <aside class="pw-side">
     <div id="sideZap"></div>
-    <div class="wgt" id="sideHorario"></div>
-    <div class="wgt" id="sideRegioes"></div>
-    <div class="wgt" id="sideCaminhoes"></div>
-    <div class="wgt" id="sideSobre"></div>
     <div class="wgt" id="sideBanners"></div>
-<div class="wgt">
-<h3><i class="fa fa-shield-alt"></i> Nossa garantia</h3>
-      <div class="wgt-selos">
-        <span class="selo"><i class="fa fa-box"></i> Pacotes</span>
-        <span class="selo"><i class="fa fa-truck"></i> Entrega</span>
-        <span class="selo"><i class="fa fa-receipt"></i> Nota fiscal</span>
-        <span class="selo"><i class="fa fa-credit-card"></i> Pix</span>
-      </div>
-    </div>
   </aside>
-  <main class="pw-main"><div id="pwMain"></div></main>
 </div>
 <div class="pw" id="bnrFim"></div>
 
@@ -435,12 +428,12 @@ a{text-decoration:none;color:inherit}
 <p style="font-size:.75rem;color:#a1a8c3;margin-top:6px">Pedidos das 08:50 às 15:00 · entrega um dia depois<br>Seg: Japeri e Engenho Pedreira · Qua: Paracambi · Qui: Seropédica</p>
 </footer>
 
-<script src="conta.js?v=20261014l"></script>
-<script src="loja.js?v=20261014l"></script>
-<script src="app.js?v=20261014l"></script>
-<script src="firebase-appcheck.js?v=20261014l"></script>
-<script src="app-update.js?v=20261014l"></script>
-<script src="atendimento.js?v=20261014l"></script>
+<script src="conta.js?v=20261014n"></script>
+<script src="loja.js?v=20261014n"></script>
+<script src="app.js?v=20261014n"></script>
+<script src="firebase-appcheck.js?v=20261014n"></script>
+<script src="app-update.js?v=20261014n"></script>
+<script src="atendimento.js?v=20261014n"></script>
 <script>
 (function(){
 /* a barra de navegacao e sempre visivel: destaca a pagina atual */
