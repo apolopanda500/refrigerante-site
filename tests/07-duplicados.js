@@ -64,7 +64,7 @@ function funcoesGlobais(codigo) {
     return achadas;
 }
 const scripts = ["app.js", "loja.js", "script.js", "conta.js", "theme.js", "telegram.js",
-    "firebase-appcheck.js", "app-update.js"];
+    "firebase-appcheck.js", "app-update.js", "ia.js"];
 const vistas = {};
 scripts.forEach(function (f) {
     const t = fs.readFileSync(path.join(dir, f), "utf8");

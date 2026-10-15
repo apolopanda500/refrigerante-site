@@ -2251,3 +2251,46 @@ select{max-width:100%;text-overflow:ellipsis}
 }
 .ci-remove:active{transform:scale(.9)}
 button{-webkit-user-select:none;user-select:none}
+
+/* ===== ASSISTENTE DE IA (ia.js) ===== */
+.ia-fab{position:fixed;right:16px;bottom:20px;z-index:9990;display:flex;align-items:center;gap:7px;
+ background:var(--primary-color,#3d4465);color:#ffb822;border:0;border-radius:26px;padding:13px 17px;
+ cursor:pointer;font:800 .92rem/1 'Segoe UI',sans-serif;box-shadow:0 6px 22px rgba(0,0,0,.3)}
+.ia-fab i{font-size:1.15rem}
+.ia-painel{position:fixed;right:16px;bottom:86px;z-index:9991;width:min(370px,calc(100vw - 24px));
+ height:min(480px,calc(100vh - 150px));display:none;flex-direction:column;overflow:hidden;
+ background:var(--white,#fff);border-radius:16px;box-shadow:0 14px 44px rgba(0,0,0,.35);border:1px solid var(--borda,#eeeef4)}
+.ia-painel.aberto{display:flex}
+.ia-topo{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;
+ background:var(--primary-color,#3d4465);color:#fff;font-weight:800;font-size:.95rem}
+.ia-fechar{background:none;border:0;color:#fff;font-size:1.3rem;cursor:pointer;line-height:1;padding:4px 6px}
+.ia-historico{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg-alt,#f7f7f7)}
+.ia-msg{max-width:88%;padding:9px 12px;border-radius:12px;font-size:.88rem;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.ia-voce{align-self:flex-end;background:var(--primary-color,#3d4465);color:#fff;border-bottom-right-radius:4px}
+.ia-ia{align-self:flex-start;background:var(--white,#fff);border:1px solid var(--borda,#eeeef4);color:var(--text-color,#3d4465);border-bottom-left-radius:4px}
+.ia-dica{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px 0}
+.ia-chip{border:1px solid var(--borda,#eeeef4);background:var(--white,#fff);color:var(--text-color,#3d4465);border-radius:14px;padding:6px 10px;font-size:.76rem;font-weight:700;cursor:pointer}
+.ia-chip:hover{border-color:var(--primary-color,#3d4465)}
+.ia-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--borda,#eeeef4)}
+.ia-form input{flex:1;min-width:0;padding:10px 12px;border:1px solid var(--borda,#eeeef4);border-radius:10px;font-size:.92rem;background:var(--white,#fff);color:var(--text-color,#3d4465)}
+.ia-enviar{background:var(--accent-color,#ffb822);color:#3d4465;border:0;border-radius:10px;padding:0 14px;cursor:pointer;font-size:1rem}
+/* recomendacoes (escolhas para voce) */
+.ia-rec{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.ia-rec-card{background:var(--white,#fff);border:1px solid var(--borda,#eeeef4);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;box-shadow:0 1px 6px rgba(82,63,105,.06)}
+.ia-rec-card b{font-size:.88rem;color:var(--text-color,#3d4465)}
+.ia-rec-preco{color:var(--primary-color,#3d4465);font-weight:800}
+.ia-rec-btn{display:inline-block;text-align:center;border:1.5px solid var(--primary-color,#3d4465);background:transparent;color:var(--primary-color,#3d4465);border-radius:8px;padding:6px 10px;font-size:.78rem;font-weight:800;cursor:pointer;text-decoration:none}
+.ia-rec-btn:hover{background:var(--primary-color,#3d4465);color:#fff}
+/* tema escuro: todo o assistente */
+[data-theme="dark"] .ia-fab{background:#2b3157;color:#ffb822}
+[data-theme="dark"] .ia-painel{background:#1e2138;border-color:#353a5c}
+[data-theme="dark"] .ia-historico{background:#171a2e}
+[data-theme="dark"] .ia-ia{background:#232742;border-color:#353a5c;color:#e6e8f2}
+[data-theme="dark"] .ia-chip{background:#2b3157;border-color:#3d4470;color:#dfe2ef}
+[data-theme="dark"] .ia-form{border-top-color:#353a5c}
+[data-theme="dark"] .ia-form input{background:#232742;border-color:#353a5c;color:#e6e8f2}
+[data-theme="dark"] .ia-rec-card{background:#1e2138;border-color:#353a5c}
+[data-theme="dark"] .ia-rec-card b{color:#e6e8f2}
+[data-theme="dark"] .ia-rec-preco{color:#ffb822}
+[data-theme="dark"] .ia-rec-btn{border-color:#ffb822;color:#ffb822}
+[data-theme="dark"] .ia-rec-btn:hover{background:#ffb822;color:#1e2138}

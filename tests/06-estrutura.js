@@ -108,7 +108,7 @@ console.log("  ok  " + html.length + " paginas: tags balanceadas e sem caractere
 
 /* ---------- 5. JSON validos ---------- */
 console.log("\n=== 5. JSON ===");
-["catalogo.json", "manifest.json", "manifest-vendedor.json", "precos-base.json"].forEach(function (f) {
+["catalogo.json", "manifest.json", "manifest-vendedor.json", "precos-base.json", "mcp.json"].forEach(function (f) {
     try { JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")); }
     catch (e) { falha(f + ": " + e.message); }
 });

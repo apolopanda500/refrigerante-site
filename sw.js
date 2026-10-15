@@ -33,7 +33,7 @@ var ESSENCIAL = [
     "script.js",
     "app.js",
     "app-update.js",
-    "atendimento.js",
+    "ia.js",
     "firebase-appcheck.js",
     "versao.txt",
     "catalogo.json",

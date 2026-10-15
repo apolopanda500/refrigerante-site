@@ -78,6 +78,8 @@ Dá para escrever só o final: `/entregue 001`.
 - **Exportar pedidos**: baixa um arquivo que abre no Excel.
 - **Configurações do painel**: tema próprio (não afeta o site do cliente) e
   conexão do bot (token e chat do Telegram).
+- **Card de IA** (`Configurações → Inteligência Artificial`): escolha Local,
+  Grátis (nuvem) ou Personalizada, e botão **Testar** para conferir na hora.
 
 ---
 

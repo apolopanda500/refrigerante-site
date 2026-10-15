@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261015a">
+<link rel="manifest" href="manifest.json?v=20261015b">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Configurações - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015a">
-<script src="theme.js?v=20261015a"></script>
+<link rel="stylesheet" href="style.css?v=20261015b">
+<script src="theme.js?v=20261015b"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -348,6 +348,33 @@
 </div>
 
 <div class="config-card">
+  <h2><i class="fa fa-robot"></i> Inteligência Artificial</h2>
+  <div class="config-row config-col">
+    <div class="config-label">Assistente do site
+      <small><b>Local</b>: responde na hora e funciona offline (sempre funciona). <b>Grátis (nuvem)</b>: IA real sem cadastro nem chave. <b>Personalizada</b>: sua própria conta de IA.</small>
+    </div>
+    <div class="opcoes" id="cfgIAProvedor">
+      <button class="op-btn" data-v="local" onclick="setOpcao('cfgIAProvedor',this)">Local</button>
+      <button class="op-btn" data-v="puter" onclick="setOpcao('cfgIAProvedor',this)">Grátis (nuvem)</button>
+      <button class="op-btn" data-v="custom" onclick="setOpcao('cfgIAProvedor',this)">Personalizada</button>
+    </div>
+  </div>
+  <div class="config-row config-col">
+    <div class="config-label">Sua IA (personalizada)
+      <small>Só é usada se você escolher <b>Personalizada</b>: endpoint compatível com OpenAI (URL, chave e modelo). A chave fica guardada <b>só neste dispositivo</b>.</small>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input id="cfgIAURL" type="text" placeholder="https://api.exemplo.com/v1/chat/completions" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.92rem">
+      <input id="cfgIAChave" type="password" placeholder="Chave da API" style="width:170px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.92rem">
+      <input id="cfgIAModelo" type="text" placeholder="gpt-4o-mini" style="width:160px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.92rem">
+      <button class="btn-mini" onclick="salvarIA(this)"><i class="fa fa-save"></i> Salvar</button>
+      <button class="btn-mini" onclick="testarIA(this)"><i class="fa fa-flask"></i> Testar</button>
+    </div>
+    <div id="iaConfigMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
+  </div>
+</div>
+
+<div class="config-card">
   <h2><i class="fa fa-comments"></i> Fale com a gente</h2>
   <div class="config-row config-col">
     <div class="config-label">Canais de atendimento
@@ -379,11 +406,12 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261015a"></script>
-<script src="firebase-appcheck.js?v=20261015a"></script>
-<script src="app-update.js?v=20261015a"></script>
-<script src="loja.js?v=20261015a"></script>
-<script src="script.js?v=20261015a"></script>
+<script src="conta.js?v=20261015b"></script>
+<script src="firebase-appcheck.js?v=20261015b"></script>
+<script src="app-update.js?v=20261015b"></script>
+<script src="ia.js?v=20261015b"></script>
+<script src="loja.js?v=20261015b"></script>
+<script src="script.js?v=20261015b"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -469,6 +497,38 @@ document.addEventListener("DOMContentLoaded", function(){
             });
         });
     }, 60);
+});
+
+/* ===== IA: URL/chave/modelo ficam so neste aparelho ===== */
+function salvarIA(btn){
+    var p = carregarPrefs();
+    p.cfgIAURL = ((document.getElementById("cfgIAURL") || {}).value || "").trim();
+    p.cfgIAChave = ((document.getElementById("cfgIAChave") || {}).value || "").trim();
+    p.cfgIAModelo = ((document.getElementById("cfgIAModelo") || {}).value || "").trim();
+    salvarPrefs(p);
+    var m = document.getElementById("iaConfigMsg");
+    if (m){ m.style.color = "#2e7d32"; m.textContent = "Salvo somente neste dispositivo."; }
+    if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> Salvo'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-save"></i> Salvar'; }, 1500); }
+}
+function testarIA(btn){
+    var m = document.getElementById("iaConfigMsg");
+    if (m){ m.style.color = "#8a6100"; m.textContent = "Testando o assistente..."; }
+    try { sessionStorage.setItem("iaCache", "{}"); } catch(e){}
+    if (typeof iaResponder !== "function") {
+        if (m){ m.style.color = "#c62828"; m.textContent = "Assistente indisponível nesta página."; }
+        return;
+    }
+    iaResponder("ola, voce e quem?", function(txt, fonte){
+        var curto = String(txt).slice(0, 130) + (String(txt).length > 130 ? "..." : "");
+        if (m){ m.style.color = "#2e7d32"; m.textContent = "Funcionando (" + fonte + "): " + curto; }
+        if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> OK'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-flask"></i> Testar'; }, 2500); }
+    });
+}
+document.addEventListener("DOMContentLoaded", function(){
+    var p = carregarPrefs();
+    var t = document.getElementById("cfgIAURL"); if (t && document.activeElement !== t) t.value = p.cfgIAURL || "";
+    var c = document.getElementById("cfgIAChave"); if (c && document.activeElement !== c) c.value = p.cfgIAChave || "";
+    var mo = document.getElementById("cfgIAModelo"); if (mo && document.activeElement !== mo) mo.value = p.cfgIAModelo || "";
 });
 
 function carregarPrefs(){

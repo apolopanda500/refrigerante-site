@@ -11,6 +11,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
-      - run: |
-          for f in *.js; do node --check "$f" || exit 1; done
-          echo "OK"
+      - name: Sintaxe de todo JS (site, testes e robos)
+        run: |
+          for f in *.js tests/*.js .github/scripts/*.js; do
+            node --check "$f" || exit 1
+          done
+          echo "Sintaxe OK"
+      - name: Baterias de teste (TUDO 10/10)
+        run: node tests/rodar-todos.js

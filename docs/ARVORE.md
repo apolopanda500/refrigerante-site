@@ -17,7 +17,7 @@ refrigerante-site/
 ├─ loja.js .......................... regiões, frete, regra de atendimento
 ├─ script.js ....................... carrinho, pedidos, aviso Telegram
 ├─ conta.js ......................... perfil (fonte única)
-├─ atendimento.js ................... respostas automáticas + contato humano
+├─ ia.js ........................... assistente de IA + recomendações
 ├─ telegram.js ...................... comandos do bot do vendedor
 ├─ app-update.js .................... service worker + "Atualizar agora"
 ├─ firebase-appcheck.js ............. proteção do banco de preços
@@ -46,23 +46,27 @@ refrigerante-site/
 │  │  └─ ultimo-resumo.json ........ resumo da última rodada
 │  └─ workflows/
 │     ├─ catalogo.yml .............. robô seg-sex 10:00 + aviso Telegram
-│     └─ check.yml .................. confere sintaxe dos .js
+│     └─ check.yml .................. sintaxe + TODOS os testes a cada push
 │
 ├─ docs/
 │  └─ PROJETO.md .................... documentação completa
 │
 ├─ build-apk.ps1 .................... gerador dos APK
-└─ serve.ps1 ........................ servidor local para testes
+├─ serve.ps1 ........................ servidor local para testes
+├─ mcp.json ......................... agentes de IA no repositório (MCP)
+└─ .cursor/mcp.json ................. mesmo, para o editor Cursor
 ```
 
 ## Ordem de carga dos scripts (importante)
 
 ```
-index.html:      theme.js → conta.js → loja.js → app.js
-                 → firebase-appcheck.js → app-update.js → atendimento.js
+index.html (e demais páginas do cliente):
+                 theme.js → conta.js → loja.js → app.js
+                 → firebase-appcheck.js → app-update.js → ia.js
 
 admin.html:      script.js → telegram.js → app.js
-                 → firebase-appcheck.js → app-update.js → atendimento.js
+                 → firebase-appcheck.js → app-update.js
+                 (sem ia.js: o painel é independente do cliente)
 ```
 
 Se um script for carregado antes do que depende dele, dá `ReferenceError`.

@@ -33,7 +33,7 @@ tudo roda no navegador do cliente e os dados ficam em `localStorage`
   │  loja.js     regiões, frete, horários   │   │  - ferramentas (calculadoras...)  │
   │  script.js   carrinho e pedidos         │   │  - bot do Telegram               │
   │  conta.js    perfil do cliente          │   │  telegram.js  comandos do bot     │
-  │  atendimento.js  respostas automáticas  │   └──────────┬───────────────────────┘
+  │  ia.js            assistente + recomendacoes   │
   └───────────┬──────────────────────────────┘              │
               │                                             │
               ▼                                             ▼
@@ -89,7 +89,7 @@ Nunca usar o nome — se o nome mudar, o preço se perde. Nunca deixar a chave v
 | `script.js` | carrinho, criação de pedido, histórico de status, aviso do Telegram, pedidos na nuvem (`enviarPedidoNuvem`/`sincronizarPedidosNuvem`) |
 | `conta.js` | perfil do cliente (fonte única de dados) |
 | `theme.js` | aplica tema/fonte/contraste/leitura antes da página pintar; no painel usa `vendedorPrefs` |
-| `atendimento.js` | respostas automáticas + encaminhamento para vendedor/motorista |
+| `ia.js` | assistente de IA (motor local + nuvem opcional) e recomendações |
 | `telegram.js` | comandos do bot (`/confirmar`, `/entregue`...) e botões da mensagem |
 | `app-update.js` | service worker, barra "Atualizar agora", botão instalar app |
 | `firebase-appcheck.js` | proteção (App Check) do banco de preços |
@@ -260,6 +260,7 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - Catálogo: 45 produtos, 7 categorias, atualizado diariamente pelo robô.
 - Preços: sincronizados em tempo real pelo Firebase (tabela do dono).
 - Pedidos: sincronizados na nuvem (`/pedidos.json`) — o painel vê os pedidos feitos em qualquer aparelho ou conta.
+- IA: assistente no site (chat) com motor local garantido + nuvem opcional, recomendações e portão automático de testes a cada push.
 - Painel: preferências próprias (`vendedorPrefs`), 5 temas, conexão do bot editável e sincronização de pedidos a cada minuto.
 - Leitura das tabelas: horizontal (padrão) ou vertical (cartões), em Configurações do cliente.
 - Bairro fora da área de entrega: pedido **bloqueado** na finalização.
@@ -267,3 +268,45 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - App: PWA instalado + APK (cliente e vendedor) disponíveis para download.
 - Temas: claro, guaraná, rosa, vermelho e escuro.
 - Pagamento: Pix e Dinheiro.
+---
+
+## 13. Inteligencia artificial, MCP e qualidade automatica
+
+### Assistente do site (ia.js)
+- Chat flutuante em todas as paginas do cliente (menos no painel do vendedor,
+  que e independente). Botao "IA" no canto inferior direito.
+- Motor local (padrao): 12 intents (preco, horario, frete, dias de entrega,
+  bairros, pagamento, status do pedido, contato, app, saudacao, compra,
+  fallback), usando o catalogo do dia, regioes, horarios e pedidos do aparelho.
+  Fato (rapido) responde sempre local: nunca erra e funciona offline.
+- Nuvem opcional (Configuracoes > Inteligencia Artificial):
+  - Local: so motor local.
+  - Gratis (nuvem): IA real via js.puter.com, sem chave.
+  - Personalizada: endpoint compativel com OpenAI (URL + chave + modelo,
+    guardados so neste aparelho).
+  Cadeia: fato responde local; conversa vai para a nuvem (8s); falha volta ao local.
+- Recomendacoes: "Escolhas para voce" na home - historico de compras do
+  aparelho ("quem levou X levou Y") ou variedade por categoria. Repinta
+  quando o catalogo novo chega (iaRepintarRecomendados em app.js).
+- Widget, historico de 20 mensagens, atalhos rapidos, cache de respostas.
+
+### Motores automaticos (o site trabalhar de verdade)
+- Robo do catalogo: seg-sex 10:00 (catalogo.yml), atualiza produtos e
+  fotos do site oficial; precos nunca mudam.
+- Precos: Firebase /precos.json, publicados pelo painel.
+- Pedidos: Firebase /pedidos.json, sincronizados na abertura do painel
+  e a cada minuto.
+
+### Qualidade automatica (rodar certo sempre vai rodar certo)
+- Testes: node tests/rodar-todos.js - 12 baterias, TUDO 10/10.
+- Portao automatico: .github/workflows/check.yml roda sintaxe de todo
+  JS (site, testes, robos) + a suite completa em TODO push e todo dia as 6h.
+- Versao: node tests/bump-versao.js <versao> antes de publicar.
+
+### MCP - agentes de IA no repositorio
+- mcp.json (raiz) e .cursor/mcp.json (Cursor): servidores filesystem
+  e github. Para usar: aponte seu agente (Cursor/VS Code/Claude) para o
+  arquivo e peca tarefas descrevendo o resultado em portugues.
+- Regras do agente: ler docs/PROJETO.md antes, mudar so o necessario,
+  manter padroes (k: nos precos, Pix/Dinheiro, dias de entrega),
+  rodar node tests/rodar-todos.js e node --check, commitar em portugues.

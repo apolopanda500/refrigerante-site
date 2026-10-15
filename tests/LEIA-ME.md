@@ -24,6 +24,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `09-carrinho-render.js` | O carrinho desenha, o preço bate com a home, botões ±, botão Editar e total final |
 | `10-carrinho.js` | Um botão só de limpar, funcionando com carrinho cheio e vazio |
 | `11-tema-escuro.js` | Todo componente novo tem versão escura |
+| `12-ia.js` | Assistente: fatos locais, cadeia da nuvem, recomendações, widget, cache offline, MCP e portão automático |
 
 ## Ferramentas
 

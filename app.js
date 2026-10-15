@@ -356,6 +356,8 @@ function aplicarCatalogoJSON(cat) {
     if (novos.length < 3) return false;
 
     PD = novos;
+    /* catálogo novo na mão: a IA repinta as recomendações na hora */
+    if (typeof iaRepintarRecomendados === "function") { try { iaRepintarRecomendados(); } catch (e) {} }
     if (cat.grupos && cat.grupos.length) {
         CT = cat.grupos.map(function (g) { return { id: g.id, nm: g.nm, ic: g.ic }; });
     }
