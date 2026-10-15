@@ -1361,7 +1361,72 @@ body{font-size:16.5px}
 .reg-tag.hoje{background:#fff3cd;color:#8a6100}
 .reg-tag.pedido{background:#e3f0ff;color:#0b4fa8}
 
-/* --- TABELA GERAL (todas as informacoes em um lugar so) --- */
+/* ===== MINI CALENDARIO DA SEMANA ===== */
+.cal-wrap{
+    width:100%;max-width:1780px;margin:14px auto 10px;padding:0 14px;
+}
+.cal-titulo{
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    font-size:.8rem;font-weight:800;color:#3d4465;
+    text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;
+}
+.cal-titulo i{color:var(--primary-color)}
+.cal-legenda{
+    font-weight:600;text-transform:none;letter-spacing:0;
+    font-size:.76rem;color:var(--text-muted);margin-left:auto;
+}
+.cal-legenda i{color:#b6bccd}
+
+.cal{
+    display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;
+}
+.cal-dia{
+    border:1px solid #e6e8f0;border-radius:10px;padding:8px 9px;
+    background:#fbfcfe;display:flex;flex-direction:column;gap:4px;
+    min-width:0;
+}
+.cal-dia.hoje{border-color:var(--primary-color);background:#f4f8ff;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.cal-dia.fechada{background:#f6f6f8;border-style:dashed}
+
+.cal-cab{display:flex;align-items:center;justify-content:space-between;gap:5px}
+.cal-nome{
+    font-size:.8rem;font-weight:800;color:#2c3252;text-transform:capitalize;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cal-badge{
+    background:var(--primary-color);color:#fff;border-radius:8px;
+    padding:1px 6px;font-size:.6rem;font-weight:800;text-transform:uppercase;
+    letter-spacing:.04em;flex:none;
+}
+.cal-loja{
+    display:flex;align-items:center;gap:4px;
+    font-size:.68rem;color:var(--text-muted);
+}
+.cal-dia.hoje .cal-loja{color:var(--primary-color);font-weight:700}
+.cal-dia.fechada .cal-loja{color:#a1a8c3}
+
+.cal-linha{
+    display:flex;align-items:center;gap:5px;min-width:0;
+    font-size:.7rem;color:#4a5170;
+    border-top:1px dashed #e8eaf2;padding-top:3px;
+}
+.cal-linha i{color:#b6bccd;flex:none;font-size:.68rem}
+.cal-linha span{
+    display:flex;gap:3px;flex-wrap:wrap;min-width:0;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cal-linha b{font-weight:800;color:#2c3252}
+.cal-linha .cal-vazio{color:#c3c8d6}
+
+/* telas medias: 4 colunas; celular: 1 coluna */
+@media(max-width:1180px){.cal{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:760px){
+    .cal{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cal-legenda{margin-left:0}
+}
+@media(max-width:420px){.cal{grid-template-columns:1fr}}
+
+/* ===== TABELA GERAL (todas as informacoes em um lugar so) ===== */
 .tb-info{
     width:100%;max-width:1780px;margin:14px auto 20px;padding:0 14px;
 }

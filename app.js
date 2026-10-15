@@ -407,7 +407,10 @@ function pintarHorario() {
 
     /* ---- status da LOJA ---- */
     var statusLoja;
-    if (lojaOk) {
+    var lojaAbertaDia = (typeof lojaAbertaNoDia === "function") ? lojaAbertaNoDia(a2.dia) : true;
+    if (!lojaAbertaDia) {
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-door-closed"></i> Loja fechada ' + (a2.dia === 6 ? "no sábado (só entrega)" : "no domingo") + '</div>';
+    } else if (lojaOk) {
         statusLoja = '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Loja aberta agora</div>';
     } else if (a2.hh < HORARIOS.loja.abre) {
         statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja abre ' + horaTexto(HORARIOS.loja.abre, 0) + '</div>';
@@ -417,7 +420,11 @@ function pintarHorario() {
 
     /* ---- status dos PEDIDOS ---- */
     var statusPedido;
-    if (soPedidos) {
+    if (!lojaAbertaDia) {
+        statusPedido = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> '
+            + (a2.dia === 6 ? "Sábado é só dia de entrega" : "Não abrem pedidos")
+            + '</div>';
+    } else if (soPedidos) {
         statusPedido = '<div class="wgt-status pedido"><i class="fa fa-calendar-check"></i> Dia de pedidos: ' + pedidoHoje + '</div>';
     } else if (abrindo.length) {
         statusPedido = '<div class="wgt-status pedido"><i class="fa fa-cart-plus"></i> Pedidos abertos: ' + pedidoHoje + '</div>';
@@ -478,7 +485,16 @@ function pintarFaixaRegiao() {
     if (!regra.liberado) {
         el.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> '
             + regra.texto
-            + ' Atendemos das <b>08:50</b> às <b>15:00</b>.</span>';
+            + ' Atendemos das <b>08:50</b> às <b>15:00</b>, de segunda a sexta.</span>';
+        return;
+    }
+
+    if (typeof lojaAbertaNoDia === "function" && !lojaAbertaNoDia(t.dia)) {
+        el.innerHTML = '<i class="fa fa-truck"></i> <span><b>'
+            + (t.dia === 6 ? "Sábado é só dia de entrega." : "A loja fecha no domingo.")
+            + '</b> '
+            + (rs.length ? 'Hoje entregamos em <b>' + rs.map(function (r) { return r.nome; }).join(", ") + '</b>. ' : '')
+            + 'Pedidos de segunda a sexta, das <b>08:50</b> às <b>15:00</b>.</span>';
         return;
     }
 
@@ -635,6 +651,54 @@ function proximoDiaAtendente(){
 }
 
 /* ============================================
+   MINI CALENDARIO DA SEMANA
+   Mostra de relance: a loja abre? quem aceita
+   pedido? quem recebe entrega? (sem repetir
+   o texto longo das linhas da tabela)
+   ============================================ */
+var NOMES_CURTOS = { seropedica: "SER", japeri: "JAP", engenhopedreira: "ENG", paracambi: "PAR" };
+
+function pintarCalendarioSemanal() {
+    var el = document.getElementById("calendario");
+    if (!el) return;
+
+    var hoje = (typeof agoraSP === "function") ? agoraSP().dia : new Date().getDay();
+    var abre = [1, 2, 3, 4, 5];              /* seg a sex */
+    var ordem = [1, 2, 3, 4, 5, 6, 0];       /* segunda primeiro */
+
+    function lista(ids) {
+        if (!ids.length) return '<span class="cal-vazio">-</span>';
+        return ids.map(function (r) { return '<b>' + (NOMES_CURTOS[r.id] || r.nome.slice(0, 3)) + '</b>'; }).join(" ");
+    }
+
+    var h = "";
+    ordem.forEach(function (d) {
+        var pedidos = regioesPedidoHoje(d);
+        var entregas = regioesDoDia(d);
+        var lojaOk = abre.indexOf(d) >= 0;
+        var ehHoje = d === hoje;
+
+        var estado = !lojaOk
+            ? (d === 6 ? "só entrega" : "fechado")
+            : (d === 1 ? "monta pedidos" : "aberta");
+
+        h += '<div class="cal-dia' + (ehHoje ? " hoje" : "") + (lojaOk ? "" : " fechada") + '">'
+           +   '<div class="cal-cab"><span class="cal-nome">' + (typeof NOMES_DIA_LONGOS !== "undefined" ? NOMES_DIA_LONGOS[d].replace("-feira", "") : d) + '</span>'
+           +     (ehHoje ? '<span class="cal-badge">hoje</span>' : '') + '</div>'
+           +   '<div class="cal-loja"><i class="fa ' + (lojaOk ? "fa-store" : "fa-door-closed") + '"></i> ' + estado + '</div>'
+           +   '<div class="cal-linha"><i class="fa fa-cart-plus" title="aceita pedido"></i><span>' + lista(pedidos) + '</span></div>'
+           +   '<div class="cal-linha"><i class="fa fa-truck" title="entrega"></i><span>' + lista(entregas) + '</span></div>'
+           + '</div>';
+    });
+
+    el.innerHTML = '<div class="cal-titulo"><i class="fa fa-calendar-alt"></i> Semana de trabalho '
+        + '<span class="cal-legenda">'
+        + '<i class="fa fa-cart-plus"></i> aceita pedido &nbsp; <i class="fa fa-truck"></i> entrega'
+        + '</span></div>'
+        + '<div class="cal">' + h + '</div>';
+}
+
+/* ============================================
    TABELA GERAL: todas as informacoes em um
    unico lugar, organizada. O catalogo fica
    logo abaixo dessa tabela.
@@ -674,17 +738,14 @@ function pintarTabelaGeral(){
         return [marca, quando, detalhe];
     });
 
-    /* ---- 2. horarios ---- */
+/* ---- 2. horarios ---- */
     var linhasHorario = [
+        ['<b>A loja funciona</b>', '<span class="tb-passo"><i class="fa fa-calendar-check"></i> segunda a sexta</span>',
+            'Sábado e domingo a loja fica fechada. No sábado sai <b>somente a entrega</b>.'],
         ['<b>Pedidos</b>', '<span class="tb-passo"><i class="fa fa-clock"></i> 08:50 às 15:00</span>',
             'Fora desse horário os pedidos ficam pausados no site.'],
-        ['<b>Entrega nas ruas</b>', '<span class="tb-passo"><i class="fa fa-truck"></i> 9h às 15h</span>',
-            'O pedido é feito <b>um dia antes</b>: o caminhão carrega na véspera.'],
-        ['<b>Hoje (' + nomeHoje + ')</b>',
-            rs.length ? '<span class="tb-passo"><i class="fa fa-check-circle"></i> ' + rs.map(function(r){return r.nome;}).join(", ") + '</span>'
-                      : '<span class="tb-passo tb-off"><i class="fa fa-times"></i> sem entrega</span>',
-            abrindo.length ? 'Pedidos abertos hoje para <b>' + abrindo.map(function(r){return r.nome;}).join(", ") + '</b>.'
-                           : 'Hoje não abrem pedidos novos.']
+        ['<b>Entrega nas ruas</b>', '<span class="tb-passo"><i class="fa fa-truck"></i> 9h às 15:00</span>',
+            'O pedido é feito <b>um dia antes</b>: o caminhão carrega na véspera.']
     ];
 
     /* ---- 3. pagamento e entrega ---- */
@@ -735,13 +796,14 @@ function pintarTabelaGeral(){
 }
 
 function ligarConfianca(){
+    pintarCalendarioSemanal();
     pintarTabelaGeral();
     pintarFaixaRegiao();
     pintarRegioes();
     pintarCaminhoes();
     pintarConfianca();
     // reavalia a regra de atendimento a cada minuto (abre 08:50 / fecha 15:00 em ponto)
-    setInterval(function(){ pintarFaixaRegiao(); pintarTabelaGeral(); }, 60000);
+    setInterval(function(){ pintarFaixaRegiao(); pintarTabelaGeral(); pintarCalendarioSemanal(); }, 60000);
 }
 
 if (document.readyState === "loading") {

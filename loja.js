@@ -114,6 +114,20 @@ var REGIOES = [
 var DIA_SOMENTE_PEDIDOS = 1;
 var TEXTO_SOMENTE_PEDIDOS = "Segunda-feira é o dia de montar os pedidos. A entrega começa na terça.";
 
+/* A LOJA SO FUNCIONA DE SEGUNDA A SEXTA.
+   Sábado e domingo: só entrega (sábado) ou nada (domingo). */
+var DIAS_LOJA = [1, 2, 3, 4, 5];           /* seg, ter, qua, qui, sex */
+var TEXTO_LOJA_FECHADA = "A loja funciona de segunda a sexta. Sábado é só dia de entrega.";
+
+function lojaAbertaNoDia(diaSemana) {
+    return DIAS_LOJA.indexOf(diaSemana) >= 0;
+}
+
+/* sabado e domingo: dia de entrega, nunca de pedido */
+function diaSomenteEntrega(diaSemana) {
+    return !lojaAbertaNoDia(diaSemana);
+}
+
 var OBS_CARGA = "O pedido é feito um dia antes da entrega. O caminhão carrega na véspera.";
 
 /* ============================================
@@ -196,8 +210,13 @@ function bairroAtendido(bairro) {
    so e preenchido no perfil). Quem decide a area de entrega
    e a regiao escolhida no checkout. */
 function pedidosLiberados(bairro) {
-    var a = (typeof agoraSP === "function") ? agoraSP() : { minutos: new Date().getHours() * 60 + new Date().getMinutes() };
+    var a = (typeof agoraSP === "function") ? agoraSP() : { dia: new Date().getDay(), minutos: new Date().getHours() * 60 + new Date().getMinutes() };
     var m = a.minutos;
+
+    /* a loja nao abre sabado nem domingo */
+    if (typeof lojaAbertaNoDia === "function" && !lojaAbertaNoDia(a.dia)) {
+        return { liberado: false, motivo: "fechado", texto: TEXTO_LOJA_FECHADA };
+    }
     if (m < HORA_ABRE_PEDIDOS) {
         return { liberado: false, motivo: "horario", texto: "Os pedidos abrem às 08:50. Agora ainda não estão sendo recebidos." };
     }
@@ -252,6 +271,8 @@ function agoraSP() {
 /* ---------- a LOJA esta aberta agora? ---------- */
 function lojaAberta(agora) {
     var a = agora || agoraSP();
+    /* a loja so funciona de segunda a sexta */
+    if (typeof lojaAbertaNoDia === "function" && !lojaAbertaNoDia(a.dia)) return false;
     if (typeof somentePedidos === "function" && somentePedidos(a.dia)) return false;
     if (regioesDoDia(a.dia).length === 0) return false;
     var L = HORARIOS.loja;
