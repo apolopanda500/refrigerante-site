@@ -407,7 +407,7 @@ function horaBrasil(){
 /* ============================================
    HORARIOS
    Loja (empresa): 09:00 as 15:00  - monta os pedidos
-   Entrega (rua): 09:00 as 18:00  - o freteiro entrega
+   Entrega (rua): 06:00 as 18:00  - o freteiro entrega
    O caminhao carrega UM DIA ANTES de sair
    ============================================ */
 function horaTexto(hh, mm) {

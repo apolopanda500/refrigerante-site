@@ -77,7 +77,7 @@ var REGIOES = [
         nome: "Seropédica",
         dias: [5, 6],
         diasTexto: "Sexta e Sábado",
-        horario: "9h às 18h",
+        horario: "6h às 18h",
         frete: 8,
         obs: "Entrega sexta e sábado. Pedido na quinta (para sexta) e na sexta (para sábado)."
     },
@@ -86,7 +86,7 @@ var REGIOES = [
         nome: "Japeri",
         dias: [2, 3, 4, 5, 6],
         diasTexto: "Terça a Sábado",
-        horario: "9h às 18h",
+        horario: "6h às 18h",
         frete: 12,
         obs: "Entrega de terça a sábado. Pedido de segunda a sexta, sempre um dia antes da entrega."
     },
@@ -95,7 +95,7 @@ var REGIOES = [
         nome: "Engenho Pedreira",
         dias: [2, 3, 4, 5, 6],
         diasTexto: "Terça a Sábado",
-        horario: "9h às 18h",
+        horario: "6h às 18h",
         frete: 15,
         obs: "Entrega de terça a sábado. Pedido de segunda a sexta, sempre um dia antes da entrega."
     },
@@ -104,7 +104,7 @@ var REGIOES = [
         nome: "Paracambi",
         dias: [4, 5, 6],
         diasTexto: "Quinta, Sexta e Sábado",
-        horario: "9h às 18h",
+        horario: "6h às 18h",
         frete: 20,
         obs: "Entrega quinta, sexta e sábado. Pedido na quarta (para quinta), na quinta (para sexta) e na sexta (para sábado)."
     }
@@ -271,10 +271,10 @@ var HORARIOS = {
         obs: "Horario em que a loja monta e organiza os pedidos."
     },
 entrega: {
-        abre: 9,          // 09:00 - a entrega comeca as 9h
+        abre: 6,          // 06:00 - o freteiro sai as 6h
         fecha: 18,        // 18:00 - entrega ate as 18h
         rotulo: "Entrega nas ruas",
-        obs: "A entrega nas ruas vai das 09:00 às 18:00."
+        obs: "A entrega nas ruas vai das 06:00 às 18:00."
     },
     carga: {
         antecedencia: 1,  // o caminhao carrega UM DIA ANTES de sair

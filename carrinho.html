@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261014s">
+<link rel="manifest" href="manifest.json?v=20261014t">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014s">
-<script src="theme.js?v=20261014s"></script>
+<link rel="stylesheet" href="style.css?v=20261014t">
+<script src="theme.js?v=20261014t"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: transparent; min-height: 100vh; }
@@ -197,11 +197,11 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261014s"></script>
-<script src="firebase-appcheck.js?v=20261014s"></script>
-<script src="app-update.js?v=20261014s"></script>
-<script src="loja.js?v=20261014s"></script>
-<script src="script.js?v=20261014s"></script>
+<script src="conta.js?v=20261014t"></script>
+<script src="firebase-appcheck.js?v=20261014t"></script>
+<script src="app-update.js?v=20261014t"></script>
+<script src="loja.js?v=20261014t"></script>
+<script src="script.js?v=20261014t"></script>
 <script>
 cart = getCart();
 
@@ -219,23 +219,50 @@ function renderCarrinho() {
     }
     btn.style.display = "";
 
+    /* ---------- preco SEMPRE o do catalogo ----------
+       o item guardado no navegador pode estar velho (ex.: preco antigo).
+       buscamos o preco atual pelo nome para o carrinho nunca mostrar
+       um valor diferente do que o cliente ve na home. */
+    const catalogo = (typeof PD !== "undefined" && PD.length) ? PD : [];
+    function precoAtual(item) {
+        let atual = null;
+        for (let i = 0; i < catalogo.length; i++) {
+            if (catalogo[i].nm === item.name) { atual = catalogo[i]; break; }
+        }
+        if (atual) {
+            item.price = atual.pr;
+            item.priceNum = precoNumero(atual.pr);
+            item.img = atual.im || item.img;
+        } else if (item.priceNum === undefined) {
+            item.priceNum = precoNumero(item.price);
+        }
+        return arredonda(item.priceNum);
+    }
+
     let html = "";
     cart.forEach(function(item, idx) {
-        const unit = arredonda(item.priceNum);
+        const unit = precoAtual(item);
         const qtd = (typeof item.qty === 'number' && item.qty > 0) ? item.qty : 1;
         const sub = arredonda(unit * qtd);
-        html += '<div class="cart-item">'
+        html += '<div class="cart-item" data-idx="' + idx + '">'
             + '<img src="' + (item.img || "img/G.svg") + '" alt="">'
             + '<div class="ci-info"><span class="ci-name">' + item.name + '</span>'
             + '<span class="ci-price">' + formatBRL(unit) + ' &times; ' + qtd + ' = <b>' + formatBRL(sub) + '</b></span></div>'
-            + '<div class="ci-qtd"><button onclick="mudarQtdCarrinho(' + idx + ',-1)">&minus;</button>'
+            /* editar quantidade: sempre visivel, com botao grande */
+            + '<div class="ci-qtd" title="Mudar a quantidade">'
+            + '<button onclick="mudarQtdCarrinho(' + idx + ',-1)" aria-label="Menos um">&minus;</button>'
             + '<span>' + qtd + '</span>'
-            + '<button onclick="mudarQtdCarrinho(' + idx + ',1)">+</button></div>'
+            + '<button onclick="mudarQtdCarrinho(' + idx + ',1)" aria-label="Mais um">+</button></div>'
             + '<span class="ci-subtotal">' + formatBRL(sub) + '</span>'
-            + '<button class="ci-remove" onclick="removerItem(' + idx + ')" title="Remover"><i class="fa fa-trash"></i></button>'
+            /* editar o item antes de finalizar */
+            + '<div class="ci-editar">'
+            + '<button class="ci-edit-btn" onclick="editarItemCarrinho(' + idx + ')"><i class="fa fa-pen"></i> Editar</button>'
+            + '<button class="ci-remove" onclick="removerItem(' + idx + ')" title="Remover do carrinho" aria-label="Remover"><i class="fa fa-trash"></i></button>'
+            + '</div>'
             + '</div>';
     });
     box.innerHTML = html;
+    saveCart();
 
     const subtotal = arredonda(calcSubtotal());
     const nItens = calcTotalItens();
@@ -289,6 +316,77 @@ function removerItem(idx) {
     cart.splice(idx, 1);
     saveCart();
     renderCarrinho();
+}
+
+/* ===== EDITAR o item antes de finalizar =====
+   abre uma caixa com o preco, a quantidade e os botoes.
+   o cliente mexe o que quiser e so entao fecha. */
+function editarItemCarrinho(idx) {
+    const item = cart[idx];
+    if (!item) return;
+    const qtd = (typeof item.qty === "number" && item.qtd > 0) ? item.qty : (item.qty || 1);
+    const unit = (typeof item.priceNum === "number") ? item.priceNum : precoNumero(item.price);
+    const nome = String(item.name).replace(/[<>&]/g, "");
+
+    const html = '<div class="ed-overlay" id="edOverlay">'
+        + '<div class="ed-box" role="dialog" aria-modal="true">'
+        + '  <div class="ed-cab"><i class="fa fa-pen"></i> Editar produto</div>'
+        + '  <div class="ed-nome">' + nome + '</div>'
+        + '  <div class="ed-preco">Pre&ccedil;o unit&aacute;rio: <b>' + formatBRL(unit) + '</b></div>'
+        + '  <div class="ed-qtd">'
+        + '    <button onclick="editarQtd(-1)" aria-label="Menos">&minus;</button>'
+        + '    <span id="edQtd">' + qtd + '</span>'
+        + '    <button onclick="editarQtd(1)" aria-label="Mais">+</button>'
+        + '  </div>'
+        + '  <div class="ed-total">Total do item: <b id="edTotal">' + formatBRL(arredonda(unit * qtd)) + '</b></div>'
+        + '  <div class="ed-acoes">'
+        + '    <button class="btn btn-secundario" onclick="fecharEdicao()">Cancelar</button>'
+        + '    <button class="btn btn-vermelho" onclick="removerItemDaEdicao()"><i class="fa fa-trash"></i> Remover</button>'
+        + '    <button class="btn btn-primario" onclick="salvarEdicao()"><i class="fa fa-check"></i> Salvar</button>'
+        + '  </div>'
+        + '</div></div>';
+
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    document.body.appendChild(div.firstChild);
+    const novaQtd = { v: qtd, unit: unit, idx: idx };
+    window._edicao = novaQtd;
+    document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") fecharEdicao(); });
+}
+
+function editarQtd(delta) {
+    const e = window._edicao;
+    if (!e) return;
+    e.v = Math.max(1, (e.v || 1) + delta);
+    const q = document.getElementById("edQtd");
+    const t = document.getElementById("edTotal");
+    if (q) q.textContent = e.v;
+    if (t) t.textContent = formatBRL(arredonda(e.unit * e.v));
+}
+
+function salvarEdicao() {
+    const e = window._edicao;
+    if (!e) return;
+    cart[e.idx].qty = e.v;
+    cart[e.idx].priceNum = e.unit;
+    saveCart();
+    fecharEdicao();
+    renderCarrinho();
+}
+
+function removerItemDaEdicao() {
+    const e = window._edicao;
+    if (!e) return;
+    cart.splice(e.idx, 1);
+    saveCart();
+    fecharEdicao();
+    renderCarrinho();
+}
+
+function fecharEdicao() {
+    const el = document.getElementById("edOverlay");
+    if (el) el.remove();
+    window._edicao = null;
 }
 
 renderCarrinho();

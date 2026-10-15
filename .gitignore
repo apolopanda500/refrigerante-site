@@ -1,8 +1,16 @@
-node_modules/
-__pycache__/
-*.log
-.env
-.DS_Store
-_oficial/
+# build do Android (nao entra no git: se regenera com gradle)
+apk/android/.gradle/
+apk/android/build/
+apk/android/*/build/
+apk/android/local.properties
+*.apk.idsig
 
-apk/*.jks
+# chave de assinatura: NUNCA no git
+*.jks
+*.keystore
+*.p12
+
+# temporarios
+correcao-precos.json
+__teste-robo.cjs
+__teste.cjs

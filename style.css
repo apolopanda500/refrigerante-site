@@ -1594,6 +1594,125 @@ html{font-size:17px}
 .ci-qtd span{min-width:34px;text-align:center;font-weight:800;font-size:1.05rem}
 [data-theme="dark"] .ci-qtd button{background:#2a2f4d;border-color:#3d4470;color:#e6e8f2}
 
+/* grupo editar/remover de cada produto */
+.ci-editar{display:flex;align-items:center;gap:6px}
+.ci-edit-btn,.ci-remove{
+    display:inline-flex;align-items:center;justify-content:center;gap:5px;
+    min-width:44px;min-height:44px;padding:0 12px;
+    border-radius:10px;border:1.5px solid #d8dbe6;background:#fff;
+    color:#3d4465;font-weight:700;font-size:.82rem;cursor:pointer;
+    transition:background .12s ease,color .12s ease;
+}
+.ci-edit-btn:hover{background:#eef1fb;border-color:#b9c0e0}
+.ci-remove{border-color:#f0c6c6;color:#c62828}
+.ci-remove:hover{background:#c62828;border-color:#c62828;color:#fff}
+[data-theme="dark"] .ci-edit-btn,
+[data-theme="dark"] .ci-remove{background:#232742;border-color:#3d4470;color:#e6e8f2}
+[data-theme="dark"] .ci-remove{color:#ff8a8a;border-color:#5a2a2e}
+
+/* caixa de edicao do produto */
+.ed-overlay{
+    position:fixed;inset:0;z-index:1200;
+    background:rgba(20,22,38,.55);
+    display:flex;align-items:center;justify-content:center;padding:18px;
+}
+.ed-box{
+    background:#fff;border-radius:16px;padding:20px;width:100%;max-width:420px;
+    box-shadow:0 18px 50px rgba(0,0,0,.3);
+}
+[data-theme="dark"] .ed-box{background:#1e2138;border:1px solid #353a5c}
+.ed-cab{
+    display:flex;align-items:center;gap:8px;margin-bottom:10px;
+    font-size:.95rem;font-weight:800;color:#3d4465;text-transform:uppercase;letter-spacing:.4px;
+}
+.ed-cab i{color:var(--primary-color)}
+.ed-nome{font-size:1.05rem;font-weight:800;margin-bottom:4px}
+.ed-preco{font-size:.9rem;color:var(--text-muted);margin-bottom:14px}
+.ed-preco b{color:var(--text-color)}
+.ed-qtd{
+    display:flex;align-items:center;justify-content:center;gap:14px;
+    margin-bottom:14px;
+}
+.ed-qtd button{
+    width:48px;height:48px;border-radius:50%;border:2px solid #cfd4e6;background:#fff;
+    font-size:1.5rem;font-weight:800;color:#3d4465;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+}
+.ed-qtd button:hover{background:var(--primary-color);border-color:var(--primary-color);color:#fff}
+.ed-qtd span{min-width:56px;text-align:center;font-size:1.5rem;font-weight:800}
+.ed-total{
+    text-align:center;font-size:1rem;margin-bottom:16px;
+    padding:10px;border-radius:10px;background:#f4f6fc;color:#3d4465;
+}
+.ed-total b{font-size:1.2rem;color:var(--primary-color)}
+.ed-acoes{display:flex;gap:8px;flex-wrap:wrap}
+.ed-acoes .btn{flex:1;min-width:110px;justify-content:center}
+.btn-vermelho{background:#c62828;color:#fff;border-color:#c62828}
+.btn-vermelho:hover{background:#ad1f1f;color:#fff}
+
+/* no celular o editor ocupa mais espaco */
+@media(max-width:420px){
+    .ed-box{padding:16px}
+    .ci-edit-btn span{display:none}
+}
+
+/* ==========================================================
+   TEMA ESCURO dos componentes novos
+   (calendario, tabelas, ofertas, regioes)
+   sem isto a pagina fica clara mesmo com o tema escuro ligado
+   ========================================================== */
+[data-theme="dark"] .cal-titulo{color:#c3cae0}
+[data-theme="dark"] .cal-titulo i{color:#ffb822}
+[data-theme="dark"] .cal-legenda{color:#8b93a8}
+[data-theme="dark"] .cal-dia{background:#232742;border-color:#3d4470}
+[data-theme="dark"] .cal-dia.hoje{background:#1b2140;border-color:#ffb822}
+[data-theme="dark"] .cal-dia.fechada{background:#1a1d31;border-color:#2f3456}
+[data-theme="dark"] .cal-nome{color:#e6e8f2}
+[data-theme="dark"] .cal-badge{background:#ffb822;color:#3d4465}
+[data-theme="dark"] .cal-loja{color:#8b93a8}
+[data-theme="dark"] .cal-dia.hoje .cal-loja{color:#ffb822}
+[data-theme="dark"] .cal-linha{border-top-color:#3d4470;color:#c3cae0}
+[data-theme="dark"] .cal-linha b{color:#e6e8f2}
+[data-theme="dark"] .cal-linha .cal-vazio{color:#6d748c}
+
+[data-theme="dark"] .tab-wrap{background:#1e2138;border-color:#353a5c}
+[data-theme="dark"] .tabela-geral th,
+[data-theme="dark"] .tabela-ofertas th{background:#2b3157;color:#e6e8f2;border-bottom-color:#3d4470}
+[data-theme="dark"] .tabela-geral td,
+[data-theme="dark"] .tabela-ofertas td{border-bottom-color:#2f3456;color:#dfe2ef}
+[data-theme="dark"] .tabela-geral tbody tr:nth-child(even) td{background:#222643}
+[data-theme="dark"] .tabela-geral tbody tr:hover td,
+[data-theme="dark"] .tabela-ofertas tbody tr:hover td{background:#262c4d}
+[data-theme="dark"] .tb-assunto,
+[data-theme="dark"] .tb-oferta b{color:#e6e8f2}
+[data-theme="dark"] .tb-quando{color:#c3cae0}
+[data-theme="dark"] .tb-detalhe{color:#a8b0c8}
+[data-theme="dark"] .tb-passo{background:#2b3157;border-color:#3d4470;color:#dfe2ef}
+[data-theme="dark"] .tb-seta{color:#6d748c}
+[data-theme="dark"] .tb-ok{color:#ffb822}
+[data-theme="dark"] .tabela-geral a{color:#8fb8ff}
+[data-theme="dark"] .tb-cam-foto{background:#2b3157;border-color:#3d4470}
+[data-theme="dark"] .tb-cam-foto.sem-foto{color:#8b93a8}
+
+[data-theme="dark"] .sec-titulo{color:#c3cae0}
+[data-theme="dark"] .sec-titulo i{color:#ffb822}
+[data-theme="dark"] .of-btn{background:#2b3157}
+[data-theme="dark"] .of-btn:hover{background:#343a63}
+
+[data-theme="dark"] .reg-cel{background:#232742;border-color:#3d4470}
+[data-theme="dark"] .reg-cel.cel-hoje{background:#2a2415;border-color:#ffb822}
+[data-theme="dark"] .reg-cel.cel-pedido{background:#1b2540;border-color:#5b9bff}
+[data-theme="dark"] .reg-cab b{color:#e6e8f2}
+[data-theme="dark"] .etapa{background:#2b3157;border-color:#3d4470}
+[data-theme="dark"] .etapa.on{background:#1e2138;border-color:#ffb822}
+[data-theme="dark"] .etapa .et-dia{color:#a8b0c8}
+[data-theme="dark"] .etapa.on .et-dia,
+[data-theme="dark"] .etapa.on .et-txt{color:#ffb822}
+[data-theme="dark"] .seta{color:#6d748c}
+[data-theme="dark"] .reg-detalhe,
+[data-theme="dark"] .reg-obs{color:#a8b0c8}
+[data-theme="dark"] .reg-nota{background:#1b2540;color:#c3d6f5}
+
 /* ===== TABELA GERAL (todas as informacoes em um lugar so) ===== */
 .tb-info{
     width:100%;max-width:1780px;margin:14px auto 20px;padding:0 14px;

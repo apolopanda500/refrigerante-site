@@ -25,13 +25,13 @@ console.log("  pedidos: " + Math.floor(sandbox.HORA_ABRE_PEDIDOS / 60) + "h" +
     (sandbox.HORA_ABRE_PEDIDOS % 60 ? String(sandbox.HORA_ABRE_PEDIDOS % 60).padStart(2, "0") : "") +
     " às " + Math.floor(sandbox.HORA_FECHA_PEDIDOS / 60) + "h");
 
-if (H.entrega.abre !== 9) falha("a entrega deveria comecar as 9h (esta " + H.entrega.abre + ")");
+if (H.entrega.abre !== 6) falha("a entrega deveria comecar as 6h (esta " + H.entrega.abre + ")");
 if (H.entrega.fecha !== 18) falha("a entrega deveria terminar as 18h (esta " + H.entrega.fecha + ")");
 if (H.loja.abre !== 9 || H.loja.fecha !== 15) falha("a loja deveria ficar 9h-15h");
 
 console.log("\n=== TEXTO DAS REGIOES (o que o cliente ve) ===");
 RA.forEach(function (r) {
-    const ok = r.horario === "9h às 18h";
+    const ok = r.horario === "6h às 18h";
     if (!ok) falha(r.nome + " mostra " + r.horario);
     console.log((ok ? "  ok   " : "  ERRO ") + r.nome.padEnd(18) + r.horario);
 });

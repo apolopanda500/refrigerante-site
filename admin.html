@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261014s">
+<link rel="manifest" href="manifest-vendedor.json?v=20261014t">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014s">
-<script src="theme.js?v=20261014s"></script>
+<link rel="stylesheet" href="style.css?v=20261014t">
+<script src="theme.js?v=20261014t"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -131,6 +131,45 @@
 [data-theme="dark"] .resumo-linha b{color:#ffb822}
 [data-theme="dark"] .resumo-linha{border-bottom-color:#353a5c}
 
+/* calculadoras e anotacoes: resultado grande e leitura facil */
+.calc-vazio{display:block;padding:10px 12px;border-radius:10px;background:#fff8e6;color:#856404;font-weight:600;font-size:.9rem}
+.calc-destaque{
+    display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    padding:12px 14px;border-radius:12px;margin-bottom:10px;
+    background:#eef1fb;border:1px solid #d5daf0;
+}
+.calc-destaque span{font-size:.9rem;font-weight:700;color:#3d4465}
+.calc-destaque b{font-size:1.5rem;font-weight:800;color:var(--primary-color);font-variant-numeric:tabular-nums}
+.calc-destaque small{flex-basis:100%;font-size:.78rem;color:#767d95}
+.calc-divisor{border-top:2px solid #d5daf0;margin-top:6px;padding-top:8px}
+.calc-fim{margin-top:10px}
+.calc-copiar{margin-top:10px;min-height:42px;padding:10px 16px}
+.notas-lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.notas-item{
+    border:1px solid #e6e8f0;border-radius:12px;padding:11px 12px;background:#fbfcfe;
+}
+.ni-cab{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:5px}
+.ni-cab b{font-size:.92rem;color:#2c3252;font-weight:700}
+.ni-data{font-size:.76rem;color:#767d95;font-weight:600}
+.ni-texto{font-size:.84rem;color:#4a5170;line-height:1.4;margin-bottom:8px}
+.ni-acoes{display:flex;gap:6px}
+.ni-btn{
+    display:inline-flex;align-items:center;gap:5px;min-height:38px;padding:0 11px;
+    border:1.5px solid #d8dbe6;background:#fff;border-radius:9px;
+    font-size:.8rem;font-weight:700;color:#3d4465;cursor:pointer;
+}
+.ni-btn:hover{background:#eef1fb}
+.ni-del{border-color:#f0c6c6;color:#c62828}
+.ni-del:hover{background:#c62828;border-color:#c62828;color:#fff}
+[data-theme="dark"] .calc-vazio{background:#33280c;color:#f2dda6}
+[data-theme="dark"] .calc-destaque{background:#232742;border-color:#353a5c}
+[data-theme="dark"] .calc-destaque span,
+[data-theme="dark"] .calc-destaque small{color:#c3cae0}
+[data-theme="dark"] .notas-item{background:#1e2138;border-color:#353a5c}
+[data-theme="dark"] .ni-cab b{color:#e6e8f2}
+[data-theme="dark"] .ni-texto{color:#c3cae0}
+[data-theme="dark"] .ni-btn{background:#232742;border-color:#3d4470;color:#e6e8f2}
+
 /* ==========================================================
    TIPOGRAFIA DO PAINEL DO VENDEDOR
    As letras estavam finas e pequenas. Aqui o painel ganha
@@ -240,6 +279,8 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
       <div class="campo"><label>Margem (%)</label><input id="calcMargem" type="text" inputmode="decimal" placeholder="30" oninput="calcPreco()"></div>
       <div class="campo"><label>Desconto (%)</label><input id="calcDesc" type="text" inputmode="decimal" placeholder="0" oninput="calcPreco()"></div>
       <div class="campo"><label>Quantidade</label><input id="calcQtd" type="text" inputmode="numeric" placeholder="1" oninput="calcPreco()"></div>
+      <div class="campo"><label>Imposto sobre a venda (%)</label><input id="calcImposto" type="text" inputmode="decimal" placeholder="0" oninput="calcPreco()"></div>
+      <div class="campo"><label>Frete que você paga (R$)</label><input id="calcFrete" type="text" inputmode="decimal" placeholder="0,00" oninput="calcPreco()"></div>
     </div>
     <div id="calcResultado" style="margin-top:10px"></div>
 
@@ -251,13 +292,19 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
     <div id="trocoResultado" style="margin-top:10px"></div>
 
     <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-file-lines"></i> Anotações da loja</h4>
-    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Lista de compras, combinado com fornecedor, telefone de cliente,olho do dia... fica salvo aqui.</p>
-    <textarea id="notasLoja" rows="5" placeholder="Ex.: ligar para o fornecedor de chopp às 8h&#10;Cliente Michele: trocar embalagem&#10;Faltando: barbear..."></textarea>
+    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Lista de compras, combinado com fornecedor, telefone de cliente, olho do dia... fica salvo aqui.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:8px">
+      <div class="campo" style="flex:1;min-width:180px"><label>Título da anotação</label><input id="notasTitulo" type="text" placeholder="Ex.: Lista de compras da quarta"></div>
+      <div class="campo" style="min-width:170px"><label>Data</label><input id="notasData" type="date"></div>
+    </div>
+    <textarea id="notasLoja" rows="6" placeholder="Ex.: ligar para o fornecedor de chopp às 8h&#10;Cliente Michele: trocar embalagem&#10;Faltando: barbear..."></textarea>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center">
       <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarNotas()"><i class="fa fa-save"></i> Salvar</button>
       <button class="btn-st b-copiar" style="min-height:44px;padding:11px 18px" onclick="baixarNotas()"><i class="fa fa-download"></i> Baixar .txt</button>
+      <button class="btn-st b-cancelar" style="min-height:44px;padding:11px 18px" onclick="historicoNotas()"><i class="fa fa-history"></i> Anotações salvas</button>
       <span id="notasMsg" style="font-size:.86rem;font-weight:700"></span>
     </div>
+    <div id="notasHistorico" style="margin-top:10px"></div>
 
     <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-clock-rotate-left"></i> Histórico de preços editados</h4>
     <div id="histPrecos"></div>
@@ -291,8 +338,8 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261014s"></script>
-<script src="telegram.js?v=20261014s"></script>
+<script src="script.js?v=20261014t"></script>
+<script src="telegram.js?v=20261014t"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -561,51 +608,97 @@ function numero(v) {
 }
 function brl(v) { return formatBRL(v); }
 
-/* ---------- 1) calculadora de preco e lucro ---------- */
+/* ---------- 1) calculadora de PRECO, LUCRO, IMPOSTO e MARGEM ----------
+   uso: digite o custo e a margem (ou o preco de venda) e o painel
+   mostra quanto voce GANHA de verdade, ja com imposto e frete. */
 function calcPreco() {
-    var custo = numero(document.getElementById("calcCusto").value);
-    var margem = numero(document.getElementById("calcMargem").value);
-    var qtd = Math.max(1, numero(document.getElementById("calcQtd").value) || 1);
-    var desconto = numero(document.getElementById("calcDesc").value);
-    var fundo = document.getElementById("calcResultado");
+    var el = function (id) { return document.getElementById(id); };
+    var custo = numero(el("calcCusto") ? el("calcCusto").value : 0);
+    var margem = numero(el("calcMargem") ? el("calcMargem").value : 0);
+    var desconto = numero(el("calcDesc") ? el("calcDesc").value : 0);
+    var qtd = Math.max(1, Math.round(numero(el("calcQtd") ? el("calcQtd").value : 0)) || 1);
+    var imposto = numero(el("calcImposto") ? el("calcImposto").value : 0);
+    var fretePago = numero(el("calcFrete") ? el("calcFrete").value : 0);
+    var fundo = el("calcResultado");
 
-    if (custo <= 0) { fundo.innerHTML = '<span style="color:#8a6100">Digite o custo de compra.</span>'; return; }
+    if (custo <= 0) { fundo.innerHTML = '<span class="calc-vazio">Digite o custo de compra do produto.</span>'; return; }
 
+    /* preco de venda sugerido a partir do custo + margem */
     var venda = custo * (1 + margem / 100);
-    venda = venda * (1 - desconto / 100);
-    var lucro = venda - custo;
-    var margemReal = (lucro / venda) * 100;
-    var total = venda * qtd;
+    venda = venda * (1 - desconto / 100);              /* desconto dado ao cliente */
+    venda = arredonda2(venda);
+
+    /* o que sobra de verdade */
+    var custoTotal = arredonda2(custo + fretePago);
+    var impostoValor = arredonda2(venda * imposto / 100);
+    var lucro = arredonda2(venda - custoTotal - impostoValor);
+    var margemReal = venda > 0 ? (lucro / venda) * 100 : 0;
+    var markup = custo > 0 ? ((venda - custo - impostoValor) / (custo + fretePago)) * 100 : 0;
+    var corLucro = lucro > 0 ? "#1b7f3b" : "#c62828";
+    var totalVenda = arredonda2(venda * qtd);
+    var lucroTotal = arredonda2(lucro * qtd);
 
     fundo.innerHTML =
-        '<div class="resumo-linha"><span>Preço de venda sugerido</span><b style="color:var(--primary-color)">' + brl(venda) + '</b></div>'
-        + '<div class="resumo-linha"><span>Lucro por unidade</span><b style="color:' + (lucro > 0 ? "#2e7d32" : "#c62828") + '">' + brl(lucro) + '</b></div>'
-        + '<div class="resumo-linha"><span>Margem real</span><b>' + margemReal.toFixed(1).replace(".", ",") + '%</b></div>'
-        + '<div class="resumo-linha"><span>Lucro com ' + qtd + ' un.</span><b style="color:' + (lucro > 0 ? "#2e7d32" : "#c62828") + '">' + brl(lucro * qtd) + '</b></div>'
-        + '<div class="resumo-linha"><span>Venda total (' + qtd + ' un.)</span><b>' + brl(total) + '</b></div>';
+        '<div class="calc-destaque"><span>Preço de venda sugerido</span><b>' + brl(venda) + '</b>'
+        + '<small>arredondado: ' + brl(venda) + '</small></div>'
+        + linhaCalc("Custo do produto", brl(custo))
+        + linhaCalc("Frete que voce paga", brl(fretePago))
+        + linhaCalc("Imposto (" + arredonda2(imposto) + "%)", brl(impostoValor))
+        + '<div class="resumo-linha calc-divisor"><span>Custo total</span><b>' + brl(custoTotal) + '</b></div>'
+        + '<div class="resumo-linha"><span>Lucro por unidade</span><b style="color:' + corLucro + '">' + brl(lucro) + '</b></div>'
+        + '<div class="resumo-linha"><span>Margem sobre a venda</span><b style="color:' + corLucro + '">' + arredonda2(margemReal).toFixed(2).replace(".", ",") + '%</b></div>'
+        + '<div class="resumo-linha"><span>Markup sobre o custo</span><b>' + arredonda2(markup).toFixed(2).replace(".", ",") + '%</b></div>'
+        + linhaCalc("Lucro com " + qtd + " un.", brl(lucroTotal), corLucro)
+        + linhaCalc("Venda total (" + qtd + " un.)", brl(totalVenda))
+        + (lucro <= 0 ? '<div class="aviso aviso-atencao calc-fim"><i class="fa fa-circle-exclamation"></i>'
+            + ' <span>Com esses numeros voce <b>perde dinheiro</b>. Aumente a margem ou negocie o custo.</span></div>' : '')
+        + '<button type="button" class="btn-st b-copiar calc-copiar" onclick="copiarTexto(\'' + brl(venda) + '\')">'
+        + '<i class="fa fa-copy"></i> Copiar preço</button>';
 }
 
-/* ---------- 2) calculadora de troco ---------- */
+function linhaCalc(rotulo, valor, cor) {
+    return '<div class="resumo-linha"><span>' + rotulo + '</span><b' + (cor ? ' style="color:' + cor + '"' : '') + '>' + valor + '</b></div>';
+}
+
+/* arredonda para 2 casas (a calculadora do vendedor tambem) */
+function arredonda2(v) {
+    var n = parseFloat(v);
+    if (isNaN(n) || !isFinite(n)) return 0;
+    return Math.round((n + (n >= 0 ? 1e-9 : -1e-9)) * 100) / 100;
+}
+
+/* ---------- 2) calculadora de TROCO (notas e moedas) ---------- */
 function calcTroco() {
     var total = numero(document.getElementById("trocoTotal").value);
     var pago = numero(document.getElementById("trocoPago").value);
     var out = document.getElementById("trocoResultado");
-    if (pago <= 0) { out.innerHTML = ""; return; }
-    var troco = pago - total;
-    var falta = total - pago;
+    if (pago <= 0) { out.innerHTML = '<span class="calc-vazio">Digite o total e o valor recebido.</span>'; return; }
+
+    var troco = arredonda2(pago - total);
     if (troco < 0) {
-        out.innerHTML = '<div class="aviso-frete" style="background:#fdecea;border-left-color:#e53935;color:#a11b0f">Falta <b>' + brl(falta) + '</b> para completar.</div>';
-    } else {
-        /* notas de 50/20/10/5/2/1 para Orientação de gaveta */
-        var restante = troco, notas = [];
-        [50, 20, 10, 5, 2, 1].forEach(function (n) {
-            var q = Math.floor(restante / n);
-            if (q > 0) { notas.push(q + "x " + n); restante =+(restante - q * n).toFixed(2); }
-        });
-        out.innerHTML = '<div class="resumo-linha"><span>Troco a dar</span><b style="color:#2e7d32">' + brl(troco) + '</b></div>'
-            + (notas.length ? '<div class="resumo-linha"><span>Em notas</span><b>' + notas.join(" + ") + '</b></div>' : '')
-            + (restante > 0.009 ? '<div class="resumo-linha"><span>Restam em moedas</span><b>' + brl(restante) + '</b></div>' : '');
+        out.innerHTML = '<div class="aviso aviso-atencao"><i class="fa fa-circle-exclamation"></i>'
+            + ' <span>Falta <b>' + brl(arredonda2(-troco)) + '</b> para completar a conta.</span></div>';
+        return;
     }
+
+    /* menor quantidade de notas/moedas: 100, 50, 20, 10, 5, 2, 1 */
+    var restante = troco, notas = [], moedas = [];
+    [100, 50, 20, 10, 5, 2, 1].forEach(function (n) {
+        var q = Math.floor(restante / n + 1e-9);
+        if (q > 0) { notas.push(q + "x " + n); restante = arredonda2(restante - q * n); }
+    });
+    [0.50, 0.25, 0.10, 0.05, 0.01].forEach(function (c) {
+        var q = Math.floor(restante / c + 1e-9);
+        if (q > 0) { moedas.push(q + "x " + c.toFixed(2).replace(".", ",")); restante = arredonda2(restante - q * c); }
+    });
+
+    out.innerHTML =
+        '<div class="calc-destaque"><span>Troco a dar</span><b style="color:#1b7f3b">' + brl(troco) + '</b></div>'
+        + (notas.length ? linhaCalc("Em notas", notas.join(" + ")) : '')
+        + (moedas.length ? linhaCalc("Em moedas", moedas.join(" + ")) : '')
+        + (restante > 0.009 ? linhaCalc("Sobra sem combina", brl(restante)) : linhaCalc("Bate certinho", "sem sobra", "#1b7f3b"))
+        + '<button type="button" class="btn-st b-copiar calc-copiar" onclick="copiarTexto(\'' + brl(troco) + '\')">'
+        + '<i class="fa fa-copy"></i> Copiar troco</button>';
 }
 
 /* ---------- 3) notas / documentos da loja ---------- */
@@ -613,16 +706,84 @@ function carregarNotas() {
     var d = ferramentasDados();
     var el = document.getElementById("notasLoja");
     if (el && !el.value) el.value = d.notas || "";
+    var t = document.getElementById("notasTitulo");
+    if (t && !t.value) t.value = d.notasTitulo || "";
+    var dt = document.getElementById("notasData");
+    if (dt && !dt.value) dt.value = d.notasData || hojeISO();
+}
+/* ---------- anotacoes: titulo, data e historico ---------- */
+function notasHistorico() {
+    var d = ferramentasDados();
+    if (!d.notasHistorico) d.notasHistorico = [];
+    return d.notasHistorico;
+}
+function hojeISO() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 }
 function salvarNotas() {
     var d = ferramentasDados();
     var el = document.getElementById("notasLoja");
     if (!el) return;
-    d.notas = el.value;
+    var texto = el.value.trim();
+    var msg = document.getElementById("notasMsg");
+    if (!texto) {
+        if (msg) { msg.style.color = "#c62828"; msg.textContent = "Escreva alguma coisa antes de salvar."; }
+        return;
+    }
+    var titulo = (document.getElementById("notasTitulo") || {}).value || "Anotação";
+    var data = (document.getElementById("notasData") || {}).value || hojeISO();
+
+    d.notas = texto;
+    d.notasTitulo = titulo;
+    d.notasData = data;
     d.notasSalvoEm = Date.now();
+
+    var hist = notasHistorico();
+    hist.unshift({ titulo: titulo, data: data, texto: texto, quando: Date.now() });
+    if (hist.length > 50) hist.length = 50;
     salvarFerramentas(d);
+
+    if (msg) { msg.style.color = "#2e7d32"; msg.textContent = "Anotação salva (" + data + ")."; }
+    historicoNotas();
+}
+/* lista as anotacoes ja salvas: da para abrir e apagar */
+function historicoNotas() {
+    var box = document.getElementById("notasHistorico");
+    if (!box) return;
+    var hist = notasHistorico();
+    if (!hist.length) { box.innerHTML = ""; return; }
+    var h = '<h5 style="margin:12px 0 6px;font-size:.88rem;color:var(--primary-color)">'
+          + '<i class="fa fa-history"></i> Anotações salvas (' + hist.length + ')</h5><div class="notas-lista">';
+    hist.forEach(function (n, i) {
+        var previa = String(n.texto).replace(/\s+/g, " ");
+        if (previa.length > 90) previa = previa.substring(0, 90) + "...";
+        h += '<div class="notas-item">'
+           + '<div class="ni-cab"><b>' + (n.titulo || "Anotação") + '</b><span class="ni-data">' + (n.data || "") + '</span></div>'
+           + '<div class="ni-texto">' + previa + '</div>'
+           + '<div class="ni-acoes">'
+           + '<button type="button" class="ni-btn" onclick="abrirNota(' + i + ')"><i class="fa fa-pen"></i> Abrir</button>'
+           + '<button type="button" class="ni-btn ni-del" onclick="apagarNota(' + i + ')"><i class="fa fa-trash"></i> Apagar</button>'
+           + '</div></div>';
+    });
+    h += '</div>';
+    box.innerHTML = h;
+}
+function abrirNota(i) {
+    var n = notasHistorico()[i];
+    if (!n) return;
+    document.getElementById("notasTitulo").value = n.titulo || "";
+    document.getElementById("notasData").value = n.data || hojeISO();
+    document.getElementById("notasLoja").value = n.texto || "";
+    document.getElementById("notasLoja").focus();
     var m = document.getElementById("notasMsg");
-    if (m) { m.style.color = "#2e7d32"; m.textContent = "Anotação salva."; }
+    if (m) { m.style.color = "#1d5fbf"; m.textContent = "Anotação aberta. Edite e salve de novo."; }
+}
+function apagarNota(i) {
+    if (!confirm("Apagar esta anotação?")) return;
+    notasHistorico().splice(i, 1);
+    salvarFerramentas(ferramentasDados());
+    historicoNotas();
 }
 function baixarNotas() {
     var el = document.getElementById("notasLoja");
@@ -758,9 +919,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261014s"></script>
-<script src="firebase-appcheck.js?v=20261014s"></script>
-<script src="app-update.js?v=20261014s"></script>
+<script src="app.js?v=20261014t"></script>
+<script src="firebase-appcheck.js?v=20261014t"></script>
+<script src="app-update.js?v=20261014t"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
