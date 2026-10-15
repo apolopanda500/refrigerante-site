@@ -788,10 +788,11 @@ function aplicarPrecosSalvar(){
     var ov = JSON.parse(localStorage.getItem("productPriceOverrides")||"{}");
     PD.forEach(function(p){
       var k = chavePreco(p);
-      if (ov[k] !== undefined) { p.pr = ov[k]; return; }
+      var original = p.pr;                 /* preco do catalogo, antes de sobrescrever */
+      if (ov[k] !== undefined) { p.pr = precoSaneio(ov[k], original); return; }
       /* chave antiga (versoes anteriores do painel) */
       var antiga = chavePrecoAntiga(p);
-      if (antiga && ov[antiga] !== undefined) p.pr = ov[antiga];
+      if (antiga && ov[antiga] !== undefined) p.pr = precoSaneio(ov[antiga], original);
     });
   }catch(e){}
 }

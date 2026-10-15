@@ -368,6 +368,21 @@ function notificarTelegramPedido(p) {
     try { fetch(url, { mode: "no-cors" }).catch(function(){}); } catch(e) {}
 }
 
+/* aviso simples de texto para o vendedor (usado pela ajuda do site).
+   A ajuda chamava notificarTelegram(), que nao existia: o aviso nunca saia. */
+function notificarTelegram(texto) {
+    var prefs = {};
+    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
+    var token = prefs.cfgTelegramToken || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
+    var chat  = prefs.cfgTelegramChatId  || "1810807613";   // chat do vendedor (@Rickcao22)
+    if (!token || !chat || !texto) return;
+    var url = "https://api.telegram.org/bot" + token + "/sendMessage"
+            + "?chat_id=" + encodeURIComponent(chat)
+            + "&text=" + encodeURIComponent(texto)
+            + "&disable_web_page_preview=true";
+    try { fetch(url, { mode: "no-cors" }).catch(function(){}); } catch(e) {}
+}
+
 function pedidosPorTelefone(tel) {
     const t = String(tel).replace(/\D/g, "");
     return getPedidos().filter(p => String(p.tel).replace(/\D/g, "") === t);

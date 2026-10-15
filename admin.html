@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261014n">
+<link rel="manifest" href="manifest-vendedor.json?v=20261014o">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261014n">
-<script src="theme.js?v=20261014n"></script>
+<link rel="stylesheet" href="style.css?v=20261014o">
+<script src="theme.js?v=20261014o"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -264,8 +264,8 @@
 
 </div></section>
 
-<script src="script.js?v=20261014n"></script>
-<script src="telegram.js?v=20261014n"></script>
+<script src="script.js?v=20261014o"></script>
+<script src="telegram.js?v=20261014o"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -731,9 +731,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261014n"></script>
-<script src="firebase-appcheck.js?v=20261014n"></script>
-<script src="app-update.js?v=20261014n"></script>
+<script src="app.js?v=20261014o"></script>
+<script src="firebase-appcheck.js?v=20261014o"></script>
+<script src="app-update.js?v=20261014o"></script>
 <script>
 (function(){
   function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
@@ -766,10 +766,16 @@ if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
         /* chave estavel: codigo do produto no site oficial (k:12345).
            Sem o codigo, cai para nome (so para produtos da lista antiga). */
         var k = (typeof chavePreco === "function") ? chavePreco(p) : (p.ct + "|" + p.nm);
-        var valor = ov[k] !== undefined ? ov[k] : p.pr;
+        /* o preco salvo so vale se fizer sentido: 275,00 no lugar de 27,50 e
+           erro de digito e fica de fora (o do catalogo manda) */
+        var salvo = ov[k] !== undefined ? ov[k] : null;
+        var descartado = salvo !== null && (typeof precoSaneio === "function")
+                     && Math.abs(precoNumero(precoSaneio(salvo, p.pr)) - precoNumero(salvo)) > 0.004;
+        var valor = descartado ? p.pr : (salvo !== null ? salvo : p.pr);
         h += '<div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-bottom:1px solid #eee">'
            + '  <span style="flex:1;min-width:0;font-size:.92rem">' + p.nm + '</span>'
            + '  <span style="font-size:.78rem;color:#999;white-space:nowrap">original ' + p.pr + '</span>'
+           + (descartado ? '  <span class="tb-tag t-agora" title="O preco salvo estava com um digito a mais. Voltamos ao do catalogo."><i class="fa fa-triangle-exclamation"></i> corrigido</span>' : '')
            + '  <input class="preco-input" data-k="' + k + '" value="' + fmtCampo(valor) + '" inputmode="decimal" '
            + '     style="width:110px;padding:9px 10px;border:1px solid #ddd;border-radius:9px;font-size:1rem;text-align:right">'
            + '</div>';
@@ -814,7 +820,9 @@ if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
   function lerCampos(){
     var ov = {};
     document.querySelectorAll(".preco-input").forEach(function(inp){
-      ov[inp.getAttribute("data-k")] = "R$ " + moedaBR(lerPreco(inp.value));
+      /* grava NUMERO, nao "R$ 27,50": numero nao sofre com virgula/ponto
+         e a nuvem fica sempre com valor limpo */
+      ov[inp.getAttribute("data-k")] = lerPreco(inp.value);
     });
     return ov;
   }

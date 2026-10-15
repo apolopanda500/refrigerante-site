@@ -129,6 +129,46 @@ var HORA_ABRE_PEDIDOS = 8 * 60 + 50;   // 08:50 (abre 10 minutos antes)
 var HORA_FECHA_PEDIDOS = 15 * 60;      // 15:00 em ponto
 
 /* ---------- DINHEIRO ---------- */
+/* precoNumero: entende "R$ 27,50", "27.5", "2750", 27.5 ...
+   (o mesmo cuidado do painel do vendedor, para todo mundo ler igual) */
+if (typeof precoNumero !== "function") {
+    var precoNumero = function (v) {
+        if (typeof v === "number") return isFinite(v) ? v : 0;
+        var s = String(v == null ? "" : v).trim().replace(/R\$\s*/i, "").replace(/\s/g, "");
+        if (!s) return 0;
+        var temPonto = s.indexOf(".") >= 0;
+        var temVirgula = s.indexOf(",") >= 0;
+        if (temPonto && temVirgula) {
+            if (s.lastIndexOf(",") > s.lastIndexOf(".")) s = s.replace(/\./g, "").replace(",", ".");
+            else s = s.replace(/,/g, "");
+        } else if (temVirgula) {
+            s = s.replace(",", ".");
+        } else if (temPonto) {
+            var partes = s.split(".");
+            if (partes.length === 2 && partes[1].length !== 3) { /* mantem o decimal */ }
+            else s = s.replace(/\./g, "");
+        }
+        var n = parseFloat(s);
+        return isNaN(n) || n < 0 ? 0 : n;
+    };
+}
+
+/* precoSaneio: protege contra o erro de digito classico (27,50 <-> 275,00).
+   Se o preco salvo for exatamente 10x ou 1/10 do preco do catalogo,
+   ele e descartado e vale o preco do catalogo. */
+if (typeof precoSaneio !== "function") {
+    var precoSaneio = function (salvo, doCatalogo) {
+        var s = precoNumero(salvo);
+        var c = precoNumero(doCatalogo);
+        if (s <= 0) return c;
+        if (c > 0) {
+            if (Math.abs(s - c * 10) < 0.005) return c;     // 27,50 gravado como 275,00
+            if (Math.abs(s * 10 - c) < 0.005) return c;     // 275,00 gravado como 27,50
+        }
+        return s;
+    };
+}
+
 /* formatBRL: converte 27.5 -> "R$ 27,50" (NaN/null viram R$ 0,00)
    fica aqui porque a home NAO carrega o script.js */
 if (typeof formatBRL !== "function") {
