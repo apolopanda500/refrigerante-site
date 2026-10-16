@@ -3,17 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016l">
+<link rel="manifest" href="manifest.json?v=20261016n">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ConvenÃ§Ã£o">
+<meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<title>Meu Carrinho - Refrigerantes ConvenÃ§Ã£o</title>
-<link rel="stylesheet" href="style.css?v=20261016l">
-<script src="theme.js?v=20261016l"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016n">
+<title>Meu Carrinho - Refrigerantes Convenção</title>
+<link rel="stylesheet" href="style.css?v=20261016n">
+<script src="theme.js?v=20261016n"></script>
+
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
 .page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
@@ -193,7 +194,7 @@
 </head>
 <body>
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
 <ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Hist&oacute;rico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configura&ccedil;&otilde;es</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="header-actions">
@@ -215,12 +216,12 @@
 <div class="caixa-limpar" id="infoRegiao" style="background:var(--bg-alt);border-color:var(--borda)"></div>
 
 <div class="caixa-bairro" id="caixaBairro">
-  <div class="cb-cab"><i class="fa fa-map-marker-alt"></i> Onde vocÃª quer receber?</div>
+  <div class="cb-cab"><i class="fa fa-map-marker-alt"></i> Onde você quer receber?</div>
   <div class="cb-grade">
     <label class="cb-rot">Seu bairro
       <input type="text" id="bairroCarrinho" placeholder="Ex.: Centro" autocomplete="address-level3">
     </label>
-    <label class="cb-rot">RegiÃ£o de entrega
+    <label class="cb-rot">Região de entrega
       <select id="regiaoCarrinho"></select>
     </label>
   </div>
@@ -229,18 +230,18 @@
 
 <div class="acoes">
   <button class="btn btn-limpar-item" onclick="confirmarLimpar()" title="Esvaziar o carrinho"><i class="fa fa-trash"></i> Limpar carrinho</button>
-  <a class="btn btn-secundario" href="index.html"><i class="fa fa-arrow-left"></i> Voltar ao catÃ¡logo</a>
+  <a class="btn btn-secundario" href="index.html"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
   <a class="btn btn-primario" href="checkout.html" id="btnCheckout"><i class="fa fa-credit-card"></i> Entrega e Pagamento</a>
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016l"></script>
-<script src="firebase-appcheck.js?v=20261016l"></script>
-<script src="app-update.js?v=20261016l"></script>
-<script src="ia.js?v=20261016l"></script>
-<script src="central.js?v=20261016l"></script>
-<script src="loja.js?v=20261016l"></script>
-<script src="script.js?v=20261016l"></script>
+<script src="conta.js?v=20261016n"></script>
+<script src="firebase-appcheck.js?v=20261016n"></script>
+<script src="app-update.js?v=20261016n"></script>
+<script src="ia.js?v=20261016n"></script>
+<script src="central.js?v=20261016n"></script>
+<script src="loja.js?v=20261016n"></script>
+<script src="script.js?v=20261016n"></script>
 <script>
 cart = getCart();
 
@@ -320,22 +321,22 @@ function renderCarrinho() {
         aviso = "";
     } else if (calc.gratis) {
         aviso = '<div class="aviso aviso-ok"><i class="fa fa-check-circle"></i>'
-              + ' <span><b>Frete GRÃTIS!</b> Seu pedido passou de ' + formatBRL(minimo) + '.</span></div>';
+              + ' <span><b>Frete GRÁTIS!</b> Seu pedido passou de ' + formatBRL(minimo) + '.</span></div>';
     } else {
         aviso = '<div class="aviso aviso-info"><i class="fa fa-truck"></i>'
               + ' <span>Faltam <b>' + formatBRL(arredonda(minimo - subtotal))
-              + '</b> para o frete ficar <b>GRÃTIS</b>.</span></div>';
+              + '</b> para o frete ficar <b>GRÁTIS</b>.</span></div>';
     }
 
     /* total final: depende da regiao escolhida */
     const linhaFrete = regiao
         ? '<div class="resumo-row"><span>Frete (' + regiao.nome + ')</span><span>'
-          + (calc.gratis ? '<b class="txt-ok">GRÃTIS</b>' : formatBRL(calc.frete)) + '</span></div>'
-        : '<div class="resumo-row"><span>Frete</span><span class="muted">escolha a regiÃ£o acima</span></div>';
+          + (calc.gratis ? '<b class="txt-ok">GRÁTIS</b>' : formatBRL(calc.frete)) + '</span></div>'
+        : '<div class="resumo-row"><span>Frete</span><span class="muted">escolha a região acima</span></div>';
 
     const semAviso = !regiao
         ? '<div class="aviso aviso-atencao"><i class="fa fa-circle-exclamation"></i>'
-          + ' <span>Escolha a <b>regiÃ£o</b> e digite seu <b>bairro</b> para ver o valor final e o dia de entrega.</span></div>'
+          + ' <span>Escolha a <b>região</b> e digite seu <b>bairro</b> para ver o valor final e o dia de entrega.</span></div>'
         : "";
 
     res.innerHTML = aviso + semAviso
@@ -457,13 +458,13 @@ renderCarrinho();
 /* ===== confirma antes de limpar (funciona com carrinho cheio ou vazio) ===== */
 function confirmarLimpar(){
     if (cart.length === 0) {
-        alert("O carrinho jÃ¡ estÃ¡ vazio.");
+        alert("O carrinho já está vazio.");
         return;
     }
     var n = cart.length;
     var itens = cart.reduce(function (t, i) { return t + i.qty; }, 0);
     if (!confirm("Remover " + itens + " " + (itens === 1 ? "item" : "itens")
-        + " (" + n + " " + (n === 1 ? "produto" : "produtos") + ") do carrinho?\n\nEsta aÃ§Ã£o nÃ£o pode ser desfeita.")) return;
+        + " (" + n + " " + (n === 1 ? "produto" : "produtos") + ") do carrinho?\n\nEsta ação não pode ser desfeita.")) return;
     limparCarrinho();
     if (typeof renderCarrinho === "function") renderCarrinho();
     alert("Carrinho esvaziado.");
@@ -563,7 +564,7 @@ function atualizarDiasCarrinho(r) {
         texto = "<b>Hoje entregamos em " + r.nome + "</b>, das " + r.horario + ".";
     } else if (abre) {
         classe = "aviso-pedido"; icone = "fa fa-cart-plus";
-        texto = "<b>Hoje os pedidos de " + r.nome + " estÃ£o abertos.</b> A entrega sai " + r.diasTexto.toLowerCase() + ".";
+        texto = "<b>Hoje os pedidos de " + r.nome + " estão abertos.</b> A entrega sai " + r.diasTexto.toLowerCase() + ".";
     } else {
         classe = "aviso-atencao"; icone = "fa fa-clock";
         texto = "Pedidos de <b>" + r.nome + "</b> na " + (typeof textoDiasPedido === "function" ? textoDiasPedido(r) : "-")
@@ -610,7 +611,7 @@ function atualizarAvisoCarrinho(){
         box.className = "regra-atendimento" + ((!regra.liberado) ? " fechado" : "");
         box.style.display = "flex";
         box.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> ' + regra.texto
-            + ' Atendemos das <b>08:50</b> Ã s <b>15:00</b>.</span>';
+            + ' Atendemos das <b>08:50</b> às <b>15:00</b>.</span>';
         if (btn) btn.style.display = "none";
         return;
     }
@@ -618,9 +619,9 @@ function atualizarAvisoCarrinho(){
     if (fora) {
         box.className = "regra-atendimento";
         box.style.display = "flex";
-        box.innerHTML = '<i class="fa fa-map-marker-alt"></i> <span><b>AtenÃ§Ã£o:</b> o bairro "' + bairro
-            + '" nÃ£o estÃ¡ na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
-            + '). O pedido serÃ¡ bloqueado na finalizaÃ§Ã£o: corrija o bairro no perfil.</span>';
+        box.innerHTML = '<i class="fa fa-map-marker-alt"></i> <span><b>Atenção:</b> o bairro "' + bairro
+            + '" não está na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
+            + '). O pedido será bloqueado na finalização: corrija o bairro no perfil.</span>';
         btnMostrar();
         return;
     }
@@ -641,7 +642,7 @@ if (document.readyState === "loading") document.addEventListener("DOMContentLoad
 else { montarSeletorBairro(); renderCarrinho(); }
 
 </script>
-<script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};var box=document.createElement("div");box.style="max-width:720px;margin:20px auto;padding:14px;border:1px solid #ddd;border-radius:10px;background:#fff";box.innerHTML="<b>EndereÃ§o de entrega</b><br><small>"+(d.endereco||"NÃ£o informado")+" "+(d.bairro||"")+" "+(d.complemento||"")+"</small><br><a href=perfil.html style=color:#3d4465;font-weight:600>Editar endereÃ§o</a>";var main=document.querySelector("section.page .container");if(main)main.appendChild(box);});</script><script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};if(!d.nome||!d.tel){var b=document.createElement("div");b.style="max-width:720px;margin:10px auto;padding:12px;background:#fff3cd;border:2px solid #ffc107;border-radius:10px;color:#856404";b.innerHTML="<b>AtenÃ§Ã£o:</b> identifique-se (nome e WhatsApp no Perfil) antes de finalizar o pedido.";var m=document.querySelector("section.page .container");if(m)m.appendChild(b);}});</script></body>
+<script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};if(!d.nome||!d.tel){var b=document.createElement("div");b.style="max-width:720px;margin:10px auto;padding:12px;background:#fff3cd;border:2px solid #ffc107;border-radius:10px;color:#856404";b.innerHTML="<b>Atenção:</b> identifique-se (nome e WhatsApp no Perfil) antes de finalizar o pedido.";var m=document.querySelector("section.page .container");if(m)m.appendChild(b);}});</script></body>
 <script>
 /* destaca a pagina atual no menu */
 (function(){
