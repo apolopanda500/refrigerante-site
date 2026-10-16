@@ -16,7 +16,7 @@
    (so que o banco fica sem a protecao extra).
    ============================================ */
 var APPCHECK_CONFIG = {
-    apiKey: "AIzaSyD4HSoi2gnchfdMb1HAwkniz-cNEfgBCpE",
+    apiKey: "",
     authDomain: "planning-with-ai-9b2c9.firebaseapp.com",
     projectId: "planning-with-ai-9b2c9",
     databaseURL: "https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com",
