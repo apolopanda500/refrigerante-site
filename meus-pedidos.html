@@ -453,7 +453,7 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
 <div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
 <ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Hist&oacute;rico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configura&ccedil;&otilde;es</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
-<div class="header-actions"></div>
+<div class="header-actions"><div class="cart-icon" onclick="window.location.href='carrinho.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div></div>
 </nav></div></header>
 
 <section class="page"><div class="container">
@@ -837,6 +837,13 @@ document.addEventListener("visibilitychange", function(){
     });
   }catch(e){}
 })();
+</script>
+<script>
+/* atualiza o contador e o ícone do carrinho no header */
+if (typeof updateCartCount === "function") {
+    updateCartCount();
+    setInterval(updateCartCount, 5000);
+}
 </script>
 </body>
 </html>
