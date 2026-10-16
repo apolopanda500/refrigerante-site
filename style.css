@@ -28,3 +28,34 @@
 [data-theme="dark"] .cb-rot select option{background:#2a2e44;color:#e6e8f2}
 [data-theme="dark"] .cart-vazio{color:#a1a8c3}
 
+/* ===== tema escuro: carrinho (itens, resumo, botoes) ===== */
+/* fundo dos itens do carrinho */
+[data-theme="dark"] .cart-item{background:#222643;border-bottom-color:#2f3456!important}
+[data-theme="dark"] .cart-item img{background:#232742!important}
+
+/* seletor de quantidade dentro do carrinho */
+[data-theme="dark"] .ci-qtd{background:#2a2e44!important;border-color:#3d4470!important;color:#e6e8f2!important}
+[data-theme="dark"] .ci-qtd button{background:#353a5c!important;color:#e6e8f2!important}
+[data-theme="dark"] .ci-qtd span{color:#e6e8f2!important}
+
+/* preco unitario e subtotal dos itens */
+[data-theme="dark"] .ci-price{color:#a1a8c3!important}
+[data-theme="dark"] .ci-subtotal{color:#e6e8f2!important}
+
+/* botoes editar/remover dentro do carrinho */
+[data-theme="dark"] .ci-editar button{color:#e6e8f2!important}
+[data-theme="dark"] .ci-editar .ci-remove{color:#ff9a9a!important}
+
+/* resumo (subtotal, frete, total) */
+[data-theme="dark"] .resumo{background:#1c1f33!important;border-color:#353a5c!important}
+[data-theme="dark"] .resumo-row{color:#e6e8f2!important;border-top-color:#353a5c!important}
+[data-theme="dark"] .resumo-row.total{color:#ffb822!important;border-top-color:#3d4470!important}
+
+/* botoes da barra de acoes no desktop */
+[data-theme="dark"] .acoes .btn-secundario{background:#2a2e44!important;color:#e6e8f2!important;border-color:#3d4470!important}
+[data-theme="dark"] .acoes .btn-secundario:hover{background:#353a5c!important}
+
+/* aviso do carrinho (frete, minimo, regiao) */
+[data-theme="dark"] .aviso{background:#2a2e44!important;border-color:#3d4470!important;color:#e6e8f2!important}
+[data-theme="dark"] .aviso i{color:#ffb822!important}
+

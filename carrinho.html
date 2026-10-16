@@ -25,11 +25,11 @@
 .cart-box { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px; }
 .cart-item { display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid #eee; flex-wrap:wrap; }
 .cart-item:last-child { border-bottom:none; }
-.cart-item img { width:64px; height:64px; object-fit:contain; border-radius:10px; background:#fafafa; display:block; }
+.cart-item img { width:64px; height:64px; object-fit:contain; border-radius:10px; background:var(--bg-alt,#232742); display:block; }
 .ci-info { flex:1; min-width:160px; }
 .ci-name { font-weight:700; color:var(--text-color); display:block; }
 .ci-price { color:#5f6570; font-size:0.9rem; }
-.ci-qtd { display:inline-flex; align-items:center; gap:8px; border:1px solid #ddd; border-radius:22px; padding:5px 8px; background:#fafafa; }
+.ci-qtd { display:inline-flex; align-items:center; gap:8px; border:1px solid #ddd; border-radius:22px; padding:5px 8px; background:var(--bg-alt,#232742); }
 .ci-qtd button { width:38px; height:38px; border:none; border-radius:50%; background:var(--primary-color); color:#fff; font-size:1.25rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .ci-qtd button:active { transform:scale(.94); }
 .ci-qtd button:focus-visible { outline:3px solid var(--accent-color,#ffb822); outline-offset:2px; }
@@ -538,7 +538,7 @@ function renderCarrinho() {
         const sub = arredonda(unit * qtd);
         html += '<div class="cart-item" data-idx="' + idx + '">'
             + '<img src="' + (item.img || "img/icon-192.png") + '" alt="' + item.name + '" loading="lazy"'
-            + ' onerror="this.style.opacity=\'0.4\';this.style.background=\'#fafafa\'">'
+            + ' onerror="this.style.opacity=\'0.4\';this.style.background=\'var(--bg-alt,#232742)\'">'
             + '<div class="ci-info"><span class="ci-name">' + item.name + '</span>'
             + '<span class="ci-price">' + formatBRL(unit) + ' &times; ' + qtd + ' = <b>' + formatBRL(sub) + '</b></span></div>'
             /* editar quantidade: sempre visivel, com botao grande */
@@ -918,3 +918,5 @@ else { montarSeletorBairro(); renderCarrinho(); }
 </script>
 </body>
 </html>
+
+
