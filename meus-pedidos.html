@@ -371,6 +371,7 @@ function render(){
     h += '<div class="timeline-resumo">'
        + '<button type="button" class="btn-detalhe" onclick="toggleTicks(\'' + p.id + '\')">'
        + '<i class="fa fa-clock"></i> Acompanhamento</button>'
+       + '<button type="button" class="tick-min" onclick="toggleTicks(\'' + p.id + '\')" title="Minimizar">—</button>'
        + '<span>' + parado + '</span></div>';
     h += '<div class="timeline" id="ticks-' + p.id + '" style="display:none">';
     if (hist.length) hist.forEach(function(ev){

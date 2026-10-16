@@ -1,6 +1,6 @@
 # ============================================
 # ROBO DO CATALOGO - CONVENCAO
-# De segunda a sexta, 10:00 (fuso de Sao Paulo),
+# De segunda a sexta, 10:00 e 14:00 (fuso de Sao Paulo),
 # entra no site oficial, ve os produtos disponiveis,
 # baixa as fotos e atualiza o catalogo.json do site.
 #
@@ -16,6 +16,8 @@ on:
   schedule:
     # 10:00 de segunda a sexta (13:00 UTC = 10:00 em SP)
     - cron: '0 13 * * 1-5'
+    # 14:00 de segunda a sexta (17:00 UTC = 14:00 em SP)
+    - cron: '0 17 * * 1-5'
   workflow_dispatch:        # da para rodar na mao pela aba Actions
   push:
     paths:

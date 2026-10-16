@@ -51,6 +51,25 @@ a{text-decoration:none;color:inherit}
 .sf i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#6b7280}
 .sf input{width:100%;padding:11px 14px 11px 40px;border:2px solid #e0e0e0;border-radius:25px;font-size:1rem;outline:none}
 @media(max-width:640px){.bs-tx{display:none}.bs{padding:0;width:44px;justify-content:center}.lg span{display:none}.lg{font-size:0}.lg i{font-size:1.5rem}}
+
+/* Imagens do catalogo proporcionais (nao esticam nem saem da tela) */
+.pib{width:100%;height:130px;overflow:hidden;border-radius:10px;background:#f6f7fb;display:flex;align-items:center;justify-content:center}
+.pi{max-width:100%;max-height:100%;object-fit:contain;width:auto;height:auto}
+.pc{max-width:260px}
+.pg{gap:12px}
+
+/* Tabelas nao extendem a tela */
+.tab-wrap{max-width:100%;overflow-x:auto}
+.tabela-geral,.tabela-ofertas,.tabela-pedidos{width:100%;max-width:100%;table-layout:fixed}
+
+/* Tema escuro nas tabelas */
+[data-theme="dark"] .tabela-geral,[data-theme="dark"] .tabela-ofertas,[data-theme="dark"] .tabela-pedidos{background:#1e2138 !important;color:#e6e8f2 !important}
+[data-theme="dark"] .tabela-geral th,[data-theme="dark"] .tabela-ofertas th,[data-theme="dark"] .tabela-pedidos th{background:#2b3157 !important;color:#e6e8f2 !important}
+[data-theme="dark"] .tabela-geral td,[data-theme="dark"] .tabela-ofertas td,[data-theme="dark"] .tabela-pedidos td{background:#222643 !important;color:#dfe2ef !important;border-color:#2f3456 !important}
+
+/* Ticks com botao visual de minimizar */
+.tick-min{background:none;border:none;color:var(--primary-color,#3d4465);cursor:pointer;font-size:.8rem;padding:4px;border-radius:6px}
+.tick-min:hover{background:rgba(61,68,101,.1)}
 </style>
 </head>
 <body>
@@ -77,17 +96,25 @@ a{text-decoration:none;color:inherit}
 <div class="tb"><div class="tr2" id="trRow"></div></div>
 <main class="pw-main" id="pwMain"></main>
 
-<!-- 3) OFERTAS: todas numa tabela so -->
-<div id="tabelaOfertas" class="tb-info"></div>
-
-<!-- 4) RECOMENDACOES (motor de IA local do ia.js) -->
+<!-- 3) RECOMENDACOES (motor de IA local do ia.js) -->
 <div id="recomendados" class="tb-info"></div>
 
-<!-- 4) atalho para os pedidos -->
-<div class="pw-layout">
-  <aside class="pw-side">
-    <div id="sideZap"></div>
-  </aside>
+<!-- Informacoes da loja no final da pagina -->
+<div class="info-loja" style="max-width:1200px;margin:0 auto;padding:30px 14px 20px;background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:24px;">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap;">
+    <div style="width:48px;height:48px;border-radius:12px;background:var(--primary-color,#3d4465);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;"><i class="fa fa-store"></i></div>
+    <div>
+      <div style="font-weight:800;color:var(--primary-color);font-size:1.1rem;">Refrigerantes Convenção</div>
+      <div style="color:#6b7280;font-size:.9rem;">Delivery de refrigerantes, chopp, águas e energético</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;font-size:.9rem;color:#555;">
+    <div><i class="fa fa-clock" style="color:var(--accent-color,#ffb822);margin-right:8px;"></i><b>Horário:</b> Segunda a sexta, 08:50 às 15:00</div>
+    <div><i class="fa fa-truck" style="color:var(--accent-color,#ffb822);margin-right:8px;"></i><b>Entrega:</b> Nas ruas das 06:00 às 18:00 · sábado só entrega</div>
+    <div><i class="fa fa-whatsapp" style="color:#25d366;margin-right:8px;"></i><b>WhatsApp:</b> (21) 9-8315-8911</div>
+    <div><i class="fa fa-envelope" style="color:var(--primary-color);margin-right:8px;"></i><b>E-mail:</b> rickjax1234@gmail.com</div>
+    <div><i class="fa fa-map-marker-alt" style="color:var(--accent-color,#ffb822);margin-right:8px;"></i><b>Frete grátis:</b> acima de R$ 150</div>
+  </div>
 </div>
 
 <footer class="ft">
