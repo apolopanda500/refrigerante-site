@@ -85,11 +85,14 @@ if (!ONLINE) {
     console.log("  --  pulado (rode com --online para conferir o site publicado)");
 } else {
     const site = "https://apolopanda500.github.io/refrigerante-site/";
+    /* baixa pelo node (o powershell nem sempre tem o mesmo acesso a rede) */
     const pega = (u) => {
+        const codigo = "fetch(process.argv[1]).then(function(r){return r.text();})"
+            + ".then(function(t){process.stdout.write(t);})"
+            + ".catch(function(){process.exit(2);});";
         try {
-            return execFileSync(process.execPath, ["-e",
-                "fetch(process.argv[1]).then(r=>r.text()).catch(()=>process.exit(2))", u],
-                { encoding: "utf8", timeout: 30000, stdio: ["ignore", "pipe", "ignore"] }).trim();
+            return execFileSync(process.execPath, ["-e", codigo, u],
+                { encoding: "utf8", timeout: 45000, stdio: ["ignore", "pipe", "ignore"] }).trim();
         } catch (e) { return null; }
     };
     const v = pega(site + "versao.txt");
