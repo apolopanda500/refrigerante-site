@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261016h">
+<link rel="manifest" href="manifest-vendedor.json?v=20261016i">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016h">
-<script src="theme.js?v=20261016h"></script>
+<link rel="stylesheet" href="style.css?v=20261016i">
+<script src="theme.js?v=20261016i"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -387,8 +387,13 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     <p style="color:#777;font-size:0.9rem">Acesso restrito</p>
     <input id="fUsuario" type="text" placeholder="Usuário" autocomplete="username" onkeydown="if(event.key==='Enter')entrar()">
     <div style="position:relative">
-      <input id="fSenha" type="password" placeholder="Senha de acesso" autocomplete="current-password" style="padding-right:44px" onkeydown="if(event.key==='Enter')entrar()">
-      <button type="button" onclick="verSenha(this)" title="Mostrar/ocultar senha" aria-label="Mostrar ou ocultar senha" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#777;cursor:pointer;font-size:1rem;padding:8px"><i class="fa fa-eye"></i></button>
+      <input id="fSenha" type="password" placeholder="Senha de acesso" autocomplete="current-password" style="padding-right:52px" onkeydown="if(event.key==='Enter')entrar()">
+      <button type="button" onclick="verSenha(this)" id="btnVerSenha" title="Mostrar/ocultar senha" aria-label="Mostrar ou ocultar senha" aria-pressed="false"
+        style="position:absolute;right:4px;top:50%;transform:translateY(-50%);
+               display:flex;align-items:center;justify-content:center;
+               width:44px;height:44px;min-width:44px;background:none;border:none;
+               color:var(--text-muted,#5f677f);cursor:pointer;font-size:1.05rem;
+               border-radius:8px;padding:0"></button>
     </div>
     <p id="loginErro" style="display:none;color:var(--texto-erro);font-size:0.85rem;margin:6px 0 0;font-weight:600"></p>
     <button onclick="entrar()"><i class="fa fa-sign-in-alt"></i> Entrar</button>
@@ -579,8 +584,8 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261016h"></script>
-<script src="telegram.js?v=20261016h"></script>
+<script src="script.js?v=20261016i"></script>
+<script src="telegram.js?v=20261016i"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -607,13 +612,32 @@ let filtroAdminAtual = "todos";
 let buscaAdmin = "";
 let fichaAberta = "";
 
+/* mostrar/ocultar a senha. Desenha o icone sempre (o botao pode ter
+   nascido vazio no HTML) e avisa quem usa leitor de tela o estado atual,
+   com aria-pressed: true = senha visivel. */
 function verSenha(btn) {
     var campo = document.getElementById("fSenha");
     if (!campo) return;
-    var mostrando = campo.type === "text";
-    campo.type = mostrando ? "password" : "text";
-    btn.innerHTML = '<i class="fa fa-eye' + (mostrando ? "" : "-slash") + '"></i>';
+    var mostrando = campo.type === "password";
+    campo.type = mostrando ? "text" : "password";
+    var b = btn || document.getElementById("btnVerSenha");
+    if (b) {
+        b.innerHTML = '<i class="fa ' + (mostrando ? "fa-eye-slash" : "fa-eye") + '"></i>';
+        b.setAttribute("aria-pressed", mostrando ? "true" : "false");
+        b.setAttribute("aria-label", mostrando ? "Ocultar a senha" : "Mostrar a senha");
+        b.title = mostrando ? "Ocultar a senha" : "Mostrar a senha";
+    }
+    /* o cursor volta para o fim do que ja foi digitado. Se o navegador
+       nao aceitar setSelectionRange (campo sem tipo texto), a senha ja
+       esta revelada e o foco e cosmetico: o erro aqui nao trava nada */
+    try { campo.focus(); var n = campo.value.length; campo.setSelectionRange(n, n); }
+    catch (e) { /* proposital: o foco e cosmetico, a senha ja foi revelada */ }
 }
+/* o icone precisa existir antes do primeiro clique */
+document.addEventListener("DOMContentLoaded", function () {
+    var b = document.getElementById("btnVerSenha");
+    if (b) verSenha(b);
+});
 
 function entrar() {
     const u = (document.getElementById("fUsuario").value || "").trim();
@@ -1473,9 +1497,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261016h"></script>
-<script src="firebase-appcheck.js?v=20261016h"></script>
-<script src="app-update.js?v=20261016h"></script>
+<script src="app.js?v=20261016i"></script>
+<script src="firebase-appcheck.js?v=20261016i"></script>
+<script src="app-update.js?v=20261016i"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL

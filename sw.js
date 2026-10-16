@@ -27,7 +27,7 @@
    ============================================ */
 
 /* precisa bater com a versao do site: o bump-versao.js troca os dois */
-var VERSAO = "20261016h";
+var VERSAO = "20261016i";
 var BASE = "convencao-cache-" + VERSAO;
 /* 8 s: no 4G a rede leva mais de 3 s e o app caia no cache velho (ou em
    nada) toda vez que a pagina abria. Ainda e rapido: o cache so entra
@@ -68,6 +68,29 @@ var ESSENCIAL = [
    (o vendedor usa no celular dele, nao o cliente)*/
 var NAO_CACHEIA = ["admin.html", "telegram.js", "manifest-vendedor.json", "produtos_ref.html"];
 
+/* quantos dos arquivos essenciais o cache novo ja tem. Publicou e o cache
+   ainda esta enchendo? os antigos NAO podem ser apagados ainda: e o intervalo
+   em que o CSS e o JS nao estavam em lugar nenhum (tela branca). */
+function cacheCompleto(cache) {
+    return cache.keys().then(function (chaves) {
+        var tem = {};
+        chaves.forEach(function (r) {
+            /* entrada sem URL valida nao utiliza a checagem, e so um cache
+               de outra origem: seguimos com o que der */
+            try { tem[new URL(r.url).pathname] = true; }
+            catch (e) { /* proposital: entrada estanha e ignorada */ }
+        });
+        var precisa = ESSENCIAL.filter(function (u) {
+            return /\.(html|css|js)$/.test(u) || u === "./";
+        });
+        var ok = precisa.filter(function (u) {
+            var alvo = u === "./" ? "/" : "/" + u;
+            return tem[alvo] === true;
+        }).length;
+        return ok >= Math.ceil(precisa.length * 0.9);   /* 90% ja serve */
+    });
+}
+
 self.addEventListener("install", function (e) {
     e.waitUntil(
         caches.open(BASE).then(function (cache) {
@@ -81,13 +104,27 @@ self.addEventListener("install", function (e) {
 
 self.addEventListener("activate", function (e) {
     e.waitUntil(
-        caches.keys().then(function (chaves) {
-            /* apaga TODO cache que nao seja o atual (inclusive os antigos v3) */
-            return Promise.all(chaves.map(function (c) {
-                if (c !== BASE) return caches.delete(c);
-            }));
+        caches.open(BASE).then(cacheCompleto).then(function (completo) {
+            if (!completo) return null;   /* cache novo ainda vazio: NAO apaga nada */
+            return caches.keys().then(function (chaves) {
+                /* apaga TODO cache que nao seja o atual (inclusive os antigos v3) */
+                return Promise.all(chaves.map(function (c) {
+                    if (c !== BASE) return caches.delete(c);
+                }));
+            });
         }).then(function () { return self.clients.claim(); })
     );
+});
+
+/* o proprio worker novo pode ser apressado se uma pagina perguntar */
+self.addEventListener("message", function (e) {
+    var dados = (e && e.data) || {};
+    if (dados.type === "SKIP_WAITING") self.skipWaiting();
+    if (dados.type === "LIMPAR_CACHE" && typeof caches !== "undefined") {
+        e.waitUntil(caches.keys().then(function (chaves) {
+            return Promise.all(chaves.map(function (c) { return caches.delete(c); }));
+        }).then(function () { return self.clients.claim(); }));
+    }
 });
 
 /* procura no cache ignorando o ?v=... (ex.: style.css?v=20261014r) */

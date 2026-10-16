@@ -113,8 +113,28 @@ if (/\.length\s*===|\.length\s*>\s*0|\.forEach\(/.test(codigo)) ok("lista vazia 
 
 console.log("\n=== 9. O USUARIO VE QUANDO O APP ESTA VELHO ===");
 const att = fontes.filter(s => s.f === "app-update.js").map(s => s.t).join("");
-if (/versao\.txt/.test(att) && (/location\.reload/.test(att) || /barraAtualizar/.test(att))) ok("app avisa e atualiza quando entra versao nova");
-else falha("app nao avisa de versao nova: o celular fica preso numa versao antiga");
+/* O dono pediu para TIRAR a barra flutuante "Versao nova disponivel" (cobria
+   o botao do carrinho). A garantia de nao ficar preso numa versao antiga
+   continua, e agora e silenciosa: quando a versao do site muda, o app apaga
+   o cache velho, pede ao worker que assuma (SKIP_WAITING) e recarrega.
+   Este teste exige as PECAS desse mecanismo - se alguem remover uma delas,
+   o celular volta a ficar preso na versao antiga e o teste acusa. */
+if (/versao\.txt/.test(att)
+    && /SKIP_WAITING/.test(att)
+    && /limparCacheApp|\.update\(\)/.test(att)
+    && /versaoAppVista/.test(att)) {
+    ok("app se atualiza sozinho quando entra versao nova (silencioso, sem barra)");
+} else {
+    falha("app nao se atualiza sozinho: o celular fica preso numa versao antiga");
+}
+if (!/barraAtualizar/.test(att) && !/function\s+barraAtualizar/.test(att))
+    ok("a barra flutuante de versao nova foi removida (o dono pediu)");
+else
+    falha("a barra flutuante de versao nova voltou (o dono pediu para tirar)");
+/* e o painel do vendedor nao pode ter a barra tambem */
+const admAtt = fontes.filter(s => s.f === "admin.html").map(s => s.t).join("");
+if (!/barraAtualizar/.test(admAtt)) ok("o painel do vendedor tambem sem a barra flutuante");
+else falha("o painel do vendedor ainda cria a barra flutuante");
 
 console.log("\n=== 10. O APP NAO FICA COM A TELA BRANCA NO CELULAR ===");
 /* Regressao real: ao publicar, o service worker novo tomba o controle

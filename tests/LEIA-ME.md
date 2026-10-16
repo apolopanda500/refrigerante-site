@@ -55,7 +55,12 @@ chaves**. Aparece no relatório como "regra removida" ou "seletor aparado".
 > O lint também roda dentro de `rodar-todos.js`: 13 baterias no total.
 
 
-## Ferramentas
+## Ferramentas de auditoria
+
+| Ferramenta | O que faz |
+|---|---|
+| `node tools/botoes.js [pagina]` | Abre cada página num navegador de verdade e audita **todo botão um por um**: botão que não faz nada (falso), botão que chama função que não existe (morto), sem rótulo, e alvo de toque menor que 44px |
+| `node tools/teste-offline-sw.js` | Abre o site, **corta a internet** e recarrega: prova que o app abre offline e não fica com a tela branca |
 
 ```bash
 node tests/manter-tudo.js                # alinha versões, datas, links, docs e robô

@@ -70,7 +70,6 @@ refrigerante-site/
 │  └─ build-apk.ps1 usa versao.txt .. APK sai na MESMA versão do site
 │
 ├─ FERRAMENTAS
-│  ├─ serve.ps1 ..................... servidor local para testar
 │  ├─ rebuild.ps1 ................... regerar o projeto Android
 │  ├─ make_svgs.ps1 ................. ícones do app
 │  ├─ tools/gerar-icone.js .......... gera os PNG do ícone
