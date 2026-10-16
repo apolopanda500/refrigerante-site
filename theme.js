@@ -82,32 +82,9 @@
         if (bd) bd.style.display = p.cfgNotifPromo ? "" : "none";
     }
 
-    // Aviso de ofertas (aparece em todas as telas do CLIENTE)
-    // O painel do vendedor nao usa: la atrapalha a lista de pedidos.
-    function avisoOferta() {
-        if (ehPainel()) return;
-        var p = prefs();
-        if (!p.cfgNotifPromo) return;
-        if (sessionStorage.getItem("avisoOfertado")) return;
-        if (document.getElementById("avisosOferta")) return;
-
-        var box = document.createElement("div");
-        box.id = "avisosOferta";
-        box.className = "aviso-oferta";
-        box.innerHTML =
-            '<i class="fa fa-bullhorn"></i>'
-            + '<span><b>Oferta da semana!</b> Frete grátis acima de R$ 150 em toda a região.</span>'
-            + '<button class="ao-fechar" aria-label="Fechar">&times;</button>';
-        box.querySelector(".ao-fechar").addEventListener("click", function () {
-            box.remove();
-            try { sessionStorage.setItem("avisoOfertado", "1"); } catch (e) {}
-        });
-        document.body.appendChild(box);
-    }
-
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", function () { aplicar(); avisoOferta(); });
-    } else { aplicar(); avisoOferta(); }
+        document.addEventListener("DOMContentLoaded", aplicar);
+    } else { aplicar(); }
 
     window.addEventListener("storage", aplicar);
     window.aplicarTema = aplicar;

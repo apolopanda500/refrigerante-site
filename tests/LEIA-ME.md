@@ -37,6 +37,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `22-entrega.js` | **Entrega**: commit feito, push na frente, versão do repositório igual à do site no ar |
 `24-textos.js` | **Texto do cliente**: palavra na tela sem o acento certo, caractere corrompido, menu e nome das regioes (so o que aparece na tela; codigo com acento seria erro)
 | `23-acesso-vendedor.js` | **Acesso do vendedor**: um acesso só de usuário e senha, trava de 5 tentativas, usuário sem differentiate maiúscula (o dono não fica trancado fora) e o painel baixando os pedidos de **todo** aparelho pela nuvem |
+| `25-aparencia.js` | **Aparência**: a opção "Animações reduzidas" ("Reduzir animações da interface") existe na tela, salva, aplica o atributo e o CSS corta as animações em todas as páginas do cliente |
 
 ## CSS: como confere e como limpa
 
