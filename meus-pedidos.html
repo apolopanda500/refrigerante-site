@@ -531,20 +531,28 @@ function sair(){
 /* ===== SEMPRE mostra os pedidos, sem pedir numero nem nome ===== */
 function mostrarPedidos(){
   try {
-    var todos = getPedidos();
-    var sessao = (typeof Conta !== "undefined" && !Conta.estaVazia())
-          ? { nome: Conta.dados().nome, tel: Conta.dados().tel, cpf: Conta.dados().cpf }
-          : null;
+    var todos = [];
+    if (typeof getPedidos === "function") {
+        try { todos = getPedidos() || []; } catch(e) { todos = []; }
+    }
+    if (!Array.isArray(todos)) todos = [];
+
+    var sessao = null;
+    if (typeof Conta !== "undefined" && Conta && typeof Conta.estaVazia === "function") {
+        try {
+            if (!Conta.estaVazia()) {
+                sessao = { nome: Conta.dados().nome, tel: Conta.dados().tel, cpf: Conta.dados().cpf };
+            }
+        } catch(e) { sessao = null; }
+    }
+
     var lista = [];
-    var porTelefone = false;
     if (sessao && sessao.tel) {
       lista = todos.filter(function(p){ return mesmoTelefone(p.tel, sessao.tel); });
-      if (lista.length) porTelefone = true;
     }
     // nao achou pelo telefone (ou nao esta logado): mostra tudo que este aparelho tem
     if (!lista.length) lista = todos.slice();
 
-    /* identidade do historico = PERFIL (fonte unica). Sem perfil, nao finge login */
     var textoEl = document.getElementById("sessaoTexto");
     if (textoEl) {
         if (sessao && sessao.nome) {
@@ -562,10 +570,10 @@ function mostrarPedidos(){
     document.querySelectorAll(".filtro").forEach(function(b){
       b.classList.toggle("ativo", b.dataset.f === "todos");
     });
-    /* tenta sincronizar com a nuvem (pedidos do vendedor mudaram de status) */
+
     if (typeof sincronizarPedidosCliente === "function") {
         sincronizarPedidosCliente(function(junto){
-            pedidosAtuais = junto;
+            pedidosAtuais = Array.isArray(junto) ? junto : [];
             filtroAtual = "todos";
             document.querySelectorAll(".filtro").forEach(function(b){
                 b.classList.toggle("ativo", b.dataset.f === "todos");
@@ -793,18 +801,6 @@ document.addEventListener("visibilitychange", function(){
 });
 </script>
 <script>
-/* destaca a pagina atual no menu */
-(function(){
-  try{
-    var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-    document.querySelectorAll('.nav-links a').forEach(function(a){
-      var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
-      if (alvo === atual) a.classList.add('ativo');
-    });
-  }catch(e){}
-})();
-</script>
-<script>
 /* ===== ACOMPANHAMENTO QUASE TEMPO REAL =====
    Verifica a cada 15s se o localStorage de pedidos mudou e atualiza a tela automaticamente. */
 (function(){
@@ -820,18 +816,6 @@ document.addEventListener("visibilitychange", function(){
     }
     setInterval(checarMudancas, 15000);
     checarMudancas();
-})();
-</script>
-<script>
-/* destaca a pagina atual no menu */
-(function(){
-  try{
-    var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-    document.querySelectorAll('.nav-links a').forEach(function(a){
-      var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
-      if (alvo === atual) a.classList.add('ativo');
-    });
-  }catch(e){}
 })();
 </script>
 <script>
