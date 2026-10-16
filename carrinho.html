@@ -286,7 +286,7 @@ function renderCarrinho() {
         const sub = arredonda(unit * qtd);
         html += '<div class="cart-item" data-idx="' + idx + '">'
             + '<img src="' + (item.img || "img/icon-192.png") + '" alt="' + item.name + '" loading="lazy"'
-            + ' onerror="this.style.opacity='0.4';this.style.background='#fafafa'"'
+            + ' onerror="this.style.opacity=\'0.4\';this.style.background=\'#fafafa\'">'
             + '<div class="ci-info"><span class="ci-name">' + item.name + '</span>'
             + '<span class="ci-price">' + formatBRL(unit) + ' &times; ' + qtd + ' = <b>' + formatBRL(sub) + '</b></span></div>'
             /* editar quantidade: sempre visivel, com botao grande */
