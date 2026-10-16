@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016b">
+<link rel="manifest" href="manifest.json?v=20261016c">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016b">
-<script src="theme.js?v=20261016b"></script>
+<link rel="stylesheet" href="style.css?v=20261016c">
+<script src="theme.js?v=20261016c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
@@ -125,6 +125,23 @@
 [data-theme="dark"] .vend-dia .reg-dias{color:#a1a8c3}
 [data-theme="dark"] .vend-dia .reg-dias b{color:#8fe0a8}
 
+/* ===== regioes no carrinho: uma linha por bairro, sem estourar a caixa ===== */
+.reg-lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px}
+.reg-lista .vend-dia{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    padding:10px 12px;border:1px solid var(--borda,#eeeef4);border-radius:12px;background:var(--bg-alt,#f7f7f7);
+}
+.reg-lista .vend-dia .dia-nome{font-weight:800;color:var(--text-color);display:inline-flex;align-items:center;gap:7px}
+.reg-lista .vend-dia .reg-dias{font-size:.86rem;color:#5f6570;text-align:right;flex:1 1 auto;min-width:0}
+.reg-lista .vend-dia.hoje{border-color:var(--primary-color,#3d4465)}
+.tag-hoje{background:var(--accent-color,#ffb822);color:#3d4465;border-radius:9px;
+ padding:2px 8px;font-size:.68rem;font-weight:800;letter-spacing:.04em;white-space:nowrap}
+[data-theme="dark"] .reg-lista .vend-dia{background:#232742;border-color:#353a5c}
+[data-theme="dark"] .reg-lista .vend-dia .reg-dias{color:#a1a8c3}
+[data-theme="dark"] .tag-hoje{background:#ffb822;color:#232742}
+/* foto do produto: sempre visivel, mesmo sem imagem no catalogo */
+.cart-item img{background:var(--bg-alt,#f7f7f7);object-fit:contain;padding:2px}
+[data-theme="dark"] .cart-item img{background:#232742}
 /* ===== NAVEGACAO HORIZONTAL (igual a home) ===== */
 .main-header{background:var(--primary-color,#3d4465)!important;position:fixed;top:0;left:0;right:0;z-index:100}
 .main-header .container{max-width:1600px;width:100%;padding:0 12px}
@@ -221,13 +238,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016b"></script>
-<script src="firebase-appcheck.js?v=20261016b"></script>
-<script src="app-update.js?v=20261016b"></script>
-<script src="ia.js?v=20261016b"></script>
-<script src="central.js?v=20261016b"></script>
-<script src="loja.js?v=20261016b"></script>
-<script src="script.js?v=20261016b"></script>
+<script src="conta.js?v=20261016c"></script>
+<script src="firebase-appcheck.js?v=20261016c"></script>
+<script src="app-update.js?v=20261016c"></script>
+<script src="ia.js?v=20261016c"></script>
+<script src="central.js?v=20261016c"></script>
+<script src="loja.js?v=20261016c"></script>
+<script src="script.js?v=20261016c"></script>
 <script>
 cart = getCart();
 
@@ -271,7 +288,8 @@ function renderCarrinho() {
         const qtd = (typeof item.qty === 'number' && item.qty > 0) ? item.qty : 1;
         const sub = arredonda(unit * qtd);
         html += '<div class="cart-item" data-idx="' + idx + '">'
-            + '<img src="' + (item.img || "img/G.svg") + '" alt="">'
+            + '<img src="' + (item.img || "img/icon-192.png") + '" alt="" loading="lazy"'
+            + ' onerror="this.onerror=null;this.src=\'img/icon-192.png\'">'
             + '<div class="ci-info"><span class="ci-name">' + item.name + '</span>'
             + '<span class="ci-price">' + formatBRL(unit) + ' &times; ' + qtd + ' = <b>' + formatBRL(sub) + '</b></span></div>'
             /* editar quantidade: sempre visivel, com botao grande */
@@ -558,7 +576,7 @@ function atualizarDiasCarrinho(r) {
     el.innerHTML = '<div class="aviso ' + classe + '"><i class="' + icone + '"></i> <span>' + texto + '</span></div>';
 }
 
-/* ===== regiao e dia de entrega no carrinho ===== */
+/* ===== regiao e dia de entrega no carrinho (simples, sem repetir) ===== */
 function pintarRegiaoCarrinho(){
     var el = document.getElementById("infoRegiao");
     if (!el || typeof REGIOES === "undefined") return;
@@ -568,12 +586,15 @@ function pintarRegiaoCarrinho(){
     var linhas = "";
     REGIOES.forEach(function (r) {
         var hoje = r.dias.indexOf(d) >= 0;
-        linhas += '<div class="vend-dia"><span class="dia-nome">' + r.nome + '</span>'
-                + '<span class="reg-dias">' + r.diasTexto + (hoje ? ' &middot; <b>HOJE</b>' : '') + '</span></div>';
+        linhas += '<div class="vend-dia' + (hoje ? " hoje" : "") + '">'
+                + '<span class="dia-nome">' + r.nome + (hoje ? ' <span class="tag-hoje">HOJE</span>' : '') + '</span>'
+                + '<span class="reg-dias">' + r.diasTexto + '</span></div>';
     });
     el.innerHTML = '<div class="cl-tx" style="color:var(--text-color);margin-bottom:8px">'
         + '<b><i class="fa fa-map-marker-alt"></i> Regioes de atendimento</b>'
-        + 'Cada bairro tem dias proprios de entrega:</div>' + linhas;
+        + '<span style="display:block;font-weight:500;color:#5f6570;margin-top:2px">'
+        + 'Cada bairro tem dias proprios de entrega.</span></div>'
+        + '<div class="reg-lista">' + linhas + '</div>';
 }
 
 /* ===== regra de atendimento: horario + bairro ===== */

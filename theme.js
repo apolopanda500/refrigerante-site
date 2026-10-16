@@ -67,9 +67,11 @@
         if (p.cfgAltoContraste) h.setAttribute("data-contraste", "alto");
         else h.removeAttribute("data-contraste");
 
-        // Modo compacto
-/* ------ compacto desativado globalmente para evitar conflito com tema ------ */
-/* if (p.cfgCompacto) h.setAttribute("data-layout", "compacto"); else h.removeAttribute("data-layout"); */
+        // Modo compacto (tela mais fechada, menos rolagem).
+        // Precisa LIGAR e DESLIGAR: se o atributo nao for removido,
+        // o botao so liga e a tela fica compacta para sempre.
+        if (p.cfgCompacto === true || p.cfgCompacto === "1") h.setAttribute("data-layout", "compacto");
+        else h.removeAttribute("data-layout");
 
         // Ver imagens dos produtos
         if (p.cfgVerImagens === false) h.setAttribute("data-imagens", "ocultas");

@@ -423,13 +423,18 @@ const centralJs = fs.readFileSync(path.join(dir, "central.js"), "utf8");
     if (centralJs.indexOf(c) < 0) falha("central.js sem " + c + " (aviso real no aparelho)");
 });
 const cfgH = fs.readFileSync(path.join(dir, "configuracoes.html"), "utf8");
-["pedirNotificacao", "testarAviso", "mostrarEstadoNotificacao"].forEach(function (c) {
-    if (cfgH.indexOf("function " + c) < 0) falha("configuracoes.html sem " + c + " (validar o aviso)");
+["ligarAviso", "mostrarEstadoNotificacao"].forEach(function (c) {
+    if (cfgH.indexOf("function " + c) < 0) falha("configuracoes.html sem " + c + " (interruptor do aviso)");
 });
-if (!/new Notification\(/.test(centralJs)) falha("o aviso de teste nao cria Notification de verdade");
-else console.log("  ok  ativar aviso pede permissao, mostra o estado e manda um aviso de teste");
+if (!/onchange="ligarAviso\(this\.checked\)"/.test(cfgH)) falha("o aviso do aparelho nao e ligado/desligado por um toque");
+if ((cfgH.match(/id="cfgNotifPedido"/g) || []).length !== 1) falha("o aviso do aparelho esta duplicado nas Configuracoes");
+else console.log("  ok  aviso do aparelho: um interruptor so, automatico, com teste");
+if (!/notifTestar/.test(cfgH) || !/function notifTestar/.test(centralJs)) falha("falta o aviso de teste do aparelho");
+else console.log("  ok  ativa pede permissao, mostra o estado e manda um aviso de teste");
 if (/cfgFreteGratisAcima|Entrega e Frete/.test(cfgH)) falha("configuracoes.html ainda tem o bloco Entrega e Frete");
 else console.log("  ok  bloco Entrega e Frete removido das Configuracoes");
+if (/href="carrinho\.html"[^>]*>.*Ir ao carrinho/i.test(cfgH)) falha("Configuracoes ainda tem 'Ir ao carrinho' no fim (duplicado)");
+else console.log("  ok  sem 'Ir ao carrinho' no fim das Configuracoes");
 if (!/mostrarVersaoCliente/.test(cfgH)) falha("cliente sem o controle de versao (app x site)");
 else console.log("  ok  cliente ve a versao do app e a do site, com botao de atualizar");
 
@@ -479,6 +484,48 @@ else console.log("  ok  credencial e chave de assinatura fora do painel");
 if (!/privacidade|modo teste|regras/i.test(fs.readFileSync(path.join(dir, "docs/PROJETO.md"), "utf8"))) {
     aviso("PROJETO.md nao lembra das regras do Firebase (quem protege os dados de verdade)");
 } else console.log("  ok  a documentacao lembra que a protecao de verdade esta no Firebase");
+
+/* ---------- 16. correcoes visuais desta rodada ---------- */
+console.log("\n=== 16. LEITURA VERTICAL, TICKS E DUPLICADOS ===");
+/* leitura vertical: cartao com o assunto como titulo (sem repetir rotulo) */
+if (!/td\.tb-assunto::before,\s*[\s\S]{0,120}td\.tb-oferta::before\{content:none\}/.test(css9)) {
+    falha("leitura vertical: o titulo do cartao ainda repete o rotulo da coluna");
+} else console.log("  ok  leitura vertical: assunto vira titulo, sem rotulo repetido");
+if (!/max-width:760px/.test(css9)) falha("leitura vertical sem largura maxima (texto esticado na tela toda)");
+else console.log("  ok  cartoes com largura maxima (texto nao estica)");
+if (!/body\.admin\[data-leitura="vertical"\] \.tabela-pedidos \.td-acoes/.test(css9)) {
+    falha("no painel, os botoes de status nao ficam utilizaveis no modo cartao");
+} else console.log("  ok  no painel os botoes de status funcionam no modo cartao");
+if (!/body\.admin \.main-header\{background:var\(--primary-color/.test(adm9)) {
+    falha("o cabecalho do painel precisa de CSS proprio (estava empilhado e torto)");
+} else console.log("  ok  cabecalho do painel com layout proprio");
+if (!/data-layout="compacto"\] \.tabela-pedidos td\{padding:7px 10px\}/.test(adm9) || !/cfgCompacto === true/.test(th)) {
+    falha("a tela compacta nao liga e desliga (faltou tema.js ou o CSS do painel)");
+} else console.log("  ok  tela compacta liga e desliga");
+
+/* ticks recolhiveis */
+const hist2 = fs.readFileSync(path.join(dir, "meus-pedidos.html"), "utf8");
+if (!/function toggleTicks/.test(hist2) || !/timeline-resumo/.test(hist2)) falha("os ticks do historico nao tem botao de recolher");
+else console.log("  ok  ticks do historico recolhem e abrem com um toque");
+if (!/style="display:none">\' \+ caixaAvaliar/.test(hist2) && !/id="ticks-'/.test(hist2)) falha("a lista de ticks nao comeca recolhida");
+else console.log("  ok  a lista de ticks comeca recolhida (so o resumo)");
+
+/* nada de duplicado no fim da configuracoes e da home */
+const cfg2 = fs.readFileSync(path.join(dir, "configuracoes.html"), "utf8");
+if (/>Ir ao carrinho</.test(cfg2)) falha("Configuracoes ainda tem 'Ir ao carrinho' no fim");
+else console.log("  ok  Configuracoes sem 'Ir ao carrinho' duplicado");
+const idx2 = fs.readFileSync(path.join(dir, "index.html"), "utf8");
+if (/Vendas:/.test(idx2)) falha("a home ainda repete o contato no rodape (esta no WhatsApp e na tabela)");
+else console.log("  ok  home sem repetir o contato");
+if (/\['<b>Contato<\/b>'/.test(fs.readFileSync(path.join(dir, "app.js"), "utf8"))) {
+    falha("a tabela geral ainda repete o contato (ja tem o botao Falar com a loja)");
+} else console.log("  ok  tabela geral sem a linha de contato repetida");
+
+/* atencao: pedido novo de outro aparelho */
+["chegarNovosPedidos", "focarNovoPedido", "avisoNovos"].forEach(function (c) {
+    if (adm9.indexOf(c) < 0) falha("painel sem " + c + " (aviso de pedido novo)");
+});
+console.log("  ok  painel avisa e destaca quando chega pedido de outro aparelho");
 
 console.log("\n" + (erros === 0 ? "*** ESTRUTURA E SEGURANCA 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
 process.exit(erros ? 1 : 0);

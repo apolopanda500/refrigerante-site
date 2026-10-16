@@ -710,31 +710,63 @@ table td.acao{text-align:right;white-space:nowrap}
 }
 
 /* ===== LEITURA VERTICAL (opcao em Configuracoes) =====
-   Em vez de deslizar a tabela para o lado, as linhas viram
-   cartoes empilhados de cima para baixo - em qualquer tela.
-   So no site do cliente: no painel ela embaralha as colunas. */
+   Em vez de deslizar a tabela para o lado, cada LINHA vira um
+   cartao: o assunto vira o titulo e as outras colunas ficam
+   embaixo, com o rotulo em cima. Sem repetir o nome da coluna
+   em cada linha e sem esticar o texto pela tela toda.
+   So no site do cliente: o painel tem regras proprias. */
 html[data-leitura="vertical"] body:not(.admin) .tab-wrap{overflow-x:visible}
-html[data-leitura="vertical"] body:not(.admin) .tab-wrap > table{min-width:0}
+html[data-leitura="vertical"] body:not(.admin) .tab-wrap > table,
+html[data-leitura="vertical"] body:not(.admin) .tabela-ofertas,
+html[data-leitura="vertical"] body:not(.admin) .tabela-geral{display:block;width:100%;min-width:0}
 html[data-leitura="vertical"] body:not(.admin) table thead{display:none}
+html[data-leitura="vertical"] body:not(.admin) table tbody{display:block}
+html[data-leitura="vertical"] body:not(.admin) table tbody tr{
+    display:block;width:100%;max-width:760px;
+    border:1px solid var(--borda,#eeeef4);border-radius:14px;
+    background:var(--white,#fff);margin:0 0 10px;padding:4px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
 html[data-leitura="vertical"] body:not(.admin) table td{
-    display:flex;justify-content:space-between;align-items:center;
-    gap:12px;padding:10px 15px;border-bottom:2px solid #eee;text-align:right;
+    display:block;border:0;border-bottom:1px dashed var(--borda,#eeeef4);
+    padding:8px 14px;text-align:left;
 }
+html[data-leitura="vertical"] body:not(.admin) table tbody tr td:last-child{border-bottom:0}
+/* o assunto/titulo da oferta: SEM rotulo repetido */
+html[data-leitura="vertical"] body:not(.admin) table td.tb-assunto,
+html[data-leitura="vertical"] body:not(.admin) table td.tb-oferta{
+    display:flex;align-items:center;gap:10px;padding:12px 14px;
+}
+html[data-leitura="vertical"] body:not(.admin) table td.tb-assunto::before,
+html[data-leitura="vertical"] body:not(.admin) table td.tb-oferta::before{content:none}
+/* as outras colunas: rotulo em cima, valor embaixo */
 html[data-leitura="vertical"] body:not(.admin) table td::before{
-    content:attr(data-label);
-    font-weight:bold;
-    color:var(--primary-color);
-    display:block;
-    text-align:left;
-    margin-bottom:0;
-    flex:none;
+    content:attr(data-label);display:block;
+    font-weight:800;color:var(--primary-color,#3d4465);
+    font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;
+    margin:0 0 3px;line-height:1.2;
 }
-html[data-leitura="vertical"] body:not(.admin) table tbody tr:nth-child(even) td{background:#f7f8fc}
-html[data-leitura="vertical"] body:not(.admin) table tfoot td{display:flex;justify-content:space-between}
-html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table td{border-bottom-color:#2f3456}
-html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table tbody tr:nth-child(even) td{background:#222643}
-html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table td::before{color:#ffb822}
-
+html[data-leitura="vertical"] body:not(.admin) table td > *{min-width:0;overflow-wrap:anywhere}
+html[data-leitura="vertical"] body:not(.admin) table td.tb-assunto b,
+html[data-leitura="vertical"] body:not(.admin) table td.tb-oferta b{font-size:1.05rem}
+html[data-leitura="vertical"] body:not(.admin) table tbody tr:nth-child(even) td{background:transparent}
+/* cabecalho de secao: uma vez so, sem virar cartao */
+html[data-leitura="vertical"] body:not(.admin) table tr.tb-secao{
+    display:block;max-width:760px;background:none;box-shadow:none;
+    border:0;border-radius:0;margin:18px 0 8px;padding:0;
+}
+html[data-leitura="vertical"] body:not(.admin) table tr.tb-secao th{
+    display:block;text-align:left;padding:10px 14px;
+    font-weight:800;font-size:.95rem;
+    color:var(--primary-color,#3d4465);
+    background:var(--bg-alt,#f7f7f7);border-radius:10px;
+}
+/* acoes ocupa a linha toda */
+html[data-leitura="vertical"] body:not(.admin) table td.acao{text-align:left}
+html[data-leitura="vertical"] body:not(.admin) table td.acao .of-btn{width:100%;justify-content:center}
+html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table tbody tr{background:#232742;border-color:#353a5c}
+html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table td{border-bottom-color:#353a5c}
+html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table tr.tb-secao th{background:#222643;color:#ffb822}
 /* ===== AGENTS.md: MODO MOBILE VERTICAL =====
    O padrao do projeto e WIDTH (tabela rolavel); o FIXED entra
    quando vale a stylesheet condicional do celular em pe:
@@ -802,7 +834,20 @@ body.admin[data-leitura="vertical"] .tabela-pedidos td::before{
 body.admin[data-leitura="vertical"] .tabela-pedidos td > *{min-width:0;overflow-wrap:anywhere}
 body.admin[data-leitura="vertical"] .tabela-pedidos td[data-label=""]{display:block;padding:0;border-bottom:0}
 body.admin[data-leitura="vertical"] .tabela-pedidos td[data-label=""]::before{content:none}
-body.admin[data-leitura="vertical"] .tabela-pedidos .td-total{font-size:1.15rem;text-align:right}
+body.admin[data-leitura="vertical"] .tabela-pedidos .td-total{font-size:1.25rem;text-align:right}
+/* acoes: os botoes de status sempre utilizaveis, com quebra em varias linhas */
+body.admin[data-leitura="vertical"] .tabela-pedidos .td-acoes{
+    display:flex !important;flex-wrap:wrap;gap:8px;justify-content:flex-end;
+    border-bottom:0 !important;padding:12px 0 4px !important;
+}
+body.admin[data-leitura="vertical"] .tabela-pedidos .td-acoes::before{content:none}
+body.admin[data-leitura="vertical"] .tabela-pedidos .td-acoes button{
+    flex:1 1 auto;min-width:96px;min-height:44px;padding:10px 12px;font-size:.9rem;font-weight:800;
+}
+body.admin[data-leitura="vertical"] .tabela-pedidos .td-id{font-size:1.12rem}
+body.admin[data-leitura="vertical"] .tabela-pedidos .status-badge,
+body.admin[data-leitura="vertical"] .tabela-pedidos .chip-st{font-size:.86rem;padding:6px 13px}
+[data-theme="dark"] body.admin[data-leitura="vertical"] .tabela-pedidos tr{background:#222643;border-color:#353a5c}
 body.admin[data-leitura="vertical"][data-theme="dark"] .tabela-pedidos tr{background:#222643;border-color:#353a5c}
 body.admin[data-leitura="vertical"][data-theme="dark"] .tabela-pedidos td{border-bottom-color:#353a5c}
 
@@ -2449,4 +2494,11 @@ button{-webkit-user-select:none;user-select:none}
 .tick em{font-style:normal;opacity:.75}
 .ficha-tick{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.92rem}
 .ficha-tick i{font-size:.5rem;color:var(--primary-color)}
+/* ticks recolhiveis: o resumo fica, a lista abre com um toque */
+.timeline-resumo{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+ padding:9px 0;border-bottom:1px dashed var(--borda,#eeeef4);font-size:.88rem;color:#5b6178}
+.timeline-resumo .btn-detalhe{flex:0 0 auto}
+[data-theme="dark"] .timeline-resumo{color:#a1a8c3;border-bottom-color:#353a5c}
+.subtotal{padding:6px 0}
+.subtotal b{color:var(--primary-color)}
 [data-theme="dark"] .ficha-tick i{color:#ffb822}

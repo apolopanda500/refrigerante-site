@@ -331,6 +331,20 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - Frota: fotos dos dois caminhões (`img/608VERDE.jpg` e `img/608AZUL.jpeg`).
 - Avaliação: o cliente dá nota de 1 a 5 + comentário no pedido entregue (Meus Pedidos);
   `salvarAvaliacao()` em `script.js` grava no aparelho e envia para `/avaliacoes` no Firebase.
+- **Leitura vertical (cartão):** cada linha vira um cartão de no máximo 760px —
+  o assunto vira o título (sem repetir o nome da coluna), os rótulos ficam em
+  cima do valor e nada se estica na tela larga. Vale nas tabelas da loja; o
+  painel tem as próprias regras (`body.admin[data-leitura=vertical]`), com os
+  botões de status grandes e utilizáveis.
+- **Ticks recolhíveis:** o acompanhamento do pedido começa fechado, mostrando só
+  "Parado em X há 2 h"; `toggleTicks()` abre e fecha.
+- **Aviso do cliente:** um interruptor só (`cfgNotifPedido`) em
+  `ligarAviso()`; pedir permissão, iniciar/parar a vigia e mostrar o estado são
+  automáticos. `notifTestar()` manda um aviso na hora para comprovar.
+- **Tela compacta** liga e desliga de verdade (`data-layout="compacto"`).
+- **Atenção no painel:** `chegarNovosPedidos()` compara a lista antes/depois da
+  sincronização e mostra uma faixa verde com os pedidos que chegaram de outro
+  aparelho, com vibração quando possível.
 - Painel do vendedor: botões **Minimizar** nos blocos longos (editor de preços já vem
   recolhido), tamanho da letra, leitura das tabelas e tempo de sincronização (1/2/5 min)
   — tudo gravado em `vendedorPrefs`, **sem** afetar o site do cliente.

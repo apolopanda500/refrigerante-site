@@ -41,13 +41,18 @@ O robô **nunca** muda seus preços.
 
 ## 3. Acompanhar pedidos
 
-- **Painel do vendedor** → tabela com todos os pedidos.
-- O painel baixa os pedidos da nuvem sozinho (na abertura e a cada minuto):
-  pedidos feitos em **outro celular ou outra conta** aparecem aqui também.
-- Botões de status: Confirmar, Em separação, Enviado, Entregue, Cancelar.
-- Clique na linha do pedido para abrir a **ficha completa**
-  (itens, endereço, CPF, histórico, botões de WhatsApp).
-- Campo de busca: procure por cliente, telefone, bairro, número ou produto.
+- **Painel do vendedor** → tabela com todos os pedidos, de **todos os aparelhos**
+  (celular, computador, qualquer conta).
+- O painel baixa os pedidos da nuvem sozinho (na abertura e no tempo que você
+  escolheu em Configurações do painel: 1, 2 ou 5 minutos).
+- Quando chega pedido novo de outro aparelho, aparece uma **faixa verde** no
+  painel com o número do pedido e o botão *Ver na lista*.
+- **Leitura da tabela**: *Rolagem horizontal* (igual ao computador) ou
+  *Cartões empilhados* (cada pedido vira um bloco com o nome de cada coluna —
+  melhor no celular). Os botões de status funcionam nos dois.
+- Em cada pedido, o horário exato (com segundos) e há quanto tempo ele chegou.
+  Os **ticks** (acompanhamento) ficam recolhidos: abre com um toque.
+- Busca: procure por cliente, telefone, bairro, número ou produto.
 
 ---
 
@@ -55,7 +60,6 @@ O robô **nunca** muda seus preços.
 
 Cada pedido novo chega no seu Telegram **com botões**:
 basta tocar em *Confirmar*, *Enviado* etc.
-
 Também dá para digitar:
 
 | Comando | O que faz |
@@ -83,13 +87,16 @@ campos) e **Reabrir** (volta para aguardando).
 
 ### Aviso no celular do cliente
 
-Em **Configurações → Avisos e promoções**:
-- **Ativar aviso no aparelho** pede a permissão e, em seguida, manda um
-  **aviso de teste** na hora — se não aparecer, é preciso liberar nas
-  configurações do navegador (Chrome: ⋮ > Configurações > Notificações).
-- **Testar aviso agora** repete o aviso sem pedir permissão de novo.
-- O aviso chega quando o **status do pedido muda** (aguardando → confirmado →
-  em separação → saiu para entrega → entregue), com a hora exata.
+Em **Configurações → Notificações** tem **um interruptor só**:
+
+- **Ligado**: o site pede a permissão sozinho e avisa quando o status do
+  pedido muda — mesmo com o app fechado. Ao lado, o texto mostra o que está
+  acontecendo ("ligado", "bloqueado no navegador", "toque para permitir").
+- **Desligado**: para tudo.
+- **Testar agora**: manda um aviso na hora, para você conferir.
+
+O aviso chega quando o status muda (aguardando → confirmado → em separação →
+saiu para entrega → entregue), com a hora exata.
 
 ---
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016b">
+<link rel="manifest" href="manifest.json?v=20261016c">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Configurações - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016b">
-<script src="theme.js?v=20261016b"></script>
+<link rel="stylesheet" href="style.css?v=20261016c">
+<script src="theme.js?v=20261016c"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -158,18 +158,17 @@
 
 <div class="config-card">
   <h2><i class="fa fa-bell"></i> Notificações</h2>
-  <div class="config-row">
-    <div class="config-label">Notificações de pedido<small>Avisos quando o pedido mudar de status</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgNotifPedido" checked><span class="slider"></span></label>
-  </div>
   <div class="config-row config-col">
     <div class="config-label">Aviso no aparelho
-      <small>Liberado, você recebe o status do pedido mesmo com o site fechado. Toque no botão: o aparelho pede a permissão e o site manda um aviso de teste na hora, para você conferir.</small>
+      <small>Um interruptor só. Ligado, o site pede a permissão sozinho e avisa
+      quando o status do pedido mudar — mesmo com o app fechado.</small>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-      <button class="btn-mini" onclick="pedirNotificacao(this)"><i class="fa fa-bell"></i> Ativar aviso no aparelho</button>
-      <button class="btn-mini neutro" onclick="testarAviso(this)"><i class="fa fa-paper-plane"></i> Testar aviso agora</button>
-      <span id="notifPermMsg" style="font-size:.82rem;font-weight:700"></span>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <label class="toggle" style="display:inline-flex;align-items:center;gap:8px">
+        <input type="checkbox" id="cfgNotifPedido" checked onchange="ligarAviso(this.checked)"><span class="slider"></span>
+      </label>
+      <b id="notifEstado" style="font-size:.88rem"></b>
+      <button class="btn-mini neutro" onclick="if (typeof notifTestar === 'function') { notifTestar(); mostrarEstadoNotificacao(); } else { mostrarEstadoNotificacao(); }"><i class="fa fa-paper-plane"></i> Testar agora</button>
     </div>
   </div>
   <div class="config-row">
@@ -394,8 +393,8 @@
     <button class="btn-perigo" onclick="limparHistorico()"><i class="fa fa-exclamation-triangle"></i> Apagar tudo</button>
   </div>
   <div class="config-row">
-    <div class="config-label">Limpar carrinho<small>Remover todos os itens do carrinho (também dá para fazer na página do carrinho)</small></div>
-    <a class="btn-limpar" href="carrinho.html" style="text-decoration:none"><i class="fa fa-shopping-cart"></i> Ir ao carrinho</a>
+    <div class="config-label">Limpar carrinho<small>Remover todos os itens que estão no carrinho deste aparelho</small></div>
+    <button class="btn-perigo" onclick="limparCarrinho()"><i class="fa fa-trash"></i> Esvaziar carrinho</button>
   </div>
 </div>
 
@@ -405,13 +404,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016b"></script>
-<script src="firebase-appcheck.js?v=20261016b"></script>
-<script src="app-update.js?v=20261016b"></script>
-<script src="ia.js?v=20261016b"></script>
-<script src="central.js?v=20261016b"></script>
-<script src="loja.js?v=20261016b"></script>
-<script src="script.js?v=20261016b"></script>
+<script src="conta.js?v=20261016c"></script>
+<script src="firebase-appcheck.js?v=20261016c"></script>
+<script src="app-update.js?v=20261016c"></script>
+<script src="ia.js?v=20261016c"></script>
+<script src="central.js?v=20261016c"></script>
+<script src="loja.js?v=20261016c"></script>
+<script src="script.js?v=20261016c"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -436,7 +435,7 @@
 (function() {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
-    var ids = ["cfgNotifPedido","cfgNotifPromo","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco","cfgAutoStatus"];
+    var ids = ["cfgNotifPromo","cfgReducedMotion","cfgLembrarPedido","cfgLimparCarrinho","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco","cfgAutoStatus"];
     ids.forEach(function(id) {
         var el = document.getElementById(id);
         if (!el) return;
@@ -458,10 +457,14 @@
     });
 })();
 function limparCarrinho() {
-    if (confirm("Deseja realmente limpar o carrinho?")) {
-        try { localStorage.removeItem("refrigeranteCart"); } catch(e) {}
-        var b = document.getElementById("cartCount"); if (b) b.textContent = "0";
-        alert("Carrinho limpo com sucesso!");
+    if (!confirm("Esvaziar o carrinho deste aparelho?")) return;
+    try { localStorage.removeItem("refrigeranteCart"); } catch(e) {}
+    ["cartCount","cBag"].forEach(function (id) { var b = document.getElementById(id); if (b) b.textContent = "0"; });
+    var aviso = document.getElementById("msgSalvo");
+    if (aviso) {
+        aviso.textContent = "Carrinho esvaziado.";
+        aviso.style.display = "block";
+        setTimeout(function () { aviso.style.display = "none"; }, 3000);
     }
 }
 function limparHistorico() {
@@ -523,55 +526,61 @@ function testarIA(btn){
         if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> OK'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-flask"></i> Testar'; }, 2500); }
     });
 }
-/* ===== aviso no aparelho (permissao de verdade + prova) ===== */
-function estadoNotificacao() {
-    if (typeof Notification === "undefined") return { txt: "Este navegador não tem aviso no aparelho.", cor: "#c62828" };
-    if (Notification.permission === "granted") return { txt: "Permissão liberada: os avisos saem de verdade.", cor: "#2e7d32" };
-    if (Notification.permission === "denied") return { txt: "Bloqueado no aparelho: libere nas configurações do navegador > notificações.", cor: "#c62828" };
-    return { txt: "Ainda não liberado. Toque no botão abaixo.", cor: "#8a6100" };
-}
+/* ============================================================
+   AVISO NO APARELHO - um interruptor so, tudo automatico
+   Ligar: o site pede a permissao sozinho, comeca a vigiar o
+   status do pedido e mostra o que esta acontecendo.
+   Desligar: para tudo e some o aviso.
+   ============================================================ */
 function mostrarEstadoNotificacao() {
-    var m = document.getElementById("notifPermMsg");
-    if (!m) return;
-    var e = estadoNotificacao();
-    m.style.color = e.cor;
-    m.textContent = e.txt;
+    var el = document.getElementById("notifEstado");
+    if (!el) return;
+    var p = carregarPrefs();
+    if (p.cfgNotifPedido === false) {
+        el.style.color = "#8a6100";
+        el.textContent = "desligado";
+        return;
+    }
+    if (typeof Notification === "undefined") {
+        el.style.color = "#c62828";
+        el.textContent = "este navegador nao tem aviso";
+        return;
+    }
+    if (Notification.permission === "granted") {
+        el.style.color = "#2e7d32";
+        el.textContent = "ligado - avisando quando o status mudar";
+        return;
+    }
+    if (Notification.permission === "denied") {
+        el.style.color = "#c62828";
+        el.textContent = "bloqueado no navegador: libere nas configuracoes do aparelho";
+        return;
+    }
+    el.style.color = "#8a6100";
+    el.textContent = "ligado - toque para o aparelho permitir";
 }
-/* botão "Testar aviso agora": comprova sem pedir permissão de novo */
-function testarAviso(btn) {
-    var m = document.getElementById("notifPermMsg");
-    function diz(txt, cor){ if (m){ m.style.color = cor; m.textContent = txt; } }
-    if (typeof notifTestar !== "function") { diz("Assistente de avisos indisponível nesta página.", "#c62828"); return; }
-    diz("Mandando um aviso de teste...", "#8a6100");
-    var t = notifTestar();
-    if (t.ok) diz("Aviso de teste enviado (" + t.motivo + "). Se não aparecer, libere nas configurações do navegador.", "#2e7d32");
-    else diz("Não deu: " + (t.motivo === "denied" ? "permissão negada" : t.motivo) + ".", "#c62828");
-    if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> Testado'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-paper-plane"></i> Testar aviso agora'; }, 2500); }
-}
-function pedirNotificacao(btn){
-    var m = document.getElementById("notifPermMsg");
-    function diz(txt, cor){ if (m){ m.style.color = cor; m.textContent = txt; } }
-    if (typeof notifPedirPermissao !== "function") { diz("Assistente de avisos indisponível nesta página.", "#c62828"); return; }
-    diz("Pedindo permissão ao aparelho...", "#8a6100");
-    if (btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Pedindo...'; }
-    notifPedirPermissao(function (r) {
-        if (btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-bell"></i> Ativar aviso no aparelho'; }
-        if (r === "ok") {
-            try { notifIniciar(); } catch (e) {}
-            /* PROVA: manda um aviso de verdade agora */
-            var t = (typeof notifTestar === "function") ? notifTestar() : { ok: true, motivo: "toast" };
-            if (t.ok) {
-                diz("Ativado! Mandei um aviso de teste agora — se não aparecer, libere nas configurações do navegador.", "#2e7d32");
-                if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> Aviso ligado'; }
-            } else {
-                diz("Permissão liberada, mas o aparelho não mostrou o aviso: " + t.motivo, "#c62828");
-            }
-        } else if (r === "negado") {
-            diz("Bloqueado no aparelho: libere nas configurações do navegador > notificações e toque de novo.", "#c62828");
-        } else {
-            diz("Este aparelho não mostra aviso fora do site (vale o aviso dentro do site).", "#8a6100");
+/* liga/desliga com um toque, sem complicacao */
+function ligarAviso(ligado) {
+    var p = carregarPrefs();
+    p.cfgNotifPedido = ligado;
+    salvarPrefs(p);
+    if (!ligado) {
+        if (typeof NOTIF_TIMER !== "undefined" && NOTIF_TIMER) { try { clearInterval(NOTIF_TIMER); } catch (e) {} }
+        try { localStorage.setItem("notifTimer", ""); } catch (e) {}
+        mostrarEstadoNotificacao();
+        return;
+    }
+    if (typeof Notification !== "undefined" && Notification.permission === "default") {
+        if (typeof notifPedirPermissao === "function") {
+            notifPedirPermissao(function () {
+                try { if (typeof notifIniciar === "function") notifIniciar(); } catch (e) {}
+                mostrarEstadoNotificacao();
+            });
         }
-    });
+    } else {
+        try { if (typeof notifIniciar === "function") notifIniciar(); } catch (e) {}
+    }
+    mostrarEstadoNotificacao();
 }
 document.addEventListener("DOMContentLoaded", function(){
     mostrarEstadoNotificacao();

@@ -760,9 +760,7 @@ function pintarTabelaGeral(){
         ['<b>Bairros atendidos</b>', '<span class="tb-passo">' + BAIRROS_ATENDIDOS_TEXTO + '</span>',
             'Bairro fora da lista é bloqueado na finalização do pedido.'],
         ['<b>Frete grátis</b>', '<span class="tb-passo"><i class="fa fa-gift"></i> a partir de ' + formatBRL(freteGratisMinimo()) + '</span>',
-            'Acima disso o frete cai para R$ 0,00 no carrinho.'],
-        ['<b>Contato</b>', '<a href="https://wa.me/5521983158911" target="_blank" rel="noopener"><i class="fa fa-whatsapp"></i> (21) 9-8315-8911</a>',
-            '<a href="mailto:rickjax1234@gmail.com">rickjax1234@gmail.com</a>' + (pix ? ' · chave Pix: ' + pix : '')]
+            'Acima disso o frete cai para R$ 0,00 no carrinho.']
     ];
 
     /* ---- 4. frota (com a foto do caminhao) ---- */
