@@ -14,13 +14,13 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="style" href="style.css?v=20261016j">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 <link rel="stylesheet" href="style.css?v=20261016j">
 <script src="theme.js?v=20261016j"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-/* header da home e sticky: nao precisa do espaco do header fixo */
 body{font-family:'Segoe UI',sans-serif;line-height:1.5;color:#333;background:#f0f2f5;padding-top:0;padding-bottom:80px}
 a{text-decoration:none;color:inherit}
 .ld{position:fixed;top:0;left:0;right:0;bottom:0;background:#1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
@@ -31,298 +31,26 @@ a{text-decoration:none;color:inherit}
 .ldb span:nth-child(3){animation-delay:.2s}
 @keyframes lb{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
 .ldt{color:#fff;font-size:.9rem;text-align:center}
-/* ============================================
-   CABECALHO E NAVEGACAO
-   - usa toda a largura da tela
-   - no celular vira uma faixa rolavel (tudo visivel)
-   - cores com contraste bom em todos os temas
-   ============================================ */
 .hd{background:var(--primary-color,#1a1a2e);position:sticky;top:0;z-index:100}
-.hd nav{
-    display:flex;align-items:center;gap:12px;
-    width:100%;max-width:1600px;margin:0 auto;padding:8px 14px;
-}
+.hd nav{display:flex;align-items:center;gap:12px;width:100%;max-width:1600px;margin:0 auto;padding:8px 14px}
 .lg{font-size:1.15rem;font-weight:800;color:var(--accent-color,#ECC400);display:flex;align-items:center;gap:8px;flex:0 0 auto;white-space:nowrap}
 .lg i{font-size:1.25rem}
-.nl{display:flex;gap:6px;list-style:none}
-.nav-links{display:flex;gap:4px;list-style:none;flex:1 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.nav-links::-webkit-scrollbar{display:none}
-.nl a{color:#ccc;font-size:.85rem;font-weight:500}
-.nav-links a{
-    display:flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap;
-    padding:9px 14px;border-radius:20px;
-    color:rgba(255,255,255,.92);font-size:.94rem;font-weight:700;
-    text-decoration:none;
-}
+.nav-links{display:flex;gap:4px;list-style:none;flex:1 1 auto;min-width:0;overflow-x:auto}
+.nav-links a{display:flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap;padding:9px 14px;border-radius:20px;color:rgba(255,255,255,.92);font-size:.94rem;font-weight:700;text-decoration:none}
 .nav-links a i{font-size:.92rem;opacity:.9}
 .nav-links a:hover{background:rgba(255,255,255,.14);color:#fff}
 .nav-links a.ativo{background:var(--accent-color,#ECC400);color:var(--primary-color,#1a1a2e)}
 .ha{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .bs{padding:9px 14px;background:var(--accent-color,#ECC400);color:#1a1a2e;border-radius:20px;font-weight:800;font-size:.82rem;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:7px;min-height:42px;white-space:nowrap}
 .bs:hover{filter:brightness(1.08)}
-.bs-tx{display:inline}
 .ci{position:relative;cursor:pointer;font-size:1.4rem;color:#fff;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14)}
 .cb{position:absolute;top:-2px;right:-2px;background:#e53935;color:#fff;font-size:.68rem;font-weight:800;padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
-/* menu hamburguer deixa de ser necessario: a nav e sempre visivel */
-.mobile-menu-btn{display:none}
-
-/* busca: uma linha só, largura toda */
 .sw{background:#fff;padding:10px 14px;box-shadow:0 2px 12px rgba(0,0,0,.08);position:sticky;top:60px;z-index:99}
 .si{max-width:1600px;margin:0 auto}
 .sf{position:relative}
 .sf i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#6b7280}
 .sf input{width:100%;padding:11px 14px 11px 40px;border:2px solid #e0e0e0;border-radius:25px;font-size:1rem;outline:none}
-@media(max-width:640px){
-    .bs-tx{display:none}
-    .bs{padding:0;width:44px;justify-content:center}
-    .lg span{display:none}
-    .lg{font-size:0}
-    .lg i{font-size:1.5rem}
-    .nav-links a{padding:9px 12px;font-size:.9rem}
-    .hd nav{padding:8px 10px;gap:8px}
-}
-.sf input:focus{border-color:#ECC400}
-.tb{background:#fff;border-bottom:2px solid #eee;position:sticky;top:107px;z-index:98;overflow-x:auto}
-.pw{max-width:1200px;margin:0 auto;padding:16px 20px}
-.gb{margin-bottom:8px;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);overflow:hidden}
-.gh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;user-select:none}
-.gh:hover{background:#fafafa}
-.gl{display:flex;align-items:center;gap:12px}
-.gi{font-size:1.3rem;color:#c4a600;width:32px;text-align:center}
-.gn{font-size:1.05rem;font-weight:700}
-.gc{font-size:.75rem;background:#ECC400;color:#1a1a2e;padding:2px 8px;border-radius:10px;font-weight:600}
-.gv{font-size:.9rem;color:#6b7280;transition:transform .3s}
-.gb.op .gv{transform:rotate(180deg)}
-.gbd{display:none;padding:0 16px 16px}
-.gb.op .gbd{display:block}
-/* grade de produtos: densa, larga e com bom contraste */
-.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-   @media(max-width:1500px){.pg{grid-template-columns:repeat(auto-fill,minmax(185px,1fr))}}
-@media(max-width:700px){.pg{grid-template-columns:repeat(2,1fr);gap:10px}}
-@media(max-width:380px){.pg{grid-template-columns:1fr}}
-.pc{background:#fff;border:1px solid #e6e8f0;border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
-.pc:hover{box-shadow:0 6px 20px rgba(0,0,0,.14);border-color:var(--primary-color,#3d4465)}
-.pch{padding:10px 12px 6px;font-weight:700;font-size:.92rem;color:#2f3550;line-height:1.3}
-.pib{width:100%;aspect-ratio:1;background:#f6f7fb;display:flex;align-items:center;justify-content:center;padding:6px}
-.pi{max-width:100%;max-height:100%;object-fit:contain}
-.pdd{padding:8px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
-.pds{font-size:.82rem;color:#5b6178}
-.pp{font-size:1.22rem;font-weight:800;color:var(--primary-color,#3d4465);margin-top:auto}
-.qr{display:flex;align-items:center;gap:8px;padding:8px 12px 12px}
-.qc{display:flex;border:2px solid #d8dbe6;border-radius:8px;overflow:hidden}
-.qb{width:38px;height:38px;background:#eef0f6;border:none;font-size:1.05rem;font-weight:800;color:#3d4465;cursor:pointer}
-.qb:hover{background:#e2e5ef}
-.qv{width:38px;text-align:center;font-weight:800;height:38px;line-height:38px;font-size:1rem;color:#2f3550;border-left:2px solid #d8dbe6;border-right:2px solid #d8dbe6}
-.qa{background:var(--accent-color,#ffb822);color:#3d4465;font-weight:800}
-.qa:hover{filter:brightness(1.06)}
-.qa.ok{background:#0b6b3a;color:#fff}
-/* no celular: nome e preco maiores, botoes maiores */
-@media(max-width:700px){
-    .pch{font-size:.95rem}
-    .pds{font-size:.82rem}
-    .pp{font-size:1.2rem}
-    .qb{width:40px;height:40px}
-    .qv{width:40px;height:40px;line-height:40px}
-    .qa{min-height:40px;padding:0 10px;font-size:.88rem}
-}
-.qa{flex:1;height:34px;background:#ECC400;color:#1a1a2e;border:none;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer}
-.qa.ok{background:#0b6b3a;color:#fff}
-.ft{background:#1a1a2e;color:#ccc;text-align:center;padding:20px;font-size:.85rem;margin-top:40px}
-.ft a{color:#ECC400;font-weight:600}
-@media(max-width:768px){.nl{display:none}.sw{top:48px}.tb{top:100px}}
-@media(max-width:480px){.bs-tx{display:none}.bs{padding:9px 12px;font-size:.9rem}.cb{font-size:.7rem}}
-
-/* === IDENTIDADE VISUAL OFICIAL (segue o tema escolhido) === */
-.hd{background:var(--primary-color,#3d4465)}
-.lg{color:var(--accent-color,#ffb822)}
-.nl a{color:rgba(255,255,255,.8)}
-.bs{background:var(--accent-color,#ffb822);color:#3d4465}
-.ci{color:#fff}
-.cb{background:#fc0758}
-.gi{color:var(--accent-color,#ffb822)}
-.gc{background:rgba(255,255,255,.72);color:var(--primary-color,#646c9a)}
-.gv{color:var(--text-muted,#a1a8c3)}
-.pc,.gb{box-shadow:0 0 13px 0 rgba(82,63,105,0.05);border:1px solid var(--borda,#eeeef4)}
-.pp{color:var(--primary-color,#3d4465)}
-.qa{background:var(--accent-color,#ffb822);color:#3d4465}
-.qa.ok{background:#0b6b3a;color:#fff}
-.ft{background:var(--primary-color,#3d4465);color:rgba(255,255,255,.82)}
-.ft a{color:var(--accent-color,#ffb822)}
-.sw,.tb,.gb,.pc{background:#fff}
-
-/* === TEMA ESCURO (home) === */
-[data-theme="dark"] .sw,
-[data-theme="dark"] .tb,
-[data-theme="dark"] .gb,
-[data-theme="dark"] .pc{background:#1c1f33 !important;border-color:#353a5c !important}
-[data-theme="dark"] .gh:hover{background:#232742 !important}
-[data-theme="dark"] .gn,
-[data-theme="dark"] .pch{color:#e6e8f2 !important}
-[data-theme="dark"] .pds,
-[data-theme="dark"] .sf i{color:#a1a8c3 !important}
-[data-theme="dark"] .pib{background:#232742 !important}
-[data-theme="dark"] .sf input{background:#232742 !important;border-color:#353a5c !important;color:#e6e8f2 !important}
-[data-theme="dark"] .ti{background:#1c1f33 !important;border-color:#353a5c !important;color:#e6e8f2 !important}
-[data-theme="dark"] .ti.on{background:#ffb822 !important;color:#3d4465 !important}
-[data-theme="dark"] .qc{border-color:#353a5c !important}
-[data-theme="dark"] .qb{background:#232742 !important;color:#e6e8f2 !important}
-[data-theme="dark"] .qv{border-color:#353a5c !important;color:#e6e8f2 !important}
-[data-theme="dark"] .gc{background:#353a5c !important;color:#e6e8f2 !important}
-[data-theme="dark"] .pp{color:#ffb822 !important}
-/* ============================================
-   ABAS DE CATEGORIA - redesign
-   Maiores, sem borda, centralizadas, visuais
-   ============================================ */
-/* ============================================
-   LAYOUT: usa toda a largura, sem colunas
-   vazias e sem pagina longa demais
-   ============================================ */
-.pw{max-width:1600px;margin:0 auto;padding:14px 14px 24px}
-.pw-layout{
-    display:block;                 /* sem coluna lateral: sobra de espaco */
-    max-width:1600px;margin:0 auto;padding:0;
-}
-.pw-main{min-width:0}
-.pw-side{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:16px 14px 0}
-/* no celular a lateral vai para o fim, em 1 coluna */
-@media(max-width:760px){
-    .pw-side{grid-template-columns:1fr;margin:14px 12px 0}
-    .pw{padding:12px 12px 20px}
-}
-
-/* abas de categoria: uma linha rolavel, sem quebrar */
-.tb{
-    background:#fff;border-bottom:0;
-    box-shadow:0 3px 14px rgba(61,68,101,.10);
-    position:sticky;top:60px;z-index:98;
-    padding:10px 12px;
-}
-.tr2{
-    display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
-    align-items:center;gap:8px;max-width:1600px;margin:0 auto;
-}
-.tr2::-webkit-scrollbar{display:none}
-.ti{
-    display:inline-flex;align-items:center;gap:8px;
-    flex:0 0 auto;white-space:nowrap;
-    padding:10px 18px;border:0;border-radius:50px;
-    background:#eceef5;color:#3d4465;
-    font-family:'Segoe UI',Tahoma,sans-serif;
-    font-size:.98rem;font-weight:800;line-height:1;
-    cursor:pointer;text-transform:none;letter-spacing:.2px;
-    box-shadow:0 2px 6px rgba(61,68,101,.10);
-    min-height:44px;
-    transition:transform .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease;
-}
-.ti i{font-size:1.05rem;color:var(--accent-color,#ffb822);transition:color .18s ease}
-.ti:hover{background:var(--primary-color,#3d4465);color:#fff;transform:translateY(-3px);
-    box-shadow:0 8px 18px rgba(61,68,101,.28)}
-.ti:hover i{color:var(--accent-color,#ffb822)}
-.ti.on{
-    background:linear-gradient(135deg,var(--primary-color,#3d4465) 0%,var(--secondary-color,#646c9a) 100%);
-    color:#fff;transform:translateY(-3px);
-    box-shadow:0 10px 22px rgba(61,68,101,.34);
-}
-.ti.on i{color:var(--accent-color,#ffb822)}
-.ti .cn{
-    display:inline-flex;align-items:center;justify-content:center;
-    min-width:26px;height:26px;padding:0 8px;border-radius:13px;
-    background:#fff;color:var(--primary-color,#3d4465);font-size:.78rem;font-weight:800;
-}
-.ti.on .cn{background:var(--accent-color,#ffb822);color:#3d4465}
-
-/* abas no tema escuro */
-[data-theme="dark"] .tb{background:#1c1f33 !important}
-[data-theme="dark"] .ti{background:#232742 !important;color:#a1a8c3 !important;box-shadow:none !important}
-[data-theme="dark"] .ti:hover{background:#353a5c !important;color:#fff !important}
-[data-theme="dark"] .ti.on{background:linear-gradient(135deg,#ffb822 0%,#ffc94d 100%) !important;color:#3d4465 !important}
-[data-theme="dark"] .ti .cn{background:#ffb822 !important;color:#3d4465 !important}
-[data-theme="dark"] .ti.on .cn{background:#3d4465 !important;color:#ffb822 !important}
-[data-theme="dark"] .ti i{color:#ffb822 !important}
-
-/* responsivo */
-@media(max-width:900px){
-    .tb{padding:12px 10px 14px}
-    .tr2{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;
-        scrollbar-width:none;-ms-overflow-style:none}
-    .tr2::-webkit-scrollbar{display:none}
-    .ti{padding:11px 18px;font-size:.92rem}
-}
-@media(max-width:768px){.tb{top:100px}}
-.bnr-go{font-size:.85rem;opacity:.8;flex:0 0 auto}
-
-@media(max-width:560px){
-    .bnr-go{display:none}
-}
-
-/* ============================================
-   BANNERS E WIDGETS LATERAIS
-   Preenchem o espaco vazio ao lado dos produtos
-   ============================================ */
-.pw-layout{
-    display:block;
-    max-width:1780px;margin:0 auto;padding:14px;
-}
-.pw-main{min-width:0}
-.pw-side{
-    position:static;display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
-    gap:14px;margin:18px 0 0;
-}
-.pw-side .bnr-go{display:none}
-.wgt-linha{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:8px 0;font-size:.9rem;color:#6b7280;
-    border-bottom:1px dashed #eeeef4;
-}
-.wgt-linha:last-child{border-bottom:0}
-.wgt-linha b{color:#3d4465;font-weight:700}
-.wgt-status{
-    display:flex;align-items:center;gap:9px;
-    padding:10px 12px;border-radius:10px;margin-bottom:12px;
-    font-size:.88rem;font-weight:700;line-height:1.35;
-}
-.wgt-status.aberto{background:var(--texto-ok-fundo);color:var(--texto-ok)}
-.wgt-status.fechado{background:var(--texto-erro-fundo);color:var(--texto-erro)}
-.wgt-status i{font-size:1rem}
-
-/* widget: contato */
-.wgt-contato a{
-    display:flex;align-items:center;gap:11px;
-    padding:11px 12px;border-radius:10px;margin-bottom:8px;
-    background:#f7f7f7;color:#3d4465;text-decoration:none;
-    font-size:.9rem;font-weight:600;transition:background .18s ease;
-}
-.wgt-contato a:hover{background:#ffb822;color:#3d4465}
-.wgt-contato a i{color:#43a047;font-size:1.05rem;width:20px;text-align:center}
-.wgt-contato a:hover i{color:#3d4465}
-
-/* widget: whatsapp destaque */
-.wgt-zap{
-    display:flex;align-items:center;gap:12px;text-decoration:none;
-    background:#0e6b4f;color:#fff;padding:16px 18px;border-radius:14px;
-    box-shadow:0 6px 18px rgba(14,107,79,.32);transition:transform .18s ease;
-}
-.wgt-zap:hover{transform:translateY(-2px);color:#fff}
-.wgt-zap i{font-size:1.7rem}
-.wgt-zap span{display:flex;flex-direction:column;line-height:1.3}
-.wgt-zap b{font-size:.98rem}
-.wgt-zap small{font-size:.78rem;opacity:.92}
-
-/* widget: selos */
-.wgt-selos{display:flex;flex-wrap:wrap;gap:8px}
-[data-theme="dark"] .wgt-linha{color:#a1a8c3 !important;border-bottom-color:#353a5c !important}
-[data-theme="dark"] .wgt-linha b{color:#e6e8f2 !important}
-[data-theme="dark"] .wgt-contato a{background:#232742 !important;color:#e6e8f2 !important}
-[data-theme="dark"] .wgt-contato a:hover{background:#ffb822 !important;color:#3d4465 !important}
-[data-theme="dark"] .wgt-status.aberto{background:#14331f !important;color:#8fe0a8 !important}
-[data-theme="dark"] .wgt-status.fechado{background:#3a1a1d !important;color:#ff9d9d !important}
-
-/* responsivo: os widgets ficam em grade tambem no celular */
-@media(max-width:1024px){
-    .pw-layout{padding:12px}
-    .pw-side{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-}
+@media(max-width:640px){.bs-tx{display:none}.bs{padding:0;width:44px;justify-content:center}.lg span{display:none}.lg{font-size:0}.lg i{font-size:1.5rem}}
 </style>
 </head>
 <body>
@@ -375,26 +103,11 @@ a{text-decoration:none;color:inherit}
 <script defer src="central.js?v=20261016j"></script>
 <script>
 (function(){
-/* a barra de navegacao e sempre visivel: destaca a pagina atual */
-var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-document.querySelectorAll('.nav-links a').forEach(function(a){
-var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
-if (alvo === atual) a.classList.add('ativo');
-});
-})();
-</script>
-
-
-<script>
-/* destaca a pagina atual no menu */
-(function(){
-  try{
-    var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-    document.querySelectorAll('.nav-links a').forEach(function(a){
-      var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
-      if (alvo === atual) a.classList.add('ativo');
-    });
-  }catch(e){}
+  var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
+    if (alvo === atual) a.classList.add('ativo');
+  });
 })();
 </script>
 </body>
