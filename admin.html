@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261016c">
+<link rel="manifest" href="manifest-vendedor.json?v=20261016d">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016c">
-<script src="theme.js?v=20261016c"></script>
+<link rel="stylesheet" href="style.css?v=20261016d">
+<script src="theme.js?v=20261016d"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -35,8 +35,6 @@
 .pedido-topo { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
 .pedido-topo b { font-size:1.1rem; }
 .pedido-meta { font-size:0.85rem; color:#888; }
-.pedido-info { font-size:0.9rem; color:#555; margin:6px 0; }
-.pedido-info i { color:var(--primary-color); width:18px; }
 .pedido-itens { font-size:0.88rem; color:#555; background:#fafafa; border-radius:8px; padding:10px 12px; margin:8px 0; }
 .pedido-itens div { padding:2px 0; }
 .pedido-acoes { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center; }
@@ -49,7 +47,6 @@
 .filtro.ativo .filtro-count{background:rgba(255,255,255,.28)}
 [data-theme="dark"] .filtro .filtro-count{background:rgba(255,255,255,.14)}
 .btn-zap { background:#25D366; color:#fff; padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
-.pedido-total-linha { font-size:1.15rem; font-weight:bold; color:var(--primary-color); }
 .vazio { text-align:center; padding:50px; color:#888; }
 .btn-sair { background:none; border:none; color:#c62828; cursor:pointer; font-size:0.9rem; }
 
@@ -136,7 +133,6 @@ body.admin .tabela-pedidos .sub{font-size:.9rem}
 body.admin .stats b,body.admin .stat-num{font-size:1.6rem}
 body.admin .btn-st{font-size:.95rem;min-height:46px;padding:11px 18px}
 body.admin .filtro{font-size:.98rem;min-height:44px}
-body.admin .status-badge,body.admin .chip-st{font-size:.85rem;padding:6px 13px}
 
 /* ===== aviso de pedido novo (chegou de outro aparelho) ===== */
 #avisoNovos{display:none;align-items:center;gap:12px;flex-wrap:wrap;
@@ -229,9 +225,6 @@ body.admin[data-layout="compacto"] .btn-st{min-height:38px;padding:8px 14px}
     .tabela-pedidos .td-total{font-size:1.1rem}
 }
 
-/* etiquetas de status */
-.chip-st{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:14px;font-size:.82rem;font-weight:800;color:#fff;white-space:nowrap}
-
 /* resumo do dia */
 .resumo-linha{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--borda);font-size:.95rem}
 .resumo-linha b{color:#3d4465;font-variant-numeric:tabular-nums}
@@ -299,10 +292,10 @@ body.admin input,body.admin select,body.admin textarea{
 }
 body.admin label{font-size:.9rem;font-weight:700;color:#3d4465}
 body.admin .btn-st,body.admin button{font-weight:700;font-size:.9rem}
-body.admin .painel-busca,body.admin .wgt,body.admin .box,body.admin .card{font-size:.95rem;line-height:1.55}
+body.admin .painel-busca,body.admin .box,body.admin .card{font-size:.95rem;line-height:1.55}
 body.admin .resumo-linha,body.admin .wgt-linha{font-size:.93rem;padding:11px 0}
 body.admin .resumo-linha b,body.admin .wgt-linha b{font-weight:700}
-body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
+body.admin .badge{font-weight:800;letter-spacing:.03em}
 </style>
 </head>
 <body class="admin">
@@ -514,8 +507,8 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261016c"></script>
-<script src="telegram.js?v=20261016c"></script>
+<script src="script.js?v=20261016d"></script>
+<script src="telegram.js?v=20261016d"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -1398,9 +1391,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261016c"></script>
-<script src="firebase-appcheck.js?v=20261016c"></script>
-<script src="app-update.js?v=20261016c"></script>
+<script src="app.js?v=20261016d"></script>
+<script src="firebase-appcheck.js?v=20261016d"></script>
+<script src="app-update.js?v=20261016d"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL

@@ -255,24 +255,26 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 ```bash
 node tests/manter-tudo.js            # versoes, datas, links, docs, robo
 node --check *.js                    # sintaxe
-node tests/rodar-todos.js            # 12 baterias (tem que dar TUDO 10/10)
+node tests/rodar-todos.js            # 13 baterias (tem que dar TUDO 10/10)
+node tests/13-validar-css.js         # CSS inteiro: sintaxe, classe sem uso, cobertura
+node tests/limpar-css-morto.js       # CSS morto: so o relatorio (--aplicar limpa)
 git add -A
 git commit -m "descrição curta em português"
 git push origin main
 ```
 
 Depois do push o GitHub Pages publica em 1-2 minutos.
-Para limpar cache antigo dos clientes, suba a versão em todos os HTML e no ersao.txt
-(	ests/bump-versao.js faz isso de uma vez, inclusive o pp-update.js).
+Para limpar cache antigo dos clientes, suba a versão em todos os HTML e no versao.txt
+(tests/bump-versao.js faz isso de uma vez, inclusive o app-update.js).
 
 ### Manutenção contínua (sem mexer no código)
 
 
-ode tests/manter-tudo.js confere, um por um: versão igual em todas as páginas
-+ ersao.txt + pp-update.js; padrão de data dd/mm/aaaa hh:mm:ss; links
+node tests/manter-tudo.js confere, um por um: versão igual em todas as páginas
++ versao.txt + app-update.js; padrão de data dd/mm/aaaa hh:mm:ss; links
 internos apontando para arquivo que existe; scripts e estilos carregados;
 ausência de código morto dentro de <script src>; documentação (docs/ +
-	ests/LEIA-ME.md) em dia; e o **robô diário** (catálogo com menos de 3 dias e
+tests/LEIA-ME.md) em dia; e o **robô diário** (catálogo com menos de 3 dias e
 agendamento às 10:00, de segunda a sexta). Com --online confere também os
 links externos; com --com-catalogo roda o robô de verdade.
 
@@ -284,7 +286,7 @@ mostra a hora exata de cada passo do pedido e há quanto tempo ele está parado.
 
 ### Acesso ao painel
 
-dmin.html **não tem login automático**: abre a tela de usuário e senha
+admin.html **não tem login automático**: abre a tela de usuário e senha
 (VENDEDOR_USUARIO/VENDEDOR_SENHA em script.js) e trava depois de 5
 tentativas erradas. Quem protege os dados de verdade, porém, são as **regras do
 Firebase** — o banco está em modo teste, então os pedidos e as avaliações são
@@ -396,7 +398,7 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
   e a cada minuto.
 
 ### Qualidade automatica (rodar certo sempre vai rodar certo)
-- Testes: node tests/rodar-todos.js - 12 baterias, TUDO 10/10.
+- Testes: node tests/rodar-todos.js - 13 baterias, TUDO 10/10 (a 13a e o lint do CSS).
 - Portao automatico: .github/workflows/check.yml roda sintaxe de todo
   JS (site, testes, robos) + a suite completa em TODO push e todo dia as 6h.
 - Versao: node tests/bump-versao.js <versao> antes de publicar.

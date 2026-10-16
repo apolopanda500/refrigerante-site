@@ -87,10 +87,12 @@ refrigerante-site/
 │     └─ check.yml .................. sintaxe + TODOS os testes a cada push
 │
 ├─ TESTES E MANUTENÇÃO
-│  ├─ tests/rodar-todos.js .......... roda as 12 baterias (TUDO 10/10)
+│  ├─ tests/rodar-todos.js .......... roda as 13 baterias (TUDO 10/10)
 │  ├─ tests/manter-tudo.js .......... alinha versões, datas, links, docs, robô
 │  ├─ tests/bump-versao.js .......... sobe a versão em todos os arquivos
-│  ├─ tests/01..12-*.js ............. as 12 baterias
+│  ├─ tests/13-validar-css.js ....... confere o CSS todo (sintaxe, classe sem uso, cobertura, duplicata)
+│  ├─ tests/limpar-css-morto.js ..... apaga CSS morto (relatório; --aplicar limpa)
+│  ├─ tests/01..13-*.js ............. as 13 baterias
 │  └─ tests/LEIA-ME.md .............. como rodar e o que cada bateria confere
 │
 ├─ DOCUMENTAÇÃO
@@ -141,7 +143,8 @@ Tudo que mostra data passa por `dataHoraSegundos()` / `dataCurta()` em
 
 ```powershell
 node tests/manter-tudo.js      # versões, datas, links, docs, robô
-node tests/rodar-todos.js      # 12 baterias — tem que dar TUDO 10/10
+node tests/rodar-todos.js      # 13 baterias — tem que dar TUDO 10/10
+node tests/limpar-css-morto.js # CSS morto: relatório (--aplicar limpa)
 node tests/bump-versao.js 20261016c
 node apk/android/build.js      # projeto Android na MESMA versão do site
 gradle -p apk/android :cliente:assembleRelease :vendedor:assembleRelease

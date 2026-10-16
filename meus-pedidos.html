@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016c">
+<link rel="manifest" href="manifest.json?v=20261016d">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Histórico - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016c">
-<script src="theme.js?v=20261016c"></script>
+<link rel="stylesheet" href="style.css?v=20261016d">
+<script src="theme.js?v=20261016d"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -30,12 +30,6 @@
 [data-theme="dark"] .stat-box .stat-num{color:#fff}
 [data-theme="dark"] .stat-box .stat-label{color:#a1a8c3}
 .pedido-sem-item{color:#8a6100;font-size:.9rem;padding:4px 0}
-.busca-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:22px; margin-bottom:22px; }
-.busca-linha { display:flex; gap:12px; flex-wrap:wrap; }
-.busca-linha input { flex:1; min-width:200px; padding:13px 14px; border:1px solid #ddd; border-radius:10px; font-size:1rem; }
-.busca-linha input:focus { outline:none; border-color:var(--primary-color); }
-.btn-buscar { padding:13px 26px; background:var(--primary-color); color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:1rem; cursor:pointer; }
-.btn-buscar:hover { background:#c62828; }
 .filtros { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
 .filtro { padding:7px 16px; border:1px solid #ddd; background:#fff; border-radius:18px; cursor:pointer; font-size:0.85rem; font-weight:600; color:#666; }
 .filtro.ativo { background:var(--primary-color); color:#fff; border-color:var(--primary-color); }
@@ -57,8 +51,6 @@
 .vazio i { font-size:3rem; color:#ddd; margin-bottom:12px; }
 .vazio p { margin-bottom:14px; }
 .aviso-info { background:#e3f2fd; border-left:4px solid var(--secondary-color); padding:12px 16px; border-radius:8px; font-size:0.88rem; color:#1565c0; margin-bottom:18px; }
-.link-voltar { color:#666; font-size:0.95rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
-.link-voltar:hover { color: var(--primary-color); }
 
 /* ===== barra de sessao ===== */
 .sessao-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
@@ -72,7 +64,6 @@
 
 /* ===== TEMA ESCURO legivel ===== */
 [data-theme="dark"] .page{background:#12121c !important}
-[data-theme="dark"] .busca-card,
 [data-theme="dark"] .pedido-card{background:#1c1f33 !important;border:1px solid #353a5c !important}
 [data-theme="dark"] .page-head h1{color:#ffb822 !important}
 [data-theme="dark"] .page-head a{color:#a1a8c3 !important}
@@ -87,7 +78,6 @@
 [data-theme="dark"] .timeline-item{color:#cdd2e6 !important}
 [data-theme="dark"] .timeline-item i{color:#ffb822 !important}
 [data-theme="dark"] .btn-detalhe{color:#ffb822 !important}
-[data-theme="dark"] .btn-buscar{background:#ffb822 !important;color:#3d4465 !important}
 [data-theme="dark"] .filtro{background:#232742 !important;border-color:#353a5c !important;color:#cdd2e6 !important}
 [data-theme="dark"] .filtro.ativo{background:#ffb822 !important;color:#3d4465 !important;border-color:#ffb822 !important}
 [data-theme="dark"] .vazio{color:#a1a8c3 !important}
@@ -204,13 +194,13 @@
 <div id="listaPedidos"></div>
 </div></section>
 
-<script src="conta.js?v=20261016c"></script>
-<script src="firebase-appcheck.js?v=20261016c"></script>
-<script src="app-update.js?v=20261016c"></script>
-<script src="ia.js?v=20261016c"></script>
-<script src="central.js?v=20261016c"></script>
-<script src="loja.js?v=20261016c"></script>
-<script src="script.js?v=20261016c"></script>
+<script src="conta.js?v=20261016d"></script>
+<script src="firebase-appcheck.js?v=20261016d"></script>
+<script src="app-update.js?v=20261016d"></script>
+<script src="ia.js?v=20261016d"></script>
+<script src="central.js?v=20261016d"></script>
+<script src="loja.js?v=20261016d"></script>
+<script src="script.js?v=20261016d"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');

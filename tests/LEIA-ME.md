@@ -25,6 +25,25 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `10-carrinho.js` | Um botão só de limpar, funcionando com carrinho cheio e vazio |
 | `11-tema-escuro.js` | Todo componente novo tem versão escura |
 | `12-ia.js` | Assistente: fatos locais, cadeia da nuvem, recomendações, widget, cache offline, MCP e portão automático |
+| `13-validar-css.js` | CSS inteiro: chaves e parênteses fecham, `attr()` com rótulo, **nenhuma classe sem uso**, cobertura do que o código gera e nada de propriedade repetida |
+
+## CSS: como confere e como limpa
+
+```bash
+node tests/13-validar-css.js              # confere o style.css + cada <style> das páginas
+node tests/limpar-css-morto.js            # só o relatório: o que seria apagado
+node tests/limpar-css-morto.js --aplicar  # apaga de verdade (com trava de segurança)
+```
+
+O limpador só mexe em regra cuja classe **nenhuma** página nem script usa. Se a
+regra tem outro seletor vivo, ele apara só o seletor morto
+(`.detalhe-valor,.resumo-linha b{}` vira `.resumo-linha b{}`). Ele respeita
+`@media`/`@keyframes`, não conta estilo dentro de página como uso de classe
+(senão o seletor se esconde) e **só grava o arquivo depois de conferir as
+chaves**. Aparece no relatório como "regra removida" ou "seletor aparado".
+
+> O lint também roda dentro de `rodar-todos.js`: 13 baterias no total.
+
 
 ## Ferramentas
 
@@ -66,6 +85,8 @@ Estos problemas existiram e foram resolvidos porque os testes acusaram:
 | Token do Telegram e painel dentro do cache do cliente | `06-estrutura` |
 | Duas ofertas fazendo a mesma coisa | `07-duplicados` |
 | Carrinho com preço velho e sem botão Editar | `09-carrinho-render` |
+| Aba `.ti` da home com `transition` fora do bloco e uma chave sobrando (quebrava o resto do `<style>`) | `13-validar-css` |
+| 165 regras de CSS morto (grade de produtos, rodapé antigo, banners, `.cam*`, `.bnr*`, `.reg-opcao`…) pesando 11 KB | `13-validar-css` + `limpar-css-morto` |
 
 ## Antes de publicar
 

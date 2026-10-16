@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016c">
+<link rel="manifest" href="manifest.json?v=20261016d">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,15 +11,13 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016c">
-<script src="theme.js?v=20261016c"></script>
+<link rel="stylesheet" href="style.css?v=20261016d">
+<script src="theme.js?v=20261016d"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
 .page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
 .page-head h1 { color: var(--primary-color); font-size:1.8rem; display:flex; align-items:center; gap:10px; }
-.link-voltar { color:#666; font-size:0.95rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
-.link-voltar:hover { color: var(--primary-color); }
 .cart-box { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px; }
 .cart-item { display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid #eee; flex-wrap:wrap; }
 .cart-item:last-child { border-bottom:none; }
@@ -45,11 +43,9 @@
 .btn-primario:hover { background:#c62828; }
 .btn-secundario { background:#fff; color:var(--primary-color); border:2px solid var(--primary-color); }
 .btn-secundario:hover { background:#fff3f3; }
-.btn-limpar { background:none; color:#c62828; border:none; cursor:pointer; font-size:0.9rem; text-decoration:underline; padding:8px; }
 
 /* ===== ALVO DE TOQUE MINIMO 44px (celular) ===== */
-.qb,.qa,.btn-mini,.op-btn,.filtro,.btn,.btn-primario,.btn-secundario,.btn-enviar,
-.btn-salvar,.btn-buscar,.btn-detalhe,.btn-sair,.btn-limpar{
+.qb,.qa,.btn-mini,.op-btn,.filtro,.btn,.btn-primario,.btn-secundario,.btn-enviar,.btn-salvar,.btn-detalhe,.btn-sair{
     min-height:44px;
     touch-action:manipulation;
     -webkit-tap-highlight-color:transparent;
@@ -238,13 +234,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016c"></script>
-<script src="firebase-appcheck.js?v=20261016c"></script>
-<script src="app-update.js?v=20261016c"></script>
-<script src="ia.js?v=20261016c"></script>
-<script src="central.js?v=20261016c"></script>
-<script src="loja.js?v=20261016c"></script>
-<script src="script.js?v=20261016c"></script>
+<script src="conta.js?v=20261016d"></script>
+<script src="firebase-appcheck.js?v=20261016d"></script>
+<script src="app-update.js?v=20261016d"></script>
+<script src="ia.js?v=20261016d"></script>
+<script src="central.js?v=20261016d"></script>
+<script src="loja.js?v=20261016d"></script>
+<script src="script.js?v=20261016d"></script>
 <script>
 cart = getCart();
 

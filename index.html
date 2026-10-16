@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016c">
+<link rel="manifest" href="manifest.json?v=20261016d">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,8 +14,8 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="style.css?v=20261016c">
-<script src="theme.js?v=20261016c"></script>
+<link rel="stylesheet" href="style.css?v=20261016d">
+<script src="theme.js?v=20261016d"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 /* header da home e sticky: nao precisa do espaco do header fixo */
@@ -210,7 +210,6 @@ a{text-decoration:none;color:inherit}
     cursor:pointer;text-transform:none;letter-spacing:.2px;
     box-shadow:0 2px 6px rgba(61,68,101,.10);
     min-height:44px;
-}
     transition:transform .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease;
 }
 .ti i{font-size:1.05rem;color:var(--accent-color,#ffb822);transition:color .18s ease}
@@ -248,42 +247,11 @@ a{text-decoration:none;color:inherit}
     .ti{padding:11px 18px;font-size:.92rem}
 }
 @media(max-width:768px){.tb{top:100px}}
-
-/* ============================================
-   BANNERS / ANUNCIOS
-   ============================================ */
-.bnr{
-    display:flex;align-items:center;gap:14px;
-    margin:14px 0;padding:16px 20px;border-radius:14px;
-    color:#fff;text-decoration:none;
-    box-shadow:0 4px 14px rgba(61,68,101,.18);
-    transition:transform .18s ease,box-shadow .18s ease;
-    overflow:hidden;position:relative;
-}
-.bnr::after{
-    content:"";position:absolute;inset:0;
-    background:linear-gradient(120deg,rgba(255,255,255,.14),transparent 55%);
-    pointer-events:none;
-}
-.bnr:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(61,68,101,.3);color:#fff}
-.bnr-ic{
-    font-size:1.5rem;width:52px;height:52px;flex:0 0 52px;
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(255,255,255,.18);border-radius:14px;
-}
-.bnr-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.bnr-tx b{font-size:1.02rem;font-weight:800;line-height:1.25}
-.bnr-tx small{font-size:.82rem;opacity:.9;line-height:1.35}
 .bnr-go{font-size:.85rem;opacity:.8;flex:0 0 auto}
 
 @media(max-width:560px){
-    .bnr{padding:13px 14px;gap:11px;border-radius:12px}
-    .bnr-ic{width:42px;height:42px;flex:0 0 42px;font-size:1.2rem}
-    .bnr-tx b{font-size:.92rem}
-    .bnr-tx small{font-size:.75rem}
     .bnr-go{display:none}
 }
-[data-theme="dark"] .bnr{box-shadow:0 4px 14px rgba(0,0,0,.4)}
 
 /* ============================================
    BANNERS E WIDGETS LATERAIS
@@ -299,25 +267,7 @@ a{text-decoration:none;color:inherit}
     grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
     gap:14px;margin:18px 0 0;
 }
-
-/* banner ja existente, ajustado para o espaco estreito */
-.pw-side .bnr{margin:0;padding:14px 16px;flex-direction:column;align-items:flex-start;gap:10px}
-.pw-side .bnr-ic{width:44px;height:44px;flex:0 0 44px;font-size:1.2rem}
-.pw-side .bnr-tx b{font-size:.98rem}
-.pw-side .bnr-tx small{font-size:.8rem}
 .pw-side .bnr-go{display:none}
-
-/* widget: horario */
-.wgt{
-    background:#fff;border-radius:14px;padding:16px 18px;
-    box-shadow:0 0 13px 0 rgba(82,63,105,.05);border:1px solid #eeeef4;
-}
-.wgt h3{
-    display:flex;align-items:center;gap:9px;
-    font-size:.95rem;font-weight:800;color:#3d4465;
-    margin:0 0 12px;text-transform:uppercase;letter-spacing:.4px;
-}
-.wgt h3 i{color:#ffb822}
 .wgt-linha{
     display:flex;justify-content:space-between;align-items:center;
     padding:8px 0;font-size:.9rem;color:#6b7280;
@@ -359,24 +309,12 @@ a{text-decoration:none;color:inherit}
 
 /* widget: selos */
 .wgt-selos{display:flex;flex-wrap:wrap;gap:8px}
-.selo{
-    display:inline-flex;align-items:center;gap:6px;
-    padding:7px 11px;border-radius:20px;background:#f7f7f7;
-    color:#646c9a;font-size:.8rem;font-weight:700;
-}
-.selo i{color:#1dc9b7;font-size:.82rem}
-
-/* tema escuro dos widgets */
-[data-theme="dark"] .wgt{background:#1c1f33 !important;border-color:#353a5c !important}
-[data-theme="dark"] .wgt h3{color:#ffb822 !important}
 [data-theme="dark"] .wgt-linha{color:#a1a8c3 !important;border-bottom-color:#353a5c !important}
 [data-theme="dark"] .wgt-linha b{color:#e6e8f2 !important}
 [data-theme="dark"] .wgt-contato a{background:#232742 !important;color:#e6e8f2 !important}
 [data-theme="dark"] .wgt-contato a:hover{background:#ffb822 !important;color:#3d4465 !important}
-[data-theme="dark"] .selo{background:#232742 !important;color:#cdd2e6 !important}
 [data-theme="dark"] .wgt-status.aberto{background:#14331f !important;color:#8fe0a8 !important}
 [data-theme="dark"] .wgt-status.fechado{background:#3a1a1d !important;color:#ff9d9d !important}
-[data-theme="dark"] .pw-side .bnr{box-shadow:0 4px 14px rgba(0,0,0,.4)}
 
 /* responsivo: os widgets ficam em grade tambem no celular */
 @media(max-width:1024px){
@@ -426,13 +364,13 @@ a{text-decoration:none;color:inherit}
 <p style="font-size:.75rem;color:#8a8a8a;margin-top:6px">Loja de segunda a sexta · pedidos das 08:50 às 15:00 · entrega nas ruas das 06:00 às 18:00 · sábado é só entrega</p>
 </footer>
 
-<script src="conta.js?v=20261016c"></script>
-<script src="loja.js?v=20261016c"></script>
-<script src="app.js?v=20261016c"></script>
-<script src="firebase-appcheck.js?v=20261016c"></script>
-<script src="app-update.js?v=20261016c"></script>
-<script src="ia.js?v=20261016c"></script>
-<script src="central.js?v=20261016c"></script>
+<script src="conta.js?v=20261016d"></script>
+<script src="loja.js?v=20261016d"></script>
+<script src="app.js?v=20261016d"></script>
+<script src="firebase-appcheck.js?v=20261016d"></script>
+<script src="app-update.js?v=20261016d"></script>
+<script src="ia.js?v=20261016d"></script>
+<script src="central.js?v=20261016d"></script>
 <script>
 (function(){
 /* a barra de navegacao e sempre visivel: destaca a pagina atual */
