@@ -90,6 +90,49 @@ function textoStatus(p) {
     );
 }
 
+function textoConfirmado(p) {
+    return (
+        "✅ *Pedido Confirmado!*\n" +
+        "Pedido: " + p.id + "\n" +
+        "Cliente: " + (p.nome || "Cliente") + "\n" +
+        "Total: " + formatBRL(p.total) + "\n" +
+        "Status: Confirmado\n" +
+        "Aguardando separação..."
+    );
+}
+
+function textoEnviado(p) {
+    return (
+        "🚚 *Pedido Enviado!*\n" +
+        "Pedido: " + p.id + "\n" +
+        "Cliente: " + (p.nome || "Cliente") + "\n" +
+        "Total: " + formatBRL(p.total) + "\n" +
+        "Status: Saiu para entrega\n" +
+        "Aguardando entrega..."
+    );
+}
+
+function textoEntregue(p) {
+    return (
+        "✅ *Pedido Entregue!*\n" +
+        "Pedido: " + p.id + "\n" +
+        "Cliente: " + (p.nome || "Cliente") + "\n" +
+        "Total: " + formatBRL(p.total) + "\n" +
+        "Status: Entregue\n" +
+        "Obrigado pela preferência!"
+    );
+}
+
+function textoCancelado(p) {
+    return (
+        "❌ *Pedido Cancelado*\n" +
+        "Pedido: " + p.id + "\n" +
+        "Cliente: " + (p.nome || "Cliente") + "\n" +
+        "Status: Cancelado\n" +
+        "Entre em contato para mais informações."
+    );
+}
+
 function textoMeusPedidos(pedidos) {
     if (!pedidos || pedidos.length === 0) {
         return "📭 Você não tem pedidos cadastrados.";
