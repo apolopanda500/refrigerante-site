@@ -75,5 +75,12 @@
 [data-theme="dark"] .cb-rot input,[data-theme="dark"] .cb-rot select{background:#2a2e44!important;border-color:#3d4470!important;color:#e6e8f2!important}
 [data-theme="dark"] .cb-rot select option{background:#2a2e44!important;color:#e6e8f2!important}
 
+/* tema escuro: caixa "Onde voce quer receber" */
+[data-theme="dark"] .caixa-bairro{background:#1c1f33!important;border-color:#353a5c!important;color:#e6e8f2!important}
+[data-theme="dark"] .cb-grade{background:transparent!important}
+[data-theme="dark"] .cb-cab{color:#e6e8f2!important}
+[data-theme="dark"] .cb-rot{color:#c7ccdf!important}
+[data-theme="dark"] .cb-dias{color:#a1a8c3!important}
+
 /* forcar nova versao para quebrar cache do navegador: v=20261017m */
 
