@@ -438,25 +438,6 @@ function textoStart() {
         "Use /ajuda para ver todos os comandos."
     );
 }
-/* ============================================
-   BOT DO TELEGRAM PARA CLIENTES - CONVENÇÃO
-   Roda no GitHub Actions a cada 5 minutos
-   ============================================ */
-"use strict";
-
-const BASE  = process.env.FB_URL   || "https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com";
-const TOKEN = process.env.TG_TOKEN_CLIENTES || "";
-const CHAT  = String(process.env.TG_CHAT_CLIENTES || "");
-
-/* Comandos do bot para clientes */
-const COMANDOS = [
-    { command: "start", description: "Iniciar o bot e ver comandos" },
-    { command: "ajuda", description: "Lista de comandos disponíveis" },
-    { command: "meuspedidos", description: "Ver meus pedidos recentes" },
-    { command: "status", description: "Status de um pedido: /status CV20261016-001" },
-    { command: "telefone", description: "Registrar meu WhatsApp: /telefone 21999999999" }
-];
-
 /* ---------- utilitários ---------- */
 function formatBRL(n) {
     const v = parseFloat(n);
@@ -484,22 +465,6 @@ function tg(metodo, params) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(params)
-    }).then(function (r) { return r.ok ? r.json() : null; });
-}
-
-/* ---------- Firebase ---------- */
-function fbGet(caminho) {
-    const url = BASE + caminho + ".json";
-    return fetch(url, { cache: "no-store" })
-        .then(function (r) { return r.ok ? r.json() : null; });
-}
-
-function fbPut(caminho, dados) {
-    const url = BASE + caminho + ".json";
-    return fetch(url, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados)
     }).then(function (r) { return r.ok ? r.json() : null; });
 }
 
