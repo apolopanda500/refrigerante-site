@@ -14,11 +14,11 @@
    de ficar preso numa versao antiga (foi o defeito do
    Historico mostrar versao velha depois do Ctrl+F5).
    ============================================ */
-var VERSAO_APP = "20261016m";
+var VERSAO_APP = "20261016n";
 
 /* nome do cache vivo: sw.js monta "convencao-cache-" + VERSAO.
    Mantido aqui so para conferir; o service worker e a fonte da verdade. */
-var CACHE_ATUAL = "convencao-cache-20261016m";
+var CACHE_ATUAL = "convencao-cache-20261016n";
 
 /* tira os caches ANTIGOS (o do service worker atual fica de pe:
    se apagassemos tudo, o app ficaria sem nada offline) */
@@ -35,9 +35,11 @@ function limparCacheApp() {
 function iniciarApp() {
     /* 1) registra o service worker */
     if ("serviceWorker" in navigator) {
+        var swReg = null;  /* guarda o registro para usar em setInterval/visibilitychange */
         window.addEventListener("load", function () {
             navigator.serviceWorker.register("sw.js").then(function (reg) {
-                /* versao nova esperando: naomos nada na tela, o proprio
+                swReg = reg;  /* guarda para uso fora deste then */
+                /* versao nova esperando: nao faz nada na tela, o proprio
                    activate troca o service worker e limpa o cache velho */
                 reg.addEventListener("updatefound", function () {
                     var novo = reg.installing;
@@ -58,10 +60,10 @@ function iniciarApp() {
 
             /* confere de tempos em tempos (ao voltar para o app) */
             setInterval(function () {
-                if (document.visibilityState === "visible") reg.update().catch(function () { });
+                if (document.visibilityState === "visible" && swReg) swReg.update().catch(function () { });
             }, 5 * 60 * 1000);
             document.addEventListener("visibilitychange", function () {
-                if (document.visibilityState === "visible") reg.update().catch(function () { });
+                if (document.visibilityState === "visible" && swReg) swReg.update().catch(function () { });
             });
         });
     }
