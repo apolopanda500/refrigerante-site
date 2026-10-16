@@ -12,3 +12,12 @@
 [data-theme="dark"] .tabela-geral tbody td,[data-theme="dark"] .tabela-ofertas tbody td,[data-theme="dark"] .tabela-pedidos tbody td{background:#222643;color:#dfe2ef;border-bottom-color:#2f3456}
 [data-theme="dark"] .tabela-geral tbody tr:nth-child(even) td,[data-theme="dark"] .tabela-ofertas tbody tr:nth-child(even) td,[data-theme="dark"] .tabela-pedidos tbody tr:nth-child(even) td{background:#262c4d}
 [data-theme="dark"] .tabela-geral tbody tr:hover td,[data-theme="dark"] .tabela-ofertas tbody tr:hover td,[data-theme="dark"] .tabela-pedidos tbody tr:hover td{background:#2b3157}
+
+/* ===== correcoes mobile/tema escuro (v) ===== */
+/* o botao IA tem que ficar ACIMA da barra de acoes fixa no celular. */
+/* Esta regra fica no fim do arquivo para vencer o .ia-fab base. */
+@media(max-width:560px){.ia-fab{bottom:calc(84px + env(safe-area-inset-bottom))!important}.ia-painel{bottom:calc(150px + env(safe-area-inset-bottom))!important}}
+/* tema escuro: subtotal do carrinho estava com a cor escura do tema (sumia) */
+[data-theme="dark"] .ci-subtotal{color:#e6e8f2!important}
+/* tema escuro: o seletor de quantidade tinha borda clara (aparecia um quadro branco) */
+[data-theme="dark"] .qc{border-color:#3d4470!important}
