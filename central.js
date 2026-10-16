@@ -73,6 +73,41 @@ function notifPedirPermissao(cb) {
         catch (e2) { if (cb) cb("negado"); }
     }
 }
+/* ---------- aviso de teste: comprova que a permissao vale ----------
+   Sem isto o cliente fica sem saber se o aviso vai sair.
+   Devolve { ok, motivo } e mostra o aviso na tela de verdade. */
+function notifTestar() {
+    if (typeof Notification === "undefined") {
+        notifToast("Aviso indisponível", "Este navegador não tem notificação. Use o Chrome/Android ou instale o app.");
+        return { ok: false, motivo: "sem-api" };
+    }
+    if (Notification.permission !== "granted") {
+        notifToast("Ainda sem permissão", "Toque em " + "Ativar aviso no aparelho" + " e libere a permissão.");
+        return { ok: false, motivo: Notification.permission };
+    }
+    /* no iPhone/iPad so mostra fora do site se o app estiver instalado */
+    var appInstalado = false;
+    try {
+        appInstalado = (window.matchMedia("(display-mode: standalone)").matches)
+            || (window.navigator.standalone === true);
+    } catch (e) {}
+    var titulo = "Convenção: aviso ligado";
+    var texto = appInstalado
+        ? "É assim que você vai receber o status do pedido, mesmo com o app fechado."
+        : "Aviso ligado. No celular, saia do site e volte: o aviso aparece mesmo com o app fechado.";
+    var fez = false;
+    try {
+        var n = new Notification(titulo, { body: texto, tag: "teste-convencao" });
+        try { n.onclick = function () { window.focus(); n.close(); }; } catch (e2) {}
+        fez = true;
+    } catch (e) {
+        vigiaErro("notificacao-teste", e);
+        notifToast(titulo, texto);
+        return { ok: true, motivo: "toast" };
+    }
+    notifToast(titulo, texto);
+    return { ok: true, motivo: fez ? (appInstalado ? "app" : "navegador") : "toast" };
+}
 
 /* ============================================================
    CENTRAL DO CLIENTE - parte 2: rodada de notificacao

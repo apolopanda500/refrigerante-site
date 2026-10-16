@@ -45,11 +45,28 @@ var TelegramBot = (function () {
         { command: "enviado",  description: "Marcar como enviado: /enviado CV20261014-001" },
         { command: "entregue",  description: "Marcar como entregue: /entregue CV20261014-001" },
         { command: "cancelar",  description: "Cancelar pedido: /cancelar CV20261014-001" },
+        { command: "reabrir",  description: "Voltar para aguardando: /reabrir CV20261014-001" },
+        { command: "editar",   description: "Corrigir dado do pedido: /editar 001 bairro Paracambi" },
+        { command: "buscar",   description: "Achar pedido por nome, telefone ou bairro: /buscar Japeri" },
         { command: "ultimos",   description: "Ver os ultimos pedidos" },
         { command: "status",    description: "Ver um pedido: /status CV20261014-001" },
         { command: "hoje",      description: "Resumo dos pedidos de hoje" },
         { command: "ajuda",     description: "Ver a lista de comandos" }
     ];
+
+    /* o que o /editar aceita trocar no pedido */
+    var CAMPOS_EDITAVEIS = {
+        nome: { rotulo: "Nome do cliente", exemplo: "Maria Silva" },
+        telefone: { rotulo: "WhatsApp", exemplo: "21999998888" },
+        cpf: { rotulo: "CPF", exemplo: "12345678901" },
+        end: { rotulo: "Endereco (rua e numero)", exemplo: "Rua das Flores, 120" },
+        bairro: { rotulo: "Bairro", exemplo: "Japeri" },
+        comp: { rotulo: "Complemento", exemplo: "Apto 21" },
+        regiao: { rotulo: "Regiao de entrega", exemplo: "Japeri" },
+        pagamento: { rotulo: "Pagamento", exemplo: "Pix ou Dinheiro" },
+        troco: { rotulo: "Troco para", exemplo: "100,00" },
+        observacao: { rotulo: "Observacao", exemplo: "telefonar na chegada" }
+    };
 
     /* apelidos aceitos -> status do sistema */
     var STATUS_CMD = {
@@ -124,14 +141,71 @@ var TelegramBot = (function () {
         return "COMANDOS DO VENDEDOR\n"
             + "\n/confirmar CV20261014-001 - confirmar pedido"
             + "\n/separacao CV20261014-001 - marcar em separacao"
-            + "\n/enviado CV20261014-001 - Saiu para entrega"
+            + "\n/enviado CV20261014-001 - saiu para entrega"
             + "\n/entregue CV20261014-001 - marcar como entregue"
             + "\n/cancelar CV20261014-001 - cancelar pedido"
+            + "\n/reabrir CV20261014-001 - voltar para aguardando"
+            + "\n/editar 001 bairro Paracambi - corrigir um dado"
+            + "\n/buscar Japeri - achar pedido por nome, telefone ou bairro"
             + "\n/ultimos - ver os ultimos 5 pedidos"
             + "\n/status CV20261014-001 - ver um pedido"
             + "\n/hoje - resumo dos pedidos de hoje"
             + "\n/ajuda - ver esta lista"
-            + "\n\nDica: na mensagem de cada pedido tem botoes. E so tocar para mudar o status.";
+            + "\n\nDica: na mensagem de cada pedido tem botoes. E so tocar: Confirmar, Editar, Entregue...";
+    }
+
+    /* ---------- /editar: corrige um dado do pedido ---------- */
+    function textoEditar(id) {
+        var t = "EDITAR PEDIDO " + id + "\n\nDigite assim:\n"
+            + "/editar " + id + " campo valor\n\nCampos que da para trocar:\n";
+        Object.keys(CAMPOS_EDITAVEIS).forEach(function (k) {
+            t += "\n- " + k + " (" + CAMPOS_EDITAVEIS[k].rotulo + ") ex.: " + CAMPOS_EDITAVEIS[k].exemplo;
+        });
+        t += "\n\nExemplo: /editar " + id + " bairro Paracambi";
+        return t;
+    }
+    function editarPedido(id, campo, valor) {
+        var pedido = acharPedido(id);
+        if (!pedido) return Promise.reject(new Error("pedido nao encontrado"));
+        var chave = String(campo || "").toLowerCase().trim();
+        if (!CAMPOS_EDITAVEIS[chave]) {
+            return enviar("Campo \"" + chave + "\" nao existe.\n\n" + textoEditar(pedido.id))
+                .then(function () { throw new Error("campo invalido"); });
+        }
+        var lista = getPedidos();
+        var alvo = lista.find(function (p) { return p.id === pedido.id; });
+        if (!alvo) return Promise.reject(new Error("pedido nao encontrado"));
+        var antes = alvo[chave];
+        alvo[chave] = valor;
+        alvo.atualizadoEm = Date.now();
+        alvo.historico = Array.isArray(alvo.historico) ? alvo.historico : [];
+        alvo.historico.push({ status: alvo.status, quando: Date.now(), nota: "Editado: " + chave });
+        savePedidos(lista);
+        if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(alvo); } catch (e) {} }
+        if (typeof renderAdmin === "function") { try { renderAdmin(); } catch (e) {} }
+        log("Bot: " + pedido.id + " - " + chave + ": " + (antes || "(vazio)") + " -> " + valor);
+        var linha = CAMPOS_EDITAVEIS[chave].rotulo + ": " + (antes || "(vazio)") + "  ->  " + valor;
+        return enviar("Pedido " + pedido.id + " atualizado\n" + linha
+            + "\nStatus: " + (STATUS_LABEL[alvo.status] || alvo.status)).then(function () {
+            return { id: alvo.id, campo: chave, valor: valor };
+        });
+    }
+
+    /* ---------- /buscar ---------- */
+    function textoBuscar(termo) {
+        var t = String(termo || "").toLowerCase().trim();
+        if (!t) return "Falta o que procurar. Exemplo: /buscar Japeri";
+        var achados = getPedidos().filter(function (p) {
+            return [p.id, p.nome, p.tel, p.bairro, p.end, p.regiao].join(" ")
+                .toLowerCase().indexOf(t) >= 0;
+        }).slice(0, 8);
+        if (!achados.length) return "Nada encontrado para \"" + termo + "\".";
+        var r = "BUSCA: " + termo + "\n";
+        achados.forEach(function (p) {
+            r += "\n- " + p.id + " - " + (p.nome || "") + " - " + (p.bairro || "")
+               + " - " + formatBRL(p.total || 0) + " - " + (STATUS_LABEL[p.status] || p.status);
+        });
+        return r;
     }
 
     function listarUltimos() {
@@ -246,13 +320,31 @@ var TelegramBot = (function () {
         return !!user && !!alvo && user === alvo;
     }
 
-    /* ---------- 3) botoes da mensagem (Confirmar, Entregue...) ---------- */
+    /* ---------- 3) botoes da mensagem (Confirmar, Editar, Entregue...) ---------- */
     function tratarBotao(cb) {
         if (!doDono(cb.from) && !doDono(cb.message && cb.message.chat)) {
             return api("answerCallbackQuery", { callback_query_id: cb.id, text: "Nao autorizado" }).catch(function(){});
         }
         var partes = String(cb.data || "").split("|");           // st|ID|status
-        if (partes.length < 3 || partes[0] !== "st") {
+        var acao = partes[0];
+
+        /* botao EDITAR: mostra como corrigir */
+        if (acao === "ed") {
+            var idEd = partes[1];
+            api("answerCallbackQuery", { callback_query_id: cb.id, text: "Abrindo editor" }).catch(function(){});
+            return enviar(textoEditar(idEd)).catch(function(){});
+        }
+        /* botao REABRIR: volta para aguardando */
+        if (acao === "rb") {
+            var idRb = partes[1];
+            var pRb = acharPedido(idRb);
+            api("answerCallbackQuery", { callback_query_id: cb.id, text: pRb ? "Voltando..." : "Pedido nao encontrado" })
+                .catch(function(){});
+            if (!pRb) return enviar("Pedido " + idRb + " nao encontrado neste navegador.").catch(function(){});
+            aplicarStatus(pRb, "aguardando");
+            return enviar("Pedido " + pRb.id + " voltou para aguardando.").catch(function(){});
+        }
+        if (partes.length < 3 || acao !== "st") {
             return api("answerCallbackQuery", { callback_query_id: cb.id }).catch(function(){});
         }
         var id = partes[1], novo = partes[2];
@@ -329,7 +421,30 @@ var TelegramBot = (function () {
             return;
         }
 
+        if (cmd === "buscar" || cmd === "acha") {
+            enviar(textoBuscar(arg)).then(function(){ log("Bot: /buscar " + arg); });
+            return;
+        }
+        if (cmd === "editar") {
+            if (!arg) { enviar("Falta o pedido. Exemplo: /editar 001 bairro Paracambi").catch(function(){}); return; }
+            var partesEd = arg.split(/\s+/);
+            if (partesEd.length < 3) {
+                var alvoEd = acharPedido(partesEd[0] || "");
+                if (!alvoEd) {
+                    enviar("Nao encontrei o pedido \"" + arg + "\". Use /ultimos para ver os numeros.").catch(function(){});
+                    return;
+                }
+                enviar(textoEditar(alvoEd.id)).catch(function(){});
+                log("Bot: /editar sem valor - mandei a lista de campos");
+                return;
+            }
+            editarPedido(partesEd[0], partesEd[1], partesEd.slice(2).join(" "))
+                .then(function () { log("Bot: /editar aplicado"); })
+                .catch(function (e) { log("Bot: /editar falhou: " + e.message); });
+            return;
+        }
         var novo = STATUS_CMD[cmd];
+        if (novo === undefined && cmd === "reabrir") novo = "aguardando";
         if (!novo) {
             enviar("Comando nao reconhecido. Use /ajuda para ver a lista.").catch(function(){});
             return;
@@ -393,6 +508,13 @@ var TelegramBot = (function () {
         verificarAgora: verificarAgora,
         ligadoMudou: ligadoMudou,
         status: status,
-        log: log
+        log: log,
+        /* exposto para o painel (e para os testes) */
+        comandos: COMANDOS,
+        camposEditaveis: CAMPOS_EDITAVEIS,
+        editar: editarPedido,
+        textoAjuda: textoAjuda,
+        textoEditar: textoEditar,
+        textoBuscar: textoBuscar
     };
 })();

@@ -549,6 +549,8 @@ function tecladoPedidoTG(id) {
               { text: "Em separacao", callback_data: "st|" + id + "|separacao" } ],
             [ { text: "Enviado", callback_data: "st|" + id + "|enviado" },
               { text: "Entregue", callback_data: "st|" + id + "|entregue" } ],
+            [ { text: "Editar", callback_data: "ed|" + id },
+              { text: "Reabrir", callback_data: "rb|" + id } ],
             [ { text: "Cancelar", callback_data: "st|" + id + "|cancelado" } ]
         ]
     };

@@ -55,6 +55,9 @@ Também dá para digitar:
 | `/enviado CV20261014-001` | saiu para entrega |
 | `/entregue CV20261014-001` | entregue |
 | `/cancelar CV20261014-001` | cancela |
+| `/reabrir CV20261014-001` | volta para *aguardando* |
+| `/editar 001 bairro Paracambi` | **corrige um dado do pedido** (nome, telefone, cpf, endereço, bairro, complemento, região, pagamento, troco, observação) |
+| `/buscar Japeri` | acha pedido por nome, telefone, bairro ou produto |
 | `/ultimos` | últimos 5 pedidos |
 | `/status CV20261014-001` | mostra o pedido inteiro |
 | `/hoje` | resumo do dia (total, aguardando, faturamento) |
@@ -62,8 +65,21 @@ Também dá para digitar:
 
 Dá para escrever só o final: `/entregue 001`.
 
+Na mensagem de cada pedido há também os botões **Editar** (manda a lista de
+campos) e **Reabrir** (volta para aguardando).
+
 > **Importante:** o painel precisa estar aberto no computador
 > para os comandos serem aplicados (ele lê o Telegram a cada 20 segundos).
+
+### Aviso no celular do cliente
+
+Em **Configurações → Avisos e promoções**:
+- **Ativar aviso no aparelho** pede a permissão e, em seguida, manda um
+  **aviso de teste** na hora — se não aparecer, é preciso liberar nas
+  configurações do navegador (Chrome: ⋮ > Configurações > Notificações).
+- **Testar aviso agora** repete o aviso sem pedir permissão de novo.
+- O aviso chega quando o **status do pedido muda** (aguardando → confirmado →
+  em separação → saiu para entrega → entregue), com a hora exata.
 
 ---
 
@@ -82,12 +98,14 @@ quando for mudar algum preço.
   O campo **Título da anotação** é largo (2/3 da linha) e a Data fica ao lado.
 - **Histórico de preços**: quem mudou, de quanto para quanto.
 - **Exportar pedidos**: baixa um arquivo que abre no Excel.
-- **Configurações do painel**: tema, **tamanho da letra**, **leitura das
-  tabelas** e **tempo de sincronização** (1, 2 ou 5 minutos), mais a conexão do
-  bot (token e chat do Telegram).
+- **Configurações do painel**: tema, **tamanho da letra**, **leitura da tabela
+  de pedidos** (rolagem horizontal ou cartões empilhados), **tempo de
+  sincronização** (1, 2 ou 5 minutos), mais a conexão do bot (token e chat).
   Tudo isso vale **só no painel**: o cliente do site nunca é afetado.
-  *A tabela de pedidos vira lista com os rótulos só no celular (até 720px);
-  no PC é rolagem normal. O modo "vertical" do cliente não vale aqui.*
+- **Ferramentas do vendedor**: campos grandes, pensados para usar no balcão —
+  calculadora de preço e lucro, **contagem de mercadorias** (packs, unidades e
+  garrafas de 1,5 L), calculadora de troco com as notas, anotações da loja,
+  histórico de preços e exportação.
 - **Versões e sincronização**: mostra a versão do seu painel, a versão do site
   publicada (e se ele está no ar), quantos pedidos estão aqui e quando foi a
   última sincronização. O botão **Sincronizar agora** busca na hora.
@@ -107,8 +125,9 @@ tempo o pedido está parado no último passo.
 
 ## 6. Frete grátis
 
-**Configurações → Entrega e Frete → Frete grátis a partir de**.
-Padrão: R$ 150,00. Deixe `0` se nunca quiser frete grátis.
+**O valor é seu, definido no código da loja** (`loja.js`, padrão R$ 150,00).
+O cliente não mexe mais nisso: o bloco *Entrega e Frete* saiu das Configurações
+para não ter duas versões do valor.
 
 ---
 

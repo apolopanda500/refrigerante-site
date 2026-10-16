@@ -5,7 +5,7 @@
    Aqui conferimos a versao e, se houver versao nova,
    aparece uma barra para atualizar na hora.
    ============================================ */
-var VERSAO_APP = "20261015f";
+var VERSAO_APP = "20261016a";
 
 function barraAtualizar() {
     if (document.getElementById("barraAtualizar")) return;

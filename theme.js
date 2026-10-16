@@ -57,9 +57,10 @@
         if (tam !== "normal") h.setAttribute("data-fonte", tam);
         else h.removeAttribute("data-fonte");
 
-        // Leitura das tabelas: horizontal (padrao) ou vertical (empilhada)
-        // SO no site do cliente: no painel as colunas ficam embaralhadas.
-        if (!ehPainel() && (p.cfgLeitura || "horizontal") === "vertical") h.setAttribute("data-leitura", "vertical");
+        // Leitura das tabelas: horizontal (padrao) ou vertical (empilhada).
+        // Cada lado tem a sua regra: o painel usa as regras proprias (cards
+        // com rotulo), o cliente usa as da loja.
+        if ((p.cfgLeitura || "horizontal") === "vertical") h.setAttribute("data-leitura", "vertical");
         else h.removeAttribute("data-leitura");
 
         // Alto contraste

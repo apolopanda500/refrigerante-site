@@ -338,12 +338,18 @@ const blocoResp = (css9.split("RESPONSIVE TABLE")[1] || "").split("@media")[0];
 if (/[^:]\btable thead/.test(blocoResp)) falha("a regra de tabela do celular ainda pega o painel do vendedor");
 else console.log("  ok  a leitura em lista do celular e so da loja");
 if (!/data-leitura="vertical"\] body:not\(\.admin\)/.test(css9)) falha("a leitura vertical do cliente esta pegando o painel");
-else console.log("  ok  leitura vertical so na loja (no painel embaralhava as colunas)");
+else console.log("  ok  leitura vertical da loja nao invade o painel");
+/* o painel TEM os dois modos, com regras proprias (body.admin) */
+if (!/body\.admin\[data-leitura="vertical"\] \.tabela-pedidos/.test(css9)) falha("o painel precisa das proprias regras de cartao empilhado");
+else console.log("  ok  painel tem leitura propria (horizontal e cartao empilhado)");
+["opcoesLeituraVendedor", "setLeituraVendedor"].forEach(function (c) {
+    if (adm9.indexOf(c) < 0) falha("painel sem a escolha de leitura: " + c);
+});
+if (!/data-v="horizontal"/.test(adm9) || !/data-v="vertical"/.test(adm9)) falha("faltou um dos modos de leitura no painel");
+else console.log("  ok  painel oferece rolagem horizontal e cartao empilhado");
 if (!/if \(ehPainel\(\)\) return;/.test(th.split("function avisoOferta")[1] || "")) {
     falha("a faixa flutuante de ofertas ainda aparece no painel");
 } else console.log("  ok  faixa de ofertas fora do painel do vendedor");
-if (/op-btn" data-v="vertical"/.test(adm9)) falha("o painel ainda oferece leitura vertical");
-else console.log("  ok  painel sem a opcao de leitura vertical");
 
 /* ---------- 12. perfil enxuto + historico unico ---------- */
 console.log("\n=== 12. PERFIL SO DADOS PESSOAIS (E O HISTORICO JUNTO) ===");
@@ -408,6 +414,52 @@ try { versaoApk = fs.readFileSync(path.join(dir, "apk", "versao-apk.txt"), "utf8
 if (versaoApk === versaoSite2) console.log("  ok  os APK publicados estao na versao do site (" + versaoSite2 + ")");
 else if (!versaoApk) console.log("  ok  ainda nao ha APK assinado nesta sessao (rode build-apk.ps1 para gerar na versao " + versaoSite2 + ")");
 else console.log("  ATENCAO  APK em " + versaoApk + " e o site esta em " + versaoSite2 + " - rebuild necessario");
+
+/* ---------- 14. o que o dono pediu nesta rodada ---------- */
+console.log("\n=== 14. AVISO REAL, FERRAMENTAS E BOTOES DO BOT ===");
+/* 1) aviso no aparelho: pede permissao, mostra estado e prova com teste */
+const centralJs = fs.readFileSync(path.join(dir, "central.js"), "utf8");
+["function notifTestar", "function notifPedirPermissao", "function notifToast"].forEach(function (c) {
+    if (centralJs.indexOf(c) < 0) falha("central.js sem " + c + " (aviso real no aparelho)");
+});
+const cfgH = fs.readFileSync(path.join(dir, "configuracoes.html"), "utf8");
+["pedirNotificacao", "testarAviso", "mostrarEstadoNotificacao"].forEach(function (c) {
+    if (cfgH.indexOf("function " + c) < 0) falha("configuracoes.html sem " + c + " (validar o aviso)");
+});
+if (!/new Notification\(/.test(centralJs)) falha("o aviso de teste nao cria Notification de verdade");
+else console.log("  ok  ativar aviso pede permissao, mostra o estado e manda um aviso de teste");
+if (/cfgFreteGratisAcima|Entrega e Frete/.test(cfgH)) falha("configuracoes.html ainda tem o bloco Entrega e Frete");
+else console.log("  ok  bloco Entrega e Frete removido das Configuracoes");
+if (!/mostrarVersaoCliente/.test(cfgH)) falha("cliente sem o controle de versao (app x site)");
+else console.log("  ok  cliente ve a versao do app e a do site, com botao de atualizar");
+
+/* 2) bot: editar de verdade + botoes na mensagem */
+const tg = fs.readFileSync(path.join(dir, "telegram.js"), "utf8");
+["editarPedido", "textoEditar", "textoBuscar", "CAMPOS_EDITAVEIS"].forEach(function (c) {
+    if (tg.indexOf(c) < 0) falha("telegram.js sem " + c + " (edicao de pedido pelo bot)");
+});
+["/editar", "/reabrir", "/buscar"].forEach(function (c) {
+    if (tg.indexOf(c) < 0) falha("telegram.js sem o comando " + c);
+});
+const sc10 = fs.readFileSync(path.join(dir, "script.js"), "utf8");
+if (!/callback_data: "ed\|"/.test(sc10)) falha("a mensagem do pedido precisa do botao Editar");
+if (!/callback_data: "rb\|"/.test(sc10)) falha("a mensagem do pedido precisa do botao Reabrir");
+console.log("  ok  bot edita pedido, reabre e busca; botoes Editar/Reabrir na mensagem");
+
+/* 3) ferramentas do vendedor maiores e com contagem de mercadorias */
+if (!/ferramenta-input/.test(adm9)) falha("as ferramentas do vendedor continuam pequenas");
+if (!/function contaCarga/.test(adm9)) falha("falta a contagem de mercadorias nas ferramentas");
+else console.log("  ok  ferramentas grandes + contagem de packs e garrafas");
+
+/* 4) home sem atalho de pedidos */
+const appJs = fs.readFileSync(path.join(dir, "app.js"), "utf8");
+if (/href="meus-pedidos\.html"/.test(appJs)) falha("a home ainda tem atalho para os pedidos");
+else console.log("  ok  home sem atalho de pedidos (so a pagina Historico)");
+if (/acao:"resumo"[\s\S]{0,200}ativo:true/.test(appJs)) falha("ha um banner de pedidos ativo na home");
+else console.log("  ok  nenhum banner de pedidos ativo na home");
+if (!/--of-cor/.test(appJs) || !/\.of-btn\{[\s\S]{0,200}--of-cor/.test(fs.readFileSync(path.join(dir, "style.css"), "utf8"))) {
+    falha("os botoes das ofertas continuam sem cor de verdade");
+} else console.log("  ok  botoes das ofertas com cor e toque grande");
 
 console.log("\n" + (erros === 0 ? "*** ESTRUTURA E SEGURANCA 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
 process.exit(erros ? 1 : 0);

@@ -115,8 +115,8 @@ var BANNERS = [
         cor:"#1dc9b7", ativo:true
     },
     {
-        /* NAO repetir aqui: a caixa "Meus pedidos" da pagina ja faz isso.
-           Se duplicar, o cliente ve a mesma coisa duas vezes. */
+        /* NAO repetir aqui: os pedidos ficam so na pagina Historico
+           (menu do topo). A home nao tem atalho de pedidos. */
         pos:"meio", acao:"resumo", alvo:"",
         icone:"fa fa-receipt",
         titulo:"Acompanhe seus pedidos",
@@ -262,8 +262,7 @@ function pintarTabelaOfertas() {
         carrinho: "Ir para o carrinho",
         categoria: "Ver os produtos",
         frete: "Calcular o frete",
-        regiao: "Ver dias de entrega",
-        resumo: "Acompanhar o historico"
+        regiao: "Ver dias de entrega"
     };
 
     var h = '<div class="tab-wrap tab-ofertas"><table class="tabela-ofertas">'
@@ -277,7 +276,7 @@ function pintarTabelaOfertas() {
            + '<td data-label="Oferta" class="tb-oferta"><span class="of-ic" style="background:' + b.cor + '">'
            + '<i class="' + b.icone + '"></i></span><b>' + b.titulo + '</b></td>'
            + '<td data-label="Detalhe">' + b.texto + '</td>'
-           + '<td data-label="Ação" class="acao"><button type="button" class="of-btn" style="border-color:' + b.cor + ';color:' + b.cor + '"'
+           + '<td data-label="Ação" class="acao"><button type="button" class="of-btn" style="--of-cor:' + b.cor + '"'
            + ' onclick="executarBanner(BANNERS[' + i + '])">'
            + (acoes[b.acao] || "Abrir") + ' <i class="fa fa-chevron-right"></i></button></td>'
            + '</tr>';
@@ -577,12 +576,13 @@ function pintarFaixaRegiao() {
 }
 
 function pintarLateral(){
-    // whatsapp em destaque
+    /* A home NAO tem atalho de pedidos: quem quiser ver o que comprou
+       usa a pagina Historico, no menu do topo. Aqui fica so o WhatsApp. */
     var z = document.getElementById("sideZap");
     if (z) {
-        z.innerHTML = '<a class="wgt-zap" href="meus-pedidos.html" style="background:var(--primary-color)">'
-            + '<i class="fa fa-box"></i>'
-            + '<span><b>Histórico</b><small>Acompanhe pelo site</small></span></a>';
+        z.innerHTML = '<a class="wgt-zap" href="https://wa.me/5521983158911" target="_blank" rel="noopener" style="background:#25D366">'
+            + '<i class="fa fa-whatsapp"></i>'
+            + '<span><b>Falar com a loja</b><small>(21) 9-8315-8911</small></span></a>';
     }
     pintarHorario();
 }

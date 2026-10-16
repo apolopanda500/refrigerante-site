@@ -759,6 +759,36 @@ html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table td::befo
     }
 }
 
+/* ===== LEITURA VERTICAL DO PAINEL (so do vendedor) =====
+   Cada pedido vira um cartao empilhado com o rotulo de cada
+   coluna. Aqui vale em QUALQUER tela (por choice do dono),
+   e nao se mistura com a leitura da loja. */
+body.admin[data-leitura="vertical"] .tab-wrap{overflow-x:visible}
+body.admin[data-leitura="vertical"] .tabela-pedidos,
+body.admin[data-leitura="vertical"] .tabela-pedidos > tbody,
+body.admin[data-leitura="vertical"] .tabela-pedidos tr,
+body.admin[data-leitura="vertical"] .tabela-pedidos td{display:block;width:100%;min-width:0}
+body.admin[data-leitura="vertical"] .tabela-pedidos thead{display:none}
+body.admin[data-leitura="vertical"] .tabela-pedidos tr{
+    border:1px solid var(--borda,#eeeef4);border-radius:14px;
+    margin:0 0 10px;padding:6px 12px;background:var(--bg-alt,#f7f7f7);
+}
+body.admin[data-leitura="vertical"] .tabela-pedidos tbody tr:nth-child(even) td{background:transparent}
+body.admin[data-leitura="vertical"] .tabela-pedidos td{
+    border:none;border-bottom:1px dashed var(--borda,#eeeef4);
+    padding:9px 0;text-align:right !important;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+}
+body.admin[data-leitura="vertical"] .tabela-pedidos td::before{
+    content:attr(data-label);font-weight:800;color:#7a8199;
+    font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;flex:0 0 auto;
+}
+body.admin[data-leitura="vertical"] .tabela-pedidos td[data-label=""]{display:block;padding:0;border-bottom:0}
+body.admin[data-leitura="vertical"] .tabela-pedidos td[data-label=""]::before{content:none}
+body.admin[data-leitura="vertical"] .tabela-pedidos .td-total{font-size:1.15rem;text-align:right}
+body.admin[data-leitura="vertical"][data-theme="dark"] .tabela-pedidos tr{background:#222643;border-color:#353a5c}
+body.admin[data-leitura="vertical"][data-theme="dark"] .tabela-pedidos td{border-bottom-color:#353a5c}
+
 /* ===== BOTAO MINIMIZAR (mesmo visual do catalogo) =====
    recolhe a tabela de informacoes (pedidos e entregas,
    horarios, pagamento/frete/contato, frota e garantia) */
@@ -1544,12 +1574,19 @@ body{font-size:16.5px}
     color:#fff;font-size:.95rem;
 }
 .of-btn{
-    background:#fff;border:1.5px solid;border-radius:8px;
-    padding:6px 12px;font-size:.8rem;font-weight:700;cursor:pointer;
-    display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
-    transition:background .12s ease,transform .12s ease;
+    background:var(--of-cor,#3d4465);border:0;border-radius:22px;color:#fff;
+    padding:11px 18px;font-size:.92rem;font-weight:800;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+    min-height:44px;box-shadow:0 3px 10px rgba(0,0,0,.18);
+    transition:filter .12s ease,transform .12s ease;
 }
-.of-btn:hover{background:#f4f6fc;transform:translateX(2px)}
+.of-btn:hover{filter:brightness(1.1);transform:translateX(2px)}
+.of-btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+/* no celular o botao ocupa a linha toda: e o que o cliente toca */
+@media(max-width:768px){
+    html[data-leitura="vertical"] .of-btn,
+    .tabela-ofertas td.acao .of-btn{width:100%;justify-content:center}
+}
 .of-btn:active{transform:translateX(0)}
 .of-btn i{font-size:.7rem;opacity:.7}
 

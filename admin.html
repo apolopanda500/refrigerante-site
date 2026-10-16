@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261015f">
+<link rel="manifest" href="manifest-vendedor.json?v=20261016a">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015f">
-<script src="theme.js?v=20261015f"></script>
+<link rel="stylesheet" href="style.css?v=20261016a">
+<script src="theme.js?v=20261016a"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -122,6 +122,20 @@
 .opcoes .op-btn:hover{border-color:var(--primary-color,#3d4465)}
 .opcoes .op-btn.ativo{background:var(--primary-color,#3d4465);color:#fff;border-color:var(--primary-color,#3d4465)}
 [data-theme="dark"] .opcoes .op-btn.ativo{background:#ffb822;color:#232742;border-color:#ffb822}
+
+/* ===== campos grandes das ferramentas do vendedor ===== */
+.ferramenta-input{
+    width:100%;min-height:54px;padding:14px 16px;
+    font-size:1.15rem;font-weight:700;text-align:right;
+    border:2px solid var(--borda,#eeeef4);border-radius:12px;
+    background:var(--bg-alt,#f7f7f7);color:var(--text-color,#333);
+}
+.ferramenta-input:focus{outline:none;border-color:var(--primary-color,#3d4465);background:#fff}
+[data-theme="dark"] .ferramenta-input{background:#1e2138;color:#e6e8f2}
+[data-theme="dark"] .ferramenta-input:focus{background:#232742}
+#caixaFerramentas .campo label{font-size:.95rem;font-weight:800;margin-bottom:6px;display:block}
+#caixaFerramentas h4{letter-spacing:.01em}
+#contaCargaResultado .calc-destaque b,#calcResultado .calc-destaque b,#trocoResultado .calc-destaque b{font-size:1.3rem}
 
 /* ===== minimizar blocos do painel (so do vendedor) ===== */
 .btn-mini-bloco{
@@ -297,25 +311,35 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
   </div>
   <div class="card" id="caixaFerramentas" style="margin-top:12px">
     <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-briefcase"></i> Ferramentas do vendedor</h3>
+    <p style="font-size:.86rem;color:#777;margin:0 0 12px">Calculadoras grandes, pensadas para usar no balcão com o celular na mão.</p>
 
-    <h4 style="margin:16px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-calendar-day"></i> Resumo de hoje</h4>
+    <h4 style="margin:16px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-calendar-day"></i> Resumo de hoje</h4>
     <div class="stats" id="resumoDia" style="margin-bottom:6px"></div>
 
-    <h4 style="margin:16px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-calculator"></i> Calculadora de preço e lucro</h4>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end">
-      <div class="campo"><label>Custo de compra (R$)</label><input id="calcCusto" type="text" inputmode="decimal" placeholder="20,00" oninput="calcPreco()"></div>
-      <div class="campo"><label>Margem (%)</label><input id="calcMargem" type="text" inputmode="decimal" placeholder="30" oninput="calcPreco()"></div>
-      <div class="campo"><label>Desconto (%)</label><input id="calcDesc" type="text" inputmode="decimal" placeholder="0" oninput="calcPreco()"></div>
-      <div class="campo"><label>Quantidade</label><input id="calcQtd" type="text" inputmode="numeric" placeholder="1" oninput="calcPreco()"></div>
-      <div class="campo"><label>Imposto sobre a venda (%)</label><input id="calcImposto" type="text" inputmode="decimal" placeholder="0" oninput="calcPreco()"></div>
-      <div class="campo"><label>Frete que você paga (R$)</label><input id="calcFrete" type="text" inputmode="decimal" placeholder="0,00" oninput="calcPreco()"></div>
+    <h4 style="margin:16px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-calculator"></i> Calculadora de preço e lucro</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end">
+      <div class="campo"><label>Custo de compra (R$)</label><input id="calcCusto" type="text" inputmode="decimal" placeholder="20,00" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Margem (%)</label><input id="calcMargem" type="text" inputmode="decimal" placeholder="30" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Desconto (%)</label><input id="calcDesc" type="text" inputmode="decimal" placeholder="0" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Quantidade</label><input id="calcQtd" type="text" inputmode="numeric" placeholder="1" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Imposto sobre a venda (%)</label><input id="calcImposto" type="text" inputmode="decimal" placeholder="0" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Frete que você paga (R$)</label><input id="calcFrete" type="text" inputmode="decimal" placeholder="0,00" class="ferramenta-input" oninput="calcPreco()"></div>
     </div>
     <div id="calcResultado" style="margin-top:10px"></div>
 
-    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-money-bill-wave"></i> Calculadora de troco</h4>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end">
-      <div class="campo"><label>Total da compra (R$)</label><input id="trocoTotal" type="text" inputmode="decimal" placeholder="0,00" oninput="calcTroco()"></div>
-      <div class="campo"><label>Valor recebido (R$)</label><input id="trocoPago" type="text" inputmode="decimal" placeholder="0,00" oninput="calcTroco()"></div>
+    <h4 style="margin:20px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-boxes-stacked"></i> Contagem das mercadorias</h4>
+    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Quantas latas, garrafas e packs saem dos produtos — e quanto pesa para a carga.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end">
+      <div class="campo"><label>Packs / caixas</label><input id="contaQtdPacks" type="text" inputmode="numeric" placeholder="10" class="ferramenta-input" oninput="contaCarga()"></div>
+      <div class="campo"><label>Unidades por pack</label><input id="contaUnidades" type="text" inputmode="numeric" placeholder="6" class="ferramenta-input" oninput="contaCarga()"></div>
+      <div class="campo"><label>Embalagens de 1,5 L no dia</label><input id="contaPet" type="text" inputmode="numeric" placeholder="12" class="ferramenta-input" oninput="contaCarga()"></div>
+    </div>
+    <div id="contaCargaResultado" style="margin-top:10px"></div>
+
+    <h4 style="margin:20px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-money-bill-wave"></i> Calculadora de troco</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end">
+      <div class="campo"><label>Total da compra (R$)</label><input id="trocoTotal" type="text" inputmode="decimal" placeholder="0,00" class="ferramenta-input" oninput="calcTroco()"></div>
+      <div class="campo"><label>Valor recebido (R$)</label><input id="trocoPago" type="text" inputmode="decimal" placeholder="0,00" class="ferramenta-input" oninput="calcTroco()"></div>
     </div>
     <div id="trocoResultado" style="margin-top:10px"></div>
 
@@ -373,13 +397,14 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
     </div>
     <p style="font-size:.82rem;color:#777;margin:6px 0 0">Valendo só no painel. O cliente continua com a letra dele.</p>
 
-    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-table"></i> Tabela de pedidos no celular</h4>
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-table"></i> Leitura da tabela de pedidos</h4>
     <div class="opcoes" id="opcoesLeituraVendedor">
-      <button class="op-btn" data-v="auto" onclick="setLeituraVendedor(this)"><i class="fa fa-mobile-screen"></i> Automática (recomendado)</button>
+      <button class="op-btn" data-v="horizontal" onclick="setLeituraVendedor(this)"><i class="fa fa-grip-lines"></i> Rolagem horizontal</button>
+      <button class="op-btn" data-v="vertical" onclick="setLeituraVendedor(this)"><i class="fa fa-grip-lines-vertical"></i> Cartões empilhados</button>
     </div>
-    <p style="font-size:.82rem;color:#777;margin:6px 0 0">No celular a tabela vira lista com os rótulos de cada
-      coluna. No PC ela fica em rolagem normal. Este painel <b>não</b> usa o modo
-      "vertical" do site do cliente — aqui ele embaralhava as colunas.</p>
+    <p style="font-size:.82rem;color:#777;margin:6px 0 0">Em <b>cartões empilhados</b> cada pedido vira um bloco
+      com o nome de cada coluna à esquerda — bom para tela pequena. Em <b>rolagem horizontal</b> a tabela
+      fica como no computador. Essa escolha é só do painel.</p>
 
     <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-sync-alt"></i> Sincronização com a nuvem</h4>
     <div class="opcoes" id="opcoesSyncVendedor">
@@ -415,8 +440,8 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261015f"></script>
-<script src="telegram.js?v=20261015f"></script>
+<script src="script.js?v=20261016a"></script>
+<script src="telegram.js?v=20261016a"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -525,11 +550,10 @@ function setFonteVendedor(btn) {
     if (typeof aplicarTema === "function") aplicarTema();
 }
 function setLeituraVendedor(btn) {
-    /* o painel NAO usa o modo vertical do cliente: aqui ele quebrava
-       as colunas. A tabela do painel ja vira lista sozinho no celular
-       (regra do proprio painel, em @media max-width:720px). */
-    salvarPrefVendedor("cfgLeitura", "auto");
-    marcarOpcaoVendedor("opcoesLeituraVendedor", "auto");
+    /* cada lado tem sua leitura: o painel usa as proprias regras
+       (body.admin[data-leitura=vertical]) e nao as da loja. */
+    salvarPrefVendedor("cfgLeitura", btn.dataset.v);
+    marcarOpcaoVendedor("opcoesLeituraVendedor", btn.dataset.v);
     if (typeof aplicarTema === "function") aplicarTema();
 }
 function setSyncVendedor(btn) {
@@ -659,7 +683,7 @@ function marcarConfigVendedor() {
     var p = {};
     try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch (e) {}
     marcarOpcaoVendedor("opcoesFonteVendedor", p.cfgFonteTamanho || "normal");
-    marcarOpcaoVendedor("opcoesLeituraVendedor", "auto");
+    marcarOpcaoVendedor("opcoesLeituraVendedor", p.cfgLeitura || "horizontal");
     marcarOpcaoVendedor("opcoesSyncVendedor", String(p.cfgSyncMs || 60000));
 }
 
@@ -979,6 +1003,29 @@ function calcTroco() {
         + '<i class="fa fa-copy"></i> Copiar troco</button>';
 }
 
+/* ---------- 2b) conta de mercadorias: quantas unidades saem ---------- */
+function contaCarga() {
+    var packs = Math.max(0, Math.floor(numero((document.getElementById("contaQtdPacks") || {}).value)));
+    var unid = Math.max(0, Math.floor(numero((document.getElementById("contaUnidades") || {}).value)));
+    var pet = Math.max(0, Math.floor(numero((document.getElementById("contaPet") || {}).value)));
+    var out = document.getElementById("contaCargaResultado");
+    if (!out) return;
+    if (!packs && !pet) {
+        out.innerHTML = '<span class="calc-vazio">Digite os packs e as garrafas de 1,5 L.</span>';
+        return;
+    }
+    var total = packs * unid + pet;
+    var petTot = pet + (unid ? Math.round(packs * unid / 6) * 1.5 / 6 : 0);
+    out.innerHTML =
+        '<div class="calc-destaque"><span>Total de mercadorias</span><b style="color:#1b7f3b">' + total + ' un.</b></div>'
+        + linhaCalc("Packs", packs + (unid ? " x " + unid + " = " + (packs * unid) + " un." : ""))
+        + (pet ? linhaCalc("Garrafas de 1,5 L", pet + " un.") : "")
+        + linhaCalc("Equivalente em garrafas de 2 L", Math.round(total * 2 / 6) + " un.")
+        + linhaCalc("Volume aproximado", (total * 0.33).toFixed(1).replace(".", ",") + " L")
+        + '<button type="button" class="btn-st b-copiar calc-copiar" onclick="copiarTexto(\'' + total + ' unidades\')">'
+        + '<i class="fa fa-copy"></i> Copiar contagem</button>';
+}
+
 /* ---------- 3) notas / documentos da loja ---------- */
 function carregarNotas() {
     var d = ferramentasDados();
@@ -1197,9 +1244,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261015f"></script>
-<script src="firebase-appcheck.js?v=20261015f"></script>
-<script src="app-update.js?v=20261015f"></script>
+<script src="app.js?v=20261016a"></script>
+<script src="firebase-appcheck.js?v=20261016a"></script>
+<script src="app-update.js?v=20261016a"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL

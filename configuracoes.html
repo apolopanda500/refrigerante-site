@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261015f">
+<link rel="manifest" href="manifest.json?v=20261016a">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Configurações - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015f">
-<script src="theme.js?v=20261015f"></script>
+<link rel="stylesheet" href="style.css?v=20261016a">
+<script src="theme.js?v=20261016a"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -164,10 +164,11 @@
   </div>
   <div class="config-row config-col">
     <div class="config-label">Aviso no aparelho
-      <small>Com o aviso ligado, o site pergunta uma vez se pode mostrar a mensagem no seu celular (fora do site também).</small>
+      <small>Liberado, você recebe o status do pedido mesmo com o site fechado. Toque no botão: o aparelho pede a permissão e o site manda um aviso de teste na hora, para você conferir.</small>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <button class="btn-mini" onclick="pedirNotificacao(this)"><i class="fa fa-bell"></i> Ativar aviso no aparelho</button>
+      <button class="btn-mini neutro" onclick="testarAviso(this)"><i class="fa fa-paper-plane"></i> Testar aviso agora</button>
       <span id="notifPermMsg" style="font-size:.82rem;font-weight:700"></span>
     </div>
   </div>
@@ -240,20 +241,7 @@
   </div>
 </div>
 
-<div class="config-card">
-  <h2><i class="fa fa-truck"></i> Entrega e Frete</h2>
-  <div class="config-row config-col">
-    <div class="config-label">Frete grátis a partir de
-      <small>Pedidos que chegarem neste valor pagam frete 0. Deixe 0 para nunca dar frete grátis.</small>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <span style="font-weight:700;color:var(--text-muted)">R$</span>
-      <input id="cfgFreteGratisAcima" type="text" inputmode="decimal" placeholder="150,00"
-             style="max-width:160px;padding:12px;border:1px solid #ddd;border-radius:9px;font-size:1rem">
-      <button class="btn-mini" onclick="salvarFreteGratis(this)"><i class="fa fa-save"></i> Salvar</button>
-    </div>
-    <div id="freteGratisMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
-  </div>
+
 </div>
 
 
@@ -411,19 +399,19 @@
   </div>
 </div>
 
-<div class="version-info">
-  <i class="fa fa-leaf"></i> Refrigerantes Convenção — v2.0<br>
-  Feito com carinho para você
+<div class="version-info" id="versoesCliente">
+  <i class="fa fa-leaf"></i> Refrigerantes Convenção<br>
+  <span id="versaoClienteTexto"> conferindo a versão publicada...</span>
 </div>
 </div></section>
 
-<script src="conta.js?v=20261015f"></script>
-<script src="firebase-appcheck.js?v=20261015f"></script>
-<script src="app-update.js?v=20261015f"></script>
-<script src="ia.js?v=20261015f"></script>
-<script src="central.js?v=20261015f"></script>
-<script src="loja.js?v=20261015f"></script>
-<script src="script.js?v=20261015f"></script>
+<script src="conta.js?v=20261016a"></script>
+<script src="firebase-appcheck.js?v=20261016a"></script>
+<script src="app-update.js?v=20261016a"></script>
+<script src="ia.js?v=20261016a"></script>
+<script src="central.js?v=20261016a"></script>
+<script src="loja.js?v=20261016a"></script>
+<script src="script.js?v=20261016a"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -535,25 +523,59 @@ function testarIA(btn){
         if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> OK'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-flask"></i> Testar'; }, 2500); }
     });
 }
-/* ===== aviso no aparelho (permissao de verdade) ===== */
+/* ===== aviso no aparelho (permissao de verdade + prova) ===== */
+function estadoNotificacao() {
+    if (typeof Notification === "undefined") return { txt: "Este navegador não tem aviso no aparelho.", cor: "#c62828" };
+    if (Notification.permission === "granted") return { txt: "Permissão liberada: os avisos saem de verdade.", cor: "#2e7d32" };
+    if (Notification.permission === "denied") return { txt: "Bloqueado no aparelho: libere nas configurações do navegador > notificações.", cor: "#c62828" };
+    return { txt: "Ainda não liberado. Toque no botão abaixo.", cor: "#8a6100" };
+}
+function mostrarEstadoNotificacao() {
+    var m = document.getElementById("notifPermMsg");
+    if (!m) return;
+    var e = estadoNotificacao();
+    m.style.color = e.cor;
+    m.textContent = e.txt;
+}
+/* botão "Testar aviso agora": comprova sem pedir permissão de novo */
+function testarAviso(btn) {
+    var m = document.getElementById("notifPermMsg");
+    function diz(txt, cor){ if (m){ m.style.color = cor; m.textContent = txt; } }
+    if (typeof notifTestar !== "function") { diz("Assistente de avisos indisponível nesta página.", "#c62828"); return; }
+    diz("Mandando um aviso de teste...", "#8a6100");
+    var t = notifTestar();
+    if (t.ok) diz("Aviso de teste enviado (" + t.motivo + "). Se não aparecer, libere nas configurações do navegador.", "#2e7d32");
+    else diz("Não deu: " + (t.motivo === "denied" ? "permissão negada" : t.motivo) + ".", "#c62828");
+    if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> Testado'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-paper-plane"></i> Testar aviso agora'; }, 2500); }
+}
 function pedirNotificacao(btn){
     var m = document.getElementById("notifPermMsg");
     function diz(txt, cor){ if (m){ m.style.color = cor; m.textContent = txt; } }
     if (typeof notifPedirPermissao !== "function") { diz("Assistente de avisos indisponível nesta página.", "#c62828"); return; }
     diz("Pedindo permissão ao aparelho...", "#8a6100");
+    if (btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Pedindo...'; }
     notifPedirPermissao(function (r) {
+        if (btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-bell"></i> Ativar aviso no aparelho'; }
         if (r === "ok") {
-            diz("Ativado! Você recebe o status do pedido em tempo real.", "#2e7d32");
-            if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> Ativado'; }
             try { notifIniciar(); } catch (e) {}
+            /* PROVA: manda um aviso de verdade agora */
+            var t = (typeof notifTestar === "function") ? notifTestar() : { ok: true, motivo: "toast" };
+            if (t.ok) {
+                diz("Ativado! Mandei um aviso de teste agora — se não aparecer, libere nas configurações do navegador.", "#2e7d32");
+                if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> Aviso ligado'; }
+            } else {
+                diz("Permissão liberada, mas o aparelho não mostrou o aviso: " + t.motivo, "#c62828");
+            }
         } else if (r === "negado") {
-            diz("Bloqueado no aparelho: libere nas configurações do navegador > notificações.", "#c62828");
+            diz("Bloqueado no aparelho: libere nas configurações do navegador > notificações e toque de novo.", "#c62828");
         } else {
             diz("Este aparelho não mostra aviso fora do site (vale o aviso dentro do site).", "#8a6100");
         }
     });
 }
 document.addEventListener("DOMContentLoaded", function(){
+    mostrarEstadoNotificacao();
+    mostrarVersaoCliente();
     var p = carregarPrefs();
     var t = document.getElementById("cfgIAURL"); if (t && document.activeElement !== t) t.value = p.cfgIAURL || "";
     var c = document.getElementById("cfgIAChave"); if (c && document.activeElement !== c) c.value = p.cfgIAChave || "";
@@ -568,36 +590,26 @@ function salvarPrefs(p){
     try { localStorage.setItem("refrigerantePrefs", JSON.stringify(p)); } catch(e){}
 }
 
-/* ===== frete gratis a partir de ===== */
-function salvarFreteGratis(btn) {
-    var campo = document.getElementById("cfgFreteGratisAcima");
-    var msg = document.getElementById("freteGratisMsg");
-    var texto = (campo ? campo.value : "").trim();
-    var valor = 0;
-    if (texto !== "") {
-        valor = parseFloat(texto.replace(/R\$/gi, "").replace(/\./g, "").replace(",", ".").trim());
-        if (isNaN(valor) || valor < 0) {
-            if (msg) { msg.style.color = "#c62828"; msg.textContent = "Digite um valor como 150,00"; }
-            return;
-        }
-    }
-    var p = carregarPrefs();
-    p.cfgFreteGratisAcima = valor > 0 ? valor : 0;
-    salvarPrefs(p);
-    if (msg) {
-        msg.style.color = "#2e7d32";
-        msg.textContent = valor > 0
-            ? "Frete grátis a partir de R$ " + valor.toFixed(2).replace(".", ",")
-            : "Sem frete grátis. O frete da região será sempre cobrado.";
-    }
-    if (btn) { btn.innerHTML = '<i class="fa fa-check"></i> Salvo'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-save"></i> Salvar'; }, 1500); }
-}
-function carregarFreteGratis() {
-    var p = carregarPrefs();
-    var campo = document.getElementById("cfgFreteGratisAcima");
-    if (!campo) return;
-    var v = parseFloat(p.cfgFreteGratisAcima || 150);
-    campo.value = (isNaN(v) ? 150 : v).toFixed(2).replace(".", ",");
+/* ===== versoes: app do celular e site sempre batendo entre si =====
+   O app (APK/PWA) e o navegador carregam a MESMA versao do site
+   (versao.txt). O painel do vendedor mostra a mesma informacao. */
+function mostrarVersaoCliente() {
+    var el = document.getElementById("versaoClienteTexto");
+    if (!el) return;
+    var instalada = (typeof VERSAO_APP !== "undefined") ? VERSAO_APP : "?";
+    fetch("versao.txt", { cache: "no-store" })
+        .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
+        .then(function (t) {
+            var v = (t || "").trim();
+            el.innerHTML = "v" + instalada + " · site publicado em v" + v
+                + (v === instalada
+                    ? ' <span style="color:#2e7d32">atualizado</span>'
+                    : ' <button type="button" class="btn-mini" style="margin-left:6px" onclick="location.reload()">'
+                      + '<i class="fa fa-sync"></i> Atualizar agora</button>');
+        })
+        .catch(function () {
+            el.textContent = "v" + instalada + " · sem resposta do site agora";
+        });
 }
 
 /* ===== conta: usa o modulo Conta (mesmo do Perfil) ===== */
@@ -678,7 +690,6 @@ document.addEventListener("DOMContentLoaded", function(){
                 b.classList.toggle("ativo", b.dataset.v === v);
             });
         });
-        if (typeof carregarFreteGratis === "function") carregarFreteGratis();
     }, 80);
 });
 
