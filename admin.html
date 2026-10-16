@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261017d">
+<link rel="manifest" href="manifest-vendedor.json?v=20261017e">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017d">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017e">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017d">
-<script src="theme.js?v=20261017d"></script>
+<link rel="stylesheet" href="style.css?v=20261017e">
+<script src="theme.js?v=20261017e"></script>
 
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -223,10 +223,10 @@ body.admin[data-leitura=vertical] .tabela-pedidos .td-total,
 body.admin[data-leitura=vertical] .tabela-pedidos .td-num{text-align:left;white-space:normal;font-size:1.05rem}
 body.admin[data-leitura=vertical] .tabela-pedidos .td-id{margin-bottom:2px}
 /* os botoes de status ocupam a linha toda: e o que o dedo acerta */
-body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes{display:flex;flex-wrap:wrap;gap:8px;white-space:normal}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes{display:flex;flex-wrap:wrap;gap:6px;white-space:normal;justify-content:flex-end}
 body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes::before{width:100%}
 body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-st,
-body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-zap{flex:1 1 auto;min-width:52px}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-zap{flex:1 1 auto;min-width:40px;max-width:64px;min-height:42px;padding:9px 6px}
 /* a ficha do pedido (linha extra) fica dentro do mesmo cartao */
 body.admin[data-leitura=vertical] .tabela-pedidos .linha-ficha{
     margin:-6px 0 12px;box-shadow:none;background:none;border:0;padding:0;
@@ -244,7 +244,7 @@ body.admin[data-leitura=vertical] .tabela-pedidos td[colspan]::before{content:no
    para o A grande do painel nao cortar nada. */
 .ficha-tick{
     display:flex;align-items:flex-start;gap:9px;
-    padding:8px 2px;border-bottom:1px dashed var(--borda,#d8dbe6);
+    padding:6px 2px;border-bottom:1px dashed var(--borda,#d8dbe6);
     line-height:1.5;overflow-wrap:anywhere;min-height:34px;
 }
 .ficha-tick:last-of-type{border-bottom:0}
@@ -258,6 +258,7 @@ body.admin[data-leitura=vertical] .tabela-pedidos td[colspan]::before{content:no
 [data-fonte="grande"] .ficha-tick,
 [data-fonte="muitogrande"] .ficha-tick{min-height:auto;padding:12px 4px}
 [data-fonte="muitogrande"] .ficha-tick > i.fa-circle{font-size:.8rem;margin-top:.4em}
+[id^="ticks-admin-"]{max-height:176px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:2px}
 .ficha-tick{overflow-wrap:break-word;word-wrap:break-word;word-break:break-word}
 
 /* Modo de leitura vertical: ticks ocupam a largura total do card */
@@ -605,8 +606,8 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261017d"></script>
-<script src="telegram.js?v=20261017d"></script>
+<script src="script.js?v=20261017e"></script>
+<script src="telegram.js?v=20261017e"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -1520,9 +1521,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261017d"></script>
-<script src="firebase-appcheck.js?v=20261017d"></script>
-<script src="app-update.js?v=20261017d"></script>
+<script src="app.js?v=20261017e"></script>
+<script src="firebase-appcheck.js?v=20261017e"></script>
+<script src="app-update.js?v=20261017e"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
