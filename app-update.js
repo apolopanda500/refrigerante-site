@@ -120,7 +120,7 @@ function instalarApp() {
         return;
     }
     if (!window.__promptInstalacao) {
-        alert("Para instalar o app:\n\nAndroid: menu do navegador (Ã¢â€¹Â®) > Instalar app.\niPhone: botÃƒÂ£o Compartilhar > Adicionar ÃƒÂ  Tela de InÃƒÂ­cio.\nPC (Chrome/Edge): ÃƒÂ­cone de instalar na barra de endereÃƒÂ§os.");
+        alert("Para instalar o app:\n\nAndroid: menu do navegador (⋮) > Instalar app.\niPhone: botão Compartilhar > Adicionar à Tela de Início.\nPC (Chrome/Edge): ícone de instalar na barra de endereços.");
         return;
     }
     window.__promptInstalacao.prompt();

@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <link rel="icon" type="image/png" href="img/icon-192.png?v=20261017c">
-<title>Painel do Vendedor - Refrigerantes ConvenÃƒÂ§ÃƒÂ£o</title>
+<title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="stylesheet" href="style.css?v=20261017c">
 <script src="theme.js?v=20261017c"></script>
 
@@ -390,7 +390,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 </head>
 <body class="admin">
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃƒÂ§ÃƒÂ£o</span></div>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
 <ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Ver loja</a></li></ul>
 <div class="header-actions"><button class="btn-sair" id="btnSair" onclick="sair()" style="display:none">Sair</button></div>
@@ -403,7 +403,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     <div class="icone"><i class="fa fa-lock"></i></div>
     <h2 style="color:var(--primary-color)">Painel do Vendedor</h2>
     <p style="color:#777;font-size:0.9rem">Acesso restrito</p>
-    <input id="fUsuario" type="text" placeholder="UsuÃƒÂ¡rio" autocomplete="username" onkeydown="if(event.key==='Enter')entrar()">
+    <input id="fUsuario" type="text" placeholder="Usuário" autocomplete="username" onkeydown="if(event.key==='Enter')entrar()">
     <div style="position:relative">
       <input id="fSenha" type="password" placeholder="Senha de acesso" autocomplete="current-password" style="padding-right:52px" onkeydown="if(event.key==='Enter')entrar()">
       <button type="button" onclick="verSenha(this)" id="btnVerSenha" title="Mostrar/ocultar senha" aria-label="Mostrar ou ocultar senha" aria-pressed="false"
@@ -423,7 +423,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     <h1><i class="fa fa-tachometer-alt"></i> Pedidos</h1>
     <span style="color:#888;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
   </div>
-  <div style="margin-bottom:12px"><label style="margin-right:6px">PerÃƒÂ­odo:</label><select id="periodoVendas" onchange="renderAdmin()"><option value="hoje">Hoje</option><option value="sem">Semana</option><option value="mes">MÃƒÂªs</option><option value="ano">Ano</option><option value="all">Tudo</option></select></div>
+  <div style="margin-bottom:12px"><label style="margin-right:6px">Período:</label><select id="periodoVendas" onchange="renderAdmin()"><option value="hoje">Hoje</option><option value="sem">Semana</option><option value="mes">Mês</option><option value="ano">Ano</option><option value="all">Tudo</option></select></div>
   <div id="avisoSincroniaAdmin" style="display:none;margin-bottom:12px;padding:12px 14px;border-radius:12px;background:var(--bg-alt);border:1px solid var(--borda);font-size:.88rem;font-weight:700"></div>
 <div id="avisoNovos">
   <i class="fa fa-bell"></i>
@@ -448,8 +448,8 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
   <div id="listaPedidos"></div>
   <div class="card" id="editorPrecos" style="margin-top:12px"></div>
   <div class="card" id="caixaPrecosNuvem" style="margin-top:12px;display:none">
-    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-cloud"></i> PreÃƒÂ§os em tempo real</h3>
-    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Opcional. Com a URL do banco, os preÃƒÂ§os que vocÃƒÂª salvar aparecem na hora na pÃƒÂ¡gina de todos os clientes. Crie em <b>console.firebase.google.com</b> Ã¢â€ â€™ <b>Realtime Database</b> Ã¢â€ â€™ modo <b>teste</b> e cole a URL aqui.</p>
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-cloud"></i> Preços em tempo real</h3>
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Opcional. Com a URL do banco, os preços que você salvar aparecem na hora na página de todos os clientes. Crie em <b>console.firebase.google.com</b> → <b>Realtime Database</b> → modo <b>teste</b> e cole a URL aqui.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <input id="cfgPrecosURL" type="text" placeholder="https://seu-banco.firebaseio.com" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
       <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarPrecosURLAdmin(this)"><i class="fa fa-save"></i> Salvar URL</button>
@@ -461,36 +461,36 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
       <ol style="margin:0;padding-left:20px;font-size:.9rem;line-height:1.9;color:#4a5070">
         <li>Abra <b>console.firebase.google.com</b> e entre no projeto <b>planning-with-ai-9b2c9</b>.</li>
         <li>No menu da esquerda clique em <b>Realtime Database</b> (ou <i>Banco de dados em tempo real</i>).</li>
-        <li>Clique em <b>Criar banco de dados</b> Ã¢â€ â€™ escolha a regiÃƒÂ£o <b>United States</b> Ã¢â€ â€™ <b>AvanÃƒÂ§ar</b>.</li>
-        <li>Escolha <b>ComeÃƒÂ§ar no modo de teste</b> e conclua.</li>
-        <li>Pronto! NÃƒÂ£o precisa colar nada aqui: o site encontra o banco sozinho.</li>
+        <li>Clique em <b>Criar banco de dados</b> → escolha a região <b>United States</b> → <b>Avançar</b>.</li>
+        <li>Escolha <b>Começar no modo de teste</b> e conclua.</li>
+        <li>Pronto! Não precisa colar nada aqui: o site encontra o banco sozinho.</li>
       </ol>
       <p style="margin:10px 0 0;font-size:.84rem;color:#7a8199">
-        Depois de criar, volte aqui e clique em <b>Testar</b>. Se aparecer Ã¢â‚¬Å“Tudo certoÃ¢â‚¬Â, ÃƒÂ© sÃƒÂ³ editar os preÃƒÂ§os e clicar em <b>Salvar e aplicar</b>: todos os clientes veem na hora.
+        Depois de criar, volte aqui e clique em <b>Testar</b>. Se aparecer “Tudo certo”, é só editar os preços e clicar em <b>Salvar e aplicar</b>: todos os clientes veem na hora.
       </p>
     </div>
     <button class="btn-st b-copiar" style="margin-top:10px;min-height:40px;padding:9px 16px" onclick="verPassoFirebase()"><i class="fa fa-question-circle"></i> Como criar o banco</button>
   </div>
   <div class="card" id="caixaFerramentas" style="margin-top:12px">
     <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-briefcase"></i> Ferramentas do vendedor</h3>
-    <p style="font-size:.86rem;color:#777;margin:0 0 12px">Calculadoras grandes, pensadas para usar no balcÃƒÂ£o com o celular na mÃƒÂ£o.</p>
+    <p style="font-size:.86rem;color:#777;margin:0 0 12px">Calculadoras grandes, pensadas para usar no balcão com o celular na mão.</p>
 
     <h4 style="margin:16px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-calendar-day"></i> Resumo de hoje</h4>
     <div class="stats" id="resumoDia" style="margin-bottom:6px"></div>
 
-    <h4 style="margin:16px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-calculator"></i> Calculadora de preÃƒÂ§o e lucro</h4>
+    <h4 style="margin:16px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-calculator"></i> Calculadora de preço e lucro</h4>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end">
       <div class="campo"><label>Custo de compra (R$)</label><input id="calcCusto" type="text" inputmode="decimal" placeholder="20,00" class="ferramenta-input" oninput="calcPreco()"></div>
       <div class="campo"><label>Margem (%)</label><input id="calcMargem" type="text" inputmode="decimal" placeholder="30" class="ferramenta-input" oninput="calcPreco()"></div>
       <div class="campo"><label>Desconto (%)</label><input id="calcDesc" type="text" inputmode="decimal" placeholder="0" class="ferramenta-input" oninput="calcPreco()"></div>
       <div class="campo"><label>Quantidade</label><input id="calcQtd" type="text" inputmode="numeric" placeholder="1" class="ferramenta-input" oninput="calcPreco()"></div>
       <div class="campo"><label>Imposto sobre a venda (%)</label><input id="calcImposto" type="text" inputmode="decimal" placeholder="0" class="ferramenta-input" oninput="calcPreco()"></div>
-      <div class="campo"><label>Frete que vocÃƒÂª paga (R$)</label><input id="calcFrete" type="text" inputmode="decimal" placeholder="0,00" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Frete que você paga (R$)</label><input id="calcFrete" type="text" inputmode="decimal" placeholder="0,00" class="ferramenta-input" oninput="calcPreco()"></div>
     </div>
     <div id="calcResultado" style="margin-top:10px"></div>
 
     <h4 style="margin:20px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-boxes-stacked"></i> Contagem das mercadorias</h4>
-    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Quantas latas, garrafas e packs saem dos produtos Ã¢â‚¬â€ e quanto pesa para a carga.</p>
+    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Quantas latas, garrafas e packs saem dos produtos — e quanto pesa para a carga.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end">
       <div class="campo"><label>Packs / caixas</label><input id="contaQtdPacks" type="text" inputmode="numeric" placeholder="10" class="ferramenta-input" oninput="contaCarga()"></div>
       <div class="campo"><label>Unidades por pack</label><input id="contaUnidades" type="text" inputmode="numeric" placeholder="6" class="ferramenta-input" oninput="contaCarga()"></div>
@@ -505,22 +505,22 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     </div>
     <div id="trocoResultado" style="margin-top:10px"></div>
 
-    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-file-lines"></i> AnotaÃƒÂ§ÃƒÂµes da loja</h4>
+    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-file-lines"></i> Anotações da loja</h4>
     <p style="font-size:.84rem;color:#777;margin:0 0 8px">Lista de compras, combinado com fornecedor, telefone de cliente, olho do dia... fica salvo aqui.</p>
     <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px;align-items:end;margin-bottom:8px">
-      <div class="campo"><label for="notasTitulo">TÃƒÂ­tulo da anotaÃƒÂ§ÃƒÂ£o</label><input id="notasTitulo" type="text" placeholder="Ex.: Lista de compras da quarta" style="width:100%;min-height:48px;padding:12px 14px;font-size:1rem"></div>
+      <div class="campo"><label for="notasTitulo">Título da anotação</label><input id="notasTitulo" type="text" placeholder="Ex.: Lista de compras da quarta" style="width:100%;min-height:48px;padding:12px 14px;font-size:1rem"></div>
       <div class="campo"><label for="notasData">Data</label><input id="notasData" type="date" style="width:100%;min-height:48px;padding:12px 14px;font-size:1rem"></div>
     </div>
-    <textarea id="notasLoja" rows="6" placeholder="Ex.: ligar para o fornecedor de chopp ÃƒÂ s 8h&#10;Cliente Michele: trocar embalagem&#10;Faltando: barbear..."></textarea>
+    <textarea id="notasLoja" rows="6" placeholder="Ex.: ligar para o fornecedor de chopp às 8h&#10;Cliente Michele: trocar embalagem&#10;Faltando: barbear..."></textarea>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center">
       <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarNotas()"><i class="fa fa-save"></i> Salvar</button>
       <button class="btn-st b-copiar" style="min-height:44px;padding:11px 18px" onclick="baixarNotas()"><i class="fa fa-download"></i> Baixar .txt</button>
-      <button class="btn-st b-cancelar" style="min-height:44px;padding:11px 18px" onclick="historicoNotas()"><i class="fa fa-history"></i> AnotaÃƒÂ§ÃƒÂµes salvas</button>
+      <button class="btn-st b-cancelar" style="min-height:44px;padding:11px 18px" onclick="historicoNotas()"><i class="fa fa-history"></i> Anotações salvas</button>
       <span id="notasMsg" style="font-size:.86rem;font-weight:700"></span>
     </div>
     <div id="notasHistorico" style="margin-top:10px"></div>
 
-    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-clock-rotate-left"></i> HistÃƒÂ³rico de preÃƒÂ§os editados</h4>
+    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-clock-rotate-left"></i> Histórico de preços editados</h4>
     <div id="histPrecos"></div>
 
     <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-file-export"></i> Exportar e instalar</h4>
@@ -532,19 +532,19 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
   </div>
 
   <div class="card" id="caixaConfigVendedor" style="margin-top:12px">
-    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-sliders-h"></i> ConfiguraÃƒÂ§ÃƒÂµes do painel</h3>
-    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Vale sÃƒÂ³ para este painel: tema e comandos aqui nÃƒÂ£o mexem nas preferÃƒÂªncias do site do cliente.</p>
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-sliders-h"></i> Configurações do painel</h3>
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Vale só para este painel: tema e comandos aqui não mexem nas preferências do site do cliente.</p>
     <h4 style="margin:12px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-palette"></i> Tema do painel</h4>
     <div class="temas" id="temasVendedor">
       <button class="tema-btn tema-claro" data-tema="claro" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Claro</span></button>
-      <button class="tema-btn tema-guara" data-tema="guara" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>GuaranÃƒÂ¡</span></button>
+      <button class="tema-btn tema-guara" data-tema="guara" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Guaraná</span></button>
       <button class="tema-btn tema-rosa" data-tema="rosa" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Rosa</span></button>
       <button class="tema-btn tema-vermelho" data-tema="vermelho" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Vermelho</span></button>
       <button class="tema-btn tema-escuro" data-tema="dark" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Escuro</span></button>
     </div>
-    <h4 style="margin:16px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-key"></i> ConexÃƒÂ£o do bot (Telegram)</h4>
+    <h4 style="margin:16px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-key"></i> Conexão do bot (Telegram)</h4>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-      <input id="cfgTGToken" type="text" placeholder="Token do bot (em branco = padrÃƒÂ£o)" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
+      <input id="cfgTGToken" type="text" placeholder="Token do bot (em branco = padrão)" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
       <input id="cfgTGChat" type="text" placeholder="Chat ID do dono" style="width:190px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
       <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarConfigBot(this)"><i class="fa fa-save"></i> Salvar</button>
     </div>
@@ -557,18 +557,18 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
       <button class="op-btn op-fonte" data-v="grande" onclick="setFonteVendedor(this)"><span style="font-size:1.2rem">A</span><span style="font-size:1.2rem">+</span></button>
       <button class="op-btn op-fonte" data-v="muitogrande" onclick="setFonteVendedor(this)"><span style="font-size:1.4rem">A</span><span style="font-size:1.4rem">++</span></button>
     </div>
-    <p style="font-size:.82rem;color:#777;margin:6px 0 0">Valendo sÃƒÂ³ no painel. O cliente continua com a letra dele.</p>
+    <p style="font-size:.82rem;color:#777;margin:6px 0 0">Valendo só no painel. O cliente continua com a letra dele.</p>
 
     <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-table"></i> Leitura da tabela de pedidos</h4>
     <div class="opcoes" id="opcoesLeituraVendedor">
       <button class="op-btn" data-v="horizontal" onclick="setLeituraVendedor(this)"><i class="fa fa-grip-lines"></i> Rolagem horizontal</button>
-      <button class="op-btn" data-v="vertical" onclick="setLeituraVendedor(this)"><i class="fa fa-grip-lines-vertical"></i> CartÃƒÂµes empilhados</button>
+      <button class="op-btn" data-v="vertical" onclick="setLeituraVendedor(this)"><i class="fa fa-grip-lines-vertical"></i> Cartões empilhados</button>
     </div>
-    <p style="font-size:.82rem;color:#777;margin:6px 0 0">Em <b>cartÃƒÂµes empilhados</b> cada pedido vira um bloco
-      com o nome de cada coluna ÃƒÂ  esquerda Ã¢â‚¬â€ bom para tela pequena. Em <b>rolagem horizontal</b> a tabela
-      fica como no computador. Essa escolha ÃƒÂ© sÃƒÂ³ do painel.</p>
+    <p style="font-size:.82rem;color:#777;margin:6px 0 0">Em <b>cartões empilhados</b> cada pedido vira um bloco
+      com o nome de cada coluna à esquerda — bom para tela pequena. Em <b>rolagem horizontal</b> a tabela
+      fica como no computador. Essa escolha é só do painel.</p>
 
-    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-sync-alt"></i> SincronizaÃƒÂ§ÃƒÂ£o com a nuvem</h4>
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-sync-alt"></i> Sincronização com a nuvem</h4>
     <div class="opcoes" id="opcoesSyncVendedor">
       <button class="op-btn" data-v="60000" onclick="setSyncVendedor(this)">A cada 1 minuto</button>
       <button class="op-btn" data-v="120000" onclick="setSyncVendedor(this)">A cada 2 minutos</button>
@@ -583,9 +583,9 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
   <div class="card" id="caixaBot" style="margin-top:12px">
     <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-robot"></i> Bot do Telegram - comandos do vendedor</h3>
-    <p style="font-size:.84rem;color:#777;margin:0 0 10px">AlÃƒÂ©m do aviso de novo pedido, o bot aceita comandos. Toque no botÃƒÂ£o <b>/</b> do Telegram para ver todos:
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Além do aviso de novo pedido, o bot aceita comandos. Toque no botão <b>/</b> do Telegram para ver todos:
       <b>/confirmar</b>, <b>/separacao</b>, <b>/enviado</b>, <b>/entregue</b>, <b>/cancelar</b>, <b>/ultimos</b>, <b>/status</b>, <b>/hoje</b> e <b>/ajuda</b>.
-      Na mensagem de cada pedido tambÃƒÂ©m tem botÃƒÂµes para mudar o status com um toque.</p>
+      Na mensagem de cada pedido também tem botões para mudar o status com um toque.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <label style="display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600;cursor:pointer">
         <input type="checkbox" id="cfgBotComandos" checked onchange="TelegramBot.ligadoMudou(this)"> Ligar os comandos
@@ -595,7 +595,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     </div>
     <div id="botStatus" style="font-size:.86rem;font-weight:700;margin-top:10px;color:#666"></div>
     <div id="botLog" style="font-size:.8rem;color:#777;margin-top:8px;display:grid;gap:2px"></div>
-    <p style="font-size:.78rem;color:#8a8a8a;margin:10px 0 0"><i class="fa fa-info-circle"></i> Os comandos sÃƒÂ£o aplicados no navegador onde o painel estÃƒÂ¡ aberto (deixe esta pÃƒÂ¡gina aberta para funcionar na hora). O status do cliente continua sendo alterado por aqui tambÃƒÂ©m.</p>
+    <p style="font-size:.78rem;color:#8a8a8a;margin:10px 0 0"><i class="fa fa-info-circle"></i> Os comandos são aplicados no navegador onde o painel está aberto (deixe esta página aberta para funcionar na hora). O status do cliente continua sendo alterado por aqui também.</p>
   </div>
 
 </div>
@@ -691,10 +691,10 @@ function entrar() {
         sessionStorage.setItem("adminTentativas", String(tentativas));
         if (tentativas >= 5) sessionStorage.setItem("adminTravadoAte", String(Date.now()));
         if (erro) {
-            erro.innerText = "UsuÃƒÂ¡rio ou senha incorretos (" + tentativas + "/5). Verifique e tente novamente.";
+            erro.innerText = "Usuário ou senha incorretos (" + tentativas + "/5). Verifique e tente novamente.";
             erro.style.display = "block";
         } else {
-            alert("UsuÃƒÂ¡rio ou senha incorretos!");
+            alert("Usuário ou senha incorretos!");
         }
         document.getElementById("fSenha").value = "";
         document.getElementById("fSenha").focus();
@@ -738,8 +738,8 @@ function mostrarPainel() {
                        nao achar que a lista esta vazia ou errada */
                     if (ok) {
                         sync.style.background = "";
-                        sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado ÃƒÂ s ' + dataHoraSegundos(Date.now())
-                            + ' Ã‚Â· ' + getPedidos().length + ' pedido(s) neste painel, de todos os aparelhos.';
+                        sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado às ' + dataHoraSegundos(Date.now())
+                            + ' · ' + getPedidos().length + ' pedido(s) neste painel, de todos os aparelhos.';
                     } else {
                         sync.style.background = "#8a6100";
                         sync.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Nao consegui falar com a nuvem agora ('
@@ -785,7 +785,7 @@ function setSyncVendedor(btn) {
     marcarOpcaoVendedor("opcoesSyncVendedor", btn.dataset.v);
     iniciarSyncPedidos();
     var m = document.getElementById("syncMsg");
-    if (m) { m.style.color = "var(--texto-ok)"; m.textContent = "SincronizaÃƒÂ§ÃƒÂ£o salva neste painel."; }
+    if (m) { m.style.color = "var(--texto-ok)"; m.textContent = "Sincronização salva neste painel."; }
 }
 /* pedidos de TODOS os aparelhos (nuvem), no tempo escolhido pelo dono */
 function iniciarSyncPedidos() {
@@ -825,7 +825,7 @@ function chegarNovosPedidos() {
             var sync = document.getElementById("avisoSincroniaAdmin");
             if (sync) {
                 sync.style.display = "block";
-                sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado ÃƒÂ s ' + dataHoraSegundos(Date.now()) + ' Ã‚Â· ' + total + ' pedido(s) neste painel, de todos os aparelhos.';
+                sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado às ' + dataHoraSegundos(Date.now()) + ' · ' + total + ' pedido(s) neste painel, de todos os aparelhos.';
             }
         } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     }
@@ -878,22 +878,22 @@ function mostrarVersoes() {
     try { pedidos = getPedidos().length; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     try { sync = (JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").ultimaSync) || 0; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     box.innerHTML = '<div style="background:var(--bg-alt);border:1px solid var(--borda);border-radius:12px;padding:12px;font-size:.86rem">'
-        + '<div class="resumo-linha"><span>VersÃƒÂ£o deste painel (seu APK)</span><b>' + painelV + '</b></div>'
-        + '<div class="resumo-linha"><span>VersÃƒÂ£o publicada do site</span><b id="versaoSite"> conferindo...</b></div>'
-        + '<div class="resumo-linha"><span>APKs na versÃƒÂ£o</span><b id="versaoApk">Ã¢â‚¬â€</b></div>'
+        + '<div class="resumo-linha"><span>Versão deste painel (seu APK)</span><b>' + painelV + '</b></div>'
+        + '<div class="resumo-linha"><span>Versão publicada do site</span><b id="versaoSite"> conferindo...</b></div>'
+        + '<div class="resumo-linha"><span>APKs na versão</span><b id="versaoApk">—</b></div>'
         + '<div class="resumo-linha"><span>Pedidos neste painel</span><b>' + pedidos + '</b></div>'
-        + '<div class="resumo-linha"><span>ÃƒÅ¡ltima sincronizaÃƒÂ§ÃƒÂ£o com a nuvem</span><b>'
-        + (sync ? tempoDesde(sync) + " atrÃƒÂ¡s" : "agora") + '</b></div>'
-        + '<div style="margin-top:8px;color:#6b7280">Cada lado tem a sua configuraÃƒÂ§ÃƒÂ£o (tema, letra, tabela, tempo de sincronizaÃƒÂ§ÃƒÂ£o). '
-        + 'Os <b>pedidos</b> e os <b>preÃƒÂ§os</b> sÃƒÂ£o os mesmos e chegam pela nuvem. '
-        + 'O APK do cliente e o do vendedor sÃƒÂ£o gerados sempre na versÃƒÂ£o do site.</div></div>';
+        + '<div class="resumo-linha"><span>Última sincronização com a nuvem</span><b>'
+        + (sync ? tempoDesde(sync) + " atrás" : "agora") + '</b></div>'
+        + '<div style="margin-top:8px;color:#6b7280">Cada lado tem a sua configuração (tema, letra, tabela, tempo de sincronização). '
+        + 'Os <b>pedidos</b> e os <b>preços</b> são os mesmos e chegam pela nuvem. '
+        + 'O APK do cliente e o do vendedor são gerados sempre na versão do site.</div></div>';
     try {
         fetch("apk/versao-apk.txt", { cache: "no-store" })
             .then(function (r) { return r.ok ? r.text() : ""; })
             .then(function (t) {
                 var el = document.getElementById("versaoApk");
                 if (!el) return;
-                el.textContent = (t || "").trim() || "ainda nÃƒÂ£o gerados nesta versÃƒÂ£o";
+                el.textContent = (t || "").trim() || "ainda não gerados nesta versão";
             })
             .catch(function () {});
     } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
@@ -936,7 +936,7 @@ function salvarConfigBot(btn){
         localStorage.setItem("vendedorPrefs", JSON.stringify(p));
     } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     var msg = document.getElementById("configBotMsg");
-    if (msg) { msg.style.color = "var(--texto-ok)"; msg.textContent = "Salvo neste painel (nÃƒÂ£o afeta o site do cliente)."; }
+    if (msg) { msg.style.color = "var(--texto-ok)"; msg.textContent = "Salvo neste painel (não afeta o site do cliente)."; }
     if (btn) { btn.innerHTML = '<i class="fa fa-check"></i> Salvo'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-save"></i> Salvar'; }, 1500); }
 }
 function carregarConfigVendedor(){
@@ -984,7 +984,7 @@ function renderAdmin() {
         '<div class="stat azul"><div class="num">' + andamento + '</div><div class="lbl">Em andamento</div></div>' +
         '<div class="stat verde"><div class="num">' + entregues + '</div><div class="lbl">Entregues</div></div>' +
         '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>' +
-        '<div class="stat"><div class="num">' + formatBRL(ticket) + '</div><div class="lbl">Ticket mÃƒÂ©dio</div></div>' +
+        '<div class="stat"><div class="num">' + formatBRL(ticket) + '</div><div class="lbl">Ticket médio</div></div>' +
         '<div class="stat"><div class="num" style="color:var(--texto-erro)">' + cancelados + '</div><div class="lbl">Cancelados</div></div>';
 
     /* ---------- contadores nos filtros ---------- */
@@ -1022,18 +1022,18 @@ function tabelaPedidos(lista) {
     let h = '<div class="tab-wrap"><table class="tabela-pedidos"><thead><tr>'
         + '<th>Pedido</th><th>Cliente</th><th>Entrega</th><th>Pagamento</th>'
         + '<th class="num">Frete</th><th class="num">Total</th>'
-        + '<th>Status</th><th class="acao">AÃƒÂ§ÃƒÂµes</th></tr></thead><tbody>';
+        + '<th>Status</th><th class="acao">Ações</th></tr></thead><tbody>';
     lista.forEach(function (p) {
         const aberto = (fichaAberta === p.id);
         h += '<tr class="linha-pedido" onclick="abrirFicha(\'' + p.id + '\')">'
             + '<td data-label="Pedido" class="td-id">' + p.id + '<span class="sub">' + (typeof tick === "function" ? tick(p.criadoEm) : dataHora(p.criadoEm)) + '</span></td>'
             + '<td data-label="Cliente" class="td-cliente">' + p.nome + '<span class="sub"><i class="fa fa-phone"></i> ' + p.tel + '</span></td>'
-            + '<td data-label="Entrega">' + (p.bairro || "Ã¢â‚¬â€") + '<span class="sub">' + (p.regiao || "") + '</span></td>'
+            + '<td data-label="Entrega">' + (p.bairro || "—") + '<span class="sub">' + (p.regiao || "") + '</span></td>'
             + '<td data-label="Pagamento">' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? '<span class="sub">troco p/ ' + p.troco + '</span>' : '') + '</td>'
-            + '<td data-label="Frete" class="td-num">' + (p.frete === 0 ? '<b style="color:var(--texto-ok)">GRÃƒÂTIS</b>' : formatBRL(p.frete)) + '</td>'
+            + '<td data-label="Frete" class="td-num">' + (p.frete === 0 ? '<b style="color:var(--texto-ok)">GRÁTIS</b>' : formatBRL(p.frete)) + '</td>'
             + '<td data-label="Total" class="td-num td-total">' + formatBRL(p.total) + '</td>'
             + '<td data-label="Status">' + statusBadge(p.status) + '</td>'
-            + '<td data-label="AÃƒÂ§ÃƒÂµes" class="td-acoes" onclick="event.stopPropagation()">' + botoesStatus(p) + '</td>'
+            + '<td data-label="Ações" class="td-acoes" onclick="event.stopPropagation()">' + botoesStatus(p) + '</td>'
             + '</tr>';
         if (aberto) h += '<tr class="linha-ficha"><td data-label="" colspan="8" style="padding:0 6px 10px">' + fichaPedido(p) + '</td></tr>';
     });
@@ -1064,31 +1064,31 @@ function fichaPedido(p) {
     let h = '<div class="ficha"><h4><i class="fa fa-file-text"></i> Detalhes do pedido ' + p.id + '</h4><div class="ficha-grid">';
     h += '<div>Cliente: <b>' + p.nome + '</b></div>';
     h += '<div>WhatsApp: <b>' + p.tel + '</b></div>';
-    h += '<div>CPF: <b>' + (p.cpf || "nÃƒÂ£o informado") + '</b></div>';
+    h += '<div>CPF: <b>' + (p.cpf || "não informado") + '</b></div>';
     h += '<div>Data: <b>' + dataHora(p.criadoEm) + '</b> <span class="sub">(' + dataHoraSegundos(p.criadoEm) + ')</span></div>';
     h += '<div>Endereco: <b>' + p.end + (p.comp ? " (" + p.comp + ")" : "") + '</b></div>';
-    h += '<div>Bairro / Regiao: <b>' + (p.bairro || "Ã¢â‚¬â€") + ' / ' + (p.regiao || "Ã¢â‚¬â€") + '</b></div>';
+    h += '<div>Bairro / Regiao: <b>' + (p.bairro || "—") + ' / ' + (p.regiao || "—") + '</b></div>';
     h += '<div>Pagamento: <b>' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</b></div>';
-    h += '<div>Frete: <b>' + (p.frete === 0 ? "GRÃƒÂTIS" : formatBRL(p.frete)) + '</b></div>';
+    h += '<div>Frete: <b>' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</b></div>';
     h += '<div class="ficha-linha"><b>Itens:</b></div>';
     (p.itens || []).forEach(function (i) {
-        h += '<div>' + i.name + ' <span class="sub">x' + i.qty + ' Ã¢â‚¬â€ ' + formatBRL(i.subtotal) + '</span></div>';
+        h += '<div>' + i.name + ' <span class="sub">x' + i.qty + ' — ' + formatBRL(i.subtotal) + '</span></div>';
     });
     h += '<div class="ficha-linha"><b>Subtotal:</b> ' + formatBRL(p.subtotal)
         + ' &nbsp;&nbsp; <b>Total:</b> ' + formatBRL(p.total) + '</div>';
     if (p.historico && p.historico.length) {
-        h += '<div class="ficha-linha" style="display:flex;align-items:center;justify-content:space-between;"><b>Acompanhamento:</b> <span class="sub">cada passo com a hora exata</span> <button type="button" class="tick-min-admin" onclick="toggleTicksAdmin(\'' + p.id + '\')" title="Minimizar">Ã¢â‚¬â€</button></div>';
+        h += '<div class="ficha-linha" style="display:flex;align-items:center;justify-content:space-between;"><b>Acompanhamento:</b> <span class="sub">cada passo com a hora exata</span> <button type="button" class="tick-min-admin" onclick="toggleTicksAdmin(\'' + p.id + '\')" title="Minimizar">—</button></div>';
         h += '<div id="ticks-admin-' + p.id + '">';
         p.historico.slice().reverse().forEach(function (ev) {
             h += '<div class="ficha-tick"><i class="fa fa-circle"></i> ' + (STATUS_LABEL[ev.status] || ev.status)
-                + ' Ã¢â‚¬â€ ' + dataHoraSegundos(ev.quando)
+                + ' — ' + dataHoraSegundos(ev.quando)
                 + ' <span class="sub">(' + tempoDesde(ev.quando) + ')</span></div>';
         });
         h += '</div>';
         var ultimo = p.historico[p.historico.length - 1];
         if (ultimo && ultimo.quando) {
             h += '<div class="ficha-linha"><b>Parado em:</b> ' + (STATUS_LABEL[ultimo.status] || ultimo.status)
-                + ' hÃƒÂ¡ ' + tempoDesde(ultimo.quando) + '</div>';
+                + ' há ' + tempoDesde(ultimo.quando) + '</div>';
         }
     }
     h += '<div class="ficha-linha"><b>Comandos:</b> '
@@ -1155,7 +1155,7 @@ function resumoPorStatus(pedidos) {
         if (!ps.length) return;
         var soma = ps.filter(function (p){ return p.status !== "cancelado"; }).reduce(function (t, p){ return t + p.total; }, 0);
         html += '<div class="resumo-linha"><span>' + statusBadge(st) + '</span>'
-              + '<b>' + ps.length + ' pedido(s) Ã¢â‚¬â€ ' + formatBRL(soma) + '</b></div>';
+              + '<b>' + ps.length + ' pedido(s) — ' + formatBRL(soma) + '</b></div>';
     });
     html += '</div>';
     return html;
@@ -1214,7 +1214,7 @@ function calcPreco() {
     var lucroTotal = arredonda2(lucro * qtd);
 
     fundo.innerHTML =
-        '<div class="calc-destaque"><span>PreÃƒÂ§o de venda sugerido</span><b>' + brl(venda) + '</b>'
+        '<div class="calc-destaque"><span>Preço de venda sugerido</span><b>' + brl(venda) + '</b>'
         + '<small>arredondado: ' + brl(venda) + '</small></div>'
         + linhaCalc("Custo do produto", brl(custo))
         + linhaCalc("Frete que voce paga", brl(fretePago))
@@ -1228,7 +1228,7 @@ function calcPreco() {
         + (lucro <= 0 ? '<div class="aviso aviso-atencao calc-fim"><i class="fa fa-circle-exclamation"></i>'
             + ' <span>Com esses numeros voce <b>perde dinheiro</b>. Aumente a margem ou negocie o custo.</span></div>' : '')
         + '<button type="button" class="btn-st b-copiar calc-copiar" onclick="copiarTexto(\'' + brl(venda) + '\')">'
-        + '<i class="fa fa-copy"></i> Copiar preÃƒÂ§o</button>';
+        + '<i class="fa fa-copy"></i> Copiar preço</button>';
 }
 
 function linhaCalc(rotulo, valor, cor) {
@@ -1329,7 +1329,7 @@ function salvarNotas() {
         if (msg) { msg.style.color = "var(--texto-erro)"; msg.textContent = "Escreva alguma coisa antes de salvar."; }
         return;
     }
-    var titulo = (document.getElementById("notasTitulo") || {}).value || "AnotaÃƒÂ§ÃƒÂ£o";
+    var titulo = (document.getElementById("notasTitulo") || {}).value || "Anotação";
     var data = (document.getElementById("notasData") || {}).value || hojeISO();
 
     d.notas = texto;
@@ -1342,7 +1342,7 @@ function salvarNotas() {
     if (hist.length > 50) hist.length = 50;
     salvarFerramentas(d);
 
-    if (msg) { msg.style.color = "var(--texto-ok)"; msg.textContent = "AnotaÃƒÂ§ÃƒÂ£o salva (" + data + ")."; }
+    if (msg) { msg.style.color = "var(--texto-ok)"; msg.textContent = "Anotação salva (" + data + ")."; }
     historicoNotas();
 }
 /* lista as anotacoes ja salvas: da para abrir e apagar */
@@ -1352,12 +1352,12 @@ function historicoNotas() {
     var hist = notasHistorico();
     if (!hist.length) { box.innerHTML = ""; return; }
     var h = '<h5 style="margin:12px 0 6px;font-size:.88rem;color:var(--primary-color)">'
-          + '<i class="fa fa-history"></i> AnotaÃƒÂ§ÃƒÂµes salvas (' + hist.length + ')</h5><div class="notas-lista">';
+          + '<i class="fa fa-history"></i> Anotações salvas (' + hist.length + ')</h5><div class="notas-lista">';
     hist.forEach(function (n, i) {
         var previa = String(n.texto).replace(/\s+/g, " ");
         if (previa.length > 90) previa = previa.substring(0, 90) + "...";
         h += '<div class="notas-item">'
-           + '<div class="ni-cab"><b>' + (n.titulo || "AnotaÃƒÂ§ÃƒÂ£o") + '</b><span class="ni-data">' + (n.data || "") + '</span></div>'
+           + '<div class="ni-cab"><b>' + (n.titulo || "Anotação") + '</b><span class="ni-data">' + (n.data || "") + '</span></div>'
            + '<div class="ni-texto">' + previa + '</div>'
            + '<div class="ni-acoes">'
            + '<button type="button" class="ni-btn" onclick="abrirNota(' + i + ')"><i class="fa fa-pen"></i> Abrir</button>'
@@ -1375,10 +1375,10 @@ function abrirNota(i) {
     document.getElementById("notasLoja").value = n.texto || "";
     document.getElementById("notasLoja").focus();
     var m = document.getElementById("notasMsg");
-    if (m) { m.style.color = "#1d5fbf"; m.textContent = "AnotaÃƒÂ§ÃƒÂ£o aberta. Edite e salve de novo."; }
+    if (m) { m.style.color = "#1d5fbf"; m.textContent = "Anotação aberta. Edite e salve de novo."; }
 }
 function apagarNota(i) {
-    if (!confirm("Apagar esta anotaÃƒÂ§ÃƒÂ£o?")) return;
+    if (!confirm("Apagar esta anotação?")) return;
     notasHistorico().splice(i, 1);
     salvarFerramentas(ferramentasDados());
     historicoNotas();
@@ -1406,7 +1406,7 @@ function exportarPedidos() {
             (p.bairro || "").replace(/;/g, ","), (p.regiao || "").replace(/;/g, ","), p.pagamento,
             (p.troco || ""), p.subtotal, p.frete, p.total, itens.replace(/;/g, ",")].join(";"));
     });
-    var blob = new Blob(["Ã¯Â»Â¿" + linhas.join("\n")], { type: "text/csv;charset=utf-8" });
+    var blob = new Blob(["﻿" + linhas.join("\n")], { type: "text/csv;charset=utf-8" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "pedidos-convencao.csv";
@@ -1420,7 +1420,7 @@ function historicoPrecos() {
     if (!box) return;
     var d = ferramentasDados();
     var hist = d.historicoPrecos || [];
-    if (!hist.length) { box.innerHTML = '<div class="vazio" style="padding:22px"><p>Nenhum preÃƒÂ§o editado ainda.</p></div>'; return; }
+    if (!hist.length) { box.innerHTML = '<div class="vazio" style="padding:22px"><p>Nenhum preço editado ainda.</p></div>'; return; }
     var h = "";
     hist.slice(0, 40).forEach(function (r) {
         h += '<div class="resumo-linha"><span>' + r.nome + '</span><b>' + r.de + " &rarr; " + r.para
@@ -1464,10 +1464,10 @@ function copiarPedido(id) {
     var txt = "PEDIDO " + p.id + "\n"
         + "Cliente: " + p.nome + (p.cpf ? "\nCPF: " + p.cpf : "") + "\n"
         + "WhatsApp: " + p.tel + "\n"
-        + "EndereÃƒÂ§o: " + p.end + (p.comp ? " (" + p.comp + ")" : "") + " - " + p.bairro + "\n"
-        + "RegiÃƒÂ£o: " + p.regiao + "\n"
+        + "Endereço: " + p.end + (p.comp ? " (" + p.comp + ")" : "") + " - " + p.bairro + "\n"
+        + "Região: " + p.regiao + "\n"
         + "Pagamento: " + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + "\n"
-        + "Frete: " + (p.frete === 0 ? "GRÃƒÂTIS" : formatBRL(p.frete)) + "\n"
+        + "Frete: " + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + "\n"
         + "Itens:\n" + linhas + "\n"
         + "TOTAL: " + formatBRL(p.total) + "\n"
         + "Status: " + (STATUS_LABEL[p.status] || p.status);
@@ -1481,7 +1481,7 @@ function copiarAntigo(txt) {
     ta.value = txt;
     document.body.appendChild(ta);
     ta.select();
-    try { document.execCommand("copy"); alert("Pedido copiado!"); } catch (e) { alert("NÃƒÂ£o foi possÃƒÂ­vel copiar."); }
+    try { document.execCommand("copy"); alert("Pedido copiado!"); } catch (e) { alert("Não foi possível copiar."); }
     document.body.removeChild(ta);
 }
 
@@ -1512,7 +1512,7 @@ function mudarStatus(id, status) {
 function falarCliente(tel, id) {
     const p = getPedidos().find(x => x.id === id);
     if (!p) return;
-    let msg = "OlÃƒÂ¡ " + p.nome + "! Sobre seu pedido " + p.id + " (" + formatBRL(p.total) + "): ";
+    let msg = "Olá " + p.nome + "! Sobre seu pedido " + p.id + " (" + formatBRL(p.total) + "): ";
     window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
@@ -1778,7 +1778,7 @@ function salvarPrecosURLAdmin(btn){
   if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Salvando...'; }
   setTimeout(function(){
     if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-save"></i> Salvar URL'; }
-    precosMsgAdmin(url ? "URL salva. Os preÃƒÂ§os agora vÃƒÂ£o em tempo real para os clientes." : "URL apagada. Os preÃƒÂ§os voltam a valer sÃƒÂ³ neste aparelho.");
+    precosMsgAdmin(url ? "URL salva. Os preços agora vão em tempo real para os clientes." : "URL apagada. Os preços voltam a valer só neste aparelho.");
   }, 400);
 }
 function testarPrecosURLAdmin(btn){
@@ -1797,23 +1797,23 @@ function testarPrecosURLAdmin(btn){
     body: JSON.stringify({ ok:true, quando: marca })
   })
     .then(function(r){
-      if(!r.ok) throw new Error("gravaÃƒÂ§ÃƒÂ£o recusada (HTTP " + r.status + ")");
+      if(!r.ok) throw new Error("gravação recusada (HTTP " + r.status + ")");
       return fetch(caminho, {cache:"no-store", headers: cabecalhosPrecos()}).then(function(r2){
         if(!r2.ok) throw new Error("leitura recusada (HTTP " + r2.status + ")");
         return r2.json();
       });
     })
     .then(function(d){
-      if(!d || d.quando !== marca) throw new Error("o banco devolveu outro conteÃƒÂºdo");
+      if(!d || d.quando !== marca) throw new Error("o banco devolveu outro conteúdo");
       return fetch(caminho, {method:"DELETE", headers: cabecalhosPrecos()});
     })
     .then(function(){
-      precosMsgAdmin("Tudo certo: o banco aceita gravaÃƒÂ§ÃƒÂ£o e leitura. Agora ÃƒÂ© sÃƒÂ³ salvar a URL.", "var(--texto-ok)");
+      precosMsgAdmin("Tudo certo: o banco aceita gravação e leitura. Agora é só salvar a URL.", "var(--texto-ok)");
     })
     .catch(function(e){
       var dica = "";
-      if(/Failed to fetch|NetworkError/.test(e.message)) dica = " O navegador bloqueou a conexÃƒÂ£o - confira se a URL comeÃƒÂ§a com https:// e se o banco estÃƒÂ¡ em modo teste.";
-      if(/401|403|Permission|HTTP 4/.test(e.message)) dica = " As regras do banco estÃƒÂ£o bloqueando a escrita. No Firebase, use uma URL com ?ns= ou abra o banco em modo teste.";
+      if(/Failed to fetch|NetworkError/.test(e.message)) dica = " O navegador bloqueou a conexão - confira se a URL começa com https:// e se o banco está em modo teste.";
+      if(/401|403|Permission|HTTP 4/.test(e.message)) dica = " As regras do banco estão bloqueando a escrita. No Firebase, use uma URL com ?ns= ou abra o banco em modo teste.";
       precosMsgAdmin("Falha no teste: " + e.message + "." + dica, "var(--texto-erro)");
     })
     .then(function(){
@@ -1834,11 +1834,11 @@ function checarNuvemPrecos(){
   if (!msg || typeof listaEnderecos !== "function") return;
   var lista = listaEnderecos(), i = 0;
   msg.style.color = "var(--texto-aviso)";
-  msg.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Procurando o banco de preÃƒÂ§os...';
+  msg.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Procurando o banco de preços...';
   (function tentar(){
     if (i >= lista.length){
       msg.style.color = "var(--texto-aviso)";
-      msg.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Banco ainda nÃƒÂ£o encontrado. Clique em <b>Como criar o banco</b> (leva 1 minuto).';
+      msg.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Banco ainda não encontrado. Clique em <b>Como criar o banco</b> (leva 1 minuto).';
       return;
     }
     var url = lista[i++];
@@ -1850,10 +1850,10 @@ function checarNuvemPrecos(){
       .then(function (dados) {
         var n = (dados && typeof dados === "object") ? Object.keys(dados).length : 0;
         var protecao = (typeof AppCheck !== "undefined" && AppCheck.ativo && AppCheck.ativo())
-            ? '<br><span style="color:var(--texto-ok)"><i class="fa fa-shield-alt"></i> App Check ligado: sÃƒÂ³ este site consegue ler e gravar os preÃƒÂ§os.</span>'
+            ? '<br><span style="color:var(--texto-ok)"><i class="fa fa-shield-alt"></i> App Check ligado: só este site consegue ler e gravar os preços.</span>'
             : '';
         msg.style.color = "var(--texto-ok)";
-        msg.innerHTML = '<i class="fa fa-check-circle"></i> Banco ligado! ' + n + ' preÃƒÂ§o(s) publicado(s). Os clientes veem as alteraÃƒÂ§ÃƒÂµes na hora.' + protecao;
+        msg.innerHTML = '<i class="fa fa-check-circle"></i> Banco ligado! ' + n + ' preço(s) publicado(s). Os clientes veem as alterações na hora.' + protecao;
         lembrarEndereco(url);
       })
       .catch(function () { tentar(); });
