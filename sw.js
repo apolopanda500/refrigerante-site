@@ -8,7 +8,7 @@
     - Ativacao: apaga caches antigos imediatamente
    ============================================ */
 
-var VERSAO = "20261016v";
+var VERSAO = "20261016w";
 var BASE = "convencao-cache-" + VERSAO;
 /* 8 s: tempo maximo de espera pela rede antes de cair no cache.
    No 4G a rede frequentemente passa de 3 s, entao um prazo curto demais
