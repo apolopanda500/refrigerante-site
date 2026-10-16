@@ -182,8 +182,10 @@ try {
 if (!existe(".github/workflows/catalogo.yml")) erro("workflow do catalogo sumiu");
 else {
     const w = ler(".github/workflows/catalogo.yml");
-    if (!/cron: '0 13 \* \* 1-5'/.test(w)) erro("o robô não esta agendado para 10h de segunda a sexta");
-    else ok("agendado para 10:00 (fuso de SP), de segunda a sexta");
+    const tem10 = /cron: '0 13 \* \* 1-5'/.test(w);
+    const tem14 = /cron: '0 17 \* \* 1-5'/.test(w);
+    if (!tem10 || !tem14) erro("o robô deve rodar às 10h e às 14h, de segunda a sexta");
+    else ok("agendado para 10:00 e 14:00 (fuso de SP), de segunda a sexta");
 }
 if (COM_CATALOGO) {
     console.log("  rodando o robo de verdade (sync-catalogo.js)...");

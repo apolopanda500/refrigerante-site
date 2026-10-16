@@ -76,7 +76,8 @@ node apk/android/build.js                # gera o projeto Android (cliente e ven
 `versao.txt` + `app-update.js`, padrão de data `dd/mm/aaaa hh:mm:ss`, links
 internos que apontam para arquivo existente, scripts e estilos carregados,
 ausência de código morto dentro de `<script src>`, documentação em dia e o robô
-diário (catálogo com menos de 3 dias e agendamento às 10:00, de segunda a sexta).
+diário (catálogo com menos de 3 dias e agendamento às 10:00 e às 14:00, de
+segunda a sexta).
 
 ## Arquivos de apoio
 

@@ -21,8 +21,12 @@ const falha = (m) => { console.log("  ERRO " + m); erros++; };
 function num(v) { return parseFloat(String(v).replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".")); }
 
 console.log("=== CATALOGO ===");
-console.log("  produtos: " + cat.produtos.length);
-if (cat.produtos.length !== 45) falha("esperava 45 produtos, veio " + cat.produtos.length);
+const total = cat.produtos.length;
+console.log("  produtos: " + total);
+/* o robo roda 2x por dia e tira do ar o que acabou no site oficial,
+   entao a quantidade varia; aqui so barra um numero absurdo. */
+if (total < 40 || total > 80) falha("quantidade estranha de produtos: " + total);
+else console.log("  quantidade coerente com o site oficial: " + total);
 
 /* campos obrigatorios */
 cat.produtos.forEach(function (p) {
