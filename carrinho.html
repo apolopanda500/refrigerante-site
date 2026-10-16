@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016p">
+<link rel="manifest" href="manifest.json?v=20261016q">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016p">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016q">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016p">
-<script src="theme.js?v=20261016p"></script>
+<link rel="stylesheet" href="style.css?v=20261016q">
+<script src="theme.js?v=20261016q"></script>
 
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
@@ -190,6 +190,49 @@
     .main-header .logo i{font-size:1.4rem}
     .main-header .nav-links a{padding:9px 12px;font-size:.9rem}
 }
+/* Temas guara, rosa e vermelho no cabeçalho e botoes do cliente */
+[data-theme="guara"] .hd{background:#1b7f3b!important}
+[data-theme="guara"] .bs{background:#ECC400!important;color:#1b7f3b!important}
+[data-theme="guara"] .bs:hover{filter:brightness(1.08)}
+[data-theme="guara"] .ci{background:rgba(255,255,255,.14)!important}
+[data-theme="guara"] .cb{background:#fc0758!important}
+[data-theme="guara"] .qa{background:#1b7f3b!important;color:#fff!important}
+[data-theme="guara"] .qa:hover{filter:brightness(1.08)}
+[data-theme="guara"] .qt{color:#1b7f3b}
+
+[data-theme="rosa"] .hd{background:#8e2f6b!important}
+[data-theme="rosa"] .bs{background:#ECC400!important;color:#8e2f6b!important}
+[data-theme="rosa"] .bs:hover{filter:brightness(1.08)}
+[data-theme="rosa"] .ci{background:rgba(255,255,255,.14)!important}
+[data-theme="rosa"] .cb{background:#fc0758!important}
+[data-theme="rosa"] .qa{background:#8e2f6b!important;color:#fff!important}
+[data-theme="rosa"] .qa:hover{filter:brightness(1.08)}
+[data-theme="rosa"] .qt{color:#8e2f6b}
+
+[data-theme="vermelho"] .hd{background:#a11b0f!important}
+[data-theme="vermelho"] .bs{background:#ECC400!important;color:#a11b0f!important}
+[data-theme="vermelho"] .bs:hover{filter:brightness(1.08)}
+[data-theme="vermelho"] .ci{background:rgba(255,255,255,.14)!important}
+[data-theme="vermelho"] .cb{background:#fc0758!important}
+[data-theme="vermelho"] .qa{background:#a11b0f!important;color:#fff!important}
+[data-theme="vermelho"] .qa:hover{filter:brightness(1.08)}
+[data-theme="vermelho"] .qt{color:#a11b0f}
+
+/* Modo compacto na tela do cliente */
+[data-layout="compacto"] .pc{padding:8px}
+[data-layout="compacto"] .pib{height:110px}
+[data-layout="compacto"] .pch{font-size:.88rem;padding:8px 10px 4px}
+[data-layout="compacto"] .pds{font-size:.78rem}
+[data-layout="compacto"] .pp{font-size:1.1rem}
+[data-layout="compacto"] .qa{height:30px;font-size:.72rem}
+[data-layout="compacto"] .qb,.qv{width:34px;height:34px;line-height:34px;font-size:.9rem}
+[data-layout="compacto"] .pg{gap:8px}
+[data-layout="compacto"] .sw{padding:8px 14px}
+[data-layout="compacto"] .sf input{padding:9px 14px 9px 38px;font-size:.92rem}
+[data-layout="compacto"] .bs{padding:7px 12px;font-size:.78rem;min-height:38px}
+[data-layout="compacto"] .ci{width:40px;height:40px;font-size:1.2rem}
+[data-layout="compacto"] .cb{font-size:.62rem;padding:1px 5px;min-width:18px}
+
 </style>
 </head>
 <body>
@@ -235,13 +278,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016p"></script>
-<script src="firebase-appcheck.js?v=20261016p"></script>
-<script src="app-update.js?v=20261016p"></script>
-<script src="ia.js?v=20261016p"></script>
-<script src="central.js?v=20261016p"></script>
-<script src="loja.js?v=20261016p"></script>
-<script src="script.js?v=20261016p"></script>
+<script src="conta.js?v=20261016q"></script>
+<script src="firebase-appcheck.js?v=20261016q"></script>
+<script src="app-update.js?v=20261016q"></script>
+<script src="ia.js?v=20261016q"></script>
+<script src="central.js?v=20261016q"></script>
+<script src="loja.js?v=20261016q"></script>
+<script src="script.js?v=20261016q"></script>
 <script>
 cart = getCart();
 
