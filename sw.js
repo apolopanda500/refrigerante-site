@@ -10,9 +10,15 @@
      versao nova? o cache novo tem outro nome, o
      activate apaga o antigo inteiro e nao sobra
      arquivo velho misturado
-   - quem manda e a REDE (network first): a pagina
-     mostra sempre a versao publicada. O cache so
-     entra se a internet nao responder em 3 s
+- quem manda e a REDE (network first): a pagina
+      mostra sempre a versao publicada. O cache so
+      entra se a internet nao responder (8 s no 4G)
+    - quando o cache novo sobe, o activate apaga o
+      antigo e sobra um instante em que um arquivo nao
+      esta em lugar nenhum. A busca cai entao nos
+      OUTROS caches antes de desistir: e o que impede a
+      tela branca depois de publicar (o CSS e o JS
+      chegavam vazios e a pagina nao montava)
    - recarga forçada (Ctrl+F5 / Shift+Recarregar /
      "Limpar cache") nunca usa o cache: o navegador
      manda Cache-Control: no-cache e a gente obedece
@@ -21,9 +27,12 @@
    ============================================ */
 
 /* precisa bater com a versao do site: o bump-versao.js troca os dois */
-var VERSAO = "20261016f";
+var VERSAO = "20261016g";
 var BASE = "convencao-cache-" + VERSAO;
-var LIMITE_MS = 3000;          /* tempo de espera antes de cair no cache */
+/* 8 s: no 4G a rede leva mais de 3 s e o app caia no cache velho (ou em
+   nada) toda vez que a pagina abria. Ainda e rapido: o cache so entra
+   quando a internet realmente nao responde. */
+var LIMITE_MS = 8000;
 
 /* o essencial para o app abrir rapido e funcionar offline
    (sem ?v=... de proposito: um arquivo = uma entrada no cache) */
@@ -95,6 +104,33 @@ function pegarIgnorandoQuery(cache, req) {
     });
 }
 
+/* Published version: the new cache is still filling up (and the old one has
+   just been deleted), so the file can genuinely be nowhere. Before giving up
+   we look in EVERY cache: an older CSS still paints the page, while an empty
+   one leaves the screen white. */
+function pegarEmQualquerCache(req) {
+    return caches.match(req).then(function (achou) {
+        if (achou) return achou;
+        var alvo = new URL(req.url).pathname;
+        return caches.keys().then(function (nomes) {
+            var resto = nomes.filter(function (n) { return n !== BASE; });
+            return resto.reduce(function (corrente, nome) {
+                return corrente.then(function (res) {
+                    if (res) return res;
+                    return caches.open(nome).then(function (c) {
+                        return c.keys().then(function (chaves) {
+                            for (var i = 0; i < chaves.length; i++) {
+                                if (new URL(chaves[i].url).pathname === alvo) return c.match(chaves[i]);
+                            }
+                            return null;
+                        });
+                    }).catch(function () { return null; });
+                });
+            }, Promise.resolve(null));
+        });
+    }).catch(function () { return null; });
+}
+
 /* rede com prazo: se a internet nao responder em LIMITE_MS, cai no cache
    (o app abre rapido offline sem ficar esperando eternamente) */
 function redeComPrazo(req) {
@@ -154,16 +190,22 @@ self.addEventListener("fetch", function (e) {
                 });
                 return r.resp;
             }
-            /* sem rede: o app continua com a copia guardada */
+/* sem rede: o app continua com a copia guardada */
             return caches.open(BASE).then(function (cache) {
                 return pegarIgnorandoQuery(cache, req).then(function (antigo) {
                     if (antigo) return antigo;
-                    /* nada guardado: arquivo some, pagina mostra o aviso */
-                    if (!ehPagina) return new Response("", { status: 504, statusText: "offline" });
-                    if (forcarRede) return new Response("", { status: 504, statusText: "offline" });
-                    return caches.match("index.html").then(function (p) {
-                        return p || new Response("<h1>Sem internet</h1><p>Abra o app de novo quando a conexao voltar.</p>",
-                            { headers: { "Content-Type": "text/html; charset=utf-8" }, status: 200 });
+                    /* nem no cache novo: procura nos antigos antes de falhar,
+                       senao o CSS/JS volta vazio e a tela fica branca */
+                    return pegarEmQualquerCache(req).then(function (deOutro) {
+                        if (deOutro) return deOutro;
+                        /* nada guardado em lugar nenhum: arquivo some,
+                           pagina mostra o aviso */
+                        if (!ehPagina) return new Response("", { status: 504, statusText: "offline" });
+                        if (forcarRede) return new Response("", { status: 504, statusText: "offline" });
+                        return caches.match("index.html").then(function (p) {
+                            return p || new Response("<h1>Sem internet</h1><p>Abra o app de novo quando a conexao voltar.</p>",
+                                { headers: { "Content-Type": "text/html; charset=utf-8" }, status: 200 });
+                        });
                     });
                 });
             });

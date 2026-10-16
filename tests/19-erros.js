@@ -116,7 +116,26 @@ const att = fontes.filter(s => s.f === "app-update.js").map(s => s.t).join("");
 if (/versao\.txt/.test(att) && (/location\.reload/.test(att) || /barraAtualizar/.test(att))) ok("app avisa e atualiza quando entra versao nova");
 else falha("app nao avisa de versao nova: o celular fica preso numa versao antiga");
 
-console.log("\n=== 10. NENHUM ERRO SENDO SENTADO SEM REGISTRO ===");
+console.log("\n=== 10. O APP NAO FICA COM A TELA BRANCA NO CELULAR ===");
+/* Regressao real: ao publicar, o service worker novo tomba o controle
+   (skipWaiting) e o activate apaga o cache antigo. No 4G a rede passa do
+   prazo de 3 s, a busca caia no cache e o CSS/JS voltava VAZIO (504):
+   a pagina do celular ficava branca e o app parecia quebrado.
+   Agora o prazo e de 8 s e, antes de responder vazio, o app procura o
+   arquivo nos OUTROS caches. */
+const sw = fontes.filter(s => s.f === "sw.js").map(s => s.t).join("");
+if (/LIMITE_MS\s*=\s*[0-9]{4,}/.test(sw)) {
+    const limite = parseInt((sw.match(/LIMITE_MS\s*=\s*(\d+)/) || [])[1], 10);
+    if (limite >= 5000) ok("prazo do cache em " + (limite / 1000) + "s (no 4G a rede passa de 3s)");
+    else falha("prazo do cache curto demais (" + limite + "ms): no 4G o app cai no cache velho");
+} else falha("nao achei o prazo do cache no sw.js");
+if (/function\s+pegarEmQualquerCache/.test(sw) && /pegarEmQualquerCache\(req\)/.test(sw))
+    ok("sem rede, o app procura o arquivo nos outros caches antes de devolver vazio");
+else falha("app devolve arquivo VAZIO sem tentar os outros caches: e a tela branca depois de publicar");
+if (/new Response\("", \{ status: 504/.test(sw)) ok("o 504 vazio ficou como ultimo recurso (so offline de verdade)");
+else falha("cache sem reserva: nao ha o que responder quando nao ha rede nem cache");
+
+console.log("\n=== 11. NENHUM ERRO SENDO SENTADO SEM REGISTRO ===");
 if (/window\.addEventListener\(\s*["']error|unhandledrejection/.test(codigo)) ok("o app vigia erro de pagina (central.js registra)");
 else ok("tratamento de erro por try/catch em cada ponto critico");
 

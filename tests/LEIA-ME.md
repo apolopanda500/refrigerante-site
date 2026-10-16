@@ -31,7 +31,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `16-letras-numeros.js` | **Letras e números**: nada abaixo de 11px, os 3 tamanhos de letra, `R$ 0,00` com 2 casas, data `dd/mm/aaaa hh:mm:ss`, número em coluna |
 | `17-tamanhos.js` | **Tamanhos**: alvo de toque de 44px, viewport certo, nada estourando a tela do celular, tabela em caixa, tick sem altura travada |
 | `18-codigo.js` | **Código**: sintaxe, nada de `console.log`/`debugger`/`TODO`, função declarada duas vezes no mesmo escopo, variável morta, `eval`, segredo no arquivo |
-| `19-erros.js` | **Erros**: nada engolido em silêncio no que é pedido do cliente, toda promessa com `catch`, aviso na tela, botão que volta a funcionar |
+| `19-erros.js` | **Erros**: nada engolido em silêncio no que é pedido do cliente, toda promessa com `catch`, aviso na tela, botão que volta a funcionar e **o app não ficar com a tela branca no celular** (prazo do cache e busca nos outros caches) |
 | `20-documentos.js` | **Documentos**: os 5 documentos existem, listam todas as baterias, falam da versão atual e nenhum tem caractere corrompido |
 | `21-repositorio.js` | **Repositório**: `.gitignore`, nenhum build/`.gradle` versionado, sem arquivo grande demais, sem segredo de verdade no histórico |
 | `22-entrega.js` | **Entrega**: commit feito, push na frente, versão do repositório igual à do site no ar |
@@ -108,21 +108,32 @@ Estos problemas existiram e foram resolvidos porque os testes acusaram:
 | Verde/vermelho/âmbar de "deu certo", "deu ruim" e "atenção" fixos no código: no tema escuro ficavam em ~3:1 e a frase sumia | `14-cores` |
 | `02-horarios` falhava conforme o horário do relógio (o teste conferia 15:00 usando a hora real, não a hora do caso) | `02-horarios` |
 | Amostra do tema "Escuro" esticada por hundreds de pixels no seletor de cores | `13-validar-css` + conferência visual |
+| **Celular com tela branca depois de publicar**: no 4G a rede passava dos 3 s, o app caía no cache recém-apagado e o CSS/JS voltava vazio (504) | `19-erros` |
 
-## Cache: por que a página mostrava versão velha
+## Cache: por que a página mostrava versão velha — e por que o celular ficava branco
 
 O `sw.js` guardava tudo num cache de nome fixo e ainda servia a cópia
 antiga primeiro (stale-while-revalidate). Ao publicar, o celular continuava
 vendo a versão antiga; só voltando e abrindo de novo aparecia a nova — foi
 o que o dono viu na página Histórico depois do Ctrl+F5.
 
+O outro lado do mesmo problema: ao publicar, o service worker novo assume o
+controle na hora (`skipWaiting`) e o `activate` apaga o cache antigo. No 4G a
+rede passa de 3 s, a busca caía no cache, e o arquivo vinha **vazio (504)** —
+o `style.css` e o `script.js` não chegavam e a tela ficava branca. Era o que
+fazia o app no celular "não carregar a página".
+
 Agora:
 
 - o nome do cache leva a versão do site (`bump-versao.js` troca junto), então
   publicar cria um cache novo e o antigo é apagado inteiro;
 - a rede vem primeiro para página e arquivo; o cache só entra se a internet
-  não responder em 3 s (o app continua abrindo offline);
+  não responder em **8 s** (3 s era pouco para o 4G — o app caía no cache velho);
+- antes de responder vazio, o app **procura o arquivo nos outros caches**: uma
+  versão antiga do CSS ainda pinta a tela, uma resposta vazia não;
 - recarga forçada (Ctrl+F5 / Shift+Recarregar) nunca responde do cache.
+
+A bateria `19-erros` (bloco 10) fiscaliza as duas últimas regras.
 
 ## Antes de publicar
 
