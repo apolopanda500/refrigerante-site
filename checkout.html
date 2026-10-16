@@ -400,7 +400,7 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
       <div id="avisoRegiao" class="aviso-regiao"></div>
       <div id="janelaEntrega"></div>
     </div>
-    <div class="aviso" style="text-align:left"><i class="fa fa-info-circle"></i> Frete grátis para pedidos acima de R$ 150,00.</div>
+    <div class="aviso" style="text-align:left"><i class="fa fa-info-circle"></i> <span id="infoFreteTexto">Frete grátis para pedidos acima de R$ 150,00.</span></div>
   </div>
 
   <div class="card-section">
@@ -419,6 +419,7 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
     <div class="resumo-row" id="rFreteRow"><span>Frete</span><span id="rFrete">R$ 0,00</span></div>
     <div class="resumo-row total"><span>Total</span><span id="rTotal">R$ 0,00</span></div>
     <div class="aviso-frete" id="avisoFrete" style="display:none;margin-top:10px"></div>
+    <div class="aviso-frete" id="avisoMinimo" style="display:none;margin-top:10px"></div>
     <button class="btn-enviar" id="btnEnviar" onclick="enviarPedido()"><i class="fa fa-check-circle"></i> Finalizar Pedido</button>
     <div class="aviso">Acompanhe o status do seu pedido na página "Meus Pedidos".</div>
   </div>
@@ -517,7 +518,26 @@ function calcular() {
             av.innerHTML = "";
         }
     }
-    return { subtotal: r.subtotal, frete: r.frete, total: r.total, gratis: r.gratis, regiao: r.regiao, minimo: r.minimo, faltaParaGratis: r.faltaParaGratis };
+    /* VALOR MINIMO PARA ENTREGA (abaixo disso o pedido nao fecha) */
+    var minE = (typeof entregaMinima === "function") ? entregaMinima() : 100;
+    var avMin = document.getElementById("avisoMinimo");
+    var abaixoMinimo = r.subtotal > 0 && r.subtotal < minE;
+    if (avMin) {
+        if (abaixoMinimo) {
+            avMin.style.display = "";
+            avMin.innerHTML = '<i class="fa fa-exclamation-triangle" style="color:var(--texto-aviso)"></i> Pedido mínimo para entrega: <b>'
+                + formatBRL(minE) + '</b>. Faltam <b>' + formatBRL(arredonda(minE - r.subtotal)) + '</b>.';
+        } else {
+            avMin.style.display = "none";
+            avMin.innerHTML = "";
+        }
+    }
+    var info = document.getElementById("infoFreteTexto");
+    if (info) {
+        info.textContent = "Pedido mínimo para entrega de " + formatBRL(minE)
+            + ". Frete grátis acima de " + formatBRL(r.minimo) + ".";
+    }
+    return { subtotal: r.subtotal, frete: r.frete, total: r.total, gratis: r.gratis, regiao: r.regiao, minimo: r.minimo, faltaParaGratis: r.faltaParaGratis, minimoEntrega: minE, abaixoMinimo: abaixoMinimo };
 }
 
 function enviarPedido() {
@@ -554,6 +574,21 @@ function enviarPedido() {
         alert("Pedido não aceito.\n\nO bairro \"" + bairro + "\" não está na nossa lista de entregas ("
             + BAIRROS_ATENDIDOS_TEXTO + ").\n\nAtendemos somente essas regiões. "
             + "Corrija o bairro no seu perfil para finalizar o pedido.");
+        return;
+    }
+
+    /* VALOR MINIMO PARA ENTREGA: abaixo disso o pedido nao finaliza */
+    var _min = (typeof entregaMinima === "function") ? entregaMinima() : 100;
+    var _sub = arredonda(calcSubtotal());
+    if (_sub > 0 && _sub < _min) {
+        var avMin = document.getElementById("avisoMinimo");
+        if (avMin) {
+            avMin.style.display = "";
+            avMin.innerHTML = '<i class="fa fa-exclamation-triangle" style="color:var(--texto-aviso)"></i> Pedido mínimo para entrega: <b>'
+                + formatBRL(_min) + '</b>. Faltam <b>' + formatBRL(arredonda(_min - _sub)) + '</b>.';
+        }
+        alert("Pedido mínimo para entrega: " + formatBRL(_min) + ".\n\nFaltam "
+            + formatBRL(arredonda(_min - _sub)) + " em produtos para finalizar. Adicione mais itens ao carrinho.");
         return;
     }
 

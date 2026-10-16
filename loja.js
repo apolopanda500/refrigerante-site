@@ -18,6 +18,16 @@ function freteGratisMinimo() {
     } catch (e) { return 150; }
 }
 
+/* VALOR MINIMO PARA ENTREGA: abaixo disso o pedido de entrega nao fecha
+   (o vendedor pode mudar em Configuracoes: cfgPedidoMinimoEntrega) */
+function entregaMinima() {
+    try {
+        var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+        var v = parseFloat(p.cfgPedidoMinimoEntrega);
+        return (isNaN(v) || v <= 0) ? 100 : v;
+    } catch (e) { return 100; }
+}
+
 /* menor frete charged entre as regioes (usado nos avisos) */
 function freteMinimo() {
     if (typeof REGIOES === "undefined" || !REGIOES.length) return 0;

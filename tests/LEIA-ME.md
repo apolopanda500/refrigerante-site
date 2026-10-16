@@ -39,6 +39,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `23-acesso-vendedor.js` | **Acesso do vendedor**: um acesso só de usuário e senha, trava de 5 tentativas, usuário sem differentiate maiúscula (o dono não fica trancado fora) e o painel baixando os pedidos de **todo** aparelho pela nuvem |
 | `25-aparencia.js` | **Aparência**: a opção "Animações reduzidas" ("Reduzir animações da interface") existe na tela, salva, aplica o atributo e o CSS corta as animações em todas as páginas do cliente |
 | `26-bot.js` | **Bot do Telegram 24/7**: o workflow `.github/workflows/bot.yml` roda a cada 5 min, o robô lê o Telegram (getUpdates), aplica o status nos pedidos do Firebase e responde no chat; o teclado do pedido tem os botões de status e o botão "Abrir painel" |
+| `27-entrega-minima.js` | **Valor mínimo para entrega**: a regra sai de `loja.js` (`entregaMinima()`, padrão R$ 100,00), o checkout bloqueia abaixo disso e avisa quanto falta, e o carrinho mostra o mesmo aviso |
 
 ## CSS: como confere e como limpa
 

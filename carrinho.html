@@ -562,6 +562,7 @@ function renderCarrinho() {
         ? calcularFrete(subtotal, regiao ? regiao.id : null)
         : { subtotal: subtotal, frete: 0, total: subtotal, gratis: false };
     const minimo = (typeof freteGratisMinimo === "function") ? freteGratisMinimo() : 150;
+    const minEntrega = (typeof entregaMinima === "function") ? entregaMinima() : 100;
 
     /* aviso do frete: sempre com o mesmo visual */
     let aviso;
@@ -576,6 +577,14 @@ function renderCarrinho() {
               + '</b> para o frete ficar <b>GRÁTIS</b>.</span></div>';
     }
 
+    /* aviso do valor MINIMO para entrega */
+    let avisoMin = "";
+    if (subtotal > 0 && subtotal < minEntrega) {
+        avisoMin = '<div class="aviso aviso-atencao"><i class="fa fa-circle-exclamation"></i>'
+                 + ' <span>Pedido mínimo para entrega: <b>' + formatBRL(minEntrega) + '</b>. Faltam <b>'
+                 + formatBRL(arredonda(minEntrega - subtotal)) + '</b>.</span></div>';
+    }
+
     /* total final: depende da regiao escolhida */
     const linhaFrete = regiao
         ? '<div class="resumo-row"><span>Frete (' + regiao.nome + ')</span><span>'
@@ -587,7 +596,7 @@ function renderCarrinho() {
           + ' <span>Escolha a <b>região</b> e digite seu <b>bairro</b> para ver o valor final e o dia de entrega.</span></div>'
         : "";
 
-    res.innerHTML = aviso + semAviso
+    res.innerHTML = aviso + avisoMin + semAviso
         + '<div class="resumo-row"><span>Subtotal (' + nItens + (nItens === 1 ? ' item' : ' itens') + ')</span><span>' + formatBRL(subtotal) + '</span></div>'
         + linhaFrete
         + '<div class="resumo-row total"><span>Total final</span><span>' + formatBRL(calc.total) + '</span></div>';
