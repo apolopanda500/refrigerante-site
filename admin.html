@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261017j">
+<link rel="manifest" href="manifest-vendedor.json?v=20261017k">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017j">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017k">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017j">
-<script src="theme.js?v=20261017j"></script>
+<link rel="stylesheet" href="style.css?v=20261017k">
+<script src="theme.js?v=20261017k"></script>
 
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -442,7 +442,10 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 <div id="painelTela" style="display:none">
   <div class="page-head">
     <h1><i class="fa fa-tachometer-alt"></i> Pedidos</h1>
-    <span style="color:#888;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">
+      <span style="color:#888;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
+      <a class="btn-st b-copiar" href="apk/convencao-vendedor.apk" download target="_blank" rel="noopener" style="min-height:42px;padding:10px 14px;text-decoration:none"><i class="fa fa-android"></i> Baixar APK do painel</a>
+    </div>
   </div>
   <div class="periodo-barra">
     <div class="periodo-linha">
@@ -589,7 +592,6 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="exportarPedidos()"><i class="fa fa-file-csv"></i> Exportar pedidos (CSV/Excel)</button>
       <button class="btn-st b-entregar" id="btnInstalarVendedor" style="min-height:44px;padding:11px 18px;display:none" onclick="instalarApp()"><i class="fa fa-download"></i> Instalar painel como app</button>
-      <a class="btn-st b-copiar" href="apk/convencao-vendedor.apk" download target="_blank" rel="noopener" style="min-height:44px;padding:11px 18px;text-decoration:none"><i class="fa fa-android"></i> Baixar APK do painel</a>
     </div>
   </div>
 
@@ -664,8 +666,8 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261017j"></script>
-<script src="telegram.js?v=20261017j"></script>
+<script src="script.js?v=20261017k"></script>
+<script src="telegram.js?v=20261017k"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -1704,9 +1706,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261017j"></script>
-<script src="firebase-appcheck.js?v=20261017j"></script>
-<script src="app-update.js?v=20261017j"></script>
+<script src="app.js?v=20261017k"></script>
+<script src="firebase-appcheck.js?v=20261017k"></script>
+<script src="app-update.js?v=20261017k"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
