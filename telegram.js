@@ -302,23 +302,29 @@ var TelegramBot = (function () {
         var c = cfg();
         if (!c.ligado) { status("Comandos desligados (veja a opcao acima).", "var(--texto-aviso)"); return; }
         status("verificando...", "var(--texto-aviso)");
-        var offset = Number(localStorage.getItem(K_OFFSET) || 0);
-        return api("getUpdates", { offset: offset || undefined, timeout: 0, limit: 20 })
-            .then(function (ups) {
-                var lista = ups || [];
-                lista.forEach(function (u) {
-                    if (u.update_id >= offset) { offset = u.update_id + 1; }
-                    try {
-                        if (u.callback_query) tratarBotao(u.callback_query);
-                        else if (u.message) tratarMensagem(u.message);
-                    } catch (e) { log("erro: " + e.message); }
+        var local = Number(localStorage.getItem(K_OFFSET) || 0);
+        return lerOffsetNuvem().then(function (naNuvem) {
+            /* comeca do maior offset (nuvem x local) para nunca repetir o que
+               o robo 24/7 ja processou */
+            var offset = Math.max(local, naNuvem || 0);
+            return api("getUpdates", { offset: offset || undefined, timeout: 0, limit: 20 })
+                .then(function (ups) {
+                    var lista = ups || [];
+                    lista.forEach(function (u) {
+                        if (u.update_id >= offset) { offset = u.update_id + 1; }
+                        try {
+                            if (u.callback_query) tratarBotao(u.callback_query);
+                            else if (u.message) tratarMensagem(u.message);
+                        } catch (e) { log("erro: " + e.message); }
+                    });
+                    try { localStorage.setItem(K_OFFSET, String(offset)); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
+                    gravarOffsetNuvem(offset);
+                    status(lista.length
+                        ? "Verificado as " + horaAgora() + " - " + lista.length + " novidade(s)."
+                        : "Verificado as " + horaAgora() + " - nada novo.",
+                        "var(--texto-ok)");
                 });
-                localStorage.setItem(K_OFFSET, String(offset));
-                status(lista.length
-                    ? "Verificado as " + horaAgora() + " - " + lista.length + " novidade(s)."
-                    : "Verificado as " + horaAgora() + " - nada novo.",
-                    "var(--texto-ok)");
-            })
+        })
             .catch(function (e) {
                 var msg = String(e.message || e);
                 if (/409|webhook/i.test(msg)) {

@@ -78,5 +78,19 @@ console.log("\n=== 4. A MENSAGEM DO PEDIDO TEM BOTAO PARA O PAINEL ===");
     else ok("mensagem tem o botao para abrir o painel");
 }
 
+console.log("\n=== 5. O OFFSET E COMPARTILHADO (PAINEL X ROBO) ===");
+{
+    const tg = ler("telegram.js");
+    if (!/bot\/offset/.test(tg)) falha("telegram.js nao usa o offset compartilhado (/bot/offset)");
+    else ok("o painel usa o mesmo offset do robo (/bot/offset)");
+    if (!/lerOffsetNuvem/.test(tg) || !/gravarOffsetNuvem/.test(tg)) falha("o painel nao le/grava o offset no Firebase");
+    else ok("o painel le e grava o offset no Firebase");
+    if (!/Math\.max\(\s*local/.test(tg)) falha("o painel nao parte do maior offset (pode repetir um toque velho)");
+    else ok("o painel parte do maior offset (nuvem x local)");
+    const r = existe(robo) ? ler(robo) : "";
+    if (!/\/bot\/offset\.json/.test(r)) falha("o robo do servidor nao usa /bot/offset.json (offsets diferentes)");
+    else ok("o robo usa exatamente o mesmo /bot/offset.json");
+}
+
 console.log("\n" + (erros === 0 ? "*** BOT 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
 process.exit(erros ? 1 : 0);

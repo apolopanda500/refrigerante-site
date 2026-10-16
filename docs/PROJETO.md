@@ -376,7 +376,7 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - Leitura das tabelas: horizontal (padrão) ou vertical (cartões), em Configurações do cliente.
 - Bairro fora da área de entrega: pedido **bloqueado** na finalização.
 - Bot: aviso de novo pedido + comandos (`/confirmar`, `/separacao`, `/enviado`, `/entregue`, `/cancelar`, `/ultimos`, `/status`, `/hoje`, `/ajuda`) + botões.
-- Bot 24/7: o robo `.github/scripts/bot-telegram.js` (workflow `.github/workflows/bot.yml`, a cada 5 min) processa os botoes e comandos no servidor, entao o bot funciona **mesmo com o painel fechado**; o status vai para o Firebase (`/pedidos`) e a mensagem e atualizada no chat.
+- Bot 24/7: o robo `.github/scripts/bot-telegram.js` (workflow `.github/workflows/bot.yml`, a cada 5 min) processa os botoes e comandos no servidor, entao o bot funciona **mesmo com o painel fechado**; o status vai para o Firebase (`/pedidos`) e a mensagem e atualizada no chat. O painel e o robo compartilham o **mesmo offset** (`/bot/offset.json` no Firebase), entao o mesmo toque nunca e processado duas vezes.
 - App: PWA instalado + APK (cliente e vendedor) disponíveis para download.
 - Temas: claro, guaraná, rosa, vermelho e escuro.
 - Pagamento: Pix e Dinheiro.
