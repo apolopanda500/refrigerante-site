@@ -1,20 +1,19 @@
 /* ============================================
-   SERVICE WORKER - APP DO CLIENTE (reconstruido v2)
-    - Imagens: rede primeiro com timeout curto, depois cache (sempre tenta mostrar a imagem nova)
-    - CSS/JS essenciais: cache-first (instantaneo, sem espera de rede)
+   SERVICE WORKER - APP DO CLIENTE (reconstruido v3 - CORRECAO ERR_FAILED)
+   Corrigido: nao causa mais ERR_FAILED nas paginas.
+    - Timeout reduzido para 3 s (era 8 s, causava travamento)
+    - Imagens: rede primeiro com timeout curto, depois cache
+    - CSS/JS essenciais: cache-first (instantaneo)
     - Paginas HTML: rede primeiro com timeout curto, depois cache
     - Ativacao: apaga caches antigos imediatamente
-    - Ctrl+F5 / limpar cache: ignora cache e vai direto na rede
    ============================================ */
 
-var VERSAO = "20261016k";
+var VERSAO = "20261016m";
 var BASE = "convencao-cache-" + VERSAO;
-/* 8 s: tempo maximo de espera pela rede antes de usar o cache.
-   No 4G a rede passa de 3 s com facilidade; com 3 s o site caia no cache
-   velho (ou vazio) e abria a tela branca depois de publicar. */
-var LIMITE_MS = 8000;
+/* 3 s: tempo maximo de espera pela rede antes de usar o cache.
+   8 s era demais: no celular o site ficava travado ou dava ERR_FAILED. */
+var LIMITE_MS = 3000;
 
-/* Arquivos essenciais para abrir o site rapido e funcionar offline */
 var ESSENCIAL = [
     "./",
     "index.html",
@@ -81,7 +80,6 @@ var ESSENCIAL = [
     "img/p36.jpg"
 ];
 
-/* paginas que NAO entram no cache do cliente */
 var NAO_CACHEIA = ["admin.html", "telegram.js", "manifest-vendedor.json", "produtos_ref.html"];
 
 function pathnameOf(req) {
@@ -112,7 +110,6 @@ function forcarRede(req) {
         || ((req.headers.get("pragma") || "").indexOf("no-cache") >= 0);
 }
 
-/* rede com prazo curto */
 function redeComPrazo(req) {
     return new Promise(function (resolve) {
         var respondido = false;
@@ -129,19 +126,6 @@ function redeComPrazo(req) {
             respondido = true;
             clearTimeout(timer);
             resolve({ timeout: false, erro: true });
-        });
-    });
-}
-
-/* ultimo recurso antes de devolver vazio: procura o arquivo em QUALQUER
-   cache. Publicou versao nova e o cache antigo ainda nao foi limpo? O
-   arquivo pode estar la, e melhor servir ele do que a tela branca. */
-function pegarEmQualquerCache(req) {
-    return caches.keys().then(function (nomes) {
-        return Promise.all(nomes.map(function (n) {
-            return caches.open(n).then(function (c) { return c.match(req); });
-        })).then(function (achados) {
-            return achados.find(function (r) { return r; }) || null;
         });
     });
 }
@@ -193,7 +177,6 @@ self.addEventListener("fetch", function (e) {
     e.respondWith(
         caches.open(BASE).then(function (cache) {
             return cache.match(req).then(function (cacheRes) {
-                /* recarga forcada: ignora cache, vai na rede */
                 if (forcado) {
                     return redeComPrazo(req).then(function (r) {
                         if (!r.timeout && r.resp && r.resp.ok) {
@@ -208,7 +191,6 @@ self.addEventListener("fetch", function (e) {
                     });
                 }
 
-                /* IMAGENS: rede primeiro (sempre tenta a nova), depois cache */
                 if (imagem) {
                     return redeComPrazo(req).then(function (r) {
                         if (!r.timeout && r.resp && r.resp.ok) {
@@ -217,14 +199,11 @@ self.addEventListener("fetch", function (e) {
                             cache.put(new Request(caminho), copia.clone());
                             return r.resp;
                         }
-                        /* rede falhou ou timeout: usa o que tiver no cache */
                         if (cacheRes) return cacheRes;
-                        /* nada em lugar nenhum: imagem transparente pequena em vez de sumir */
                         return new Response("", { status: 204, statusText: "no content" });
                     });
                 }
 
-                /* NAO e paginas (CSS, JS): cache-first (instantaneo) */
                 if (!pagina) {
                     if (cacheRes) return cacheRes;
                     return redeComPrazo(req).then(function (r) {
@@ -240,7 +219,6 @@ self.addEventListener("fetch", function (e) {
                     });
                 }
 
-                /* PAGINAS: rede primeiro com timeout curto, depois cache */
                 return redeComPrazo(req).then(function (r) {
                     if (!r.timeout && r.resp && r.resp.ok) {
                         var copia = r.resp.clone();
@@ -260,3 +238,26 @@ self.addEventListener("fetch", function (e) {
         })
     );
 });
+
+function pegarEmQualquerCache(req) {
+    return caches.match(req).then(function (achou) {
+        if (achou) return achou;
+        var alvo = new URL(req.url).pathname;
+        return caches.keys().then(function (nomes) {
+            var resto = nomes.filter(function (n) { return n !== BASE; });
+            return resto.reduce(function (corrente, nome) {
+                return corrente.then(function (res) {
+                    if (res) return res;
+                    return caches.open(nome).then(function (c) {
+                        return c.keys().then(function (chaves) {
+                            for (var i = 0; i < chaves.length; i++) {
+                                if (new URL(chaves[i].url).pathname === alvo) return c.match(chaves[i]);
+                            }
+                            return null;
+                        });
+                    }).catch(function () { return null; });
+                });
+            }, Promise.resolve(null));
+        });
+    }).catch(function () { return null; });
+}
