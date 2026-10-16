@@ -461,5 +461,24 @@ if (!/--of-cor/.test(appJs) || !/\.of-btn\{[\s\S]{0,200}--of-cor/.test(fs.readFi
     falha("os botoes das ofertas continuam sem cor de verdade");
 } else console.log("  ok  botoes das ofertas com cor e toque grande");
 
+/* ---------- 15. so o dono entra no painel ---------- */
+console.log("\n=== 15. PAINEL SO PARA O DONO ===");
+const codigoAuto = (adm9.match(/sessionStorage\.setItem\("adminLogado"\s*,\s*"1"\)/g) || []);
+if (codigoAuto.length !== 1) {
+    falha("o painel nao pode logar sozinho (o login automatico deixava qualquer um entrar): " + codigoAuto.length + "encias");
+} else console.log("  ok  nenhum login automatico: so abre com usuario e senha");
+if (!/adminTentativas/.test(adm9) || !/adminTravadoAte/.test(adm9)) falha("falta o trava de tentativas de login");
+else console.log("  ok  trava de 5 tentativas antes de travar o painel");
+["VENDEDOR_USUARIO", "VENDEDOR_SENHA"].forEach(function (c) {
+    const sc11 = fs.readFileSync(path.join(dir, "script.js"), "utf8");
+    if (sc11.indexOf("const " + c) < 0) falha("script.js sem " + c + " (credencial do painel)");
+});
+if (/admin\.jks|convencao\.jks/.test(adm9)) falha("o painel nao pode citar o arquivo de assinatura");
+else console.log("  ok  credencial e chave de assinatura fora do painel");
+/* aviso honesto: o painel e um site, quem protege de verdade e o Firebase */
+if (!/privacidade|modo teste|regras/i.test(fs.readFileSync(path.join(dir, "docs/PROJETO.md"), "utf8"))) {
+    aviso("PROJETO.md nao lembra das regras do Firebase (quem protege os dados de verdade)");
+} else console.log("  ok  a documentacao lembra que a protecao de verdade esta no Firebase");
+
 console.log("\n" + (erros === 0 ? "*** ESTRUTURA E SEGURANCA 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
 process.exit(erros ? 1 : 0);

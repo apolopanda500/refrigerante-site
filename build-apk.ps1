@@ -61,13 +61,18 @@ $versaoSite = (Get-Content "versao.txt" -Raw).Trim()
 $codigo = [int]($versaoSite -replace '\D','')
 Say "    Versao do site: $versaoSite  (versionCode $codigo)"
 
+Say "    JDK: " + (& java -version 2>&1 | Select-Object -First 1)
+Say "    Versao do site: $versaoSite  (versionCode $codigo)"
+# o init baixa o manifesto da loja; o build usa o arquivo local
 bubblewrap init --manifest "https://apolopanda500.github.io/refrigerante-site/manifest.json" --asset "logo.png:img/icon-512.png" | Out-Null
 # app do CLIENTE
-bubblewrap build --manifest "$SITE/manifest.json" --appVersionName "$versaoSite" --appVersionCode "$codigo" | Out-Null
+bubblewrap build --manifest "manifest.json" --appVersionName "$versaoSite" --appVersionCode "$codigo" | Out-Null
 Copy-Item "app-release-signed.apk" "apk\convencao-cliente.apk" -Force -ErrorAction SilentlyContinue
 # app do VENDEDOR (+100 no codigo para nunca colidir com o do cliente)
-bubblewrap build --manifest "$SITE/manifest-vendedor.json" --appName "Painel Vendedor" --appVersionName "$versaoSite" --appVersionCode ($codigo + 100) --package "br.com.convencao.painel" | Out-Null
+Copy-Item "manifest-vendedor.json" "manifest-vendedor-local.json" -Force -ErrorAction SilentlyContinue
+bubblewrap build --manifest "manifest-vendedor-local.json" --appName "Painel Vendedor" --appVersionName "$versaoSite" --appVersionCode ($codigo + 100) --package "br.com.convencao.painel" | Out-Null
 Copy-Item "app-release-signed.apk" "apk\convencao-vendedor.apk" -Force -ErrorAction SilentlyContinue
+Remove-Item "manifest-vendedor-local.json" -Force -ErrorAction SilentlyContinue
 
 Set-Content -Path "apk\versao-apk.txt" -Value $versaoSite -Encoding UTF8
 Say "    APK cliente e vendedor gravados na versao $versaoSite"
@@ -75,5 +80,5 @@ Say "    APK cliente e vendedor gravados na versao $versaoSite"
 Say "Pronto!"
 Say "APKs em:"
 Get-ChildItem "apk\*.apk" -ErrorAction SilentlyContinue | ForEach-Object {
-    Write-Host ("   " + $_.Name + "  (" + [math]::Round($_.Length / 1MB, 1) + " MB)")
-    Write-Host ""
+    Write-Host ("   " + $_.Name + "  (" + [math]::Round($_.Length / 1MB, 1) + " MB)  " + $_.LastWriteTime)
+}

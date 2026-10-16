@@ -2,6 +2,16 @@
 
 Guia rápido, sem termos técnicos.
 
+## Arquivos que valem a pena conhecer
+
+| Onde | O que tem |
+|---|---|
+| `apk/convencao-cliente.apk` | App do cliente (o que você instala e entrega) |
+| `apk/convencao-vendedor.apk` | App do painel (só você) |
+| `img/608VERDE.jpg` / `img/608AZUL.jpeg` | Fotos dos dois caminhões |
+| `central.js` | Avisos reais no celular do cliente (código do site) |
+| `apk/versao-apk.txt` | Versão do último APK assinado (igual à do site) |
+
 ---
 
 ## 1. Mudar preço

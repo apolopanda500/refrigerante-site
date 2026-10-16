@@ -14,3 +14,12 @@ apk/android/local.properties
 correcao-precos.json
 __teste-robo.cjs
 __teste.cjs
+
+#saida do bubblewrap (build-apk.ps1): os .apk ficam so em apk/
+app-release.apk
+app-release-signed.apk
+app-release-unsigned.apk
+app-debug.apk
+manifest-local.json
+manifest-vendedor-local.json
+logo.png

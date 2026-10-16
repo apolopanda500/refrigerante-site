@@ -607,11 +607,11 @@ function atualizarStatus(id, novoStatus) {
     return p;
 }
 /* ---------- data e hora DETALHADAS ----------
-   O vendedor precisa ver o horario exato do pedido e de
-   cada mudanca de status (com os "ticks" do relogio). */
+   PADRAO DO PROJETO: dd/mm/aaaa hh:mm:ss (ex.: 15/10/2026 14:12:37).
+   Tudo que mostra data passa por dataHoraSegundos, assim nao
+   existem dois formatos diferentes na loja. */
 function dataHora(ts) {
-    const d = new Date(ts || Date.now());
-    return d.toLocaleDateString("pt-BR") + " às " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return dataHoraSegundos(ts);
 }
 /* com segundos: 15/10/2026 14:12:37 */
 function dataHoraSegundos(ts) {
@@ -619,6 +619,12 @@ function dataHoraSegundos(ts) {
     const p = (n) => ("0" + n).slice(-2);
     return p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear()
         + " " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+}
+/* so a data: 15/10/2026 */
+function dataCurta(ts) {
+    const d = new Date(ts || Date.now());
+    const p = (n) => ("0" + n).slice(-2);
+    return p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear();
 }
 /* quanto tempo ja passou: "agora", "3 min", "2 h 15 min", "6 dias" */
 function tempoDesde(ts) {

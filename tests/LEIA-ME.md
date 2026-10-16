@@ -29,10 +29,28 @@ se nenhuma falhar. Acompanhe cada arquivo:
 ## Ferramentas
 
 ```bash
-node tests/bump-versao.js 20261014t   # sobe a versao dos assets (obrigatorio a cada publicacao)
-node tools/gerar-icone.js            # gera os icones do site e dos apps
-node apk/android/build.js            # gera o projeto Android (cliente e vendedor)
+node tests/manter-tudo.js                # alinha versões, datas, links, docs e robô
+node tests/manter-tudo.js --online       # confere também os links externos
+node tests/manter-tudo.js --com-catalogo # roda o robô do catálogo de verdade
+node tests/bump-versao.js 20261016b      # sobe a versao dos assets (obrigatorio a cada publicacao)
+node tools/gerar-icone.js                # gera os icones do site e dos apps
+node apk/android/build.js                # gera o projeto Android (cliente e vendedor)
 ```
+
+`manter-tudo.js` confere, um por um: versão igual em todas as páginas +
+`versao.txt` + `app-update.js`, padrão de data `dd/mm/aaaa hh:mm:ss`, links
+internos que apontam para arquivo existente, scripts e estilos carregados,
+ausência de código morto dentro de `<script src>`, documentação em dia e o robô
+diário (catálogo com menos de 3 dias e agendamento às 10:00, de segunda a sexta).
+
+## Arquivos de apoio
+
+| Arquivo | Para que serve |
+|---|---|
+| `central.js` | Avisos reais no aparelho do cliente (`Notification`) + vigia de erros da rede |
+| `img/608VERDE.jpg` / `img/608AZUL.jpeg` | Fotos dos dois caminhões (verde e azul) |
+| `apk/versao-projeto.txt` | Versão do projeto Android gerado (`build.js`) |
+| `apk/versao-apk.txt` | Versão do APK assinado (`build-apk.ps1`) — mesma do site |
 
 ## Erros que os testes já pegaram
 
@@ -51,7 +69,10 @@ Estos problemas existiram e foram resolvidos porque os testes acusaram:
 
 ## Antes de publicar
 
-1. `node tests/rodar-todos.js` → tem que dizer **TUDO 10/10**
-2. `node tests/bump-versao.js <versao>` → senão o celular fica com cache velho
-3. `node --check` em todos os `.js`
-4. Conferir no emulador: `adb install -r apk\convencao-cliente.apk`
+1. `node tests/manter-tudo.js` → tem que dizer **Tudo alinhado**
+2. `node tests/rodar-todos.js` → tem que dizer **TUDO 10/10**
+3. `node tests/bump-versao.js <versao>` → senão o celular fica com cache velho
+4. `node --check` em todos os `.js`
+5. Conferir no emulador: `adb install -r apk\convencao-cliente.apk`
+6. `git add -A && git commit -m "..." && git push origin main`
+   (o GitHub Pages publica em 1–2 minutos)

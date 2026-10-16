@@ -20,7 +20,7 @@
     { "src": "img/icon-512-vendedor-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Pedidos", "url": "admin.html", "icons": [{ "src": "img/icon-192-vendedor.png", "sizes": "192x192" }] },
-    { "name": "Configurações", "url": "configuracoes.html", "icons": [{ "src": "img/icon-192-vendedor.png", "sizes": "192x192" }] }
+    { "name": "Pedidos", "url": "admin.html", "icons": [{ "src": "img/icon-192-vendedor.png", "sizes": "192x192", "chosenIconUrl": "img/icon-192-vendedor.png" }] },
+    { "name": "Configurações", "url": "configuracoes.html", "icons": [{ "src": "img/icon-192-vendedor.png", "sizes": "192x192", "chosenIconUrl": "img/icon-192-vendedor.png" }] }
   ]
 }

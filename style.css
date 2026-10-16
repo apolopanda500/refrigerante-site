@@ -759,6 +759,21 @@ html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table td::befo
     }
 }
 
+/* ===== palavras alinhadas dentro das tabelas (celular) =====
+   Em modo cartao, o rotulo fica a esquerda e o conteudo a
+   direita; quando o texto e longo (endereco, itens, bairro),
+   ele alinha a esquerda e o rotulo desce para cima. */
+@media (max-width:768px){
+    body:not(.admin) table td{hyphens:auto}
+    body:not(.admin) table td::before{
+        max-width:42%;flex:0 0 auto;align-self:flex-start;padding-right:10px;
+        overflow-wrap:anywhere;
+    }
+    body:not(.admin) table td > *{min-width:0;overflow-wrap:anywhere}
+    body:not(.admin) table td.detalhe-longo{text-align:left}
+    body:not(.admin) table td.detalhe-longo::before{display:block;margin-bottom:2px}
+}
+
 /* ===== LEITURA VERTICAL DO PAINEL (so do vendedor) =====
    Cada pedido vira um cartao empilhado com o rotulo de cada
    coluna. Aqui vale em QUALQUER tela (por choice do dono),
@@ -781,8 +796,10 @@ body.admin[data-leitura="vertical"] .tabela-pedidos td{
 }
 body.admin[data-leitura="vertical"] .tabela-pedidos td::before{
     content:attr(data-label);font-weight:800;color:#7a8199;
-    font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;flex:0 0 auto;
+    font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;
+    flex:0 0 auto;max-width:38%;padding-right:10px;overflow-wrap:anywhere;
 }
+body.admin[data-leitura="vertical"] .tabela-pedidos td > *{min-width:0;overflow-wrap:anywhere}
 body.admin[data-leitura="vertical"] .tabela-pedidos td[data-label=""]{display:block;padding:0;border-bottom:0}
 body.admin[data-leitura="vertical"] .tabela-pedidos td[data-label=""]::before{content:none}
 body.admin[data-leitura="vertical"] .tabela-pedidos .td-total{font-size:1.15rem;text-align:right}

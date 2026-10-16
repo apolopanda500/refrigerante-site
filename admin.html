@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261016a">
+<link rel="manifest" href="manifest-vendedor.json?v=20261016b">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016a">
-<script src="theme.js?v=20261016a"></script>
+<link rel="stylesheet" href="style.css?v=20261016b">
+<script src="theme.js?v=20261016b"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -440,8 +440,8 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261016a"></script>
-<script src="telegram.js?v=20261016a"></script>
+<script src="script.js?v=20261016b"></script>
+<script src="telegram.js?v=20261016b"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -481,12 +481,36 @@ function entrar() {
     const s = document.getElementById("fSenha").value;
     const erro = document.getElementById("loginErro");
     if (erro) { erro.style.display = "none"; erro.innerText = ""; }
+    /* trava contra tentativas seguidas (forca bruta de senha) */
+    var tentativas = parseInt(sessionStorage.getItem("adminTentativas") || "0", 10);
+    if (tentativas >= 5) {
+        var espera = Math.ceil((Date.now() - (parseInt(sessionStorage.getItem("adminTravadoAte") || "0", 10))) / 1000);
+        if (espera > 0) {
+            if (erro) {
+                erro.innerText = "Muitas tentativas. Tente de novo em " + espera + " segundo(s).";
+                erro.style.display = "block";
+            }
+            document.getElementById("fSenha").value = "";
+            return;
+        }
+        sessionStorage.removeItem("adminTentativas");
+        sessionStorage.removeItem("adminTravadoAte");
+        tentativas = 0;
+    }
     if (u === VENDEDOR_USUARIO && s === VENDEDOR_SENHA) {
+        sessionStorage.removeItem("adminTentativas");
+        sessionStorage.removeItem("adminTravadoAte");
+        /* marca a sessao deste navegador: e o que garante que so o dono,
+           com a conta certa, veja os pedidos de todo mundo */
         sessionStorage.setItem("adminLogado", "1");
+        sessionStorage.setItem("adminDono", String(Date.now()));
         mostrarPainel();
     } else {
+        tentativas++;
+        sessionStorage.setItem("adminTentativas", String(tentativas));
+        if (tentativas >= 5) sessionStorage.setItem("adminTravadoAte", String(Date.now()));
         if (erro) {
-            erro.innerText = "Usuário ou senha incorretos. Verifique e tente novamente.";
+            erro.innerText = "Usuário ou senha incorretos (" + tentativas + "/5). Verifique e tente novamente.";
             erro.style.display = "block";
         } else {
             alert("Usuário ou senha incorretos!");
@@ -1244,9 +1268,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261016a"></script>
-<script src="firebase-appcheck.js?v=20261016a"></script>
-<script src="app-update.js?v=20261016a"></script>
+<script src="app.js?v=20261016b"></script>
+<script src="firebase-appcheck.js?v=20261016b"></script>
+<script src="app-update.js?v=20261016b"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
@@ -1602,7 +1626,11 @@ document.addEventListener("DOMContentLoaded", function(){
   setTimeout(function(){ if (typeof checarNuvemPrecos === "function") checarNuvemPrecos(); }, 400);
 });
 </script>
-<script>sessionStorage.setItem("adminLogado","1"); if(typeof mostrarPainel==="function") mostrarPainel();</script>
+<script>
+/* SEM login automatico: o painel so abre com usuario e senha do dono.
+   (Havia aqui uma marcacao automatica de sessao, que deixava
+   qualquer pessoa entrar so abrindo admin.html.) */
+</script>
 <script>
 /* sincroniza com outras abas: se um pedido mudar, o painel atualiza sozinho */
 window.addEventListener("storage", function(e){

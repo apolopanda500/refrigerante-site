@@ -1,62 +1,115 @@
-# Árvore do projeto — referência rápida
+# Árvore do projeto — mapa completo
+
+> Mapa para o dia a dia: **onde mexer** em cada assunto.
+> Se algo não estiver aqui, provavelmente não existe mais.
+> Para conferir, rode `node tests/manter-tudo.js`.
 
 ```
 refrigerante-site/
-├─ index.html ....................... vitrine do cliente
-├─ carrinho.html .................... cesto + limpar carrinho
-├─ checkout.html .................... finalizar pedido (região + pagamento)
-├─ perfil.html ...................... dados do cliente
-├─ meus-pedidos.html ................ histórico do cliente
-├─ pedido-sucesso.html .............. confirmação
-├─ configuracoes.html ............... preferências (tema, letra, frete, app)
-├─ admin.html ....................... painel do vendedor
 │
-├─ style.css ........................ temas (claro/guara/rosa/vermelho/dark)
-├─ theme.js ......................... aplica tema antes de pintar
-├─ app.js ........................... catálogo, preços, horários, vitrine
-├─ loja.js .......................... regiões, frete, regra de atendimento
-├─ script.js ....................... carrinho, pedidos, aviso Telegram
-├─ conta.js ......................... perfil (fonte única)
-├─ ia.js ........................... assistente de IA (só o botão flutuante para o cliente)
-├─ central.js ....................... avisos reais no aparelho (Notification)
-├─ telegram.js ...................... comandos do bot do vendedor
-├─ app-update.js .................... service worker + "Atualizar agora"
-├─ firebase-appcheck.js ............. proteção do banco de preços
-├─ sw.js ............................ cache do app instalado
-├─ versao.txt ....................... versão atual (dispara atualização)
+├─ PAGINAS DO CLIENTE (o que o cliente vê)
+│  ├─ index.html .................... vitrine: busca, calendário, tabela de
+│  │                                informações (Minimizar), catálogo, ofertas
+│  ├─ carrinho.html ................. itens, +/− grandes, frete, limpar carrinho
+│  ├─ checkout.html ................. resumo, região, pagamento (Pix/Dinheiro)
+│  ├─ perfil.html ................... SÓ dados pessoais e contato + foto
+│  ├─ meus-pedidos.html ............. HISTÓRICO (pedidos, itens, total gasto,
+│  │                                avaliação por estrelas) — é a página do menu
+│  ├─ pedido-sucesso.html ........... confirmação do pedido
+│  └─ configuracoes.html ............ perfil, avisos, letra, leitura, tema,
+│                                   dados, versões (cliente x site)
 │
-├─ catalogo.json .................... catálogo do dia (gerado pelo robô)
-├─ precos-base.json ................. preços do dono (o robô nunca altera)
+├─ PAINEL DO VENDEDOR (só o dono entra)
+│  └─ admin.html .................... pedidos de TODO mundo, busca por nome/
+│                                   telefone/bairro, ficha com horário exato,
+│                                   editor de preços (Minimizar), ferramentas,
+│                                   calc. de troco, contagem de mercadorias,
+│                                   anotações, exportar, config do painel,
+│                                   bot do Telegram, versões e sincronização
 │
-├─ manifest.json .................... app do cliente (PWA)
-├─ manifest-vendedor.json ........... app do painel (PWA)
+├─ CODIGO DO SITE
+│  ├─ app.js ........................ catálogo, preços em tempo real, horários,
+│  │                                horários de entrega, tabela geral, ofertas
+│  ├─ loja.js ........................ regiões, dias de pedido/entrega, frete,
+│  │                                horário da loja (08:50–15:00), caminhos
+│  ├─ script.js ..................... carrinho, criação de pedido, status,
+│  │                                histórico com data/hora, Telegram (aviso),
+│  │                                nuvem (pedidos/avaliações), datas
+│  ├─ conta.js ...................... perfil do cliente (fonte única)
+│  ├─ theme.js ...................... tema/letra/contraste/leitura antes de
+│  │                                pintar; painel usa vendedorPrefs
+│  ├─ central.js .................... avisos reais no aparelho (Notification),
+│  │                                toast, vigia de erros da rede
+│  ├─ ia.js .......................... assistente (só o botão flutuante para
+│  │                                o cliente), motor local + nuvem
+│  ├─ telegram.js ................... comandos do bot (/confirmar, /editar,
+│  │                                /reabrir, /buscar, /status, /hoje...)
+│  ├─ app-update.js ................. service worker, barra "Atualizar agora",
+│  │                                botão instalar, VERSAO_APP
+│  ├─ firebase-appcheck.js .......... proteção do banco de preços
+│  ├─ sw.js ......................... cache do app instalado (offline)
+│  └─ style.css ..................... temas (claro, guaraná, rosa, vermelho,
+│                                   escuro), tabelas, celular vertical,Minimizar
 │
-├─ apk/
-│  ├─ convencao-cliente.apk ......... APK do cliente
-│  └─ convencao-vendedor.apk ........ APK do painel
+├─ DADOS
+│  ├─ catalogo.json ................. catálogo do dia (gerado pelo robô)
+│  ├─ precos-base.json .............. preços do dono (o robô NUNCA altera)
+│  └─ versao.txt .................... versão publicada (ex.: 20261016a)
 │
-├─ img/
-│  ├─ p01..p36.jpg .................. fotos antigas (lista fixa)
-│  ├─ 608VERDE.jpg / 608AZUL.jpeg .. fotos dos caminhões (verde e azul)
-│  ├─ cat/ .......................... fotos do catálogo oficial (id do produto)
-│  └─ icon-*.png .................... ícones do app
+├─ APP DE CELULAR
+│  ├─ manifest.json ................. PWA do cliente
+│  ├─ manifest-vendedor.json ........ PWA do painel
+│  ├─ apk/
+│  │  ├─ convencao-cliente.apk ...... APK do cliente
+│  │  ├─ convencao-vendedor.apk ..... APK do painel
+│  │  ├─ convencao.jks .............. chave de assinatura (NÃO versionar)
+│  │  ├─ versao-projeto.txt ......... versão do projeto Android gerado
+│  │  ├─ versao-apk.txt ............. versão do APK assinado (build-apk.ps1)
+│  │  └─ android/ ................... projeto Gradle (build.js gera)
+│  ├─ build-apk.ps1 .................. JDK 17 + Bubblewrap + APK dos dois
+│  └─ build-apk.ps1 usa versao.txt .. APK sai na MESMA versão do site
 │
-├─ .github/
-│  ├─ scripts/
-│  │  ├─ sync-catalogo.js .......... robô do catálogo
-│  │  ├─ publicar-precos.js ........ publica preços no Firebase
-│  │  └─ ultimo-resumo.json ........ resumo da última rodada
-│  └─ workflows/
-│     ├─ catalogo.yml .............. robô seg-sex 10:00 + aviso Telegram
+├─ FERRAMENTAS
+│  ├─ serve.ps1 ..................... servidor local para testar
+│  ├─ rebuild.ps1 ................... regerar o projeto Android
+│  ├─ make_svgs.ps1 ................. ícones do app
+│  ├─ tools/gerar-icone.js .......... gera os PNG do ícone
+│  └─ mcp.json, .cursor/mcp.json .... agentes de IA no repositório
+│
+├─ ROBÔS E AUTOMAÇÃO
+│  ├─ .github/scripts/
+│  │  ├─ sync-catalogo.js ........... lê o site oficial, baixa fotos,
+│  │  │                              gera catalogo.json (seg-sex 10:00)
+│  │  ├─ publicar-precos.js ......... publica a tabela de preços no Firebase
+│  │  └─ ultimo-resumo.json ......... resumo da última rodada
+│  └─ .github/workflows/
+│     ├─ catalogo.yml ............... robô diário + aviso no Telegram
 │     └─ check.yml .................. sintaxe + TODOS os testes a cada push
 │
-├─ docs/
-│  └─ PROJETO.md .................... documentação completa
+├─ TESTES E MANUTENÇÃO
+│  ├─ tests/rodar-todos.js .......... roda as 12 baterias (TUDO 10/10)
+│  ├─ tests/manter-tudo.js .......... alinha versões, datas, links, docs, robô
+│  ├─ tests/bump-versao.js .......... sobe a versão em todos os arquivos
+│  ├─ tests/01..12-*.js ............. as 12 baterias
+│  └─ tests/LEIA-ME.md .............. como rodar e o que cada bateria confere
 │
-├─ build-apk.ps1 .................... gerador dos APK
-├─ serve.ps1 ........................ servidor local para testes
-├─ mcp.json ......................... agentes de IA no repositório (MCP)
-└─ .cursor/mcp.json ................. mesmo, para o editor Cursor
+├─ DOCUMENTAÇÃO
+│  ├─ docs/PROJETO.md ............... referência técnica (verdade do repo)
+│  ├─ docs/ARVORE.md ................ este mapa
+│  ├─ docs/MANUAL-DONO.md ........... guia do dono, sem termos técnicos
+│  ├─ docs/AGENTS.md ................ regras de renderização para agentes
+│  └─ README.md ..................... apresentação rápida
+│
+├─ IMAGENS
+│  ├─ img/icon-*.png ................ ícones do app
+│  ├─ img/608VERDE.jpg .............. caminhão verde
+│  ├─ img/608AZUL.jpeg ............. caminhão azul
+│  ├─ img/p01..p36.jpg .............. fotos antigas (lista fixa)
+│  └─ img/cat/ ...................... fotos do catálogo oficial
+│
+└─ REFERÊNCIA (não é do site)
+   ├─ produtos_ref.html ............. cópia do site oficial (só consulta)
+   └─ _oficial/ ...................... cópia do site oficial
 ```
 
 ## Ordem de carga dos scripts (importante)
@@ -76,18 +129,30 @@ admin.html:        theme.js → script.js → telegram.js → app.js
 ```
 
 Se um script for carregado antes do que depende dele, dá `ReferenceError`.
-`script.js` define os pedidos; `loja.js` define região e frete; `app.js`
-depende dos dois. `central.js` (avisos) usa `getPedidos()` do `script.js`,
-por isso só age depois do DOM pronto.
+**Nunca escreva código dentro de `<script src="...">`**: o navegador ignora o
+conteúdo inline e a função "some" sem erro (o teste 06 fiscaliza isso).
+
+## Padrão de data e hora
+
+Tudo que mostra data passa por `dataHoraSegundos()` / `dataCurta()` em
+`script.js`, no formato **`dd/mm/aaaa hh:mm:ss`** (ex.: `15/10/2026 14:12:37`).
+
+## Antes de publicar (checklist)
+
+```powershell
+node tests/manter-tudo.js      # versões, datas, links, docs, robô
+node tests/rodar-todos.js      # 12 baterias — tem que dar TUDO 10/10
+node tests/bump-versao.js 20261016b
+git add -A
+git commit -m "descrição curta em português"
+git push origin main
+```
 
 ## Celular em pé (modo vertical)
 
-- O header das páginas do cliente é `position:fixed`
-  (`style.css`, regra `@media (max-width:768px) and (orientation:portrait)`).
+- Header `position:fixed` em todas as páginas do cliente.
 - O menu que desliza para fora da tela vale **só no painel** (`body.admin`).
-  Nas páginas do cliente a lista é uma faixa rolável dentro do header —
-  é o que impede o menu de sumir (inclusive em `meus-pedidos.html`).
-- Nesse modo as tabelas ganham `height:100%` para as linhas não colapsarem
-  quando viram cartões.
+  Nas páginas do cliente a lista é uma faixa rolável dentro do header.
+- Nesse modo as tabelas ganham `height:100%` para as linhas não colapsarem.
 - A tabela de informações da home tem botão **Minimizar**
   (`alternarTabelaInfo()` em `app.js`, estado em `localStorage:tabelaInfoMini`).

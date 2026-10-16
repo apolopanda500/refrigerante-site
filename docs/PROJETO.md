@@ -246,16 +246,42 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 ## 9. Publicar mudanças
 
 ```bash
-node --check *.js                      # sintaxe
-# (o workflow check.yml faz isso sozinho no push)
+node tests/manter-tudo.js            # versoes, datas, links, docs, robo
+node --check *.js                    # sintaxe
+node tests/rodar-todos.js            # 12 baterias (tem que dar TUDO 10/10)
 git add -A
 git commit -m "descrição curta em português"
 git push origin main
 ```
 
-Depois do push o GitHub Pages publica em 1–2 minutos.
-Para limpar cache antigo dos clientes, suba a versão em todos os HTML e no `versao.txt`.
+Depois do push o GitHub Pages publica em 1-2 minutos.
+Para limpar cache antigo dos clientes, suba a versão em todos os HTML e no ersao.txt
+(	ests/bump-versao.js faz isso de uma vez, inclusive o pp-update.js).
 
+### Manutenção contínua (sem mexer no código)
+
+
+ode tests/manter-tudo.js confere, um por um: versão igual em todas as páginas
++ ersao.txt + pp-update.js; padrão de data dd/mm/aaaa hh:mm:ss; links
+internos apontando para arquivo que existe; scripts e estilos carregados;
+ausência de código morto dentro de <script src>; documentação (docs/ +
+	ests/LEIA-ME.md) em dia; e o **robô diário** (catálogo com menos de 3 dias e
+agendamento às 10:00, de segunda a sexta). Com --online confere também os
+links externos; com --com-catalogo roda o robô de verdade.
+
+### Padrão de data e hora
+
+Tudo que mostra data passa por dataHoraSegundos()/dataCurta() em script.js,
+no formato **dd/mm/aaaa hh:mm:ss** (ex.: 15/10/2026 14:12:37). O painel
+mostra a hora exata de cada passo do pedido e há quanto tempo ele está parado.
+
+### Acesso ao painel
+
+dmin.html **não tem login automático**: abre a tela de usuário e senha
+(VENDEDOR_USUARIO/VENDEDOR_SENHA em script.js) e trava depois de 5
+tentativas erradas. Quem protege os dados de verdade, porém, são as **regras do
+Firebase** — o banco está em modo teste, então os pedidos e as avaliações são
+públicos para quem tiver a URL. Em produção, restrinja pelo Firebase.
 ---
 
 ## 10. Como testar antes de publicar
