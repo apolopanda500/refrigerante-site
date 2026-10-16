@@ -45,6 +45,28 @@
 .btn-enviar { width:100%; padding:15px; background:#0e6b4f; color:#fff; border:none; border-radius:26px; font-weight:bold; font-size:1.05rem; cursor:pointer; margin-top:14px; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
 .btn-enviar:hover { background:#0a5638; }
 .aviso { font-size:0.82rem; color:#6b7280; margin-top:10px; text-align:center; }
+
+/* ===== TEMA ESCURO: checkout (card-section, campos, pagamento, resumo, avisos) ===== */
+[data-theme="dark"] .card-section{background:#1c1f33!important;border-color:#353a5c!important}
+[data-theme="dark"] .card-section h2{color:#ffb822!important}
+[data-theme="dark"] .campo label{color:#e6e8f2!important}
+[data-theme="dark"] .campo input,[data-theme="dark"] .campo select,[data-theme="dark"] .campo textarea{background:#232742!important;border-color:#3d4470!important;color:#e6e8f2!important}
+[data-theme="dark"] .campo input:focus,[data-theme="dark"] .campo select:focus{border-color:#ffb822!important}
+[data-theme="dark"] .pag-opcao{border-color:#3d4470!important;background:#232742!important;color:#e6e8f2!important}
+[data-theme="dark"] .pag-opcao:hover{border-color:#ffb822!important}
+[data-theme="dark"] .pag-opcao.ativa{border-color:#ffb822!important;background:#3a2f14!important}
+[data-theme="dark"] .pag-opcao i{color:#ffb822!important}
+[data-theme="dark"] .pag-opcao span{color:#e6e8f2!important}
+[data-theme="dark"] .troco-box{background:#232742!important;border-color:#3d4470!important}
+[data-theme="dark"] .troco-box input{background:#2a2e44!important;border-color:#3d4470!important;color:#e6e8f2!important}
+[data-theme="dark"] .troco-box label{color:#e6e8f2!important}
+[data-theme="dark"] .resumo-item{color:#e6e8f2!important}
+[data-theme="dark"] .resumo-row{color:#e6e8f2!important}
+[data-theme="dark"] .resumo-row.total{color:#ffb822!important;border-top-color:#3d4470!important}
+[data-theme="dark"] .aviso-frete{color:#a1a8c3!important}
+[data-theme="dark"] .aviso{color:#a1a8c3!important}
+[data-theme="dark"] .btn-enviar{background:#1e7d46!important}
+
 @media (max-width: 768px){ .checkout-grid{grid-template-columns:1fr;} .resumo-lateral{position:static;} .linha2{grid-template-columns:1fr;} }
 .aviso-regiao{margin-top:8px;padding:11px 13px;border-radius:10px;font-size:.86rem;
     line-height:1.45;display:flex;gap:9px;align-items:flex-start}
