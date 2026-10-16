@@ -58,7 +58,8 @@
         else h.removeAttribute("data-fonte");
 
         // Leitura das tabelas: horizontal (padrao) ou vertical (empilhada)
-        if ((p.cfgLeitura || "horizontal") === "vertical") h.setAttribute("data-leitura", "vertical");
+        // SO no site do cliente: no painel as colunas ficam embaralhadas.
+        if (!ehPainel() && (p.cfgLeitura || "horizontal") === "vertical") h.setAttribute("data-leitura", "vertical");
         else h.removeAttribute("data-leitura");
 
         // Alto contraste
@@ -78,8 +79,10 @@
         if (bd) bd.style.display = p.cfgNotifPromo ? "" : "none";
     }
 
-    // Aviso de ofertas (aparece em todas as telas)
+    // Aviso de ofertas (aparece em todas as telas do CLIENTE)
+    // O painel do vendedor nao usa: la atrapalha a lista de pedidos.
     function avisoOferta() {
+        if (ehPainel()) return;
         var p = prefs();
         if (!p.cfgNotifPromo) return;
         if (sessionStorage.getItem("avisoOfertado")) return;

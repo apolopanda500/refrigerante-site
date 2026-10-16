@@ -103,8 +103,15 @@ html.forEach(function (p) {
     if (sa !== sf) falha(p + ": <style> " + sa + " x </style> " + sf);
     if ((t.match(/<html/g) || []).length !== 1) falha(p + ": falta <html>");
     if (t.indexOf("�") >= 0) falha(p + ": tem caractere corrompido");
+    /* codigo escrito DENTRO de <script src=...> e ignorado pelo navegador:
+       e assim que um botao "funciona" mas nao acontece nada */
+    const dentroDeSrc = t.match(/<script[^>]*\bsrc=[^>]*>([\s\S]*?)<\/script>/g) || [];
+    dentroDeSrc.forEach(function (bloco) {
+        const conteudo = bloco.replace(/^<script[^>]*>/, "").replace(/<\/script>$/, "").trim();
+        if (conteudo) falha(p + ": tem codigo dentro de <script src> (o navegador ignora): " + conteudo.slice(0, 60).replace(/\s+/g, " "));
+    });
 });
-console.log("  ok  " + html.length + " paginas: tags balanceadas e sem caractere corrompido");
+console.log("  ok  " + html.length + " paginas: tags balanceadas, sem caractere corrompido e sem codigo morto dentro de <script src>");
 
 /* ---------- 5. JSON validos ---------- */
 console.log("\n=== 5. JSON ===");
@@ -197,6 +204,146 @@ else if (/cfgTema|cfgFonteTamanho|cfgLeitura|cfgModoEscuro|cfgCompacto|cfgVerIma
 } else console.log("  ok  painel nao herda tema, letra nem leitura do cliente");
 if (!/cfgTelegramToken/.test(listaCopiada)) falha("o painel deve aproveitar so a conexao do bot ja salva");
 else console.log("  ok  do cliente so aproveita a conexao do bot (nao a parte visual)");
+
+/* ---------- 10. o botao Minimizar funciona de verdade ---------- */
+console.log("\n=== 10. BOTAO MINIMIZAR DO PAINEL (FUNCIONA) ===");
+const vm = require("vm");
+function puxarFuncao(texto, nome) {
+    const m = texto.match(new RegExp("function " + nome + "\\([\\s\\S]*?\\n\\}"));
+    if (!m) throw new Error("nao achei " + nome);
+    return m[0];
+}
+/* DOM de mentira com o formato do painel (card > h3 + conteudo) */
+function el(id, tag) {
+    return {
+        id: id || "", tagName: (tag || "div").toUpperCase(), style: {}, _attrs: {},
+        className: "", children: [], parentNode: null, nextSibling: null,
+        _html: "",
+        setAttribute(k, v) { this._attrs[k] = v; },
+        getAttribute(k) { return this._attrs[k] || null; },
+        appendChild(f) { f.parentNode = this; this.children.push(f); this._sync(); return f; },
+        querySelector(sel) { return sel[0] === "h" ? this._findH() : null; },
+        set innerHTML(v) { this._html = v; }, get innerHTML() { return this._html; },
+        _findH() { if (this.tagName === "H3") return this; for (const c of this.children) { const r = c._findH(); if (r) return r; } return null; },
+        _sync() {
+            this.children.forEach((c, i) => {
+                c.nextSibling = this.children[i + 1] || null;
+            });
+        }
+    };
+}
+function montarPainel() {
+    const mapa = {};
+    ["caixaFerramentas", "caixaConfigVendedor", "caixaBot", "caixaPrecosNuvem"].forEach(function (id) {
+        const card = el(id);
+        card.appendChild(el(null, "h3"));
+        card.appendChild(el("conteudo-" + id));
+        card.appendChild(el("mais-" + id));
+        card._sync();
+        mapa[id] = card;
+    });
+    mapa.editorPrecosCorpo = el("editorPrecosCorpo");
+    return mapa;
+}
+    const loja = {};
+    function achar(no, id) {
+        if (!no) return null;
+        if (no.id === id) return no;
+        for (const c of (no.children || [])) { const r = achar(c, id); if (r) return r; }
+        return null;
+    }
+    function rodarMini(mapa, prefsIniciais) {
+    const variaveis = [
+        (adm9.match(/var BLOCOS_MINI_PADRAO[^;]*;/g) || []).join("\n"),
+        (adm9.match(/var BLOCOS_MINI_MAP = \{[\s\S]*?\};/g) || []).join("\n")
+    ].join("\n");
+    const funcoes = ["prefsPainel", "salvarPrefsPainel", "blocosMinimizados", "blocoMinimizado",
+        "aplicarMini", "alternarMini", "prepararMini"].map(n => puxarFuncao(adm9, n)).join("\n");
+    const textos = variaveis + "\n" + funcoes;
+    const sandbox = {
+        console, JSON, Array, Object, String,
+        document: {
+            readyState: "complete",
+            addEventListener() {},
+            getElementById: (id) => mapa[id] || achar(mapa[id], id) || Object.keys(mapa)
+                .map(k => achar(mapa[k], id)).find(Boolean) || null,
+            querySelectorAll: (sel) => {
+                const m = /data-mini-btn="([^"]+)"/.exec(sel);
+                if (!m) return [];
+                const achados = [];
+                Object.keys(mapa).forEach(function (id) {
+                    (function anda(no) {
+                        if (no.getAttribute && no.getAttribute("data-mini-btn") === m[1]) achados.push(no);
+                        (no.children || []).forEach(anda);
+                    })(mapa[id]);
+                });
+                if (m[1] === "editorPrecos") achados.push(el("botaoEditor", "button"));
+                return achados;
+            },
+            createElement: () => el(null, "div")
+        },
+        localStorage: {
+            getItem: (k) => (k in prefsIniciais ? prefsIniciais[k] : null),
+            setItem: (k, v) => { prefsIniciais[k] = v; }
+        },
+        setInterval() {}, setTimeout() {}
+    };
+    vm.createContext(sandbox);
+    vm.runInContext(textos, sandbox, { filename: "mini.js" });
+    return sandbox;
+}
+try {
+    /* 1) editor de precos ja vem recolhido */
+    let mapa = montarPainel();
+    let prefs = {};
+    let sb = rodarMini(mapa, prefs);
+    sb.prepararMini();
+    sb.aplicarMini();
+    if (mapa.editorPrecosCorpo.style.display !== "none") falha("o editor de precos deveria vir recolhido");
+    else console.log("  ok  editor de precos abre recolhido");
+
+    /* 2) clicar em Minimizar abre, clicar de novo recolhe */
+    sb.alternarMini("editorPrecos");
+    if (mapa.editorPrecosCorpo.style.display === "none") falha("clicar em Minimizar nao abriu o editor de precos");
+    else console.log("  ok  clicar abre o bloco");
+    sb.alternarMini("editorPrecos");
+    if (mapa.editorPrecosCorpo.style.display !== "none") falha("clicar de novo nao recolheu o bloco");
+    else console.log("  ok  clicar de novo recolhe");
+
+    /* 3) estado fica guardado em vendedorPrefs */
+    let salvos = JSON.parse(prefs.vendedorPrefs || "{}");
+    if (!Array.isArray(salvos.miniCards)) falha("o estado do minimizar nao foi salvo em vendedorPrefs.miniCards");
+    else console.log("  ok  o que ficou recolhido e lembrado");
+
+    /* 4) os cards do painel ganham corpo e botao */
+    mapa = montarPainel();
+    prefs = {};
+    sb = rodarMini(mapa, prefs);
+    sb.prepararMini();
+    const corpoFerramentas = sb.document.getElementById("corpoCaixaFerramentas");
+    if (!corpoFerramentas || !sb.document.getElementById("corpoCaixaConfigVendedor")
+        || !sb.document.getElementById("corpoCaixaBot")) {
+        falha("os blocos do painel nao ganharam o corpo recolhivel");
+    } else console.log("  ok  ferramentas, configuracoes e bot became recolhiveis");
+    if (!corpoFerramentas || corpoFerramentas.children.length !== 2) falha("o corpo das ferramentas nao guardou o conteudo");
+    else console.log("  ok  o conteudo foi movido para dentro do corpo");
+} catch (e) {
+    falha("o botao Minimizar quebrou: " + e.message);
+}
+
+/* ---------- 11. painel nao usa nada que e so do cliente ---------- */
+console.log("\n=== 11. SEPARACAO ENTRE PAINEL E LOJA ===");
+const css9 = fs.readFileSync(path.join(dir, "style.css"), "utf8");
+const blocoResp = (css9.split("RESPONSIVE TABLE")[1] || "").split("@media")[0];
+if (/[^:]\btable thead/.test(blocoResp)) falha("a regra de tabela do celular ainda pega o painel do vendedor");
+else console.log("  ok  a leitura em lista do celular e so da loja");
+if (!/data-leitura="vertical"\] body:not\(\.admin\)/.test(css9)) falha("a leitura vertical do cliente esta pegando o painel");
+else console.log("  ok  leitura vertical so na loja (no painel embaralhava as colunas)");
+if (!/if \(ehPainel\(\)\) return;/.test(th.split("function avisoOferta")[1] || "")) {
+    falha("a faixa flutuante de ofertas ainda aparece no painel");
+} else console.log("  ok  faixa de ofertas fora do painel do vendedor");
+if (/op-btn" data-v="vertical"/.test(adm9)) falha("o painel ainda oferece leitura vertical");
+else console.log("  ok  painel sem a opcao de leitura vertical");
 
 console.log("\n" + (erros === 0 ? "*** ESTRUTURA E SEGURANCA 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
 process.exit(erros ? 1 : 0);

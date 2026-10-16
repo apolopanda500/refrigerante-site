@@ -79,12 +79,15 @@ quando for mudar algum preço.
   de venda, o lucro e a margem real.
 - **Calculadora de troco**: mostra o troco e sugere as notas.
 - **Anotações da loja**: lista de compras, combinados, telefones.
+  O campo **Título da anotação** é largo (2/3 da linha) e a Data fica ao lado.
 - **Histórico de preços**: quem mudou, de quanto para quanto.
 - **Exportar pedidos**: baixa um arquivo que abre no Excel.
 - **Configurações do painel**: tema, **tamanho da letra**, **leitura das
-  tabelas** (rolagem normal ou cartões), **tempo de sincronização** (1, 2 ou
-  5 minutos) e a conexão do bot (token e chat do Telegram).
+  tabelas** e **tempo de sincronização** (1, 2 ou 5 minutos), mais a conexão do
+  bot (token e chat do Telegram).
   Tudo isso vale **só no painel**: o cliente do site nunca é afetado.
+  *A tabela de pedidos vira lista com os rótulos só no celular (até 720px);
+  no PC é rolagem normal. O modo "vertical" do cliente não vale aqui.*
 - **Versões e sincronização**: mostra a versão do seu painel, a versão do site
   publicada (e se ele está no ar), quantos pedidos estão aqui e quando foi a
   última sincronização. O botão **Sincronizar agora** busca na hora.

@@ -671,14 +671,17 @@ table tfoot td {
 table td.num, table th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 table td.acao{text-align:right;white-space:nowrap}
 
-/* ===== RESPONSIVE TABLE ===== */
+/* ===== RESPONSIVE TABLE (so o site do cliente) =====
+   O painel do vendedor tem a propria leitura (vira lista
+   aos 720px) e nao pode herdar estas regras: misturadas
+   com as dele as colunas saiam embaralhadas. */
 @media (max-width: 768px) {
     /* no celular as tabelas viram listas empilhadas (vertical) */
-    table thead {
+    body:not(.admin) table thead {
         display: none;
     }
     
-    table td {
+    body:not(.admin) table td {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -688,7 +691,7 @@ table td.acao{text-align:right;white-space:nowrap}
         text-align: right;
     }
     
-    table td::before {
+    body:not(.admin) table td::before {
         content: attr(data-label);
         font-weight: bold;
         color: var(--primary-color);
@@ -698,9 +701,9 @@ table td.acao{text-align:right;white-space:nowrap}
         flex: none;
     }
     
-    table tbody tr:nth-child(even) td { background: #f7f8fc; }
+    body:not(.admin) table tbody tr:nth-child(even) td { background: #f7f8fc; }
     
-    table tfoot td {
+    body:not(.admin) table tfoot td {
         display: flex;
         justify-content: space-between;
     }
@@ -708,15 +711,16 @@ table td.acao{text-align:right;white-space:nowrap}
 
 /* ===== LEITURA VERTICAL (opcao em Configuracoes) =====
    Em vez de deslizar a tabela para o lado, as linhas viram
-   cartoes empilhados de cima para baixo - em qualquer tela. */
-html[data-leitura="vertical"] .tab-wrap{overflow-x:visible}
-html[data-leitura="vertical"] .tab-wrap > table{min-width:0}
-html[data-leitura="vertical"] table thead{display:none}
-html[data-leitura="vertical"] table td{
+   cartoes empilhados de cima para baixo - em qualquer tela.
+   So no site do cliente: no painel ela embaralha as colunas. */
+html[data-leitura="vertical"] body:not(.admin) .tab-wrap{overflow-x:visible}
+html[data-leitura="vertical"] body:not(.admin) .tab-wrap > table{min-width:0}
+html[data-leitura="vertical"] body:not(.admin) table thead{display:none}
+html[data-leitura="vertical"] body:not(.admin) table td{
     display:flex;justify-content:space-between;align-items:center;
     gap:12px;padding:10px 15px;border-bottom:2px solid #eee;text-align:right;
 }
-html[data-leitura="vertical"] table td::before{
+html[data-leitura="vertical"] body:not(.admin) table td::before{
     content:attr(data-label);
     font-weight:bold;
     color:var(--primary-color);
@@ -725,11 +729,11 @@ html[data-leitura="vertical"] table td::before{
     margin-bottom:0;
     flex:none;
 }
-html[data-leitura="vertical"] table tbody tr:nth-child(even) td{background:#f7f8fc}
-html[data-leitura="vertical"] table tfoot td{display:flex;justify-content:space-between}
-html[data-leitura="vertical"][data-theme="dark"] table td{border-bottom-color:#2f3456}
-html[data-leitura="vertical"][data-theme="dark"] table tbody tr:nth-child(even) td{background:#222643}
-html[data-leitura="vertical"][data-theme="dark"] table td::before{color:#ffb822}
+html[data-leitura="vertical"] body:not(.admin) table tbody tr:nth-child(even) td{background:#f7f8fc}
+html[data-leitura="vertical"] body:not(.admin) table tfoot td{display:flex;justify-content:space-between}
+html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table td{border-bottom-color:#2f3456}
+html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table tbody tr:nth-child(even) td{background:#222643}
+html[data-leitura="vertical"][data-theme="dark"] body:not(.admin) table td::before{color:#ffb822}
 
 /* ===== AGENTS.md: MODO MOBILE VERTICAL =====
    O padrao do projeto e WIDTH (tabela rolavel); o FIXED entra
@@ -742,14 +746,14 @@ html[data-leitura="vertical"][data-theme="dark"] table td::before{color:#ffb822}
         position:fixed !important;
         top:0;left:0;right:0;width:100%;z-index:100;
     }
-    html[data-leitura="vertical"] table tbody,
-    html[data-leitura="vertical"] table tbody tr,
-    html[data-leitura="vertical"] table td{height:100%}
+    html[data-leitura="vertical"] body:not(.admin) table tbody,
+    html[data-leitura="vertical"] body:not(.admin) table tbody tr,
+    html[data-leitura="vertical"] body:not(.admin) table td{height:100%}
 
     /* cabecalho de secao (ex.: "Nossa frota") continua aparecendo
        uma vez so, sem repetir o titulo das colunas */
-    html[data-leitura="vertical"] table tr.tb-secao{height:auto}
-    html[data-leitura="vertical"] table tr.tb-secao th{
+    html[data-leitura="vertical"] body:not(.admin) table tr.tb-secao{height:auto}
+    html[data-leitura="vertical"] body:not(.admin) table tr.tb-secao th{
         display:block;text-align:left;padding:12px 15px;
         font-weight:800;color:var(--primary-color);
     }

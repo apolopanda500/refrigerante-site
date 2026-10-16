@@ -205,7 +205,16 @@ vindo pela nuvem para os dois.
 
 **Minimizar no painel:** os blocos longos (editar preços, ferramentas,
 configurações, bot, preços na nuvem) têm botão **Minimizar**; o editor de preços
-vem recolhido por padrão. Estado em `vendedorPrefs.miniCards`.
+vem recolhido por padrão. Estado em `vendedorPrefs.miniCards`. Nunca escreva
+código dentro de `<script src="...">`: o navegador ignora o conteúdo inline e o
+botão parece morto (o teste 06 fiscaliza isso).
+
+**Separação loja × painel (não misturar):**
+- `html[data-leitura="vertical"]` e o `@media (max-width:768px)` de tabela do
+  `style.css` só valem com `body:not(.admin)`. O painel tem a própria leitura
+  (cartão aos 720px, rolagem no PC) e **não** oferece o modo vertical.
+- O painel não recebe `data-leitura` (`theme.js` ignora no `admin.html`).
+- A faixa flutuante de ofertas (`avisoOferta`) não aparece no painel.
 
 **Hora detalhada:** `dataHoraSegundos()` (com segundos), `tempoDesde()` ("há 2 h")
 e `tick()` Mostram no painel, no cartão do cliente e na mensagem do Telegram

@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261015d">
+<link rel="manifest" href="manifest-vendedor.json?v=20261015e">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015d">
-<script src="theme.js?v=20261015d"></script>
+<link rel="stylesheet" href="style.css?v=20261015e">
+<script src="theme.js?v=20261015e"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -321,9 +321,9 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 
     <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-file-lines"></i> Anotações da loja</h4>
     <p style="font-size:.84rem;color:#777;margin:0 0 8px">Lista de compras, combinado com fornecedor, telefone de cliente, olho do dia... fica salvo aqui.</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:8px">
-      <div class="campo" style="flex:1;min-width:180px"><label>Título da anotação</label><input id="notasTitulo" type="text" placeholder="Ex.: Lista de compras da quarta"></div>
-      <div class="campo" style="min-width:170px"><label>Data</label><input id="notasData" type="date"></div>
+    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px;align-items:end;margin-bottom:8px">
+      <div class="campo"><label for="notasTitulo">Título da anotação</label><input id="notasTitulo" type="text" placeholder="Ex.: Lista de compras da quarta" style="width:100%;min-height:48px;padding:12px 14px;font-size:1rem"></div>
+      <div class="campo"><label for="notasData">Data</label><input id="notasData" type="date" style="width:100%;min-height:48px;padding:12px 14px;font-size:1rem"></div>
     </div>
     <textarea id="notasLoja" rows="6" placeholder="Ex.: ligar para o fornecedor de chopp às 8h&#10;Cliente Michele: trocar embalagem&#10;Faltando: barbear..."></textarea>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center">
@@ -366,18 +366,20 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 
     <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-text-height"></i> Tamanho da letra do painel</h4>
     <div class="opcoes" id="opcoesFonteVendedor">
-      <button class="op-btn" data-v="p" onclick="setFonteVendedor(this)">Pequena</button>
-      <button class="op-btn" data-v="normal" onclick="setFonteVendedor(this)">Normal</button>
-      <button class="op-btn" data-v="g" onclick="setFonteVendedor(this)">Grande</button>
-      <button class="op-btn" data-v="gg" onclick="setFonteVendedor(this)">Bem grande</button>
+      <button class="op-btn op-fonte" data-v="pequeno" onclick="setFonteVendedor(this)"><span style="font-size:.8rem">A</span><span style="font-size:.8rem">-</span></button>
+      <button class="op-btn op-fonte" data-v="normal" onclick="setFonteVendedor(this)"><span style="font-size:1rem">A</span></button>
+      <button class="op-btn op-fonte" data-v="grande" onclick="setFonteVendedor(this)"><span style="font-size:1.2rem">A</span><span style="font-size:1.2rem">+</span></button>
+      <button class="op-btn op-fonte" data-v="muitogrande" onclick="setFonteVendedor(this)"><span style="font-size:1.4rem">A</span><span style="font-size:1.4rem">++</span></button>
     </div>
     <p style="font-size:.82rem;color:#777;margin:6px 0 0">Valendo só no painel. O cliente continua com a letra dele.</p>
 
-    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-table"></i> Leitura das tabelas do painel</h4>
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-table"></i> Tabela de pedidos no celular</h4>
     <div class="opcoes" id="opcoesLeituraVendedor">
-      <button class="op-btn" data-v="horizontal" onclick="setLeituraVendedor(this)">Rolagem normal</button>
-      <button class="op-btn" data-v="vertical" onclick="setLeituraVendedor(this)">Cartões empilhados</button>
+      <button class="op-btn" data-v="auto" onclick="setLeituraVendedor(this)"><i class="fa fa-mobile-screen"></i> Automática (recomendado)</button>
     </div>
+    <p style="font-size:.82rem;color:#777;margin:6px 0 0">No celular a tabela vira lista com os rótulos de cada
+      coluna. No PC ela fica em rolagem normal. Este painel <b>não</b> usa o modo
+      "vertical" do site do cliente — aqui ele embaralhava as colunas.</p>
 
     <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-sync-alt"></i> Sincronização com a nuvem</h4>
     <div class="opcoes" id="opcoesSyncVendedor">
@@ -413,8 +415,8 @@ body.admin .status-badge,body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261015d"></script>
-<script src="telegram.js?v=20261015d"></script>
+<script src="script.js?v=20261015e"></script>
+<script src="telegram.js?v=20261015e"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -523,8 +525,11 @@ function setFonteVendedor(btn) {
     if (typeof aplicarTema === "function") aplicarTema();
 }
 function setLeituraVendedor(btn) {
-    salvarPrefVendedor("cfgLeitura", btn.dataset.v);
-    marcarOpcaoVendedor("opcoesLeituraVendedor", btn.dataset.v);
+    /* o painel NAO usa o modo vertical do cliente: aqui ele quebrava
+       as colunas. A tabela do painel ja vira lista sozinho no celular
+       (regra do proprio painel, em @media max-width:720px). */
+    salvarPrefVendedor("cfgLeitura", "auto");
+    marcarOpcaoVendedor("opcoesLeituraVendedor", "auto");
     if (typeof aplicarTema === "function") aplicarTema();
 }
 function setSyncVendedor(btn) {
@@ -642,7 +647,7 @@ function marcarConfigVendedor() {
     var p = {};
     try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch (e) {}
     marcarOpcaoVendedor("opcoesFonteVendedor", p.cfgFonteTamanho || "normal");
-    marcarOpcaoVendedor("opcoesLeituraVendedor", p.cfgLeitura || "horizontal");
+    marcarOpcaoVendedor("opcoesLeituraVendedor", "auto");
     marcarOpcaoVendedor("opcoesSyncVendedor", String(p.cfgSyncMs || 60000));
 }
 
@@ -1180,9 +1185,11 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261015d"></script>
-<script src="firebase-appcheck.js?v=20261015d"></script>
-<script src="app-update.js?v=20261015d">/* ============================================================
+<script src="app.js?v=20261015e"></script>
+<script src="firebase-appcheck.js?v=20261015e"></script>
+<script src="app-update.js?v=20261015e"></script>
+<script>
+/* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
    Vale so no painel do vendedor: o estado fica em
    vendedorPrefs.miniCards e NUNCA chega ao site do cliente
