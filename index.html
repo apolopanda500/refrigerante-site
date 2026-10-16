@@ -138,6 +138,26 @@ a{text-decoration:none;color:inherit}
 <p style="font-size:.75rem;color:#8a8a8a;margin-top:6px">Loja de segunda a sexta Â· pedidos das 08:50 Ã s 15:00 Â· entrega nas ruas das 06:00 Ã s 18:00 Â· sÃ¡bado Ã© sÃ³ entrega</p>
 </footer>
 
+<div id="btnRecuperacao" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:99999;background:#ff3d3d;color:#fff;padding:14px 24px;border-radius:30px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);">
+  <i class="fa fa-bolt"></i> Limpar cache e recarregar
+</div>
+<style>
+#btnRecuperacao:hover{background:#e52d2d}
+</style>
+<script>
+document.getElementById('btnRecuperacao')?.addEventListener('click', function(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(r){ r.unregister(); });
+      sessionStorage.setItem('swLimpo','1');
+      location.reload();
+    });
+  } else {
+    location.reload();
+  }
+});
+</script>
+
 <script defer src="conta.js?v=20261016m"></script>
 <script defer src="loja.js?v=20261016m"></script>
 <script defer src="app.js?v=20261016m"></script>
@@ -164,7 +184,6 @@ a{text-decoration:none;color:inherit}
   navigator.serviceWorker.getRegistrations().then(function(regs){
     regs.forEach(function(reg){
       reg.unregister().then(function(){
-        /* desregistrou o antigo; recarrega para pegar o novo */
         if (!sessionStorage.getItem('swLimpo')) {
           sessionStorage.setItem('swLimpo', '1');
           location.reload();
@@ -173,6 +192,16 @@ a{text-decoration:none;color:inherit}
     });
   });
 })();
+
+// Botao de emergencia se houver erro de carregamento
+window.addEventListener('error', function(){
+  var b = document.getElementById('btnRecuperacao');
+  if(b) b.style.display = 'block';
+});
+window.addEventListener('unhandledrejection', function(){
+  var b = document.getElementById('btnRecuperacao');
+  if(b) b.style.display = 'block';
+});
 </script>
 </body>
 </html>
