@@ -89,15 +89,15 @@ var BANNERS = [
     {
         pos:"topo", acao:"frete", alvo:"",
         icone:"fa fa-truck",
-        titulo:"Frete grÃ¡tis acima de R$ 150",
-        texto:"Mostre quanto vocÃª paga de frete na sua regiÃ£o.",
+        titulo:"Frete grátis acima de R$ 150",
+        texto:"Mostre quanto você paga de frete na sua região.",
         cor:"#3d4465", ativo:true
     },
     {
         pos:"topo", acao:"categoria", alvo:"2l",
         icone:"fa fa-box-open",
         titulo:"Refrigerantes 2L - pacote com 6",
-        texto:"Do GuaranÃ¡ Ã  Cola. Clique e veja os preÃ§os.",
+        texto:"Do Guaraná à Cola. Clique e veja os preços.",
         cor:"#646c9a", ativo:true
     },
     {
@@ -111,7 +111,7 @@ var BANNERS = [
         pos:"meio", acao:"regiao", alvo:"",
         icone:"fa fa-map-marker-alt",
         titulo:"Qual o dia de entrega do seu bairro?",
-        texto:"SeropÃ©dica, Japeri, Engenho Pedreira e Paracambi.",
+        texto:"Seropédica, Japeri, Engenho Pedreira e Paracambi.",
         cor:"#1dc9b7", ativo:true
     },
     {
@@ -120,7 +120,7 @@ var BANNERS = [
         pos:"meio", acao:"resumo", alvo:"",
         icone:"fa fa-receipt",
         titulo:"Acompanhe seus pedidos",
-        texto:"Veja o status, a data e a hora de tudo que vocÃª comprou.",
+        texto:"Veja o status, a data e a hora de tudo que você comprou.",
         cor:"#646c9a", ativo:false
     },
     {
@@ -188,18 +188,18 @@ var t = (typeof horarioDeHoje === "function") ? horarioDeHoje() : null;
     var maior = 0;
     if (typeof REGIOES !== "undefined") REGIOES.forEach(function (r) { if (typeof r.frete === "number" && r.frete > maior) maior = r.frete; });
     mostrarModal("Frete e entregas",
-        '<p><b>Frete grÃ¡tis</b> em pedidos a partir de <b>' + formatBRL(minimo) + '</b>.</p>'
-        + '<p>Antes disso o frete varia por regiÃ£o: de <b>' + formatBRL(menor) + '</b> a <b>' + formatBRL(maior) + '</b>. '
-        + 'VocÃª escolhe a regiÃ£o na hora do pedido e o valor aparece antes de confirmar.</p>'
-        + '<p><b>Entrega nas ruas:</b> das ' + horaTexto(HORARIOS.entrega.abre, 0) + ' Ã s ' + horaTexto(HORARIOS.entrega.fecha, 0)
-        + ', somente nos dias de cada regiÃ£o. <b>Pedidos</b> das '
+        '<p><b>Frete grátis</b> em pedidos a partir de <b>' + formatBRL(minimo) + '</b>.</p>'
+        + '<p>Antes disso o frete varia por região: de <b>' + formatBRL(menor) + '</b> a <b>' + formatBRL(maior) + '</b>. '
+        + 'Você escolhe a região na hora do pedido e o valor aparece antes de confirmar.</p>'
+        + '<p><b>Entrega nas ruas:</b> das ' + horaTexto(HORARIOS.entrega.abre, 0) + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0)
+        + ', somente nos dias de cada região. <b>Pedidos</b> das '
         + horaTexto(horaDeMinutos(HORA_ABRE_PEDIDOS).h, horaDeMinutos(HORA_ABRE_PEDIDOS).m)
-        + ' Ã s ' + horaTexto(horaDeMinutos(HORA_FECHA_PEDIDOS).h, horaDeMinutos(HORA_FECHA_PEDIDOS).m) + '.</p>'
+        + ' às ' + horaTexto(horaDeMinutos(HORA_FECHA_PEDIDOS).h, horaDeMinutos(HORA_FECHA_PEDIDOS).m) + '.</p>'
         + (st ? '<p>Agora: ' + st + '</p>' : '')
-        + '<h4>RegiÃµes e dias</h4>' + linhas);
+        + '<h4>Regiões e dias</h4>' + linhas);
 }
 
-/* ---------- informacao das regiÃµes (real) ---------- */
+/* ---------- informacao das regiões (real) ---------- */
 function mostrarInfoRegioes(){
     var hoje = new Date().getDay();
     var linhas = "";
@@ -209,10 +209,10 @@ function mostrarInfoRegioes(){
         linhas += '<div class="info-linha">'
                 + '<b>' + r.nome + (attendsHoje ? ' <em>(hoje)</em>' : '') + '</b>'
                 + '<span>' + r.diasTexto + ' &middot; ' + r.horario + '</span>'
-                + '<small>' + (attendsHoje ? 'Entrega hoje mesmo' : 'PrÃ³xima: ' + NOMES_DIA_LONGOS[prox]) + '</small>'
+                + '<small>' + (attendsHoje ? 'Entrega hoje mesmo' : 'Próxima: ' + NOMES_DIA_LONGOS[prox]) + '</small>'
                 + '</div>';
     });
-    mostrarModal("RegiÃµes de atendimento", linhas);
+    mostrarModal("Regiões de atendimento", linhas);
 }
 
 /* ---------- cupom ---------- */
@@ -248,8 +248,8 @@ function mostrarModal(titulo, html){
 /* clique na foto/informacao do caminhao: abre a imagem bem maior */
 function ampliarCaminhao(src, nome) {
     if (!src) return;
-    mostrarModal("CaminhÃ£o " + (nome || ""),
-        '<img src="' + src + '" alt="CaminhÃ£o ' + (nome || "") + '" loading="eager"'
+    mostrarModal("Caminhão " + (nome || ""),
+        '<img src="' + src + '" alt="Caminhão ' + (nome || "") + '" loading="eager"'
         + ' style="width:100%;display:block;border-radius:10px">');
 }
 
@@ -276,7 +276,7 @@ function pintarTabelaOfertas() {
            + '<td data-label="Oferta" class="tb-oferta"><span class="of-ic" style="background:' + b.cor + '">'
            + '<i class="' + b.icone + '"></i></span><b>' + b.titulo + '</b></td>'
            + '<td data-label="Detalhe">' + b.texto + '</td>'
-           + '<td data-label="AÃ§Ã£o" class="acao"><button type="button" class="of-btn" style="--of-cor:' + b.cor + '"'
+           + '<td data-label="Ação" class="acao"><button type="button" class="of-btn" style="--of-cor:' + b.cor + '"'
            + ' onclick="executarBanner(BANNERS[' + i + '])">'
            + (acoes[b.acao] || "Abrir") + ' <i class="fa fa-chevron-right"></i></button></td>'
            + '</tr>';
@@ -324,7 +324,7 @@ for(var i=0;i<it.length;i++)t+=(it[i].qty||0);
 var a=document.getElementById("cBag"),b=document.getElementById("fBag");
 if(a)a.textContent=t;if(b)b.textContent=t}catch(e){}}
 function aC(bt){try{var cd=bt.parentNode.parentNode;var q=parseInt(cd.querySelector(".qv").textContent)||0;
-if(q<=0){alert("Use os botÃµes + e - para escolher a quantidade.");return}
+if(q<=0){alert("Use os botões + e - para escolher a quantidade.");return}
 var pid=cd.getAttribute("data-pid").split(".");var pr=PD[parseInt(pid[1])];if(!pr)return;
 var pv=0;var mm=String(pr.pr).match(/[\d.,]+/);if(mm)pv=parseFloat(mm[0].replace(/\./g,"").replace(",","."));
 var ct=JSON.parse(localStorage.getItem("refrigeranteCart")||"[]");
@@ -356,7 +356,7 @@ function aplicarCatalogoJSON(cat) {
     if (novos.length < 3) return false;
 
     PD = novos;
-    /* catÃ¡logo novo na mÃ£o: a IA repinta as recomendaÃ§Ãµes na hora */
+    /* catálogo novo na mão: a IA repinta as recomendações na hora */
     if (typeof iaRepintarRecomendados === "function") { try { iaRepintarRecomendados(); } catch (e) { /* proposital: nao pode travar a tela */ } }
     if (cat.grupos && cat.grupos.length) {
         CT = cat.grupos.map(function (g) { return { id: g.id, nm: g.nm, ic: g.ic }; });
@@ -450,27 +450,27 @@ function pintarHorario() {
     var statusLoja;
     var lojaAbertaDia = (typeof lojaAbertaNoDia === "function") ? lojaAbertaNoDia(a2.dia) : true;
     if (!lojaAbertaDia) {
-        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-door-closed"></i> Loja fechada ' + (a2.dia === 6 ? "no sÃ¡bado (sÃ³ entrega)" : "no domingo") + '</div>';
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-door-closed"></i> Loja fechada ' + (a2.dia === 6 ? "no sábado (só entrega)" : "no domingo") + '</div>';
     } else if (lojaOk) {
         statusLoja = '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Loja aberta agora</div>';
     } else if (a2.hh < HORARIOS.loja.abre) {
         statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja abre ' + horaTexto(HORARIOS.loja.abre, 0) + '</div>';
     } else {
-        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja fechou Ã s ' + horaTexto(HORARIOS.loja.fecha, 0) + '</div>';
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja fechou às ' + horaTexto(HORARIOS.loja.fecha, 0) + '</div>';
     }
 
     /* ---- status dos PEDIDOS ---- */
     var statusPedido;
     if (!lojaAbertaDia) {
         statusPedido = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> '
-            + (a2.dia === 6 ? "SÃ¡bado Ã© sÃ³ dia de entrega" : "NÃ£o abrem pedidos")
+            + (a2.dia === 6 ? "Sábado é só dia de entrega" : "Não abrem pedidos")
             + '</div>';
     } else if (soPedidos) {
         statusPedido = '<div class="wgt-status pedido"><i class="fa fa-calendar-check"></i> Dia de pedidos: ' + pedidoHoje + '</div>';
     } else if (abrindo.length) {
         statusPedido = '<div class="wgt-status pedido"><i class="fa fa-cart-plus"></i> Pedidos abertos: ' + pedidoHoje + '</div>';
     } else {
-        statusPedido = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> Hoje nÃ£o abrem pedidos</div>';
+        statusPedido = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> Hoje não abrem pedidos</div>';
     }
 
     /* ---- status da ENTREGA ---- */
@@ -480,15 +480,15 @@ function pintarHorario() {
     } else if (entregaOk) {
         statusEntrega = '<div class="wgt-status aberto"><i class="fa fa-truck"></i> Freteiro entregando agora</div>';
     } else if (a2.hh < HORARIOS.entrega.abre) {
-        statusEntrega = '<div class="wgt-status pedido"><i class="fa fa-sun"></i> Entrega comeÃ§a Ã s ' + horaTexto(HORARIOS.entrega.abre, 0) + '</div>';
+        statusEntrega = '<div class="wgt-status pedido"><i class="fa fa-sun"></i> Entrega começa às ' + horaTexto(HORARIOS.entrega.abre, 0) + '</div>';
     } else {
-        statusEntrega = '<div class="wgt-status fechado"><i class="fa fa-moon"></i> Entrega encerrada Ã s ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</div>';
+        statusEntrega = '<div class="wgt-status fechado"><i class="fa fa-moon"></i> Entrega encerrada às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</div>';
     }
 
     var hoje = rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "Nenhuma";
     var prox = (typeof proximoDiaAtendente === "function") ? proximoDiaAtendente() : 2;
 
-    el.innerHTML = '<h3><i class="fa fa-clock"></i> HorÃ¡rios</h3>'
+    el.innerHTML = '<h3><i class="fa fa-clock"></i> Horários</h3>'
         + '<div class="hr-bloco">'
         + '  <div class="hr-titulo"><i class="fa fa-store"></i> Loja (empresa)</div>'
         + statusLoja
@@ -497,17 +497,17 @@ function pintarHorario() {
         + '<div class="hr-bloco">'
         + '  <div class="hr-titulo"><i class="fa fa-cart-plus"></i> Pedidos</div>'
         + statusPedido
-        + '  <div class="wgt-linha"><span>RegiÃµes hoje</span><b>' + pedidoHoje + '</b></div>'
+        + '  <div class="wgt-linha"><span>Regiões hoje</span><b>' + pedidoHoje + '</b></div>'
         + '</div>'
         + '<div class="hr-bloco">'
         + '  <div class="hr-titulo"><i class="fa fa-truck"></i> Entrega nas ruas</div>'
         + statusEntrega
         + '  <div class="wgt-linha"><span>Entrega das</span><b>' + horaTexto(HORARIOS.entrega.abre, 0) + '</b></div>'
-        + '  <div class="wgt-linha"><span>Entrega atÃ©</span><b>' + horaTexto(HORARIOS.entrega.fecha, 0) + '</b></div>'
+        + '  <div class="wgt-linha"><span>Entrega até</span><b>' + horaTexto(HORARIOS.entrega.fecha, 0) + '</b></div>'
         + '</div>'
-        + '<div class="hr-aviso"><i class="fa fa-box"></i> <span>O pedido Ã© feito <b>um dia antes</b> da entrega: o caminhÃ£o carrega na vÃ©spera.</span></div>'
+        + '<div class="hr-aviso"><i class="fa fa-box"></i> <span>O pedido é feito <b>um dia antes</b> da entrega: o caminhão carrega na véspera.</span></div>'
         + '<div class="wgt-linha"><span>Entrega hoje (' + NOMES_DIA_LONGOS[a2.dia] + ')</span><b>' + hoje + '</b></div>'
-        + (rs.length ? '' : '<div class="wgt-linha"><span>PrÃ³xima entrega</span><b>' + NOMES_DIA_LONGOS[prox] + '</b></div>');
+        + (rs.length ? '' : '<div class="wgt-linha"><span>Próxima entrega</span><b>' + NOMES_DIA_LONGOS[prox] + '</b></div>');
 }
 
 /* ============================================
@@ -526,22 +526,22 @@ function pintarFaixaRegiao() {
     if (!regra.liberado) {
         el.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> '
             + regra.texto
-            + ' Atendemos das <b>08:50</b> Ã s <b>15:00</b>, de segunda a sexta.</span>';
+            + ' Atendemos das <b>08:50</b> às <b>15:00</b>, de segunda a sexta.</span>';
         return;
     }
 
     if (typeof lojaAbertaNoDia === "function" && !lojaAbertaNoDia(t.dia)) {
         el.innerHTML = '<i class="fa fa-truck"></i> <span><b>'
-            + (t.dia === 6 ? "SÃ¡bado Ã© sÃ³ dia de entrega." : "A loja fecha no domingo.")
+            + (t.dia === 6 ? "Sábado é só dia de entrega." : "A loja fecha no domingo.")
             + '</b> '
             + (rs.length ? 'Hoje entregamos em <b>' + rs.map(function (r) { return r.nome; }).join(", ") + '</b>. ' : '')
-            + 'Pedidos de segunda a sexta, das <b>08:50</b> Ã s <b>15:00</b>.</span>';
+            + 'Pedidos de segunda a sexta, das <b>08:50</b> às <b>15:00</b>.</span>';
         return;
     }
 
     if (soPedidos) {
-        el.innerHTML = '<i class="fa fa-clipboard-list"></i> <span><b>Hoje Ã© dia de pedidos.</b> '
-            + 'Sem entrega hoje. O pedido Ã© feito um dia antes da entrega.'
+        el.innerHTML = '<i class="fa fa-clipboard-list"></i> <span><b>Hoje é dia de pedidos.</b> '
+            + 'Sem entrega hoje. O pedido é feito um dia antes da entrega.'
             + (abrindo.length ? ' Abrindo agora para: <b>' + abrindo.map(function (r) { return r.nome; }).join(", ") + '</b>.' : '')
             + '</span>';
         return;
@@ -550,7 +550,7 @@ function pintarFaixaRegiao() {
         el.innerHTML = '<i class="fa fa-calendar-check"></i> <span><b>Pedidos abertos para '
             + abrindo.map(function (r) { return r.nome; }).join(", ")
             + '</b>. A entrega sai no dia seguinte ('
-            + (rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "prÃ³ximo dia de entrega")
+            + (rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "próximo dia de entrega")
             + ').</span>';
         return;
     }
@@ -560,16 +560,16 @@ function pintarFaixaRegiao() {
         el.innerHTML = '<i class="fa fa-truck"></i> <span>Entrega hoje para <b>'
             + rs.map(function (r) { return r.nome; }).join(", ")
             + '</b>. Pedidos de hoje saem <b>'
-            + (typeof NOMES_DIA_LONGOS !== "undefined" ? NOMES_DIA_LONGOS[proxDia] : "amanhÃ£")
+            + (typeof NOMES_DIA_LONGOS !== "undefined" ? NOMES_DIA_LONGOS[proxDia] : "amanhã")
             + '</b>' + (abreAmanha.length ? ' para ' + abreAmanha.map(function (r) { return r.nome; }).join(", ") : '')
             + '.</span>';
         return;
     }
     if (t.hh < HORARIOS.loja.abre) {
-        el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja abre Ã s <b>'
+        el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja abre às <b>'
             + horaTexto(HORARIOS.loja.abre, 0) + '</b>. Enquanto isso monte o carrinho e agende.</span>';
     } else {
-        el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja fecha Ã s <b>'
+        el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja fecha às <b>'
             + horaTexto(HORARIOS.loja.fecha, 0) + '</b>. Os pedidos de hoje saem na entrega de <b>'
             + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '</b>.</span>';
     }
@@ -620,7 +620,7 @@ function pintarRegioes(){
         var tag = '<span class="reg-tag fecha"><i class="fa fa-times"></i> fechado</span>';
         if (entregaHoje) tag = '<span class="reg-tag hoje"><i class="fa fa-truck"></i> entrega hoje</span>';
         else if (abreHoje) tag = '<span class="reg-tag pedido"><i class="fa fa-cart-plus"></i> pedidos abertos</span>';
-        else if (abreAmanha) tag = '<span class="reg-tag amanha"><i class="fa fa-clock"></i> amanhÃ£</span>';
+        else if (abreAmanha) tag = '<span class="reg-tag amanha"><i class="fa fa-clock"></i> amanhã</span>';
 
         h += '<div class="reg-cel' + (entregaHoje ? " cel-hoje" : (abreHoje ? " cel-pedido" : "")) + '">'
            +   '<div class="reg-cab"><b>' + r.nome + '</b>' + tag + '</div>'
@@ -629,15 +629,15 @@ function pintarRegioes(){
            +     '<i class="fa fa-arrow-right seta"></i>'
            +     '<div class="etapa' + (entregaHoje ? " on" : "") + '"><span class="et-dia">' + r.diasTexto + '</span><span class="et-txt">Entrega</span></div>'
            +   '</div>'
-           +   '<div class="reg-detalhe">entrega <b>' + r.diasTexto.toLowerCase() + '</b> Â· ' + r.horario + '</div>'
+           +   '<div class="reg-detalhe">entrega <b>' + r.diasTexto.toLowerCase() + '</b> · ' + r.horario + '</div>'
            +   '<div class="reg-obs">' + r.obs + '</div>'
            + '</div>';
     });
     h += '</div>';
 
     h += '<div class="reg-nota"><i class="fa fa-info-circle"></i> '
-       + 'O pedido Ã© sempre <b>um dia antes</b> da entrega. VocÃª pode registrar o pedido '
-       + 'fora do dia e o vendedor agenda para a prÃ³xima carga.</div>';
+       + 'O pedido é sempre <b>um dia antes</b> da entrega. Você pode registrar o pedido '
+       + 'fora do dia e o vendedor agenda para a próxima carga.</div>';
 
     el.innerHTML = '<h3><i class="fa fa-map-marker-alt"></i> Pedidos e entregas</h3>' + h;
 }
@@ -680,7 +680,7 @@ function pintarCalendarioSemanal() {
         var ehHoje = d === hoje;
 
         var estado = !lojaOk
-            ? (d === 6 ? "sÃ³ entrega" : "fechado")
+            ? (d === 6 ? "só entrega" : "fechado")
             : (d === 1 ? "monta pedidos" : "aberta");
 
         h += '<div class="cal-dia' + (ehHoje ? " hoje" : "") + (lojaOk ? "" : " fechada") + '">'
@@ -733,31 +733,31 @@ function pintarTabelaGeral(){
         var quando = '<span class="tb-passo"><i class="fa fa-cart-plus"></i> ' + textoDiasPedido(r) + '</span>'
                    + '<i class="fa fa-arrow-right tb-seta"></i>'
                    + '<span class="tb-passo"><i class="fa fa-truck"></i> ' + r.diasTexto + '</span>';
-        var detalhe = r.horario + ' Â· frete <b>' + formatBRL(r.frete) + '</b>';
+        var detalhe = r.horario + ' · frete <b>' + formatBRL(r.frete) + '</b>';
         return [marca, quando, detalhe];
     });
 
 /* ---- 2. horarios ---- */
     var linhasHorario = [
         ['<b>A loja funciona</b>', '<span class="tb-passo"><i class="fa fa-calendar-check"></i> segunda a sexta</span>',
-            'SÃ¡bado e domingo a loja fica fechada. No sÃ¡bado sai <b>somente a entrega</b>.'],
+            'Sábado e domingo a loja fica fechada. No sábado sai <b>somente a entrega</b>.'],
 ['<b>Pedidos</b>', '<span class="tb-passo"><i class="fa fa-clock"></i> '
             + horaTexto(horaDeMinutos(HORA_ABRE_PEDIDOS).h, horaDeMinutos(HORA_ABRE_PEDIDOS).m)
-            + ' Ã s ' + horaTexto(horaDeMinutos(HORA_FECHA_PEDIDOS).h, horaDeMinutos(HORA_FECHA_PEDIDOS).m) + '</span>',
-            'Fora desse horÃ¡rio os pedidos ficam pausados no site.'],
+            + ' às ' + horaTexto(horaDeMinutos(HORA_FECHA_PEDIDOS).h, horaDeMinutos(HORA_FECHA_PEDIDOS).m) + '</span>',
+            'Fora desse horário os pedidos ficam pausados no site.'],
         ['<b>Entrega nas ruas</b>', '<span class="tb-passo"><i class="fa fa-truck"></i> '
-            + horaTexto(HORARIOS.entrega.abre, 0) + ' Ã s ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</span>',
-            'O pedido Ã© feito <b>um dia antes</b>: o caminhÃ£o carrega na vÃ©spera.']
+            + horaTexto(HORARIOS.entrega.abre, 0) + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</span>',
+            'O pedido é feito <b>um dia antes</b>: o caminhão carrega na véspera.']
     ];
 
     /* ---- 3. pagamento e entrega ---- */
     var pix = (typeof PIX_CHAVE !== "undefined") ? PIX_CHAVE : "";
     var linhasPAG = [
         ['<b>Formas de pagamento</b>', '<span class="tb-passo"><i class="fa fa-qrcode"></i> Pix</span> <span class="tb-passo"><i class="fa fa-money-bill-wave"></i> Dinheiro</span>',
-            'Sem cartÃ£o de crÃ©dito. O Pix Ã© confirmado na hora.'],
+            'Sem cartão de crédito. O Pix é confirmado na hora.'],
         ['<b>Bairros atendidos</b>', '<span class="tb-passo">' + BAIRROS_ATENDIDOS_TEXTO + '</span>',
-            'Bairro fora da lista Ã© bloqueado na finalizaÃ§Ã£o do pedido.'],
-        ['<b>Frete grÃ¡tis</b>', '<span class="tb-passo"><i class="fa fa-gift"></i> a partir de ' + formatBRL(freteGratisMinimo()) + '</span>',
+            'Bairro fora da lista é bloqueado na finalização do pedido.'],
+        ['<b>Frete grátis</b>', '<span class="tb-passo"><i class="fa fa-gift"></i> a partir de ' + formatBRL(freteGratisMinimo()) + '</span>',
             'Acima disso o frete cai para R$ 0,00 no carrinho.']
     ];
 
@@ -767,7 +767,7 @@ function pintarTabelaGeral(){
             ? ' onclick="ampliarCaminhao(\'' + c.imagem + '\',\'' + c.corNome + '\')" style="cursor:zoom-in" title="Clique para ver a foto maior"'
             : '';
         var foto = c.imagem
-            ? '<img class="tb-cam-foto" src="' + c.imagem + '" alt="CaminhÃ£o ' + c.corNome + '" loading="lazy" onerror="this.style.opacity=\'0.3\';this.style.background=\'#232742\'"' + zoom + '>'
+            ? '<img class="tb-cam-foto" src="' + c.imagem + '" alt="Caminhão ' + c.corNome + '" loading="lazy" onerror="this.style.opacity=\'0.3\';this.style.background=\'#232742\'"' + zoom + '>'
             : '<span class="tb-cam-foto sem-foto"><i class="fa fa-truck"></i></span>';
         var regioes = (c.regioes || []).map(function (id) {
             var r = regiaoPorId(id);
@@ -775,15 +775,15 @@ function pintarTabelaGeral(){
         }).join(", ");
         return [foto + '<b class="tb-cam tb-cam-' + c.cor + '"' + zoom + '>' + c.corNome + '</b>',
                 '<span class="tb-passo">' + c.modelo + '</span>',
-                'Placa <b>' + c.placa + '</b> Â· ' + (c.motorista === "A INFORMAR" ? "motorista a informar" : c.motorista)
-                + (c.whatsapp ? ' Â· <a href="https://wa.me/' + c.whatsapp + '" target="_blank" rel="noopener">WhatsApp</a>' : '')
+                'Placa <b>' + c.placa + '</b> · ' + (c.motorista === "A INFORMAR" ? "motorista a informar" : c.motorista)
+                + (c.whatsapp ? ' · <a href="https://wa.me/' + c.whatsapp + '" target="_blank" rel="noopener">WhatsApp</a>' : '')
                 + (regioes ? '<br>Atende: ' + regioes : '')];
     });
 
     /* ---- 5. garantia ---- */
     var linhasGarantia = [
-        ['<b>Embalagem</b>', '<span class="tb-passo"><i class="fa fa-box"></i> conferida na saÃ­da</span>',
-            'Produto fechado e identificado na hora da separaÃ§Ã£o.'],
+        ['<b>Embalagem</b>', '<span class="tb-passo"><i class="fa fa-box"></i> conferida na saída</span>',
+            'Produto fechado e identificado na hora da separação.'],
         ['<b>Nota fiscal</b>', '<span class="tb-passo"><i class="fa fa-receipt"></i> simplicada</span>',
             'Comprovante entregue junto com a mercadoria.'],
         ['<b>Troca</b>', '<span class="tb-passo"><i class="fa fa-undo"></i> na hora da entrega</span>',
@@ -793,7 +793,7 @@ function pintarTabelaGeral(){
     var h = '<div class="tb-mini">'
           + '<button type="button" class="tb-mini-btn" onclick="alternarTabelaInfo()" aria-expanded="true">'
           + '<i class="fa fa-chevron-up" id="tbMiniIcon"></i>'
-          + '<span id="tbMiniTexto">Minimizar informaÃ§Ãµes</span>'
+          + '<span id="tbMiniTexto">Minimizar informações</span>'
           + '</button></div>'
           + '<div id="tbInfoCorpo" class="tb-info-corpo">'
           + '<div class="tab-wrap tab-graud"><table class="tabela-geral">'
@@ -803,7 +803,7 @@ function pintarTabelaGeral(){
           + '<th class="tb-c3">Detalhe</th>'
           + '</tr></thead><tbody>'
           + secao("Pedidos e entregas", "fa-map-marker-alt", linhasRegioes)
-          + secao("HorÃ¡rios de hoje", "fa-clock", linhasHorario)
+          + secao("Horários de hoje", "fa-clock", linhasHorario)
           + secao("Pagamento, frete e contato", "fa-file-invoice-dollar", linhasPAG)
           + secao("Nossa frota", "fa-truck", linhasFrota)
           + secao("Garantia", "fa-shield-alt", linhasGarantia)
@@ -839,7 +839,7 @@ function aplicarEstadoTabelaInfo() {
     var botao = (document.querySelector ? document.querySelector(".tb-mini-btn") : null);
     if (corpo) corpo.style.display = mini ? "none" : "";
     if (icone) icone.className = "fa " + (mini ? "fa-chevron-down" : "fa-chevron-up");
-    if (texto) texto.textContent = mini ? "Ver informaÃ§Ãµes da loja" : "Minimizar informaÃ§Ãµes";
+    if (texto) texto.textContent = mini ? "Ver informações da loja" : "Minimizar informações";
     if (botao) botao.setAttribute("aria-expanded", mini ? "false" : "true");
 }
 
