@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261016z">
+<link rel="manifest" href="manifest-vendedor.json?v=20261017a">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016z">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017a">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016z">
-<script src="theme.js?v=20261016z"></script>
+<link rel="stylesheet" href="style.css?v=20261017a">
+<script src="theme.js?v=20261017a"></script>
 
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -256,6 +256,25 @@ body.admin[data-leitura=vertical] .tabela-pedidos td[colspan]::before{content:no
 [data-fonte="grande"] .ficha-tick,
 [data-fonte="muitogrande"] .ficha-tick{min-height:42px;padding:10px 2px}
 [data-fonte="muitogrande"] .ficha-tick > i.fa-circle{font-size:.75rem;margin-top:.45em}
+
+/* Modo de leitura vertical: ticks ocupam a largura total do card */
+body.admin[data-leitura=vertical] .ficha-tick{width:100%;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+body.admin[data-leitura=vertical] .ficha-tick > i.fa-circle{margin-top:0}
+body.admin[data-leitura=vertical] .ficha-tick .sub{display:block;margin-top:2px}
+
+/* Botao minimizar ticks do vendedor */
+.tick-min-admin{background:none;border:none;color:var(--primary-color,#3d4465);font-size:.95rem;font-weight:800;padding:4px 12px;line-height:1;min-width:44px;min-height:44px;cursor:pointer}
+.tick-min-admin:hover{background:rgba(61,68,101,.1)}
+[data-theme="dark"] .tick-min-admin{color:#c3cae0}
+[data-theme="dark"] .tick-min-admin:hover{background:rgba(255,255,255,.08)}
+[data-theme="guara"] .tick-min-admin{color:#1b7f3b}
+[data-theme="guara"] .tick-min-admin:hover{background:rgba(27,127,59,.1)}
+[data-theme="rosa"] .tick-min-admin{color:#8e2f6b}
+[data-theme="rosa"] .tick-min-admin:hover{background:rgba(142,47,107,.1)}
+[data-theme="vermelho"] .tick-min-admin{color:#a11b0f}
+[data-theme="vermelho"] .tick-min-admin:hover{background:rgba(161,27,15,.1)}
+/* esconde ticks quando minimizado */
+.ticks-oculto{display:none!important}
 
 /* ===== campos grandes das ferramentas do vendedor ===== */
 .ferramenta-input{
@@ -585,8 +604,8 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261016z"></script>
-<script src="telegram.js?v=20261016z"></script>
+<script src="script.js?v=20261017a"></script>
+<script src="telegram.js?v=20261017a"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -1060,12 +1079,14 @@ function fichaPedido(p) {
     h += '<div class="ficha-linha"><b>Subtotal:</b> ' + formatBRL(p.subtotal)
         + ' &nbsp;&nbsp; <b>Total:</b> ' + formatBRL(p.total) + '</div>';
     if (p.historico && p.historico.length) {
-        h += '<div class="ficha-linha"><b>Acompanhamento:</b> <span class="sub">cada passo com a hora exata</span></div>';
+        h += '<div class="ficha-linha" style="display:flex;align-items:center;justify-content:space-between;"><b>Acompanhamento:</b> <span class="sub">cada passo com a hora exata</span> <button type="button" class="tick-min-admin" onclick="toggleTicksAdmin(\'' + p.id + '\')" title="Minimizar">—</button></div>';
+        h += '<div id="ticks-admin-' + p.id + '">';
         p.historico.slice().reverse().forEach(function (ev) {
             h += '<div class="ficha-tick"><i class="fa fa-circle"></i> ' + (STATUS_LABEL[ev.status] || ev.status)
                 + ' — ' + dataHoraSegundos(ev.quando)
                 + ' <span class="sub">(' + tempoDesde(ev.quando) + ')</span></div>';
         });
+        h += '</div>';
         var ultimo = p.historico[p.historico.length - 1];
         if (ultimo && ultimo.quando) {
             h += '<div class="ficha-linha"><b>Parado em:</b> ' + (STATUS_LABEL[ultimo.status] || ultimo.status)
@@ -1498,9 +1519,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261016z"></script>
-<script src="firebase-appcheck.js?v=20261016z"></script>
-<script src="app-update.js?v=20261016z"></script>
+<script src="app.js?v=20261017a"></script>
+<script src="firebase-appcheck.js?v=20261017a"></script>
+<script src="app-update.js?v=20261017a"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
@@ -1868,6 +1889,13 @@ window.addEventListener("storage", function(e){
         renderAdmin();
     }
 });
+</script>
+<script>
+/* ticks do acompanhamento do vendedor: abrem e fecham com um toque */
+function toggleTicksAdmin(id){
+    var el = document.getElementById("ticks-admin-" + id);
+    if(el) el.style.display = (el.style.display === "none") ? "block" : "none";
+}
 </script>
 </body>
 </html>

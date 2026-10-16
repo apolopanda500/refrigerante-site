@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016z">
+<link rel="manifest" href="manifest.json?v=20261017a">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,11 +14,11 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="preload" as="style" href="style.css?v=20261016z">
+<link rel="preload" as="style" href="style.css?v=20261017a">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261016z">
-<script src="theme.js?v=20261016z"></script>
+<link rel="stylesheet" href="style.css?v=20261017a">
+<script src="theme.js?v=20261017a"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;line-height:1.5;color:#333;background:#f0f2f5;padding-top:0;padding-bottom:80px}
@@ -63,12 +63,12 @@ a{text-decoration:none;color:inherit}
 .pdd{padding:8px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
 .pds{font-size:.82rem;color:#5b6178}
 .pp{font-size:1.22rem;font-weight:800;color:var(--primary-color,#3d4465);margin-top:auto}
-.qr{display:flex;align-items:center;gap:8px;padding:8px 12px 12px}
-.qc{display:flex;border:2px solid #d8dbe6;border-radius:8px;overflow:hidden}
-.qb{width:44px;height:44px;background:#eef0f6;border:none;font-size:1.1rem;font-weight:800;color:#3d4465;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.qr{display:flex;flex-direction:column;gap:8px;padding:10px 12px 12px}
+.qc{display:flex;width:100%;border:2px solid #d8dbe6;border-radius:8px;overflow:hidden}
+.qb{flex:1;min-width:44px;height:46px;background:#eef0f6;border:none;font-size:1.3rem;font-weight:800;color:#3d4465;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .qb:hover{background:#e2e5ef}
 .qb:active{transform:scale(.9)}
-.qv{width:44px;text-align:center;font-weight:800;height:44px;line-height:44px;font-size:1.1rem;color:#2f3550;border-left:2px solid #d8dbe6;border-right:2px solid #d8dbe6}
+.qv{flex:1;min-width:44px;text-align:center;font-weight:800;height:46px;line-height:46px;font-size:1.15rem;color:#2f3550;border-left:2px solid #d8dbe6;border-right:2px solid #d8dbe6}
 .qa{flex:1;height:34px;background:var(--accent-color,#ffb822);color:#3d4465;border:none;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer}
 .qa:hover{filter:brightness(1.06)}
 
@@ -220,7 +220,7 @@ a{text-decoration:none;color:inherit}
 [data-theme="vermelho"] .qb:hover{background:#5a343b}
 
 /* Botão Adicionar dos produtos - bem visível e fácil de clicar */
-.qa{flex:1;height:auto;min-height:48px;background:var(--accent-color,#ffb822);color:#1a1a2e;border:none;border-radius:10px;font-weight:900;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px}
+.qa{width:100%;height:auto;min-height:48px;background:var(--accent-color,#ffb822);color:#1a1a2e;border:none;border-radius:10px;font-weight:900;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px}
 .qa:hover{filter:brightness(1.06)}
 .qa:active{transform:scale(.94)}
 [data-theme="dark"] .qa{background:#ffb822;color:#1a1a2e}
@@ -380,13 +380,13 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
 <!-- Botão de atualizar página visível -->
 <div style="text-align:center;margin:10px 0;">
 
-<script defer src="conta.js?v=20261016z"></script>
-<script defer src="loja.js?v=20261016z"></script>
-<script defer src="app.js?v=20261016z"></script>
-<script defer src="firebase-appcheck.js?v=20261016z"></script>
-<script defer src="app-update.js?v=20261016z"></script>
-<script defer src="ia.js?v=20261016z"></script>
-<script defer src="central.js?v=20261016z"></script>
+<script defer src="conta.js?v=20261017a"></script>
+<script defer src="loja.js?v=20261017a"></script>
+<script defer src="app.js?v=20261017a"></script>
+<script defer src="firebase-appcheck.js?v=20261017a"></script>
+<script defer src="app-update.js?v=20261017a"></script>
+<script defer src="ia.js?v=20261017a"></script>
+<script defer src="central.js?v=20261017a"></script>
 <script>
 (function(){
   var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
