@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016s">
+<link rel="manifest" href="manifest.json?v=20261016t">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016s">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016t">
 <title>Pedido Recebido - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016s">
-<script src="theme.js?v=20261016s"></script>
+<link rel="stylesheet" href="style.css?v=20261016t">
+<script src="theme.js?v=20261016t"></script>
 
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -191,6 +191,63 @@
 [data-theme="guara"] .pp{color:#8fe0a8!important}
 [data-theme="rosa"] .pp{color:#c39bd3!important}
 [data-theme="vermelho"] .pp{color:#ff9d9d!important}
+/* ===== BOTÕES - tamanho mínimo 44px e cores por tema ===== */
+.tick-min,
+.qb,
+.qa,
+.bs,
+.btn-primario,
+.btn-secundario,
+.btn-mini,
+.btn-detalhe{
+    min-width:44px;min-height:44px;border-radius:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .15s ease;
+}
+.tick-min:active,.qb:active,.qa:active,.bs:active,.btn-primario:active,.btn-secundario:active,.btn-mini:active,.btn-detalhe:active{transform:scale(.94);}
+
+/* Botão minimizar ticks */
+.tick-min{background:none;border:none;color:var(--primary-color,#3d4465);font-size:.95rem;font-weight:800;padding:4px 12px;line-height:1;min-width:44px;min-height:44px}
+.tick-min:hover{background:rgba(61,68,101,.1)}
+[data-theme="dark"] .tick-min{color:#c3cae0}
+[data-theme="dark"] .tick-min:hover{background:rgba(255,255,255,.08)}
+[data-theme="guara"] .tick-min{color:#1b7f3b}
+[data-theme="guara"] .tick-min:hover{background:rgba(27,127,59,.1)}
+[data-theme="rosa"] .tick-min{color:#8e2f6b}
+[data-theme="rosa"] .tick-min:hover{background:rgba(142,47,107,.1)}
+[data-theme="vermelho"] .tick-min{color:#a11b0f}
+[data-theme="vermelho"] .tick-min:hover{background:rgba(161,27,15,.1)}
+
+/* Botões de quantidade dos produtos */
+.qb{background:#eef0f6;border:none;font-size:1.05rem;color:#3d4465}
+.qb:hover{background:#e2e5ef}
+.qv{border-left:2px solid #d8dbe6;border-right:2px solid #d8dbe6}
+[data-theme="dark"] .qb{background:#353a5c;color:#e6e8f2}
+[data-theme="dark"] .qb:hover{background:#404764}
+[data-theme="guara"] .qb{background:#233829;color:#8fe0a8}
+[data-theme="guara"] .qb:hover{background:#2e4c3a}
+[data-theme="rosa"] .qb{background:#4a3254;color:#c39bd3}
+[data-theme="rosa"] .qb:hover{background:#5a3d68}
+[data-theme="vermelho"] .qb{background:#4a2a2f;color:#ff9d9d}
+[data-theme="vermelho"] .qb:hover{background:#5a343b}
+
+/* Botão Adicionar dos produtos */
+.qa{flex:1;height:auto;min-height:44px;background:var(--accent-color,#ffb822);color:#1a1a2e;border:none;border-radius:8px;font-weight:800;font-size:.82rem}
+.qa:hover{filter:brightness(1.06)}
+[data-theme="dark"] .qa{background:#ffb822;color:#1a1a2e}
+[data-theme="guara"] .qa{background:#1b7f3b;color:#fff}
+[data-theme="guara"] .qa:hover{filter:brightness(1.08)}
+[data-theme="rosa"] .qa{background:#8e2f6b;color:#fff}
+[data-theme="rosa"] .qa:hover{filter:brightness(1.08)}
+[data-theme="vermelho"] .qa{background:#a11b0f;color:#fff}
+[data-theme="vermelho"] .qa:hover{filter:brightness(1.08)}
+
+/* Botão principal da home e outros */
+.bs{background:var(--accent-color,#ffb822);color:#1a1a2e;border-radius:20px;font-weight:800;white-space:nowrap}
+.bs:hover{filter:brightness(1.08)}
+[data-theme="dark"] .bs{background:#ffb822;color:#1a1a2e}
+[data-theme="guara"] .bs{background:#1b7f3b;color:#fff}
+[data-theme="rosa"] .bs{background:#8e2f6b;color:#fff}
+[data-theme="vermelho"] .bs{background:#a11b0f;color:#fff}
+
 </style>
 </head>
 <body>
@@ -218,13 +275,13 @@
 </div>
 </div></div></section>
 
-<script src="conta.js?v=20261016s"></script>
-<script src="firebase-appcheck.js?v=20261016s"></script>
-<script src="app-update.js?v=20261016s"></script>
-<script src="ia.js?v=20261016s"></script>
-<script src="central.js?v=20261016s"></script>
-<script src="loja.js?v=20261016s"></script>
-<script src="script.js?v=20261016s"></script>
+<script src="conta.js?v=20261016t"></script>
+<script src="firebase-appcheck.js?v=20261016t"></script>
+<script src="app-update.js?v=20261016t"></script>
+<script src="ia.js?v=20261016t"></script>
+<script src="central.js?v=20261016t"></script>
+<script src="loja.js?v=20261016t"></script>
+<script src="script.js?v=20261016t"></script>
 <script>
 /* se o pedido ficou preso na nuvem, mostra o aviso aqui tambem */
 (function () {

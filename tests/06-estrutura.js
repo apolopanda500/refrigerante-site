@@ -347,9 +347,9 @@ else console.log("  ok  painel tem leitura propria (horizontal e cartao empilhad
 });
 if (!/data-v="horizontal"/.test(adm9) || !/data-v="vertical"/.test(adm9)) falha("faltou um dos modos de leitura no painel");
 else console.log("  ok  painel oferece rolagem horizontal e cartao empilhado");
-if (!/if \(ehPainel\(\)\) return;/.test(th.split("function avisoOferta")[1] || "")) {
-    falha("a faixa flutuante de ofertas ainda aparece no painel");
-} else console.log("  ok  faixa de ofertas fora do painel do vendedor");
+if (/function avisoOferta|avisosOferta/.test(th)) {
+    falha("o banner de ofertas voltou ao theme.js (o dono mandou remover)");
+} else console.log("  ok  banner de ofertas removido do cliente");
 
 /* ---------- 12. perfil enxuto + historico unico ---------- */
 console.log("\n=== 12. PERFIL SO DADOS PESSOAIS (E O HISTORICO JUNTO) ===");

@@ -76,10 +76,6 @@
         // Ver imagens dos produtos
         if (p.cfgVerImagens === false) h.setAttribute("data-imagens", "ocultas");
         else h.removeAttribute("data-imagens");
-
-        // Banner de avisos/ofertas
-        var bd = document.getElementById("avisosOferta");
-        if (bd) bd.style.display = p.cfgNotifPromo ? "" : "none";
     }
 
     if (document.readyState === "loading") {
