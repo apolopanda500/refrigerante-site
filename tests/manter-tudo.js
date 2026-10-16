@@ -20,7 +20,7 @@
    ============================================================ */
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
+const { execSync, execFileSync } = require("child_process");
 
 const dir = process.env.WDIR || path.resolve(__dirname, "..");
 const ONLINE = process.argv.includes("--online");
@@ -102,13 +102,22 @@ const externos = [
 if (!ONLINE) {
     ok("pulado (rode com --online para checar)");
 } else {
+    /* O site oficial pede cookie de sessao: sem ele o fetch entra em laco de
+       redirect e o link era dado como quebrado quando estava no ar. O
+       helper lib/http-checar.js segue os redirects na mao e guarda o cookie,
+       igual o robo do catalogo faz. 3 tentativas com 1 s de respiro, porque
+       rede as vezes engasga (o site oficial ja demorou 2,4 s numa checagem). */
+    const CHECAR = path.join(__dirname, "lib", "http-checar.js");
     externos.forEach(function (u) {
-        try {
-            const r = execSync('node -e "fetch(process.argv[1],{redirect:\'follow\'}).then(r=>console.log(r.status)).catch(()=>console.log(0))" ' + JSON.stringify(u),
-                { timeout: 25000 }).toString().trim();
-            if (r === "200") ok("responde 200: " + u);
-            else aviso("respondeu " + r + ": " + u);
-        } catch (e) { aviso("sem resposta: " + u); }
+        let r = "0";
+        for (let tentativa = 1; tentativa <= 3 && r !== "200"; tentativa++) {
+            try {
+                r = execFileSync("node", [CHECAR, u], { timeout: 25000 }).toString().trim();
+            } catch (e) { r = "0"; }
+            if (r !== "200" && tentativa < 3) Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1000);
+        }
+        if (r === "200") ok("responde 200: " + u);
+        else aviso("respondeu " + r + " em 3 tentativas: " + u);
     });
 }
 
