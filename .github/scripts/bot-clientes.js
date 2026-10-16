@@ -348,7 +348,8 @@ async function rodar() {
 
     let updates = [];
     try {
-        updates = await tg("getUpdates", { offset: offset || undefined, timeout: 0, limit: 50 }) || [];
+        var _r = await tg("getUpdates", { offset: offset || undefined, timeout: 0, limit: 50 });
+        updates = (_r && Array.isArray(_r.result)) ? _r.result : [];
     } catch (e) {
         console.log("falha no getUpdates: " + e.message);
         return;
@@ -627,7 +628,8 @@ async function rodar() {
 
     let updates = [];
     try {
-        updates = await tg("getUpdates", { offset: offset || undefined, timeout: 0, limit: 50 }) || [];
+        var _r = await tg("getUpdates", { offset: offset || undefined, timeout: 0, limit: 50 });
+        updates = (_r && Array.isArray(_r.result)) ? _r.result : [];
     } catch (e) {
         console.log("falha no getUpdates: " + e.message);
         return;
