@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261015e">
+<link rel="manifest" href="manifest.json?v=20261015f">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Perfil - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261015e">
-<script src="theme.js?v=20261015e"></script>
+<link rel="stylesheet" href="style.css?v=20261015f">
+<script src="theme.js?v=20261015f"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -39,20 +39,6 @@
 .status-msg { display:none; padding:12px 16px; border-radius:10px; margin-bottom:16px; font-weight:600; }
 .status-msg.ok { background:#e8f5e9; color:#2e7d32; border-left:4px solid #43a047; }
 .perfil-card h2 small { font-weight:600; font-size:.8rem; color:#6b7280; }
-#tabelaPedidosPerfil .vazio-tabela { padding:18px 4px; color:#6b7280; font-size:.95rem; text-align:center; }
-#tabelaPedidosPerfil .resumo-linha { display:flex; justify-content:space-between; gap:12px; padding:12px 14px; background:#f7f8fc; border-radius:10px; margin-top:12px; font-weight:700; }
-#tabelaPedidosPerfil .mini-conteudo { display:inline-block; text-align:right; }
-#tabelaPedidosPerfil .mini-item { display:block; font-size:.86rem; color:#555; }
-[data-theme="dark"] .perfil-card h2 small{color:#a1a8c3}
-[data-theme="dark"] #tabelaPedidosPerfil .vazio-tabela{color:#a1a8c3}
-[data-theme="dark"] #tabelaPedidosPerfil .resumo-linha{background:#222643}
-[data-theme="dark"] #tabelaPedidosPerfil .mini-item{color:#a1a8c3}
-[data-theme="dark"] .status-msg.ok{background:#1c331f;color:#8fe39a;border-left-color:#43a047}
-.stats-row { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px; }
-.stat-box { flex:1; min-width:140px; background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:20px; text-align:center; }
-.stat-box .stat-icon { font-size:1.8rem; color:var(--primary-color); margin-bottom:8px; }
-.stat-box .stat-num { font-size:1.6rem; font-weight:bold; color:var(--text-color); }
-.stat-box .stat-label { font-size:0.82rem; color:#6b7280; margin-top:4px; }
 
 /* ===== avatar do perfil ===== */
 .perfil-avatar-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px}
@@ -122,7 +108,7 @@
 <header class="main-header"><div class="container"><nav>
 <div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
-<ul class="nav-links" id="mainNav"><li><a href="index.html">Produtos</a></li><li><a href="meus-pedidos.html">Histórico</a></li><li><a href="configuracoes.html">Configurações</a></li><li><a href="perfil.html">Perfil</a></li></ul>
+<ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Hist&oacute;rico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configura&ccedil;&otilde;es</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="header-actions"><div class="cart-icon" onclick="window.location.href='carrinho.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div></div>
 </nav></div></header>
 
@@ -147,22 +133,7 @@
   <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
 </div>
 
-<div class="stats-row">
-  <div class="stat-box"><div class="stat-icon"><i class="fa fa-box"></i></div><div class="stat-num" id="statPedidos">0</div><div class="stat-label">Pedidos realizados</div></div>
-  <div class="stat-box"><div class="stat-icon"><i class="fa fa-shopping-bag"></i></div><div class="stat-num" id="statItens">0</div><div class="stat-label">Itens comprados</div></div>
-  <div class="stat-box"><div class="stat-icon"><i class="fa fa-dollar-sign"></i></div><div class="stat-num" id="statGasto">R$ 0</div><div class="stat-label">Total gasto</div></div>
-</div>
-
-<div class="perfil-card" id="cardPedidosPerfil">
-  <h2><i class="fa fa-receipt"></i> Meus pedidos <small id="qtdPedidosPerfil"></small></h2>
-  <div id="tabelaPedidosPerfil"></div>
-  <a href="meus-pedidos.html" style="display:inline-block;margin-top:14px;color:var(--primary-color);font-weight:700"><i class="fa fa-arrow-right"></i> Ver histórico completo</a>
-</div>
-
-
-
-
-<div class="perfil-card">
+<div class="perfil-card" id="cardDados">
   <h2><i class="fa fa-id-card"></i> Dados Pessoais</h2>
   <div class="status-msg ok" id="msgSalvo" style="display:none"><i class="fa fa-check-circle"></i> Dados salvos com sucesso!</div>
   <div class="form-row">
@@ -193,13 +164,13 @@
 </div></section>
 
 
-<script src="conta.js?v=20261015e"></script>
-<script src="firebase-appcheck.js?v=20261015e"></script>
-<script src="app-update.js?v=20261015e"></script>
-<script src="ia.js?v=20261015e"></script>
-<script src="central.js?v=20261015e"></script>
-<script src="loja.js?v=20261015e"></script>
-<script src="script.js?v=20261015e"></script>
+<script src="conta.js?v=20261015f"></script>
+<script src="firebase-appcheck.js?v=20261015f"></script>
+<script src="app-update.js?v=20261015f"></script>
+<script src="ia.js?v=20261015f"></script>
+<script src="central.js?v=20261015f"></script>
+<script src="loja.js?v=20261015f"></script>
+<script src="script.js?v=20261015f"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -229,92 +200,15 @@
     if (typeof Conta !== "undefined") Conta.aplicarEmTodos();
 })();
 
-/* pedidos do cliente: filtra pelo WhatsApp quando da,
-   senao mostra tudo que este aparelho tem (mesma regra
-   do Meus Pedidos, para o cliente nunca ver "0 pedidos"
-   quando o pedido esta salvo aqui) */
-function pedidosDoPerfil() {
-    var todos = (typeof getPedidos === "function") ? getPedidos() : [];
-    var tel = "";
-    try { tel = (typeof Conta !== "undefined" ? Conta.dados().tel : ""); } catch (e) {}
-    var lista = todos.slice();
-    if (tel && typeof mesmoTelefone === "function") {
-        var meus = todos.filter(function (p) { return mesmoTelefone(p.tel, tel); });
-        if (meus.length) lista = meus;
-    }
-    return lista;
-}
-
-function renderPedidosPerfil() {
-    var box = document.getElementById("tabelaPedidosPerfil");
-    if (!box) return;
-    var lista = pedidosDoPerfil();
-
-    var tp = 0, ti = 0, tg = 0;
-    lista.forEach(function (p) {
-        tp++;
-        if (Array.isArray(p.itens)) p.itens.forEach(function (i) { ti += (i.qty || 0); });
-        if (p.status !== "cancelado") tg += (p.total || 0);
-    });
-
-    var setTxt = function (id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; };
-    setTxt("statPedidos", String(tp));
-    setTxt("statItens", String(ti));
-    setTxt("statGasto", (typeof formatBRL === "function" ? formatBRL(tg) : "R$ " + tg.toFixed(2).replace(".", ",")));
-    setTxt("qtdPedidosPerfil", tp ? "(" + tp + ")" : "");
-
-    /* tabela so e desenhada se houver pedidos */
-    if (!lista.length) {
-        box.innerHTML = '<div class="vazio-tabela"><i class="fa fa-receipt"></i> Você ainda não fez pedidos neste aparelho.</div>';
-        return;
-    }
-
-    var badge = (typeof statusBadge === "function")
-        ? function (s) { return statusBadge(s); }
-        : function (s) { return STATUS_LABEL[s] || s; };
-    var quando = (typeof dataHora === "function")
-        ? function (ts) { return dataHora(ts); }
-        : function (ts) { return new Date(ts || Date.now()).toLocaleString("pt-BR"); };
-    var reais = (typeof formatBRL === "function")
-        ? function (n) { return formatBRL(n); }
-        : function (n) { return "R$ " + Number(n || 0).toFixed(2).replace(".", ","); };
-
-    var h = '<div class="tab-wrap"><table><thead><tr>'
-          + '<th>Pedido</th><th>Data</th><th>Itens</th><th>Status</th><th>Total</th>'
-          + '</tr></thead><tbody>';
-    lista.slice(0, 20).forEach(function (p) {
-        var nItens = 0;
-        var resumo = "";
-        (p.itens || []).forEach(function (i) {
-            nItens += (i.qty || 0);
-            resumo += '<span class="mini-item">' + (i.name || "item") + " &times;" + (i.qty || 0) + "</span>";
-        });
-        h += "<tr>"
-           + '<td data-label="Pedido"><b>' + (p.id || "—") + "</b></td>"
-           + '<td data-label="Data">' + quando(p.criadoEm) + "</td>"
-           + '<td data-label="Itens"><span class="mini-conteudo"><b>' + nItens + "</b>" + resumo + "</span></td>"
-           + '<td data-label="Status">' + badge(p.status) + "</td>"
-           + '<td data-label="Total"><b>' + reais(p.total) + "</b></td>"
-           + "</tr>";
-    });
-    h += "</tbody></table></div>";
-
-    h += '<div class="resumo-linha"><span>Total gasto (sem cancelados)</span><span>'
-       + reais(tg) + "</span></div>";
-    if (lista.length > 20) h += '<div class="vazio-tabela">Mostrando os 20 pedidos mais recentes de ' + lista.length + ".</div>";
-    box.innerHTML = h;
-}
-
+/* ============================================
+   PERFIL = SO DADOS PESSOAIS E CONTATO
+   Os numeros (pedidos, itens, total gasto) e a
+   lista completa dos pedidos ficam na pagina Historico.
+   ============================================ */
 document.addEventListener("DOMContentLoaded", function () {
-    renderPedidosPerfil();
     if (typeof Conta !== "undefined") Conta.aplicarEmTodos();
 });
-if (document.readyState !== "loading") { renderPedidosPerfil(); }
-/* pedido novo (em outra aba) atualiza os numeros do perfil */
-window.addEventListener("storage", function (e) {
-    if (e.key === "convencao_pedidos") renderPedidosPerfil();
-});
-
+if (document.readyState !== "loading" && typeof Conta !== "undefined") Conta.aplicarEmTodos();
 function mostrarMsgSalvo(texto) {
     var msg = document.getElementById("msgSalvo");
     if (!msg) return;
@@ -370,7 +264,6 @@ function salvarPerfil() {
     Conta.salvar(dados);
     Conta.aplicarEmTodos();
     mostrarMsgSalvo("Dados salvos com sucesso!");
-    renderPedidosPerfil();
 }
 </script>
 <script>

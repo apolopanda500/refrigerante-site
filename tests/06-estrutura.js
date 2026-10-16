@@ -345,5 +345,48 @@ if (!/if \(ehPainel\(\)\) return;/.test(th.split("function avisoOferta")[1] || "
 if (/op-btn" data-v="vertical"/.test(adm9)) falha("o painel ainda oferece leitura vertical");
 else console.log("  ok  painel sem a opcao de leitura vertical");
 
+/* ---------- 12. perfil enxuto + historico unico ---------- */
+console.log("\n=== 12. PERFIL SO DADOS PESSOAIS (E O HISTORICO JUNTO) ===");
+const perf = fs.readFileSync(path.join(dir, "perfil.html"), "utf8");
+["statPedidos", "statItens", "statGasto", "tabelaPedidosPerfil", "renderPedidosPerfil", "renderPedidos", "meus pedidos"]
+    .forEach(function (c) {
+        if (new RegExp(c, "i").test(perf)) falha("perfil.html ainda tem '" + c + "' (isso e do historico)");
+    });
+["Dados Pessoais", "Contato"].forEach(function (c) {
+    if (perf.indexOf(c) < 0) falha("perfil.html perdeu o bloco: " + c);
+});
+if (/id="pNome"/.test(perf) === false) falha("perfil.html perdeu o formulario de dados");
+else console.log("  ok  perfil so com dados pessoais e contato");
+
+const hist = fs.readFileSync(path.join(dir, "meus-pedidos.html"), "utf8");
+["statPedidos", "statItens", "statGasto", "resumoHistorico", "listaPedidos"].forEach(function (c) {
+    if (hist.indexOf(c) < 0) falha("meus-pedidos.html (historico) sem " + c);
+});
+console.log("  ok  historico tem pedidos, itens comprados e total gasto");
+/* um nome so no menu: historico */
+const nomesMenu = [];
+cliente.forEach(function (p) {
+    const t = fs.readFileSync(path.join(dir, p), "utf8");
+    const nav = (t.match(/<ul class="nav-links" id="mainNav">[\s\S]*?<\/ul>/) || [""])[0];
+    if (!nav) { falha(p + ": menu sem a lista de links"); return; }
+    ["index.html", "meus-pedidos.html", "configuracoes.html", "perfil.html"].forEach(function (destino) {
+        if (nav.indexOf('href="' + destino + '"') < 0) falha(p + ": menu sem link para " + destino);
+    });
+    if (/Meus Pedidos/i.test(nav)) falha(p + ": o menu ainda chama de 'Meus Pedidos' (use Historico)");
+    nomesMenu.push(nav);
+});
+if (nomesMenu.some(n => n !== nomesMenu[0])) falha("o menu das paginas do cliente esta diferente entre si");
+else console.log("  ok  as " + cliente.length + " paginas do cliente tem o mesmo menu: Produtos, Historico, Configuracoes, Perfil");
+
+/* o HTML montado do historico precisa fechar as tags (bug do </div> a mais) */
+function tagsBalanceadas(html) {
+    const abertos = (html.match(/<div\b/g) || []).length;
+    const fechados = (html.match(/<\/div>/g) || []).length;
+    return abertos === fechados;
+}
+const blocoAvaliar = (hist.split("function caixaAvaliar")[1] || "").split("function toggleAvaliar")[0];
+if (!tagsBalanceadas(blocoAvaliar)) falha("caixaAvaliar() devolve um </div> a mais e quebra o card do historico");
+else console.log("  ok  a caixa de avaliacao fecha as tags direitinho");
+
 console.log("\n" + (erros === 0 ? "*** ESTRUTURA E SEGURANCA 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
 process.exit(erros ? 1 : 0);

@@ -291,7 +291,11 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - Painel: preferências próprias (`vendedorPrefs`), 5 temas, conexão do bot editável e sincronização de pedidos a cada minuto.
 - Celular em pé: header **fixo** no topo em todas as páginas, menu sempre visível (faixa rolável) e tabelas com `height:100%` para não colapsar.
 - Tabela de informações da home (pedidos e entregas, horários, pagamento/frete/contato, frota, garantia) tem botão **Minimizar** — no celular ela já vem recolhida (lembra em `localStorage:tabelaInfoMini`).
-- Perfil: tabela real com os pedidos do cliente (data, itens, status, total) e "Dados salvos" só depois de salvar de verdade.
+- Perfil: **só dados pessoais e contato**. Os números (pedidos realizados,
+  itens comprados, total gasto) e a lista com status e horário de cada passo
+  ficam na página **Histórico** (`meus-pedidos.html`), que é o único destino
+  do menu — as 7 páginas do cliente usam o mesmo menu: Produtos, Histórico,
+  Configurações, Perfil.
 - Frota: fotos dos dois caminhões (`img/608VERDE.jpg` e `img/608AZUL.jpeg`).
 - Avaliação: o cliente dá nota de 1 a 5 + comentário no pedido entregue (Meus Pedidos);
   `salvarAvaliacao()` em `script.js` grava no aparelho e envia para `/avaliacoes` no Firebase.
