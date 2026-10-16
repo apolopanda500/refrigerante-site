@@ -59,3 +59,21 @@
 [data-theme="dark"] .aviso{background:#2a2e44!important;border-color:#3d4470!important;color:#e6e8f2!important}
 [data-theme="dark"] .aviso i{color:#ffb822!important}
 
+/* ===== tema escuro: carrinho - container principal e mobile ===== */
+[data-theme="dark"] .cart-box{background:#1c1f33!important;border-color:#353a5c!important}
+[data-theme="dark"] .ci-editar{background:transparent!important}
+[data-theme="dark"] .ci-editar button{background:#2a2e44!important;border-color:#3d4470!important;color:#e6e8f2!important}
+[data-theme="dark"] .ci-editar button:hover{background:#353a5c!important}
+[data-theme="dark"] .acoes{background:#1c1f33!important;border-top-color:#353a5c!important}
+[data-theme="dark"] .acoes .btn-primario{background:#ffb822!important;color:#1a1a2e!important}
+[data-theme="dark"] .acoes .btn-secundario{background:#2a2e44!important;color:#e6e8f2!important;border-color:#3d4470!important}
+[data-theme="dark"] .acoes .btn-secundario:hover{background:#353a5c!important}
+[data-theme="dark"] .btn-limpar-item{background:#2a1a1c!important;color:#ff8a8a!important;border-color:#5a2a2e!important}
+[data-theme="dark"] .btn-limpar-item:hover{background:#c62828!important;color:#fff!important}
+
+/* tema escuro: inputs/selects do bairro e regiao no carrinho */
+[data-theme="dark"] .cb-rot input,[data-theme="dark"] .cb-rot select{background:#2a2e44!important;border-color:#3d4470!important;color:#e6e8f2!important}
+[data-theme="dark"] .cb-rot select option{background:#2a2e44!important;color:#e6e8f2!important}
+
+/* forcar nova versao para quebrar cache do navegador: v=20261017m */
+
