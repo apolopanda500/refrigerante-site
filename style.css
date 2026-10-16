@@ -21,3 +21,10 @@
 [data-theme="dark"] .ci-subtotal{color:#e6e8f2!important}
 /* tema escuro: o seletor de quantidade tinha borda clara (aparecia um quadro branco) */
 [data-theme="dark"] .qc{border-color:#3d4470!important}
+
+[data-theme="dark"] .cb-cab{color:#e6e8f2}
+[data-theme="dark"] .cb-rot{color:#c7ccdf}
+[data-theme="dark"] .cb-rot input,[data-theme="dark"] .cb-rot select{background:#2a2e44;border-color:#3d4470;color:#e6e8f2}
+[data-theme="dark"] .cb-rot select option{background:#2a2e44;color:#e6e8f2}
+[data-theme="dark"] .cart-vazio{color:#a1a8c3}
+
