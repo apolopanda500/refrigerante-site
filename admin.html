@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261016g">
+<link rel="manifest" href="manifest-vendedor.json?v=20261016h">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016g">
-<script src="theme.js?v=20261016g"></script>
+<link rel="stylesheet" href="style.css?v=20261016h">
+<script src="theme.js?v=20261016h"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -579,8 +579,8 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261016g"></script>
-<script src="telegram.js?v=20261016g"></script>
+<script src="script.js?v=20261016h"></script>
+<script src="telegram.js?v=20261016h"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -636,7 +636,7 @@ function entrar() {
         sessionStorage.removeItem("adminTravadoAte");
         tentativas = 0;
     }
-    if (u === VENDEDOR_USUARIO && s === VENDEDOR_SENHA) {
+    if (typeof credenciaisConfere === "function" ? credenciaisConfere(u, s) : (u === VENDEDOR_USUARIO && s === VENDEDOR_SENHA)) {
         sessionStorage.removeItem("adminTentativas");
         sessionStorage.removeItem("adminTravadoAte");
         /* marca a sessao deste navegador: e o que garante que so o dono,
@@ -1473,9 +1473,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261016g"></script>
-<script src="firebase-appcheck.js?v=20261016g"></script>
-<script src="app-update.js?v=20261016g"></script>
+<script src="app.js?v=20261016h"></script>
+<script src="firebase-appcheck.js?v=20261016h"></script>
+<script src="app-update.js?v=20261016h"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL

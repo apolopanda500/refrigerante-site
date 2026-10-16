@@ -5,7 +5,7 @@
    Aqui conferimos a versao e, se houver versao nova,
    aparece uma barra para atualizar na hora.
    ============================================ */
-var VERSAO_APP = "20261016g";
+var VERSAO_APP = "20261016h";
 
 function barraAtualizar() {
     if (document.getElementById("barraAtualizar")) return;
@@ -51,7 +51,7 @@ function barraAtualizar() {
 
 /* nome do cache vivo: sw.js monta "convencao-cache-" + VERSAO.
    Mantido aqui so para conferir; o service worker e a fonte da verdade. */
-var CACHE_ATUAL = "convencao-cache-20261016g";
+var CACHE_ATUAL = "convencao-cache-20261016h";
 
 /* tira os caches ANTIGOS (o do service worker atual fica de pe:
    se apagassemos tudo, o app ficaria sem nada offline) */

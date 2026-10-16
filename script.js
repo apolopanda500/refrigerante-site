@@ -220,8 +220,25 @@ async function copiarLink() {
 // ============================================
 const PEDIDOS_KEY = "convencao_pedidos";
 // acesso do vendedor (painel admin.html)
-const VENDEDOR_USUARIO = "apolopanda500";
-const VENDEDOR_SENHA = "Flamengo903@";
+// ATENCAO: este arquivo e PUBLICO. Qualquer pessoa que abrir o codigo-fonte
+// do site ve estas duas linhas - e por isso que a protecao de verdade dos
+// pedidos sao as REGRAS DO FIREBASE (veja docs/PROJETO.md). O login serve
+// para esconder a tela de quem nao e o dono, nao para segurar um invasor.
+// O usuario nao diferencia maiuscula/minuscula (comparacao em
+// normalizarUsuario), senao "Apolopanda500" e "apolopanda500" travavam o dono
+// fora depois de 5 tentativas.
+const VENDEDOR_USUARIO = "Apolopanda500";
+const VENDEDOR_SENHA = "Naruto123@";
+
+/* usuario nao distingue maiuscula/minuscula e ignora espaco nas pontas:
+   evita o dono ficar trancado fora so por digitar com outra caixa */
+function normalizarUsuario(txt) {
+    return String(txt == null ? "" : txt).trim().toLowerCase();
+}
+function credenciaisConfere(usuario, senha) {
+    if (normalizarUsuario(usuario) !== normalizarUsuario(VENDEDOR_USUARIO)) return false;
+    return String(senha == null ? "" : senha) === VENDEDOR_SENHA;
+}
 
 /* ---------- validacao de CPF (digitos verificadores) ---------- */
 function cpfValido(cpf) {

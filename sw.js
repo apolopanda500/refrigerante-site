@@ -27,7 +27,7 @@
    ============================================ */
 
 /* precisa bater com a versao do site: o bump-versao.js troca os dois */
-var VERSAO = "20261016g";
+var VERSAO = "20261016h";
 var BASE = "convencao-cache-" + VERSAO;
 /* 8 s: no 4G a rede leva mais de 3 s e o app caia no cache velho (ou em
    nada) toda vez que a pagina abria. Ainda e rapido: o cache so entra

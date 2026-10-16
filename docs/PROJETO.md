@@ -261,7 +261,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 ```bash
 node tests/manter-tudo.js            # versoes, datas, links, docs, robo
 node --check *.js                    # sintaxe
-node tests/rodar-todos.js            # 22 baterias (tem que dar TUDO 10/10)
+node tests/rodar-todos.js            # 23 baterias (tem que dar TUDO 10/10)
 node tests/13-validar-css.js         # CSS inteiro: sintaxe, classe sem uso, cobertura
 node tests/limpar-css-morto.js       # CSS morto: so o relatorio (--aplicar limpa)
 git add -A
@@ -293,10 +293,20 @@ mostra a hora exata de cada passo do pedido e há quanto tempo ele está parado.
 ### Acesso ao painel
 
 admin.html **não tem login automático**: abre a tela de usuário e senha
-(VENDEDOR_USUARIO/VENDEDOR_SENHA em script.js) e trava depois de 5
-tentativas erradas. Quem protege os dados de verdade, porém, são as **regras do
-Firebase** — o banco está em modo teste, então os pedidos e as avaliações são
-públicos para quem tiver a URL. Em produção, restrinja pelo Firebase.
+(`VENDEDOR_USUARIO`/`VENDEDOR_SENHA` em `script.js`) e trava depois de 5
+tentativas erradas. É **um acesso só**, e é ele que baixa os pedidos de todos os
+aparelhos (via `sincronizarPedidosNuvem`, na abertura e a cada minuto).
+
+Duas regras ao mexer nisso:
+
+- **O usuário não diferencia maiúscula de minúscula** (`credenciaisConfere()` /
+  `normalizarUsuario()`). Senão digitar `Apolopanda500` ou `apolopanda500` trava
+  o dono fora depois de 5 tentativas — e o painel inteiro fica inacessível.
+- **O login é só para esconder a tela.** O `script.js` é público: quem abrir o
+  código-fonte vê as duas linhas. Quem protege os dados de verdade são as
+  **regras do Firebase** — o banco está em modo teste, então os pedidos e as
+  avaliações são públicos para quem tiver a URL. Em produção, restrinja pelo
+  Firebase.
 ---
 
 ## 10. Como testar antes de publicar
@@ -412,8 +422,8 @@ sumia. A bateria `14-cores` confere o contraste das duas versões.
   e a cada minuto.
 
 ### Qualidade automatica (rodar certo sempre vai rodar certo)
-- Testes: node tests/rodar-todos.js - 22 baterias, TUDO 10/10. A 13a e o lint
-  do CSS; da 14a a 22a vem cor, imagem, letra/numero, tamanho, codigo, erro,
+- Testes: node tests/rodar-todos.js - 23 baterias, TUDO 10/10. A 13a e o lint
+  do CSS; da 14a a 23a vem cor, imagem, letra/numero, tamanho, codigo, erro,
   documento, repositorio e entrega (esta ultima com --online confere o site no ar).
 - Portao automatico: .github/workflows/check.yml roda sintaxe de todo
   JS (site, testes, robos) + a suite completa em TODO push e todo dia as 6h.
