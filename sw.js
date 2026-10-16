@@ -8,7 +8,7 @@
     - Ativacao: apaga caches antigos imediatamente
    ============================================ */
 
-var VERSAO = "20261016n";
+var VERSAO = "20261016o";
 var BASE = "convencao-cache-" + VERSAO;
 /* 8 s: tempo maximo de espera pela rede antes de cair no cache.
    No 4G a rede frequentemente passa de 3 s, entao um prazo curto demais
@@ -181,9 +181,10 @@ self.addEventListener("fetch", function (e) {
                 if (forcado) {
                     return redeComPrazo(req).then(function (r) {
                         if (!r.timeout && r.resp && r.resp.ok) {
-                            var copia = r.resp.clone();
-                            cache.put(req, copia);
-                            if (!pagina) cache.put(new Request(caminho), copia.clone());
+                            var c1 = r.resp.clone();
+                            var c2 = r.resp.clone();
+                            cache.put(req, c1);
+                            if (!pagina) cache.put(new Request(caminho), c2);
                             return r.resp;
                         }
                         return cacheRes || pegarEmQualquerCache(req).then(function (qualquer) {
@@ -195,9 +196,10 @@ self.addEventListener("fetch", function (e) {
                 if (imagem) {
                     return redeComPrazo(req).then(function (r) {
                         if (!r.timeout && r.resp && r.resp.ok) {
-                            var copia = r.resp.clone();
-                            cache.put(req, copia);
-                            cache.put(new Request(caminho), copia.clone());
+                            var c1 = r.resp.clone();
+                            var c2 = r.resp.clone();
+                            cache.put(req, c1);
+                            cache.put(new Request(caminho), c2);
                             return r.resp;
                         }
                         if (cacheRes) return cacheRes;
@@ -209,9 +211,10 @@ self.addEventListener("fetch", function (e) {
                     if (cacheRes) return cacheRes;
                     return redeComPrazo(req).then(function (r) {
                         if (!r.timeout && r.resp && r.resp.ok) {
-                            var copia = r.resp.clone();
-                            cache.put(req, copia);
-                            cache.put(new Request(caminho), copia.clone());
+                            var c1 = r.resp.clone();
+                            var c2 = r.resp.clone();
+                            cache.put(req, c1);
+                            cache.put(new Request(caminho), c2);
                             return r.resp;
                         }
                         return cacheRes || pegarEmQualquerCache(req).then(function (qualquer) {

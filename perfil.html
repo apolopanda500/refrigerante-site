@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016n">
+<link rel="manifest" href="manifest.json?v=20261016o">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Convenção">
+<meta name="apple-mobile-web-app-title" content="ConvenÃ§Ã£o">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016n">
-<title>Perfil - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016n">
-<script src="theme.js?v=20261016n"></script>
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016o">
+<title>Perfil - Refrigerantes ConvenÃ§Ã£o</title>
+<link rel="stylesheet" href="style.css?v=20261016o">
+<script src="theme.js?v=20261016o"></script>
 
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -107,7 +107,7 @@
 </head>
 <body>
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
 <ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Hist&oacute;rico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configura&ccedil;&otilde;es</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="header-actions"><div class="cart-icon" onclick="window.location.href='carrinho.html'" title="Carrinho"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div></div>
@@ -125,13 +125,13 @@
   </button>
   <div class="perfil-dados">
     <b id="nomeDestaque" data-conta="nome-mostrar">Cliente</b>
-    <small id="telDestaque" data-conta="tel-mostrar">WhatsApp não informado</small>
-    <small><i class="fa fa-lock"></i> Guardado só neste dispositivo</small>
+    <small id="telDestaque" data-conta="tel-mostrar">WhatsApp nÃ£o informado</small>
+    <small><i class="fa fa-lock"></i> Guardado sÃ³ neste dispositivo</small>
   </div>
   <input type="file" id="fotoPerfil" accept="image/*" hidden>
 </div>
 
-  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
+  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catÃ¡logo</a>
 </div>
 
 <div class="perfil-card" id="cardDados">
@@ -143,16 +143,16 @@
   </div>
   <div class="form-group"><label>CPF</label><input type="text" id="pCpf" data-conta="cpf" placeholder="000.000.000-00"></div>
   <div class="form-group"><label>E-mail</label><input type="email" id="pEmail" data-conta="email" placeholder="seu@email.com"></div>
-  <div class="form-group"><label>Endereço padrão</label><input type="text" id="pEndereco" data-conta="endereco" placeholder="Rua, número"></div>
+  <div class="form-group"><label>EndereÃ§o padrÃ£o</label><input type="text" id="pEndereco" data-conta="endereco" placeholder="Rua, nÃºmero"></div>
   <div class="form-row">
     <div class="form-group"><label>Bairro</label><input type="text" id="pBairro" data-conta="bairro" placeholder="Seu bairro"></div>
     <div class="form-group"><label>Complemento</label><input type="text" id="pComplemento" data-conta="complemento" placeholder="Apto, bloco, etc."></div>
-    <div class="form-group"><label>Número</label><input type="text" id="pNumero" data-conta="numero" placeholder="Número"></div>
+    <div class="form-group"><label>NÃºmero</label><input type="text" id="pNumero" data-conta="numero" placeholder="NÃºmero"></div>
     <div class="form-group"><label>Rua</label><input type="text" id="pRua" data-conta="rua" placeholder="Nome da rua"></div>
     <div class="form-group"><label>CEP</label><input type="text" id="pCep" data-conta="cep" placeholder="CEP"></div>
-    <div class="form-group"><label>Observação</label><input type="text" id="pObs" data-conta="observacao" placeholder="Obs."></div>
+    <div class="form-group"><label>ObservaÃ§Ã£o</label><input type="text" id="pObs" data-conta="observacao" placeholder="Obs."></div>
   </div>
-  <button class="btn-salvar" onclick="salvarPerfil()"><i class="fa fa-save"></i> Salvar alterações</button>
+  <button class="btn-salvar" onclick="salvarPerfil()"><i class="fa fa-save"></i> Salvar alteraÃ§Ãµes</button>
 </div>
 
 <div class="perfil-card">
@@ -165,13 +165,13 @@
 </div></section>
 
 
-<script src="conta.js?v=20261016n"></script>
-<script src="firebase-appcheck.js?v=20261016n"></script>
-<script src="app-update.js?v=20261016n"></script>
-<script src="ia.js?v=20261016n"></script>
-<script src="central.js?v=20261016n"></script>
-<script src="loja.js?v=20261016n"></script>
-<script src="script.js?v=20261016n"></script>
+<script src="conta.js?v=20261016o"></script>
+<script src="firebase-appcheck.js?v=20261016o"></script>
+<script src="app-update.js?v=20261016o"></script>
+<script src="ia.js?v=20261016o"></script>
+<script src="central.js?v=20261016o"></script>
+<script src="loja.js?v=20261016o"></script>
+<script src="script.js?v=20261016o"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -223,7 +223,7 @@ function salvarPerfil() {
     var cpfVal = (document.getElementById("pCpf") || {}).value || "";
     cpfVal = cpfVal.replace(/\D/g, "");
     if (cpfVal && !cpfValido(cpfVal)) {
-        alert("CPF inválido. Confira os números e tente novamente.");
+        alert("CPF invÃ¡lido. Confira os nÃºmeros e tente novamente.");
         document.getElementById("pCpf").focus();
         return;
     }
@@ -243,24 +243,24 @@ function salvarPerfil() {
     }
     var telDigitos = dados.tel.replace(/\D/g, "");
     if (telDigitos.length < 10 || telDigitos.length > 11) {
-        alert("Informe um WhatsApp válido com DDD. Exemplo: (21) 99999-9999.");
+        alert("Informe um WhatsApp vÃ¡lido com DDD. Exemplo: (21) 99999-9999.");
         document.getElementById("pTel").focus();
         return;
     }
     if (dados.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(dados.email)) {
-        alert("E-mail inválido. Verifique o endereço digitado.");
+        alert("E-mail invÃ¡lido. Verifique o endereÃ§o digitado.");
         document.getElementById("pEmail").focus();
         return;
     }
 
     var resumo = "Nome: " + dados.nome + "\n"
                + "WhatsApp: " + dados.tel + "\n"
-               + "CPF: " + (cpfVal ? cpfVal.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") : "não informado") + "\n"
+               + "CPF: " + (cpfVal ? cpfVal.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") : "nÃ£o informado") + "\n"
                + (dados.email ? "E-mail: " + dados.email + "\n" : "")
-               + (dados.endereco ? "Endereço: " + dados.endereco + "\n" : "")
+               + (dados.endereco ? "EndereÃ§o: " + dados.endereco + "\n" : "")
                + (dados.bairro ? "Bairro: " + dados.bairro : "");
 
-    if (!confirm("Confirmar as alterações?\n\n" + resumo + "\n\nOs dados ficam salvos neste aparelho.")) return;
+    if (!confirm("Confirmar as alteraÃ§Ãµes?\n\n" + resumo + "\n\nOs dados ficam salvos neste aparelho.")) return;
 
     Conta.salvar(dados);
     Conta.aplicarEmTodos();
