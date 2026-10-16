@@ -82,5 +82,26 @@
 [data-theme="dark"] .cb-rot{color:#c7ccdf!important}
 [data-theme="dark"] .cb-dias{color:#a1a8c3!important}
 
+/* alto contraste com tema escuro: corrigir fundo branco que vazava */
+[data-theme="dark"][data-contraste="alto"] .detalhe{background:#1c1f33!important;border-color:#fff!important}
+
+/* modo compacto com tema escuro: manter fundos escuros */
+[data-theme="dark"][data-layout="compacto"] .cart-item{background:#222643!important}
+[data-theme="dark"][data-layout="compacto"] .pc{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .config-card{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .pedido-card{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .gb{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .config-row{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .caixa-bairro{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .resumo{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .acoes{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .detalhe-extra{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .detalhe{background:#1c1f33!important}
+[data-theme="dark"][data-layout="compacto"] .sw{background:#222643!important}
+[data-theme="dark"][data-layout="compacto"] .sf input{background:#232742!important;border-color:#3d4470!important;color:#e6e8f2!important}
+[data-theme="dark"][data-layout="compacto"] .ci-qtd{background:#2a2e44!important}
+[data-theme="dark"][data-layout="compacto"] .qv{background:#222643!important;color:#e6e8f2!important}
+
 /* forcar nova versao para quebrar cache do navegador: v=20261017m */
+
 
