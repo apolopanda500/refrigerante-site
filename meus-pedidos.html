@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016o">
+<link rel="manifest" href="manifest.json?v=20261016n">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ConvenÃ§Ã£o">
+<meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016o">
-<title>HistÃ³rico - Refrigerantes ConvenÃ§Ã£o</title>
-<link rel="stylesheet" href="style.css?v=20261016o">
-<script src="theme.js?v=20261016o"></script>
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016n">
+<title>Histórico - Refrigerantes Convenção</title>
+<link rel="stylesheet" href="style.css?v=20261016n">
+<script src="theme.js?v=20261016n"></script>
 
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -158,7 +158,7 @@
 </head>
 <body>
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
 <ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Hist&oacute;rico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configura&ccedil;&otilde;es</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="header-actions"></div>
@@ -166,11 +166,11 @@
 
 <section class="page"><div class="container">
 <div class="page-head">
-  <h1><i class="fa fa-history"></i> HistÃ³rico de pedidos</h1>
-  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catÃ¡logo</a>
+  <h1><i class="fa fa-history"></i> Histórico de pedidos</h1>
+  <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
 </div>
 
-<div class="aviso-info"><i class="fa fa-info-circle"></i> Seus pedidos aparecem automaticamente, com data e hora. NÃ£o precisa digitar nada.</div>
+<div class="aviso-info"><i class="fa fa-info-circle"></i> Seus pedidos aparecem automaticamente, com data e hora. Não precisa digitar nada.</div>
 
 <div id="usuarioLogado" class="sessao-bar">
   <i class="fa fa-user-check"></i>
@@ -195,13 +195,13 @@
 <div id="listaPedidos"></div>
 </div></section>
 
-<script src="conta.js?v=20261016o"></script>
-<script src="firebase-appcheck.js?v=20261016o"></script>
-<script src="app-update.js?v=20261016o"></script>
-<script src="ia.js?v=20261016o"></script>
-<script src="central.js?v=20261016o"></script>
-<script src="loja.js?v=20261016o"></script>
-<script src="script.js?v=20261016o"></script>
+<script src="conta.js?v=20261016n"></script>
+<script src="firebase-appcheck.js?v=20261016n"></script>
+<script src="app-update.js?v=20261016n"></script>
+<script src="ia.js?v=20261016n"></script>
+<script src="central.js?v=20261016n"></script>
+<script src="loja.js?v=20261016n"></script>
+<script src="script.js?v=20261016n"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -271,7 +271,7 @@ function mostrarPedidos(){
   if (aviso) {
       if (!sessao) {
           aviso.style.display = "flex";
-          aviso.innerHTML = '<i class="fa fa-info-circle"></i> <span>VocÃª nÃ£o estÃ¡ identificado. Preencha seu <a href="perfil.html" style="color:#1565c0;font-weight:700">perfil</a> para ver apenas os seus pedidos. Abaixo, todos os pedidos salvos neste aparelho.</span>';
+          aviso.innerHTML = '<i class="fa fa-info-circle"></i> <span>Você não está identificado. Preencha seu <a href="perfil.html" style="color:#1565c0;font-weight:700">perfil</a> para ver apenas os seus pedidos. Abaixo, todos os pedidos salvos neste aparelho.</span>';
       } else if (!porTelefone && lista.length) {
           aviso.style.display = "flex";
           aviso.innerHTML = '<i class="fa fa-sync-alt"></i> <span>Nenhum pedido antigo com o WhatsApp <b>' + sessao.tel + '</b>. Mostramos todos os pedidos salvos neste aparelho.</span>';
@@ -331,7 +331,7 @@ function render(){
 
   if (!pedidosAtuais.length) {
     box.innerHTML = '<div class="vazio"><i class="fa fa-receipt"></i><p>Nenhum pedido salvo neste aparelho ainda.</p>'
-      + '<p>Quando vocÃª fizer um pedido, ele aparece aqui automaticamente.</p></div>';
+      + '<p>Quando você fizer um pedido, ele aparece aqui automaticamente.</p></div>';
     return;
   }
   if (!lista.length) {
@@ -361,7 +361,7 @@ function render(){
     if (p.cpf) h += '<div><b>CPF:</b> ' + p.cpf + '</div>';
     h += '<div><b>Entrega:</b> ' + entrega + '</div>';
     h += '<div><b>Pagamento:</b> ' + (p.pagamento || "â€”") + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</div>';
-    h += '<div><b>Frete:</b> ' + (p.frete === 0 ? "GRÃTIS" : formatBRL(p.frete || 0)) + '</div>';
+    h += '<div><b>Frete:</b> ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete || 0)) + '</div>';
     h += '<div class="subtotal"><b>Subtotal:</b> ' + formatBRL(sub) + '</div>';
     /* ACOMPANHAMENTO: fica recolhido (so o resumo) e abre com um toque,
        para a tela nao crescer a cada pedido */
@@ -380,7 +380,7 @@ function render(){
            + " â€” " + (typeof dataHoraSegundos === "function" ? dataHoraSegundos(ev.quando) : dataHora(ev.quando))
            + ' <span class="sub">(' + (typeof tempoDesde === "function" ? tempoDesde(ev.quando) : "") + ')</span></div>';
     });
-    else h += '<div class="timeline-item"><i class="fa fa-circle"></i> aguardando â€” sem histÃ³rico salvo</div>';
+    else h += '<div class="timeline-item"><i class="fa fa-circle"></i> aguardando â€” sem histórico salvo</div>';
     h += '</div>';
     /* avaliacao de estrelas: so no pedido entregue */
     if (p.status === "entregue") {
@@ -406,10 +406,10 @@ function caixaAvaliar(p, av) {
            + '" onclick="votarEstrela(\'' + p.id + '\',' + i + ')" aria-label="' + i + ' estrela'
            + (i > 1 ? "s" : "") + '"><i class="fa fa-star"></i></button>';
     }
-    h += '</div><textarea id="avTexto-' + p.id + '" maxlength="500" placeholder="ComentÃ¡rio (opcional)">'
+    h += '</div><textarea id="avTexto-' + p.id + '" maxlength="500" placeholder="Comentário (opcional)">'
        + (av && av.texto ? String(av.texto).replace(/</g, "&lt;") : "") + '</textarea>'
        + '<button type="button" class="btn-detalhe" onclick="salvarVoto(\'' + p.id + '\')">'
-       + '<i class="fa fa-check"></i> Enviar avaliaÃ§Ã£o</button>';
+       + '<i class="fa fa-check"></i> Enviar avaliação</button>';
     return h;
 }
 function toggleAvaliar(id) {

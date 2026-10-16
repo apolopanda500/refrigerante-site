@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016o">
+<link rel="manifest" href="manifest.json?v=20261016n">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ConvenÃ§Ã£o">
+<meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016o">
-<title>Finalizar Pedido - Refrigerantes ConvenÃ§Ã£o</title>
-<link rel="stylesheet" href="style.css?v=20261016o">
-<script src="theme.js?v=20261016o"></script>
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016n">
+<title>Finalizar Pedido - Refrigerantes Convenção</title>
+<link rel="stylesheet" href="style.css?v=20261016n">
+<script src="theme.js?v=20261016n"></script>
 
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
@@ -129,7 +129,7 @@
 </head>
 <body>
 <header class="main-header"><div class="container"><nav>
-<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes ConvenÃ§Ã£o</span></div>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
 <span class="mobile-menu-btn"><span></span><span></span><span></span></span>
 <ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Produtos</a></li><li><a href="meus-pedidos.html"><i class="fa fa-history"></i> Hist&oacute;rico</a></li><li><a href="configuracoes.html"><i class="fa fa-cog"></i> Configura&ccedil;&otilde;es</a></li><li><a href="perfil.html"><i class="fa fa-user"></i> Perfil</a></li></ul>
 <div class="header-actions">
@@ -147,12 +147,12 @@
     <h2><i class="fa fa-map-marker-alt"></i> Dados de Entrega</h2>
     <div class="linha2">
       <div class="campo">
-      <label>RegiÃ£o de entrega *</label>
+      <label>Região de entrega *</label>
       <select id="fRegiao"></select>
       <div id="avisoRegiao" class="aviso-regiao"></div>
       <div id="janelaEntrega"></div>
     </div>
-    <div class="aviso" style="text-align:left"><i class="fa fa-info-circle"></i> Frete grÃ¡tis para pedidos acima de R$ 150,00.</div>
+    <div class="aviso" style="text-align:left"><i class="fa fa-info-circle"></i> Frete grátis para pedidos acima de R$ 150,00.</div>
   </div>
 
   <div class="card-section">
@@ -172,19 +172,19 @@
     <div class="resumo-row total"><span>Total</span><span id="rTotal">R$ 0,00</span></div>
     <div class="aviso-frete" id="avisoFrete" style="display:none;margin-top:10px"></div>
     <button class="btn-enviar" id="btnEnviar" onclick="enviarPedido()"><i class="fa fa-check-circle"></i> Finalizar Pedido</button>
-    <div class="aviso">Acompanhe o status do seu pedido na pÃ¡gina "Meus Pedidos".</div>
+    <div class="aviso">Acompanhe o status do seu pedido na página "Meus Pedidos".</div>
   </div>
 </div>
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016o"></script>
-<script src="firebase-appcheck.js?v=20261016o"></script>
-<script src="app-update.js?v=20261016o"></script>
-<script src="ia.js?v=20261016o"></script>
-<script src="central.js?v=20261016o"></script>
-<script src="loja.js?v=20261016o"></script>
-<script src="script.js?v=20261016o"></script>
+<script src="conta.js?v=20261016n"></script>
+<script src="firebase-appcheck.js?v=20261016n"></script>
+<script src="app-update.js?v=20261016n"></script>
+<script src="ia.js?v=20261016n"></script>
+<script src="central.js?v=20261016n"></script>
+<script src="loja.js?v=20261016n"></script>
+<script src="script.js?v=20261016n"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -247,7 +247,7 @@ function calcular() {
     const frRow = document.getElementById("rFreteRow");
     if (r.frete === 0) {
         frRow.classList.add("gratis");
-        fr.innerText = "GRÃTIS";
+        fr.innerText = "GRÁTIS";
     } else {
         frRow.classList.remove("gratis");
         fr.innerText = formatBRL(r.frete);
@@ -260,10 +260,10 @@ function calcular() {
         if (r.faltaParaGratis > 0) {
             av.style.display = "";
             av.innerHTML = '<i class="fa fa-truck"></i> Faltam <b>' + formatBRL(r.faltaParaGratis)
-                + '</b> para o frete ficar <b>GRÃTIS</b>';
+                + '</b> para o frete ficar <b>GRÁTIS</b>';
         } else if (r.subtotal > 0 && r.gratis) {
             av.style.display = "";
-            av.innerHTML = '<i class="fa fa-check-circle" style="color:var(--texto-ok)"></i> <b style="color:var(--texto-ok)">Frete grÃ¡tis!</b> Pedido acima de ' + formatBRL(r.minimo);
+            av.innerHTML = '<i class="fa fa-check-circle" style="color:var(--texto-ok)"></i> <b style="color:var(--texto-ok)">Frete grátis!</b> Pedido acima de ' + formatBRL(r.minimo);
         } else {
             av.style.display = "none";
             av.innerHTML = "";
@@ -289,7 +289,7 @@ function enviarPedido() {
         ? pedidosLiberados("")
         : { liberado: true, texto: "" };
     if (!regra.liberado) {
-        alert("Pedido nÃ£o aceito.\n\n" + regra.texto + "\n\nAtendemos das 08:50 Ã s 15:00.");
+        alert("Pedido não aceito.\n\n" + regra.texto + "\n\nAtendemos das 08:50 às 15:00.");
         return;
     }
 
@@ -299,12 +299,12 @@ function enviarPedido() {
         var avisoBloqueio = document.getElementById("avisoRegiao");
         if (avisoBloqueio) {
             avisoBloqueio.className = "aviso-regiao aviso";
-            avisoBloqueio.innerHTML = '<i class="fa fa-map-marker-alt"></i><span><b>Pedido nÃ£o aceito:</b> o bairro "<b>'
-                + bairro + '</b>" nÃ£o estÃ¡ na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
-                + '). Atendemos somente essas regiÃµes.</span>';
+            avisoBloqueio.innerHTML = '<i class="fa fa-map-marker-alt"></i><span><b>Pedido não aceito:</b> o bairro "<b>'
+                + bairro + '</b>" não está na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
+                + '). Atendemos somente essas regiões.</span>';
         }
-        alert("Pedido nÃ£o aceito.\n\nO bairro \"" + bairro + "\" nÃ£o estÃ¡ na nossa lista de entregas ("
-            + BAIRROS_ATENDIDOS_TEXTO + ").\n\nAtendemos somente essas regiÃµes. "
+        alert("Pedido não aceito.\n\nO bairro \"" + bairro + "\" não está na nossa lista de entregas ("
+            + BAIRROS_ATENDIDOS_TEXTO + ").\n\nAtendemos somente essas regiões. "
             + "Corrija o bairro no seu perfil para finalizar o pedido.");
         return;
     }
@@ -312,18 +312,18 @@ function enviarPedido() {
     const regiaoSel = document.getElementById("fRegiao");
     const regiaoTexto = regiaoSel.options[regiaoSel.selectedIndex].text;
     if (!foraArea && bairro && regiaoTexto.toLowerCase().indexOf(bairro.toLowerCase()) === -1) {
-        const continuar = confirm("A regiÃ£o selecionada (" + regiaoTexto + ") pode nÃ£o corresponder ao bairro (" + bairro + "). Continuar mesmo assim?");
+        const continuar = confirm("A região selecionada (" + regiaoTexto + ") pode não corresponder ao bairro (" + bairro + "). Continuar mesmo assim?");
         if (!continuar) return;
     }
 
     const faltando = [];
     if (!nomeValido(nome)) faltando.push("nome completo");
     if (!tel) faltando.push("WhatsApp");
-    if (cpf && !cpfValido(cpf)) faltando.push("CPF vÃ¡lido");
-    if (!end && !rua) faltando.push("endereÃ§o");
+    if (cpf && !cpfValido(cpf)) faltando.push("CPF válido");
+    if (!end && !rua) faltando.push("endereço");
     if (!bairro) faltando.push("bairro");
     if (faltando.length) {
-        if (confirm("Para finalizar o pedido complete seu perfil. EstÃ¡ faltando: " + faltando.join(", ") + ".\n\nIr para a pÃ¡gina do perfil agora?")) {
+        if (confirm("Para finalizar o pedido complete seu perfil. Está faltando: " + faltando.join(", ") + ".\n\nIr para a página do perfil agora?")) {
             location.href = "perfil.html";
         }
         return;
@@ -341,10 +341,10 @@ function enviarPedido() {
         var _p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
         if (_p.cfgConfirmarPedido !== false) {
             var r = calcular();
-            var linhas = cart.map(function(i){ return "â€¢ " + i.name + " x" + i.qty; }).join("\n");
+            var linhas = cart.map(function(i){ return "⬢ " + i.name + " x" + i.qty; }).join("\n");
             var resumo = "Confirmar o pedido?\n\n" + linhas + "\n\n"
                 + "Subtotal: " + formatBRL(r.subtotal) + "\n"
-                + "Frete: " + (r.frete === 0 ? "GRÃTIS" : formatBRL(r.frete)) + "\n"
+                + "Frete: " + (r.frete === 0 ? "GRÁTIS" : formatBRL(r.frete)) + "\n"
                 + "Total: " + formatBRL(r.total) + "\n\nPagamento: " + pagSelecionado;
             if (!confirm(resumo)) return;
         }
@@ -390,7 +390,7 @@ function atualizarAvisoAtendimento(){
     box.className = "regra-atendimento pausado";
     box.style.display = "flex";
     box.innerHTML = '<i class="fa fa-clock"></i> <span><b>Pedidos pausados.</b> ' + regra.texto
-      + ' Atendemos das <b>08:50</b> Ã s <b>15:00</b>.</span>';
+      + ' Atendemos das <b>08:50</b> às <b>15:00</b>.</span>';
     if(btn) btn.style.display = "none";
     return;
   }
@@ -399,9 +399,9 @@ function atualizarAvisoAtendimento(){
   if(fora){
     box.className = "regra-atendimento";
     box.style.display = "flex";
-    box.innerHTML = '<i class="fa fa-map-marker-alt"></i> <span><b>AtenÃ§Ã£o:</b> o bairro "'
-      + bairro + '" nÃ£o estÃ¡ na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
-      + '). O pedido serÃ¡ bloqueado atÃ© vocÃª corrigir o bairro no perfil.</span>';
+    box.innerHTML = '<i class="fa fa-map-marker-alt"></i> <span><b>Atenção:</b> o bairro "'
+      + bairro + '" não está na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
+      + '). O pedido será bloqueado até você corrigir o bairro no perfil.</span>';
     if(btn) btn.style.display = "";
     return;
   }
@@ -462,13 +462,13 @@ function atualizarRegiao(){
         aviso.className = "aviso-regiao pedido";
         aviso.innerHTML = '<i class="fa fa-calendar-alt"></i><span>Os pedidos de <b>' + r.nome
             + '</b> abrem na <b>' + nomePedido + '</b> (um dia antes da entrega de ' + r.diasTexto.toLowerCase() + ').'
-            + ' VocÃª pode registrar o pedido agora e o vendedor agenda na prÃ³xima carga.</span>';
+            + ' Você pode registrar o pedido agora e o vendedor agenda na próxima carga.</span>';
         return;
     }
     /* 2) hoje e dia de pedido da regiao */
     if (soPedidos) {
         aviso.className = "aviso-regiao pedido";
-        aviso.innerHTML = '<i class="fa fa-clipboard-list"></i><span><b>Hoje Ã© dia de pedidos para ' + r.nome + '.</b> '
+        aviso.innerHTML = '<i class="fa fa-clipboard-list"></i><span><b>Hoje é dia de pedidos para ' + r.nome + '.</b> '
             + 'A entrega acontece a partir de <b>' + NOMES_DIA_LONGOS[prox] + '</b>.</span>';
         return;
     }
@@ -477,7 +477,7 @@ function atualizarRegiao(){
         aviso.className = "aviso-regiao ok";
         aviso.innerHTML = '<i class="fa fa-check-circle"></i><span><b>' + r.nome
             + '</b> - entregamos hoje (' + r.diasTexto + '), das ' + r.horario
-            + '.<br>CaminhÃ£o ' + cam.corNome + ' (' + cam.modeloCurto + ') placa ' + cam.placa
+            + '.<br>Caminhão ' + cam.corNome + ' (' + cam.modeloCurto + ') placa ' + cam.placa
             + '.<br>Pedidos de hoje saem <b>' + NOMES_DIA_LONGOS[prox] + '</b>.</span>';
         return;
     }
@@ -486,7 +486,7 @@ function atualizarRegiao(){
     aviso.innerHTML = '<i class="fa fa-calendar-alt"></i><span><b>' + r.nome
         + '</b> entregamos ' + r.diasTexto.toLowerCase() + '.'
         + '<br>Pedidos na <b>' + nomePedido + '</b>.'
-        + '<br>PrÃ³xima entrega: <b>' + NOMES_DIA_LONGOS[prox] + '</b>.</span>';
+        + '<br>Próxima entrega: <b>' + NOMES_DIA_LONGOS[prox] + '</b>.</span>';
 }
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", montarRegioes); else montarRegioes();
@@ -532,15 +532,15 @@ function pintarJanelaEntrega(){
 
     box.innerHTML = '<div class="janela-entrega">'
         + '<div class="je-topo"><i class="fa fa-truck"></i> Seu pedido vai sair assim</div>'
-        + '<div class="je-linha"><span>RegiÃ£o</span><b>' + r.regiao.nome + '</b></div>'
+        + '<div class="je-linha"><span>Região</span><b>' + r.regiao.nome + '</b></div>'
         + '<div class="je-linha"><span>Dias de entrega</span><b>' + r.regiao.diasTexto + '</b></div>'
-        + '<div class="je-linha"><span>CaminhÃ£o carrega</span><b>' + cargaTxt + '</b></div>'
+        + '<div class="je-linha"><span>Caminhão carrega</span><b>' + cargaTxt + '</b></div>'
         + '<div class="je-linha"><span>Entrega acontece</span><b>' + r.entregaEmNome + '</b></div>'
-        + '<div class="je-linha"><span>HorÃ¡rio da entrega</span><b>' + horaTexto(HORARIOS.entrega.abre, 0)
-        + ' Ã s ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</b></div>'
+        + '<div class="je-linha"><span>Horário da entrega</span><b>' + horaTexto(HORARIOS.entrega.abre, 0)
+        + ' às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</b></div>'
         + '<div class="je-obs"><i class="fa fa-info-circle"></i> ' + HORARIOS.carga.obs
         + ' A loja funciona das ' + horaTexto(HORARIOS.loja.abre, 0)
-        + ' Ã s ' + horaTexto(HORARIOS.loja.fecha, 0) + '.</div>'
+        + ' às ' + horaTexto(HORARIOS.loja.fecha, 0) + '.</div>'
         + '</div>';
 }
 
@@ -548,7 +548,7 @@ function pintarJanelaEntrega(){
 <script>
 document.addEventListener("DOMContentLoaded",function(){
   if(typeof Conta!=="undefined" && Conta.estaVazia()){
-    alert("Complete seu perfil antes de finalizar o pedido. Preencha nome, WhatsApp, CPF e endereÃ§o na pÃ¡gina do perfil.");
+    alert("Complete seu perfil antes de finalizar o pedido. Preencha nome, WhatsApp, CPF e endereço na página do perfil.");
     location.href="perfil.html";
   }
 });
