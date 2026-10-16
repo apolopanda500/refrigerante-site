@@ -263,7 +263,7 @@ function pintarTabelaOfertas() {
         categoria: "Ver os produtos",
         frete: "Calcular o frete",
         regiao: "Ver dias de entrega",
-        resumo: "Acompanhar meus pedidos"
+        resumo: "Acompanhar o historico"
     };
 
     var h = '<div class="tab-wrap tab-ofertas"><table class="tabela-ofertas">'
@@ -582,7 +582,7 @@ function pintarLateral(){
     if (z) {
         z.innerHTML = '<a class="wgt-zap" href="meus-pedidos.html" style="background:var(--primary-color)">'
             + '<i class="fa fa-box"></i>'
-            + '<span><b>Meus pedidos</b><small>Acompanhe pelo site</small></span></a>';
+            + '<span><b>Histórico</b><small>Acompanhe pelo site</small></span></a>';
     }
     pintarHorario();
 }

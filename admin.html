@@ -585,11 +585,23 @@ function mostrarVersoes() {
     box.innerHTML = '<div style="background:var(--bg-alt);border:1px solid var(--borda);border-radius:12px;padding:12px;font-size:.86rem">'
         + '<div class="resumo-linha"><span>Versão deste painel (seu APK)</span><b>' + painelV + '</b></div>'
         + '<div class="resumo-linha"><span>Versão publicada do site</span><b id="versaoSite"> conferindo...</b></div>'
+        + '<div class="resumo-linha"><span>APKs na versão</span><b id="versaoApk">—</b></div>'
         + '<div class="resumo-linha"><span>Pedidos neste painel</span><b>' + pedidos + '</b></div>'
         + '<div class="resumo-linha"><span>Última sincronização com a nuvem</span><b>'
         + (sync ? tempoDesde(sync) + " atrás" : "agora") + '</b></div>'
         + '<div style="margin-top:8px;color:#6b7280">Cada lado tem a sua configuração (tema, letra, tabela, tempo de sincronização). '
-        + 'Os <b>pedidos</b> e os <b>preços</b> são os mesmos e chegam pela nuvem.</div></div>';
+        + 'Os <b>pedidos</b> e os <b>preços</b> são os mesmos e chegam pela nuvem. '
+        + 'O APK do cliente e o do vendedor são gerados sempre na versão do site.</div></div>';
+    try {
+        fetch("apk/versao-apk.txt", { cache: "no-store" })
+            .then(function (r) { return r.ok ? r.text() : ""; })
+            .then(function (t) {
+                var el = document.getElementById("versaoApk");
+                if (!el) return;
+                el.textContent = (t || "").trim() || "ainda não gerados nesta versão";
+            })
+            .catch(function () {});
+    } catch (e) {}
     try {
         fetch("versao.txt", { cache: "no-store" })
             .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })

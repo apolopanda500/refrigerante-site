@@ -231,6 +231,12 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 - **APK:** `apk/convencao-cliente.apk` e `apk/convencao-vendedor.apk`
   (TWA, 0,9 MB cada). Gerados com JDK 17 + Android SDK 34 + Gradle
   (ver `build-apk.ps1` e `.github/scripts`/fluxo documentado no histórico de commits).
+- **Versão dos APK = versão do site:** tanto `apk/android/build.js` quanto
+  `build-apk.ps1` leem `versao.txt`. O `versionName` é a mesma versão publicada
+  (ex.: `20261015f`) e o `versionCode` é a data `YYYYMMDD` (vendedor recebe +100,
+  para nunca colidir). Depois de gerar, o script grava `apk/versao-apk.txt` e o
+  painel mostra "APKs na versão" ao lado da versão publicada. Rebuild:
+  `powershell -ExecutionPolicy Bypass -File build-apk.ps1`.
 - **Chave de assinatura:** guardada fora do repositório (`apk/*.jks` ignorado pelo git).
   **Guarde esse arquivo com cuidado**: sem ele não dá para publicar atualização
   do mesmo aplicativo.

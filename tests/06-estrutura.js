@@ -388,5 +388,26 @@ const blocoAvaliar = (hist.split("function caixaAvaliar")[1] || "").split("funct
 if (!tagsBalanceadas(blocoAvaliar)) falha("caixaAvaliar() devolve um </div> a mais e quebra o card do historico");
 else console.log("  ok  a caixa de avaliacao fecha as tags direitinho");
 
+/* ---------- 13. versao dos APK sempre igual a do site ---------- */
+console.log("\n=== 13. VERSAO DOS APK SINCRONIZADA ===");
+const bjs = fs.readFileSync(path.join(dir, "apk", "android", "build.js"), "utf8");
+if (!/versao\.txt/.test(bjs)) falha("apk/android/build.js nao le a versao do site (versao.txt)");
+else if (/const VERSAO = "\d/.test(bjs)) falha("apk/android/build.js ainda tem versao fixada no codigo");
+else console.log("  ok  o projeto Android tira a versao de versao.txt");
+if (!/versionCode \$\{app\.codigo\}/.test(bjs)) falha("o APK do cliente e do vendedor precisam de codigo proprio (app.codigo)");
+else console.log("  ok  cliente e vendedor com versionCode proprio");
+const ps1 = fs.readFileSync(path.join(dir, "build-apk.ps1"), "utf8");
+if (!/versaoSite/.test(ps1) || /--appVersionName "1\.0"/.test(ps1)) falha("build-apk.ps1 ainda fixa a versao do APK");
+else console.log("  ok  build-apk.ps1 usa a versao do site nos dois APK");
+["cliente", "vendedor"].forEach(function (n) {
+    if (!fs.existsSync(path.join(dir, "apk", "convencao-" + n + ".apk"))) falha("falta o APK do " + n);
+});
+const versaoSite2 = fs.readFileSync(path.join(dir, "versao.txt"), "utf8").trim();
+let versaoApk = "";
+try { versaoApk = fs.readFileSync(path.join(dir, "apk", "versao-apk.txt"), "utf8").trim(); } catch (e) {}
+if (versaoApk === versaoSite2) console.log("  ok  os APK publicados estao na versao do site (" + versaoSite2 + ")");
+else if (!versaoApk) console.log("  ok  ainda nao ha APK assinado nesta sessao (rode build-apk.ps1 para gerar na versao " + versaoSite2 + ")");
+else console.log("  ATENCAO  APK em " + versaoApk + " e o site esta em " + versaoSite2 + " - rebuild necessario");
+
 console.log("\n" + (erros === 0 ? "*** ESTRUTURA E SEGURANCA 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
 process.exit(erros ? 1 : 0);

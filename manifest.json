@@ -20,7 +20,7 @@
     { "src": "img/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Meus pedidos", "short_name": "Pedidos", "url": "meus-pedidos.html", "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Histórico", "short_name": "Histórico", "url": "meus-pedidos.html", "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }] },
     { "name": "Meu perfil", "short_name": "Perfil", "url": "perfil.html", "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }] }
   ]
 }

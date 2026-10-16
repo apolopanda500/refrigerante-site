@@ -19,11 +19,32 @@ const fs = require("fs");
 const path = require("path");
 
 const RAIZ = path.resolve(__dirname, "..");            /* apk/           */
+const SITE = path.resolve(RAIZ, "..");                 /* raiz do site   */
 const PROJ = path.join(RAIZ, "android");
 const SITE_CLIENTE = "https://apolopanda500.github.io/refrigerante-site/index.html";
 const SITE_VENDEDOR = "https://apolopanda500.github.io/refrigerante-site/admin.html";
-const VERSAO = "1.0";
-const VERSAO_CODE = 2;
+
+/* ---------- versao SEMPRE sincronizada com o site ----------
+   A versao do APK e a mesma que o site publica em versao.txt
+   (ex.: 20261015f). Assim o app instalado nunca fica com uma
+   versao diferente da loja - e o "Atualizar agora" do app-update.js
+   aponta exatamente para a mesma versao.
+   Trocar de versao e o mesmo comando de sempre:
+     node tests/bump-versao.js 20261016a
+   O codigo numerico (versionCode) usa a data YYYYMMDD, que
+   so cresce; o do vendedor recebe +100 para nunca colidir. */
+function versaoDoSite() {
+    try {
+        const v = fs.readFileSync(path.join(SITE, "versao.txt"), "utf8").trim();
+        if (/^\d{8}[a-z]?$/.test(v)) return v;
+    } catch (e) {}
+    return "20260101a";
+}
+const VERSAO = versaoDoSite();
+const CODIGO_BASE = parseInt(VERSAO.replace(/\D/g, ""), 10) || 20260101;
+const CODIGO_CLIENTE = CODIGO_BASE;
+const CODIGO_VENDEDOR = CODIGO_BASE + 100;
+const VERSAO_CODE = CODIGO_CLIENTE;      /* valor padrao (cliente) */
 
 const APLICATIVOS = [
     {
@@ -32,7 +53,8 @@ const APLICATIVOS = [
         rotulo: "Convenção",
         url: SITE_CLIENTE,
         icone: "ic_launcher.png",
-        fundo: "#3d4465"
+        fundo: "#3d4465",
+        codigo: CODIGO_CLIENTE
     },
     {
         nome: "vendedor",
@@ -40,7 +62,8 @@ const APLICATIVOS = [
         rotulo: "Convenção Vendedor",
         url: SITE_VENDEDOR,
         icone: "ic_launcher_vendedor.png",
-        fundo: "#1d3f6e"
+        fundo: "#1d3f6e",
+        codigo: CODIGO_VENDEDOR
     }
 ];
 
@@ -174,7 +197,7 @@ android {
         applicationId "${app.pacote}"
         minSdk 24
         targetSdk 34
-        versionCode ${VERSAO_CODE}
+        versionCode ${app.codigo}
         versionName "${VERSAO}"
     }
 
@@ -277,6 +300,16 @@ include ':vendedor'
 project(':cliente').projectDir = file('cliente')
 project(':vendedor').projectDir = file('vendedor')
 `);
+
+console.log("\n=== versao sincronizada com o site ===");
+console.log("  site (versao.txt) : " + VERSAO);
+console.log("  APK cliente       : versionName " + VERSAO + " / versionCode " + CODIGO_CLIENTE);
+console.log("  APK vendedor      : versionName " + VERSAO + " / versionCode " + CODIGO_VENDEDOR);
+/* deixa o registro: o painel e os testes comparam com versao.txt */
+try {
+    fs.writeFileSync(path.join(RAIZ, "versao-projeto.txt"), VERSAO + "\n", "utf8");
+    console.log("  gravado: apk/versao-projeto.txt (o APK em si e gravado pelo build-apk.ps1)");
+} catch (e) {}
 
 console.log("\nPronto. Para gerar os APKs:");
 console.log("  cd apk/android");

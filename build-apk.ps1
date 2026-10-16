@@ -55,13 +55,22 @@ npm install -g @bubblewrap/cli | Out-Null
 Say "    Bubblewrap instalado."
 
 Say "4/4  Gerando os APK"
+# a versao dos dois APK e SEMPRE a do site (versao.txt): assim o app
+# instalado nunca fica com uma versao diferente da loja.
+$versaoSite = (Get-Content "versao.txt" -Raw).Trim()
+$codigo = [int]($versaoSite -replace '\D','')
+Say "    Versao do site: $versaoSite  (versionCode $codigo)"
+
 bubblewrap init --manifest "https://apolopanda500.github.io/refrigerante-site/manifest.json" --asset "logo.png:img/icon-512.png" | Out-Null
 # app do CLIENTE
-bubblewrap build --manifest "$SITE/manifest.json" | Out-Null
+bubblewrap build --manifest "$SITE/manifest.json" --appVersionName "$versaoSite" --appVersionCode "$codigo" | Out-Null
 Copy-Item "app-release-signed.apk" "apk\convencao-cliente.apk" -Force -ErrorAction SilentlyContinue
-# app do VENDEDOR
-bubblewrap build --manifest "$SITE/manifest-vendedor.json" --appName "Painel Vendedor" --appVersionName "1.0" --package "br.com.convencao.painel" | Out-Null
+# app do VENDEDOR (+100 no codigo para nunca colidir com o do cliente)
+bubblewrap build --manifest "$SITE/manifest-vendedor.json" --appName "Painel Vendedor" --appVersionName "$versaoSite" --appVersionCode ($codigo + 100) --package "br.com.convencao.painel" | Out-Null
 Copy-Item "app-release-signed.apk" "apk\convencao-vendedor.apk" -Force -ErrorAction SilentlyContinue
+
+Set-Content -Path "apk\versao-apk.txt" -Value $versaoSite -Encoding UTF8
+Say "    APK cliente e vendedor gravados na versao $versaoSite"
 
 Say "Pronto!"
 Say "APKs em:"
