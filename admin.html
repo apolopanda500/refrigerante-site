@@ -432,7 +432,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
   <div class="card" id="editorPrecos" style="margin-top:12px"></div>
   <div class="card" id="caixaPrecosNuvem" style="margin-top:12px;display:none">
     <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-cloud"></i> Preços em tempo real</h3>
-    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Opcional. Com a URL do banco, os preços que você salvar aparecem na hora na página de todos os clientes. Crie em <b>console.firebase.google.com</b> â†’ <b>Realtime Database</b> â†’ modo <b>teste</b> e cole a URL aqui.</p>
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Opcional. Com a URL do banco, os preços que você salvar aparecem na hora na página de todos os clientes. Crie em <b>console.firebase.google.com</b> → <b>Realtime Database</b> → modo <b>teste</b> e cole a URL aqui.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <input id="cfgPrecosURL" type="text" placeholder="https://seu-banco.firebaseio.com" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
       <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarPrecosURLAdmin(this)"><i class="fa fa-save"></i> Salvar URL</button>
@@ -444,12 +444,12 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
       <ol style="margin:0;padding-left:20px;font-size:.9rem;line-height:1.9;color:#4a5070">
         <li>Abra <b>console.firebase.google.com</b> e entre no projeto <b>planning-with-ai-9b2c9</b>.</li>
         <li>No menu da esquerda clique em <b>Realtime Database</b> (ou <i>Banco de dados em tempo real</i>).</li>
-        <li>Clique em <b>Criar banco de dados</b> â†’ escolha a região <b>United States</b> â†’ <b>Avançar</b>.</li>
+        <li>Clique em <b>Criar banco de dados</b> → escolha a região <b>United States</b> → <b>Avançar</b>.</li>
         <li>Escolha <b>Começar no modo de teste</b> e conclua.</li>
         <li>Pronto! Não precisa colar nada aqui: o site encontra o banco sozinho.</li>
       </ol>
       <p style="margin:10px 0 0;font-size:.84rem;color:#7a8199">
-        Depois de criar, volte aqui e clique em <b>Testar</b>. Se aparecer â€œTudo certoâ€, é só editar os preços e clicar em <b>Salvar e aplicar</b>: todos os clientes veem na hora.
+        Depois de criar, volte aqui e clique em <b>Testar</b>. Se aparecer “Tudo certo”, é só editar os preços e clicar em <b>Salvar e aplicar</b>: todos os clientes veem na hora.
       </p>
     </div>
     <button class="btn-st b-copiar" style="margin-top:10px;min-height:40px;padding:9px 16px" onclick="verPassoFirebase()"><i class="fa fa-question-circle"></i> Como criar o banco</button>
@@ -473,7 +473,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     <div id="calcResultado" style="margin-top:10px"></div>
 
     <h4 style="margin:20px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-boxes-stacked"></i> Contagem das mercadorias</h4>
-    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Quantas latas, garrafas e packs saem dos produtos â€” e quanto pesa para a carga.</p>
+    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Quantas latas, garrafas e packs saem dos produtos — e quanto pesa para a carga.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end">
       <div class="campo"><label>Packs / caixas</label><input id="contaQtdPacks" type="text" inputmode="numeric" placeholder="10" class="ferramenta-input" oninput="contaCarga()"></div>
       <div class="campo"><label>Unidades por pack</label><input id="contaUnidades" type="text" inputmode="numeric" placeholder="6" class="ferramenta-input" oninput="contaCarga()"></div>
@@ -548,7 +548,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
       <button class="op-btn" data-v="vertical" onclick="setLeituraVendedor(this)"><i class="fa fa-grip-lines-vertical"></i> Cartões empilhados</button>
     </div>
     <p style="font-size:.82rem;color:#777;margin:6px 0 0">Em <b>cartões empilhados</b> cada pedido vira um bloco
-      com o nome de cada coluna à esquerda â€” bom para tela pequena. Em <b>rolagem horizontal</b> a tabela
+      com o nome de cada coluna à esquerda — bom para tela pequena. Em <b>rolagem horizontal</b> a tabela
       fica como no computador. Essa escolha é só do painel.</p>
 
     <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-sync-alt"></i> Sincronização com a nuvem</h4>
@@ -722,7 +722,7 @@ function mostrarPainel() {
                     if (ok) {
                         sync.style.background = "";
                         sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado às ' + dataHoraSegundos(Date.now())
-                            + ' Â· ' + getPedidos().length + ' pedido(s) neste painel, de todos os aparelhos.';
+                            + ' · ' + getPedidos().length + ' pedido(s) neste painel, de todos os aparelhos.';
                     } else {
                         sync.style.background = "#8a6100";
                         sync.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Nao consegui falar com a nuvem agora ('
@@ -863,9 +863,9 @@ function mostrarVersoes() {
     box.innerHTML = '<div style="background:var(--bg-alt);border:1px solid var(--borda);border-radius:12px;padding:12px;font-size:.86rem">'
         + '<div class="resumo-linha"><span>Versão deste painel (seu APK)</span><b>' + painelV + '</b></div>'
         + '<div class="resumo-linha"><span>Versão publicada do site</span><b id="versaoSite"> conferindo...</b></div>'
-        + '<div class="resumo-linha"><span>APKs na versão</span><b id="versaoApk">â€”</b></div>'
+        + '<div class="resumo-linha"><span>APKs na versão</span><b id="versaoApk">—</b></div>'
         + '<div class="resumo-linha"><span>Pedidos neste painel</span><b>' + pedidos + '</b></div>'
-        + '<div class="resumo-linha"><span>Ãšltima sincronização com a nuvem</span><b>'
+        + '<div class="resumo-linha"><span>Última sincronização com a nuvem</span><b>'
         + (sync ? tempoDesde(sync) + " atrás" : "agora") + '</b></div>'
         + '<div style="margin-top:8px;color:#6b7280">Cada lado tem a sua configuração (tema, letra, tabela, tempo de sincronização). '
         + 'Os <b>pedidos</b> e os <b>preços</b> são os mesmos e chegam pela nuvem. '
@@ -1011,7 +1011,7 @@ function tabelaPedidos(lista) {
         h += '<tr class="linha-pedido" onclick="abrirFicha(\'' + p.id + '\')">'
             + '<td data-label="Pedido" class="td-id">' + p.id + '<span class="sub">' + (typeof tick === "function" ? tick(p.criadoEm) : dataHora(p.criadoEm)) + '</span></td>'
             + '<td data-label="Cliente" class="td-cliente">' + p.nome + '<span class="sub"><i class="fa fa-phone"></i> ' + p.tel + '</span></td>'
-            + '<td data-label="Entrega">' + (p.bairro || "â€”") + '<span class="sub">' + (p.regiao || "") + '</span></td>'
+            + '<td data-label="Entrega">' + (p.bairro || "—") + '<span class="sub">' + (p.regiao || "") + '</span></td>'
             + '<td data-label="Pagamento">' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? '<span class="sub">troco p/ ' + p.troco + '</span>' : '') + '</td>'
             + '<td data-label="Frete" class="td-num">' + (p.frete === 0 ? '<b style="color:var(--texto-ok)">GRÁTIS</b>' : formatBRL(p.frete)) + '</td>'
             + '<td data-label="Total" class="td-num td-total">' + formatBRL(p.total) + '</td>'
@@ -1050,12 +1050,12 @@ function fichaPedido(p) {
     h += '<div>CPF: <b>' + (p.cpf || "não informado") + '</b></div>';
     h += '<div>Data: <b>' + dataHora(p.criadoEm) + '</b> <span class="sub">(' + dataHoraSegundos(p.criadoEm) + ')</span></div>';
     h += '<div>Endereco: <b>' + p.end + (p.comp ? " (" + p.comp + ")" : "") + '</b></div>';
-    h += '<div>Bairro / Regiao: <b>' + (p.bairro || "â€”") + ' / ' + (p.regiao || "â€”") + '</b></div>';
+    h += '<div>Bairro / Regiao: <b>' + (p.bairro || "—") + ' / ' + (p.regiao || "—") + '</b></div>';
     h += '<div>Pagamento: <b>' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</b></div>';
     h += '<div>Frete: <b>' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</b></div>';
     h += '<div class="ficha-linha"><b>Itens:</b></div>';
     (p.itens || []).forEach(function (i) {
-        h += '<div>' + i.name + ' <span class="sub">x' + i.qty + ' â€” ' + formatBRL(i.subtotal) + '</span></div>';
+        h += '<div>' + i.name + ' <span class="sub">x' + i.qty + ' — ' + formatBRL(i.subtotal) + '</span></div>';
     });
     h += '<div class="ficha-linha"><b>Subtotal:</b> ' + formatBRL(p.subtotal)
         + ' &nbsp;&nbsp; <b>Total:</b> ' + formatBRL(p.total) + '</div>';
@@ -1063,7 +1063,7 @@ function fichaPedido(p) {
         h += '<div class="ficha-linha"><b>Acompanhamento:</b> <span class="sub">cada passo com a hora exata</span></div>';
         p.historico.slice().reverse().forEach(function (ev) {
             h += '<div class="ficha-tick"><i class="fa fa-circle"></i> ' + (STATUS_LABEL[ev.status] || ev.status)
-                + ' â€” ' + dataHoraSegundos(ev.quando)
+                + ' — ' + dataHoraSegundos(ev.quando)
                 + ' <span class="sub">(' + tempoDesde(ev.quando) + ')</span></div>';
         });
         var ultimo = p.historico[p.historico.length - 1];
@@ -1136,7 +1136,7 @@ function resumoPorStatus(pedidos) {
         if (!ps.length) return;
         var soma = ps.filter(function (p){ return p.status !== "cancelado"; }).reduce(function (t, p){ return t + p.total; }, 0);
         html += '<div class="resumo-linha"><span>' + statusBadge(st) + '</span>'
-              + '<b>' + ps.length + ' pedido(s) â€” ' + formatBRL(soma) + '</b></div>';
+              + '<b>' + ps.length + ' pedido(s) — ' + formatBRL(soma) + '</b></div>';
     });
     html += '</div>';
     return html;
@@ -1387,7 +1387,7 @@ function exportarPedidos() {
             (p.bairro || "").replace(/;/g, ","), (p.regiao || "").replace(/;/g, ","), p.pagamento,
             (p.troco || ""), p.subtotal, p.frete, p.total, itens.replace(/;/g, ",")].join(";"));
     });
-    var blob = new Blob(["ï»¿" + linhas.join("\n")], { type: "text/csv;charset=utf-8" });
+    var blob = new Blob(["﻿" + linhas.join("\n")], { type: "text/csv;charset=utf-8" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "pedidos-convencao.csv";

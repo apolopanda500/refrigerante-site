@@ -160,7 +160,7 @@
   <div class="config-row config-col">
     <div class="config-label">Aviso no aparelho
       <small>Um interruptor só. Ligado, o site pede a permissão sozinho e avisa
-      quando o status do pedido mudar â€” mesmo com o app fechado.</small>
+      quando o status do pedido mudar — mesmo com o app fechado.</small>
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
       <label class="toggle" style="display:inline-flex;align-items:center;gap:8px">
@@ -182,7 +182,7 @@
       <a class="btn-mini" href="apk/convencao-cliente.apk" download style="text-decoration:none"><i class="fa fa-android"></i> Baixar aplicativo (APK)</a>
     </div>
     <p style="font-size:.8rem;color:#8a8a8a;margin:10px 0 0">
-      <b>Como instalar:</b> baixe o arquivo, abra ele e toque em <b>Instalar</b>. O celular vai pedir autorização para instalar de fontes desconhecidas â€” libere para o navegador que fez o download.
+      <b>Como instalar:</b> baixe o arquivo, abra ele e toque em <b>Instalar</b>. O celular vai pedir autorização para instalar de fontes desconhecidas — libere para o navegador que fez o download.
       No iPhone use o botão <b>Compartilhar</b> e depois <b>Adicionar à Tela de Início</b>.
     </p>
   </div>
@@ -453,7 +453,7 @@ function limparCarrinho() {
     }
 }
 function limparHistorico() {
-    if (confirm("ATENÃ‡ÃƒO: Isso apagará TODO o histórico de pedidos deste dispositivo. Continuar?")) {
+    if (confirm("ATENÇÃO: Isso apagará TODO o histórico de pedidos deste dispositivo. Continuar?")) {
         try { Object.keys(localStorage).forEach(function(k) { if (k.indexOf("convencao_pedidos") === 0 || k.indexOf("pedidos_") === 0) localStorage.removeItem(k); }); } catch(e) {}
         alert("Histórico apagado!");
     }
@@ -595,14 +595,14 @@ function mostrarVersaoCliente() {
         .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
         .then(function (t) {
             var v = (t || "").trim();
-            el.innerHTML = "v" + instalada + " Â· site publicado em v" + v
+            el.innerHTML = "v" + instalada + " · site publicado em v" + v
                 + (v === instalada
                     ? ' <span style="color:var(--texto-ok)">atualizado</span>'
                     : ' <button type="button" class="btn-mini" style="margin-left:6px" onclick="location.reload()">'
                       + '<i class="fa fa-sync"></i> Atualizar agora</button>');
         })
         .catch(function () {
-            el.textContent = "v" + instalada + " Â· sem resposta do site agora";
+            el.textContent = "v" + instalada + " · sem resposta do site agora";
         });
 }
 

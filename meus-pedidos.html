@@ -543,9 +543,9 @@ function render(){
     var itens   = Array.isArray(p.itens) ? p.itens : [];
     var hist    = Array.isArray(p.historico) ? p.historico : [];
     var sub     = (p.subtotal !== undefined) ? p.subtotal : (p.total || 0);
-    var entrega = [p.end, p.comp, p.bairro].filter(Boolean).join(" - ") || "â€”";
+    var entrega = [p.end, p.comp, p.bairro].filter(Boolean).join(" - ") || "—";
     h += '<div class="pedido-card">';
-    h += '<div class="pedido-topo"><div><b>' + (p.id || "â€”") + '</b><div class="pedido-meta"><i class="fa fa-clock"></i> '
+    h += '<div class="pedido-topo"><div><b>' + (p.id || "—") + '</b><div class="pedido-meta"><i class="fa fa-clock"></i> '
        + (typeof dataHoraSegundos === "function" ? dataHoraSegundos(p.criadoEm) : dataHora(p.criadoEm))
        + (typeof tempoDesde === "function" && tempoDesde(p.criadoEm) ? " (" + tempoDesde(p.criadoEm) + ")" : "")
        + '</div></div>' + statusBadge(p.status) + '</div>';
@@ -555,10 +555,10 @@ function render(){
     h += '</div>';
     h += '<div class="pedido-total"><button class="btn-detalhe" onclick="toggleDetalhe(\'' + p.id + '\')"><i class="fa fa-chevron-down"></i> Ver detalhes</button><span class="val">' + formatBRL(p.total) + '</span></div>';
     h += '<div class="detalhe-extra" id="det-' + p.id + '">';
-    h += '<div><b>Cliente:</b> ' + (p.nome || "â€”") + (p.tel ? " &middot; " + p.tel : "") + '</div>';
+    h += '<div><b>Cliente:</b> ' + (p.nome || "—") + (p.tel ? " &middot; " + p.tel : "") + '</div>';
     if (p.cpf) h += '<div><b>CPF:</b> ' + p.cpf + '</div>';
     h += '<div><b>Entrega:</b> ' + entrega + '</div>';
-    h += '<div><b>Pagamento:</b> ' + (p.pagamento || "â€”") + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</div>';
+    h += '<div><b>Pagamento:</b> ' + (p.pagamento || "—") + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</div>';
     h += '<div><b>Frete:</b> ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete || 0)) + '</div>';
     h += '<div class="subtotal"><b>Subtotal:</b> ' + formatBRL(sub) + '</div>';
     /* ACOMPANHAMENTO: fica recolhido (so o resumo) e abre com um toque,
