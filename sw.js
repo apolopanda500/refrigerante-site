@@ -1,14 +1,10 @@
 /* ============================================
-   SERVICE WORKER - APP DO CLIENTE (reconstruido)
-   Site leve, offline-first e sem tela branca.
-
-   Estrategia:
-   - Assets (CSS, JS, imagens): cache-first. Se estiver no cache, usa direto.
-     Sem espera de rede, sem tela branca.
-   - Paginas (HTML): rede primeiro com timeout curto (3 s). Se a internet
-     responder, mostra a versao publicada. Se nao, cai no cache.
-   - Ativacao: apaga caches antigos imediatamente. Nao espera "90% completo".
-   - Ctrl+F5 / limpar cache: ignora o service worker cache e vai direto na rede.
+   SERVICE WORKER - APP DO CLIENTE (reconstruido v2)
+    - Imagens: rede primeiro com timeout curto, depois cache (sempre tenta mostrar a imagem nova)
+    - CSS/JS essenciais: cache-first (instantaneo, sem espera de rede)
+    - Paginas HTML: rede primeiro com timeout curto, depois cache
+    - Ativacao: apaga caches antigos imediatamente
+    - Ctrl+F5 / limpar cache: ignora cache e vai direto na rede
    ============================================ */
 
 var VERSAO = "20261016j";
@@ -16,6 +12,7 @@ var BASE = "convencao-cache-" + VERSAO;
 /* 3 s: tempo maximo de espera pela rede antes de usar o cache */
 var LIMITE_MS = 3000;
 
+/* Arquivos essenciais para abrir o site rapido e funcionar offline */
 var ESSENCIAL = [
     "./",
     "index.html",
@@ -40,8 +37,46 @@ var ESSENCIAL = [
     "manifest.json",
     "img/icon-192.png",
     "img/icon-512.png",
+    "img/icon-192-maskable.png",
+    "img/icon-512-maskable.png",
     "img/608VERDE.jpg",
-    "img/608AZUL.jpeg"
+    "img/608AZUL.jpeg",
+    "img/p01.jpg",
+    "img/p02.jpg",
+    "img/p03.jpg",
+    "img/p04.jpg",
+    "img/p05.jpg",
+    "img/p06.jpg",
+    "img/p07.jpg",
+    "img/p08.jpg",
+    "img/p09.jpg",
+    "img/p10.jpg",
+    "img/p11.jpg",
+    "img/p12.jpg",
+    "img/p13.jpg",
+    "img/p14.jpg",
+    "img/p15.jpg",
+    "img/p16.jpg",
+    "img/p17.jpg",
+    "img/p18.jpg",
+    "img/p19.jpg",
+    "img/p20.jpg",
+    "img/p21.jpg",
+    "img/p22.jpg",
+    "img/p23.jpg",
+    "img/p24.jpg",
+    "img/p25.jpg",
+    "img/p26.jpg",
+    "img/p27.jpg",
+    "img/p28.jpg",
+    "img/p29.jpg",
+    "img/p30.jpg",
+    "img/p31.jpg",
+    "img/p32.jpg",
+    "img/p33.jpg",
+    "img/p34.jpg",
+    "img/p35.jpg",
+    "img/p36.jpg"
 ];
 
 /* paginas que NAO entram no cache do cliente */
@@ -64,13 +99,18 @@ function ehPagina(req) {
     return (mode === "navigate") || (accept.indexOf("text/html") >= 0);
 }
 
+function ehImagem(req) {
+    var accept = req.headers.get("accept") || "";
+    return accept.indexOf("image/") >= 0;
+}
+
 function forcarRede(req) {
     return (req.cache === "reload")
         || ((req.headers.get("cache-control") || "").indexOf("no-cache") >= 0)
         || ((req.headers.get("pragma") || "").indexOf("no-cache") >= 0);
 }
 
-/* rede com prazo curto: se nao responder em LIMITE_MS, resolve com timeout */
+/* rede com prazo curto */
 function redeComPrazo(req) {
     return new Promise(function (resolve) {
         var respondido = false;
@@ -104,7 +144,6 @@ self.addEventListener("install", function (e) {
 self.addEventListener("activate", function (e) {
     e.waitUntil(
         caches.keys().then(function (chaves) {
-            /* apaga TODOS os caches antigos imediatamente */
             return Promise.all(chaves.map(function (c) {
                 if (c !== BASE) return caches.delete(c);
             }));
@@ -129,17 +168,17 @@ self.addEventListener("fetch", function (e) {
     var url = new URL(req.url);
     if (url.origin !== self.location.origin) return;
 
-    /* painel do vendedor nunca entra no cache do cliente */
     if (estaNaLista(NAO_CACHEIA, pathnameOf(req))) return;
 
     var caminho = pathnameOf(req);
     var pagina = ehPagina(req);
+    var imagem = ehImagem(req);
     var forcado = forcarRede(req);
 
     e.respondWith(
         caches.open(BASE).then(function (cache) {
             return cache.match(req).then(function (cacheRes) {
-                /* se e recarga forcada, ignora cache e vai na rede */
+                /* recarga forcada: ignora cache, vai na rede */
                 if (forcado) {
                     return redeComPrazo(req).then(function (r) {
                         if (!r.timeout && r.resp && r.resp.ok) {
@@ -152,7 +191,23 @@ self.addEventListener("fetch", function (e) {
                     });
                 }
 
-                /* NAO e paginas: cache-first (nao espera rede) */
+                /* IMAGENS: rede primeiro (sempre tenta a nova), depois cache */
+                if (imagem) {
+                    return redeComPrazo(req).then(function (r) {
+                        if (!r.timeout && r.resp && r.resp.ok) {
+                            var copia = r.resp.clone();
+                            cache.put(req, copia);
+                            cache.put(new Request(caminho), copia.clone());
+                            return r.resp;
+                        }
+                        /* rede falhou ou timeout: usa o que tiver no cache */
+                        if (cacheRes) return cacheRes;
+                        /* nada em lugar nenhum: imagem transparente pequena em vez de sumir */
+                        return new Response("", { status: 204, statusText: "no content" });
+                    });
+                }
+
+                /* NAO e paginas (CSS, JS): cache-first (instantaneo) */
                 if (!pagina) {
                     if (cacheRes) return cacheRes;
                     return redeComPrazo(req).then(function (r) {
@@ -166,7 +221,7 @@ self.addEventListener("fetch", function (e) {
                     });
                 }
 
-                /* e pagina: rede primeiro com timeout curto, depois cache */
+                /* PAGINAS: rede primeiro com timeout curto, depois cache */
                 return redeComPrazo(req).then(function (r) {
                     if (!r.timeout && r.resp && r.resp.ok) {
                         var copia = r.resp.clone();
@@ -174,7 +229,6 @@ self.addEventListener("fetch", function (e) {
                         return r.resp;
                     }
                     if (cacheRes) return cacheRes;
-                    /* nem na rede nem no cache: mostra index.html como fallback */
                     return cache.match("index.html").then(function (p) {
                         if (p) return p;
                         return new Response(
