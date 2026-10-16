@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016t">
+<link rel="manifest" href="manifest.json?v=20261016u">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016t">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261016u">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016t">
-<script src="theme.js?v=20261016t"></script>
+<link rel="stylesheet" href="style.css?v=20261016u">
+<script src="theme.js?v=20261016u"></script>
 
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
@@ -368,6 +368,26 @@
 [data-theme="rosa"] .bs{background:#8e2f6b;color:#fff}
 [data-theme="vermelho"] .bs{background:#a11b0f;color:#fff}
 
+/* Barra de busca - alinhamento e cores em todos os temas */
+.sw{padding:10px 14px}
+.sf input{border-radius:25px}
+.sf i{font-size:1rem}
+
+/* Informacoes da loja no final - cores por tema */
+.info-loja{background:#fff!important;border-color:#eeeef4}
+[data-theme="dark"] .info-loja{background:#1c1f33!important;border-color:#353a5c}
+[data-theme="dark"] .info-loja,.info-loja *{color:#e6e8f2!important}
+[data-theme="dark"] .info-loja b,.info-loja strong{color:#ffb822!important}
+[data-theme="guara"] .info-loja{background:#1c331f!important;border-color:#3a5c42}
+[data-theme="guara"] .info-loja,.info-loja *{color:#8fe0a8!important}
+[data-theme="guara"] .info-loja b,.info-loja strong{color:#1b7f3b!important}
+[data-theme="rosa"] .info-loja{background:#3d2a4a!important;border-color:#5c3a62}
+[data-theme="rosa"] .info-loja,.info-loja *{color:#c39bd3!important}
+[data-theme="rosa"] .info-loja b,.info-loja strong{color:#8e2f6b!important}
+[data-theme="vermelho"] .info-loja{background:#3a1a1d!important;border-color:#5c3a42}
+[data-theme="vermelho"] .info-loja,.info-loja *{color:#ff9d9d!important}
+[data-theme="vermelho"] .info-loja b,.info-loja strong{color:#a11b0f!important}
+
 </style>
 </head>
 <body>
@@ -413,13 +433,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016t"></script>
-<script src="firebase-appcheck.js?v=20261016t"></script>
-<script src="app-update.js?v=20261016t"></script>
-<script src="ia.js?v=20261016t"></script>
-<script src="central.js?v=20261016t"></script>
-<script src="loja.js?v=20261016t"></script>
-<script src="script.js?v=20261016t"></script>
+<script src="conta.js?v=20261016u"></script>
+<script src="firebase-appcheck.js?v=20261016u"></script>
+<script src="app-update.js?v=20261016u"></script>
+<script src="ia.js?v=20261016u"></script>
+<script src="central.js?v=20261016u"></script>
+<script src="loja.js?v=20261016u"></script>
+<script src="script.js?v=20261016u"></script>
 <script>
 cart = getCart();
 
