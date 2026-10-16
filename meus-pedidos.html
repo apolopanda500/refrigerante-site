@@ -512,9 +512,9 @@ function mostrarPedidos(){
   var textoEl = document.getElementById("sessaoTexto");
   if (textoEl) {
       if (sessao && sessao.nome) {
-          textoEl.innerHTML = 'Conectado como <b id="nomeUsuario">' + sessao.nome + '</b>';
+          textoEl.innerHTML = 'Conectado como <b>' + sessao.nome + '</b>';
       } else {
-          textoEl.innerHTML = 'Sem perfil — <a href="perfil.html" style="color:#1565c0;font-weight:700">preencha para ver so os seus pedidos</a>';
+          textoEl.innerHTML = 'Sem perfil — preencha o perfil para ver so os seus pedidos';
       }
   }
 

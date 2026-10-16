@@ -261,7 +261,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 ```bash
 node tests/manter-tudo.js            # versoes, datas, links, docs, robo
 node --check *.js                    # sintaxe
-node tests/rodar-todos.js            # 25 baterias (tem que dar TUDO 10/10)
+node tests/rodar-todos.js            # 26 baterias (tem que dar TUDO 10/10)
 node tests/13-validar-css.js         # CSS inteiro: sintaxe, classe sem uso, cobertura
 node tests/limpar-css-morto.js       # CSS morto: so o relatorio (--aplicar limpa)
 git add -A
@@ -376,6 +376,7 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - Leitura das tabelas: horizontal (padrão) ou vertical (cartões), em Configurações do cliente.
 - Bairro fora da área de entrega: pedido **bloqueado** na finalização.
 - Bot: aviso de novo pedido + comandos (`/confirmar`, `/separacao`, `/enviado`, `/entregue`, `/cancelar`, `/ultimos`, `/status`, `/hoje`, `/ajuda`) + botões.
+- Bot 24/7: o robo `.github/scripts/bot-telegram.js` (workflow `.github/workflows/bot.yml`, a cada 5 min) processa os botoes e comandos no servidor, entao o bot funciona **mesmo com o painel fechado**; o status vai para o Firebase (`/pedidos`) e a mensagem e atualizada no chat.
 - App: PWA instalado + APK (cliente e vendedor) disponíveis para download.
 - Temas: claro, guaraná, rosa, vermelho e escuro.
 - Pagamento: Pix e Dinheiro.
@@ -422,10 +423,11 @@ sumia. A bateria `14-cores` confere o contraste das duas versões.
   e a cada minuto.
 
 ### Qualidade automatica (rodar certo sempre vai rodar certo)
-- Testes: node tests/rodar-todos.js - 25 baterias, TUDO 10/10. A 13a e o lint
+- Testes: node tests/rodar-todos.js - 26 baterias, TUDO 10/10. A 13a e o lint
   do CSS; da 14a a 24a vem cor, imagem, letra/numero, tamanho, codigo, erro,
   documento, repositorio e entrega (esta ultima com --online confere o site no ar);
-  a 25a confere a opcao "Aparência" (Animações reduzidas).
+  a 25a confere a opcao "Aparência" (Animações reduzidas) e a 26a o bot do
+  Telegram 24/7 (workflow + robo + teclado do pedido).
 - Portao automatico: .github/workflows/check.yml roda sintaxe de todo
   JS (site, testes, robos) + a suite completa em TODO push e todo dia as 6h.
 - Versao: node tests/bump-versao.js <versao> antes de publicar.
