@@ -417,6 +417,12 @@ else console.log("  ATENCAO  APK em " + versaoApk + " e o site esta em " + versa
 if (versaoApk && /^\uFEFF/.test(fs.readFileSync(path.join(dir, "apk", "versao-apk.txt"), "utf8"))) {
     falha("apk/versao-apk.txt tem BOM (o painel nao consegue ler a versao)");
 }
+/* os grupos de categoria do catalogo (index.html) precisam do CSS de colapso:
+   sem ele o cabecalho fica sem estilo e o botao de minimizar nao faz nada */
+const idxGrupos = fs.readFileSync(path.join(dir, "index.html"), "utf8");
+if (!/\.gbd\{display:none\}/.test(idxGrupos) || !/\.gb\.op\s+\.gbd\{display:block\}/.test(idxGrupos)) {
+    falha("index.html sem o CSS dos grupos do catalogo (minimizar nao funciona)");
+} else console.log("  ok  grupos do catalogo abrem e minimizam (CSS presente)");
 
 /* ---------- 14. o que o dono pediu nesta rodada ---------- */
 console.log("\n=== 14. AVISO REAL, FERRAMENTAS E BOTOES DO BOT ===");
