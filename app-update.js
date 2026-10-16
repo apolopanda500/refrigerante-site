@@ -14,11 +14,11 @@
    de ficar preso numa versao antiga (foi o defeito do
    Historico mostrar versao velha depois do Ctrl+F5).
    ============================================ */
-var VERSAO_APP = "20261017b";
+var VERSAO_APP = "20261017c";
 
 /* nome do cache vivo: sw.js monta "convencao-cache-" + VERSAO.
    Mantido aqui so para conferir; o service worker e a fonte da verdade. */
-var CACHE_ATUAL = "convencao-cache-20261017b";
+var CACHE_ATUAL = "convencao-cache-20261017c";
 
 /* tira os caches ANTIGOS (o do service worker atual fica de pe:
    se apagassemos tudo, o app ficaria sem nada offline) */
@@ -120,7 +120,7 @@ function instalarApp() {
         return;
     }
     if (!window.__promptInstalacao) {
-        alert("Para instalar o app:\n\nAndroid: menu do navegador (â‹®) > Instalar app.\niPhone: botÃ£o Compartilhar > Adicionar Ã  Tela de InÃ­cio.\nPC (Chrome/Edge): Ã­cone de instalar na barra de endereÃ§os.");
+        alert("Para instalar o app:\n\nAndroid: menu do navegador (Ã¢â€¹Â®) > Instalar app.\niPhone: botÃƒÂ£o Compartilhar > Adicionar ÃƒÂ  Tela de InÃƒÂ­cio.\nPC (Chrome/Edge): ÃƒÂ­cone de instalar na barra de endereÃƒÂ§os.");
         return;
     }
     window.__promptInstalacao.prompt();
