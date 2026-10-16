@@ -2,7 +2,6 @@
 //  Refrigerantes Convenção - Carrinho & Pedidos
 // ============================================
 
-const MENTOR_WHATSAPP = "5521983158911"; // (21) 9-8315-8911
 const SHARE_URL = window.location.href.split("#")[0];
 
 // Carrinho: [{ name, price, priceNum, qty }]
@@ -67,7 +66,7 @@ function getCart() {
     }
 }
 function saveCart() {
-    try { localStorage.setItem("refrigeranteCart", JSON.stringify(cart)); } catch(e) {}
+    try { localStorage.setItem("refrigeranteCart", JSON.stringify(cart)); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
 }
 function calcSubtotal() {
     return somaCentavos(cart, "priceNum", "qty");
@@ -215,7 +214,6 @@ async function copiarLink() {
 //  SISTEMA DE PEDIDOS (status)
 // ============================================
 const PEDIDOS_KEY = "convencao_pedidos";
-const ADMIN_SENHA = "Flamengo903@";
 // acesso do vendedor (painel admin.html)
 const VENDEDOR_USUARIO = "apolopanda500";
 const VENDEDOR_SENHA = "Flamengo903@";
@@ -299,19 +297,47 @@ function nuvemEnderecos() {
         var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
         var salvo = String(p.cfgPrecosURL || "").trim().replace(/\/+$/, "");
         if (salvo) out.push(salvo);
-    } catch (e) {}
+    } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
     NUVEM_ENDERECOS.forEach(function (u) { if (out.indexOf(u) < 0) out.push(u); });
     return out;
 }
 function enviarPedidoNuvem(pedido) {
     if (!pedido || !pedido.id) return;
     var corpo = JSON.stringify(pedido);
-    nuvemEnderecos().forEach(function (base) {
-        try {
-            fetch(base + "/pedidos/" + encodeURIComponent(pedido.id) + ".json",
-                { method: "PUT", body: corpo, mode: "cors" }).catch(function () {});
-        } catch (e) {}
-    });
+    var bases = nuvemEnderecos();
+    var caminho = "/pedidos/" + encodeURIComponent(pedido.id) + ".json";
+    var i = 0;
+    /* tenta um banco atras do outro. se todos falharem, tenta de novo:
+       o pedido ja esta salvo no aparelho, entao nunca se perde --
+       mas o dono precisa saber que o painel ainda nao recebeu */
+    function tentar(vez) {
+        if (i >= bases.length) {
+            if (vez < 2) { setTimeout(function () { i = 0; tentar(vez + 1); }, 4000); return; }
+            marcarFalhaNuvem(pedido);
+            return;
+        }
+        var base = bases[i++];
+        fetch(base + caminho, { method: "PUT", body: corpo, mode: "cors" })
+            .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); })
+            .catch(function () { tentar(vez); });
+    }
+    try { tentar(1); } catch (e) { marcarFalhaNuvem(pedido); }
+}
+
+/* a nuvem nao aceitou: o pedido segue salvo neste aparelho, mas o painel
+   pode demorar a ver. avisamos o cliente para ele nao achar que sumiu */
+function marcarFalhaNuvem(pedido) {
+    try {
+        var mapa = JSON.parse(localStorage.getItem("convencaoNuvemFalhou") || "{}");
+        mapa[pedido.id] = Date.now();
+        localStorage.setItem("convencaoNuvemFalhou", JSON.stringify(mapa));
+    } catch (e) { /* proposital: aba anonima nao guarda preferencia */ }
+    var aviso = document.getElementById("avisoNuvemFora");
+    if (aviso) {
+        aviso.style.display = "block";
+        aviso.innerHTML = '<i class="fa fa-wifi"></i> O pedido <b>' + String(pedido.id) + '</b> ficou salvo aqui, '
+            + 'mas a internet nao deixou enviar para o painel agora. Abrindo o app de novo ele tenta de novo.';
+    }
 }
 /* junta aparelho + nuvem; para o mesmo id vence o que tem
    mais historico (e, em empate, o mais recente) */
@@ -360,13 +386,13 @@ function sincronizarPedidosNuvem(callback) {
 function sincronizarPedidosCliente(callback) {
     if (typeof Conta === "undefined") { if (callback) callback(getPedidos()); return; }
     var tels = [];
-    try { (Conta.dados().tel || "").toString(); } catch (e) {}
+    try { (Conta.dados().tel || "").toString(); } catch(e){/* proposital: a conta pode nao existir ainda */}
     try {
         var d = Conta.dados();
         if (d && d.tel) tels.push(String(d.tel).replace(/\D/g, ""));
         var perfil = JSON.parse(localStorage.getItem("refrigerantePerfil") || "{}");
         if (perfil.tel) tels.push(String(perfil.tel).replace(/\D/g, ""));
-    } catch (e) {}
+    } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
     tels = tels.filter(function (t, i) { return t && tels.indexOf(t) === i; });
     if (!tels.length) { if (callback) callback(getPedidos()); return; }
     var bases = nuvemEnderecos();
@@ -405,7 +431,7 @@ function getAvaliacoesLocais() {
     catch (e) { return []; }
 }
 function saveAvaliacoesLocais(lista) {
-    try { localStorage.setItem(AVALIACOES_KEY, JSON.stringify(lista)); } catch (e) {}
+    try { localStorage.setItem(AVALIACOES_KEY, JSON.stringify(lista)); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
 }
 function enviarAvaliacaoNuvem(av) {
     if (!av || !av.id) return;
@@ -414,7 +440,7 @@ function enviarAvaliacaoNuvem(av) {
         try {
             fetch(base + "/avaliacoes/" + encodeURIComponent(av.id) + ".json",
                 { method: "PUT", body: corpo, mode: "cors" }).catch(function () {});
-        } catch (e) {}
+        } catch(e){/* proposital: avaliacao e um extra, nao pode travar o app */}
     });
 }
 /* grava avaliacao (nova ou substitui a do mesmo pedido) */
@@ -431,10 +457,10 @@ function salvarAvaliacao(pedidoId, estrelas, texto) {
     try {
         var p = null;
         if (typeof Conta !== "undefined") {
-            try { p = Conta.dados(); } catch (e) {}
+            try { p = Conta.dados(); } catch (e) { /* proposital: conta ainda nao salva */ }
         }
         if (p) av.nome = p.nome || "";
-    } catch (e) {}
+    } catch (e) { /* proposital: nota quebrada nao pode travar o app */ }
     var lista = getAvaliacoesLocais().filter(function (a) { return a.pedidoId !== pedidoId; });
     lista.unshift(av);
     saveAvaliacoesLocais(lista);
@@ -499,7 +525,7 @@ function criarPedido(dados) {
     pedidos.unshift(pedido);
     savePedidos(pedidos);
     /* manda para a nuvem: o painel do vendedor ve pedidos de TODO mundo */
-    if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(pedido); } catch (e) {} }
+    if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(pedido); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */} }
     return pedido;
 }
 
@@ -558,7 +584,7 @@ function tecladoPedidoTG(id) {
 
 function notificarTelegramPedido(p) {
     var prefs = {};
-    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
+    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
     if (prefs.cfgAvisoPedido === false) return;          // desligado (opcao oculta)
     var token = prefs.cfgTelegramToken || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
     var chat  = prefs.cfgTelegramChatId || "1810807613";  // chat do vendedor (@Rickcao22)
@@ -571,14 +597,14 @@ function notificarTelegramPedido(p) {
             + "&text=" + encodeURIComponent(msg)
             + "&disable_web_page_preview=true"
             + "&reply_markup=" + encodeURIComponent(JSON.stringify(tecladoPedidoTG(p.id)));
-    try { fetch(url, { mode: "no-cors" }).catch(function(){}); } catch(e) {}
+    try { fetch(url, { mode: "no-cors" }).catch(function(){}); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
 }
 
 /* aviso simples de texto para o vendedor (usado pela ajuda do site).
    A ajuda chamava notificarTelegram(), que nao existia: o aviso nunca saia. */
 function notificarTelegram(texto) {
     var prefs = {};
-    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
+    try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
     var token = prefs.cfgTelegramToken || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
     var chat  = prefs.cfgTelegramChatId  || "1810807613";   // chat do vendedor (@Rickcao22)
     if (!token || !chat || !texto) return;
@@ -586,7 +612,7 @@ function notificarTelegram(texto) {
             + "?chat_id=" + encodeURIComponent(chat)
             + "&text=" + encodeURIComponent(texto)
             + "&disable_web_page_preview=true";
-    try { fetch(url, { mode: "no-cors" }).catch(function(){}); } catch(e) {}
+    try { fetch(url, { mode: "no-cors" }).catch(function(){}); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
 }
 
 function pedidosPorTelefone(tel) {
@@ -602,7 +628,7 @@ function atualizarStatus(id, novoStatus) {
         p.atualizadoEm = Date.now();
         savePedidos(pedidos);
         /* a mudanca tambem vai para a nuvem (outro aparelho enxerga na hora) */
-        if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(p); } catch (e) {} }
+        if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(p); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */} }
     }
     return p;
 }

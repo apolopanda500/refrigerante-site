@@ -101,7 +101,7 @@ function iaContexto() {
             }).join("; ") + ".");
         }
         linhas.push("Contato/WhatsApp: (21) 9-8315-8911.");
-    } catch (e) {}
+    } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
     var txt = linhas.join("\n");
     if (txt.length > 4000) txt = txt.slice(0, 3950) + "\n...(catalogo cortado)";
     return txt;
@@ -200,7 +200,7 @@ function iaRespostaLocal(pergunta) {
                     }).join("\n");
                     return res("Seus pedidos recentes:\n" + l2 + "\n\nMais detalhes em Historico no menu.", "meuPedido", 0.96, true);
                 }
-            } catch (e) {}
+            } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
         }
         return res("Acompanhe na pagina Historico (menu superior). Se nao achar, chame a loja no WhatsApp (21) 9-8315-8911.", "meuPedido", 0.9, true);
     }
@@ -344,7 +344,7 @@ function iaCacheSet(p, texto) {
         if (chaves.length > 40) delete m[chaves[0]];
         m[iaNormal(p)] = texto;
         sessionStorage.setItem("iaCache", JSON.stringify(m));
-    } catch (e) {}
+    } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
 }
 
 /* ---------- RECOMENDACOES ("quem levou X levou Y") ---------- */
@@ -362,10 +362,10 @@ function iaHistoricoCompras() {
                 (p.itens || []).forEach(function (i) { soma(i.name, i.qty); });
             });
         }
-    } catch (e) {}
+    } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
     try {
         (JSON.parse(localStorage.getItem("refrigeranteCart") || "[]")).forEach(function (i) { soma(i.name, i.qty); });
-    } catch (e) {}
+    } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
     return contagem;
 }
 function variedadeCatalogo(cat, n, jaTem) {
@@ -460,7 +460,7 @@ function pintarRecomendados() {
     el.innerHTML = h;
 }
 function iaRepintarRecomendados() {
-    try { pintarRecomendados(); } catch (e) {}
+    try { pintarRecomendados(); } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
 }
 
 /* ---------- ATENDIMENTO ROBOTICO + HUMANO REAL ----------
@@ -499,9 +499,9 @@ function iaHumanoPara(textoLivre) {
             var bairro = "";
             if (typeof Conta !== "undefined") bairro = (Conta.dados().bairro || "");
             regiaoId = (typeof regiaoDoBairro === "function") ? (regiaoDoBairro(bairro) || "") : "";
-        } catch (e) {}
+        } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
         var cam = null;
-        try { cam = regiaoId ? caminhaoDaRegiao(regiaoId) : null; } catch (e) {}
+        try { cam = regiaoId ? caminhaoDaRegiao(regiaoId) : null; } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
         if (!cam && CAMINHOES.length) cam = CAMINHOES[0];
         if (cam && cam.whatsapp) {
             return {
@@ -565,7 +565,7 @@ function iaMontarWidget() {
         if (typeof MutationObserver !== "undefined") {
             new MutationObserver(ajustarBase).observe(document.body, { childList: true });
         }
-    } catch (e) {}
+    } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
 
     fab.addEventListener("click", function () {
         painel.classList.toggle("aberto");
@@ -603,7 +603,7 @@ function iaHistoricoLer() {
     catch (e) { return []; }
 }
 function iaHistoricoGravar(lista) {
-    try { sessionStorage.setItem("iaHistorico", JSON.stringify(lista.slice(-20))); } catch (e) {}
+    try { sessionStorage.setItem("iaHistorico", JSON.stringify(lista.slice(-20))); } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
 }
 function iaDesenharMensagem(texto, quem, fonte) {
     var box = document.getElementById("iaHistorico");
@@ -653,6 +653,6 @@ if (typeof document !== "undefined") {
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", iaMontarWidget);
     } else {
-        try { iaMontarWidget(); } catch (e) {}
+        try { iaMontarWidget(); } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
     }
 }

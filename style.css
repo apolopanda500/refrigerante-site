@@ -1102,7 +1102,7 @@ body.admin[data-leitura="vertical"][data-theme="dark"] .tabela-pedidos td{border
 [data-theme="guara"] .qa:hover { background: #ffc400; }
 [data-theme="guara"] .bs { background: #ffd100; color: #12301f; }
 [data-theme="guara"] .btn-primario { background: #00752e !important; }
-[data-theme="guara"] .btn-enviar { background: #0f9d58 !important; }
+[data-theme="guara"] .btn-enviar { background: #0b6b3a !important; }
 [data-theme="guara"] .cb { background: #e03131 !important; }
 
 /* ---------- 3. ROSA (para elas) ---------- */
@@ -1146,7 +1146,7 @@ body.admin[data-leitura="vertical"][data-theme="dark"] .tabela-pedidos td{border
 [data-theme="rosa"] .qa:hover { background: #f5a9c9; }
 [data-theme="rosa"] .bs { background: #f8bbd0; color: #4a0e2a; }
 [data-theme="rosa"] .btn-primario { background: #c2185b !important; }
-[data-theme="rosa"] .btn-enviar { background: #e91e63 !important; }
+[data-theme="rosa"] .btn-enviar { background: #c2185b !important; }
 [data-theme="rosa"] .cb { background: #e03131 !important; }
 
 /* ---------- 4. VERMELHO ---------- */
@@ -1190,7 +1190,7 @@ body.admin[data-leitura="vertical"][data-theme="dark"] .tabela-pedidos td{border
 [data-theme="vermelho"] .qa:hover { background: #f9b3b7; }
 [data-theme="vermelho"] .bs { background: #ffcdd2; color: #4a0f0f; }
 [data-theme="vermelho"] .btn-primario { background: #c62828 !important; }
-[data-theme="vermelho"] .btn-enviar { background: #e53935 !important; }
+[data-theme="vermelho"] .btn-enviar { background: #c62828 !important; }
 [data-theme="vermelho"] .cb { background: #e03131 !important; }
 
 /* ---------- 4. ESCURO (base ja existente) ---------- */
@@ -1241,7 +1241,7 @@ body.admin[data-leitura="vertical"][data-theme="dark"] .tabela-pedidos td{border
 [data-theme="dark"] .tema-btn .amostra{filter:brightness(.95)}
 
 /* ---------- TIPOGRAFIA MAIOR (padrao do cliente) ---------- */
-body{font-size:16.5px}
+body{font-size:16.5px;line-height:1.5}
 .ti{font-size:1.02rem}
 .gn{font-size:1.14rem}
 .pch{font-size:.95rem}
@@ -1291,7 +1291,7 @@ body{font-size:16.5px}
 }
 .cal-badge{
     background:var(--primary-color);color:#fff;border-radius:8px;
-    padding:1px 6px;font-size:.6rem;font-weight:800;text-transform:uppercase;
+    padding:1px 6px;font-size:.7rem;font-weight:800;text-transform:uppercase;
     letter-spacing:.04em;flex:none;
 }
 .cal-loja{
@@ -1714,7 +1714,7 @@ html{font-size:17px}
     color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
 }
 .etapa.on .et-dia{color:var(--primary-color)}
-.etapa .et-txt{font-size:.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
+.etapa .et-txt{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
 .etapa.on .et-txt{color:var(--primary-color);font-weight:700}
 .seta{font-size:.7rem;color:#b6bccd;flex:none}
 

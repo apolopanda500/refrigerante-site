@@ -10,6 +10,17 @@ apk/android/local.properties
 *.keystore
 *.p12
 
+# dependencia e bagunca de SO
+node_modules/
+package-lock.json
+.DS_Store
+Thumbs.db
+*.log
+~$*
+*.tmp
+.env
+.env.local
+
 # temporarios
 correcao-precos.json
 __teste-robo.cjs

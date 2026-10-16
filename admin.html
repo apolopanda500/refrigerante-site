@@ -2,16 +2,16 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"[^>]*>
-<link rel="manifest" href="manifest-vendedor.json?v=20261016d">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest-vendedor.json?v=20261016e">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016d">
-<script src="theme.js?v=20261016d"></script>
+<link rel="stylesheet" href="style.css?v=20261016e">
+<script src="theme.js?v=20261016e"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -46,7 +46,7 @@
 .filtro .filtro-count{background:rgba(0,0,0,.12);border-radius:10px;padding:1px 7px;font-size:.76rem;font-weight:800}
 .filtro.ativo .filtro-count{background:rgba(255,255,255,.28)}
 [data-theme="dark"] .filtro .filtro-count{background:rgba(255,255,255,.14)}
-.btn-zap { background:#25D366; color:#fff; padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+ .btn-zap { background:#0e6b4f; color:#fff; padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
 .vazio { text-align:center; padding:50px; color:#888; }
 .btn-sair { background:none; border:none; color:#c62828; cursor:pointer; font-size:0.9rem; }
 
@@ -184,6 +184,78 @@ body.admin[data-layout="compacto"] .tabela-pedidos th{padding:8px 10px;font-size
 body.admin[data-layout="compacto"] .campo{margin-bottom:8px}
 body.admin[data-layout="compacto"] .btn-st{min-height:38px;padding:8px 14px}
 
+/* ==========================================================
+   LEITURA DA TABELA DO PAINEL: ROLAGEM ou CARTAO VERTICAL
+   O painel tem as proprias regras (body.admin),separate das
+   da loja: em cartao cada pedido vira um bloco com o rotulo
+   ACIMA do valor, para nao repetir nome de coluna e para o
+   texto grande (fonte do vendedor) caber inteiro na tela.
+   ========================================================== */
+body.admin[data-leitura=vertical] .tab-wrap{overflow:visible;background:none;border:0;box-shadow:none}
+body.admin[data-leitura=vertical] .tabela-pedidos,
+body.admin[data-leitura=vertical] .tabela-pedidos tbody,
+body.admin[data-leitura=vertical] .tabela-pedidos tr,
+body.admin[data-leitura=vertical] .tabela-pedidos td{display:block;width:100%;min-width:0}
+body.admin[data-leitura=vertical] .tabela-pedidos thead{display:none}
+body.admin[data-leitura=vertical] .tabela-pedidos{border-collapse:separate;font-size:1rem}
+body.admin[data-leitura=vertical] .tabela-pedidos tbody tr{
+    background:var(--bg,#fff);border:1px solid var(--borda);border-radius:14px;
+    padding:10px 14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(61,68,101,.07);
+}
+body.admin[data-leitura=vertical] .tabela-pedidos tbody tr:nth-child(even){background:var(--bg,#fff)}
+body.admin[data-leitura=vertical] .tabela-pedidos tbody tr:hover{background:var(--bg-alt,#f4f5fa)}
+body.admin[data-leitura=vertical] .tabela-pedidos td{
+    border-bottom:1px dashed var(--borda);padding:9px 0;text-align:left;
+    color:inherit;overflow-wrap:anywhere;
+}
+body.admin[data-leitura=vertical] .tabela-pedidos td:last-child{border-bottom:0;padding-bottom:2px}
+/* o rotulo vem do proprio td (data-label): aparece uma vez so */
+body.admin[data-leitura=vertical] .tabela-pedidos td::before{
+    content:attr(data-label);display:block;margin-bottom:2px;
+    font-size:.74rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--primary-color,#3d4465);
+}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-id,
+body.admin[data-leitura=vertical] .tabela-pedidos .td-total,
+body.admin[data-leitura=vertical] .tabela-pedidos .td-num{text-align:left;white-space:normal;font-size:1.05rem}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-id{margin-bottom:2px}
+/* os botoes de status ocupam a linha toda: e o que o dedo acerta */
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes{display:flex;flex-wrap:wrap;gap:8px;white-space:normal}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes::before{width:100%}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-st,
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-zap{flex:1 1 auto;min-width:52px}
+/* a ficha do pedido (linha extra) fica dentro do mesmo cartao */
+body.admin[data-leitura=vertical] .tabela-pedidos .linha-ficha{
+    margin:-6px 0 12px;box-shadow:none;background:none;border:0;padding:0;
+}
+body.admin[data-leitura=vertical] .tabela-pedidos td[colspan]{padding:0 2px 6px;border-bottom:0}
+body.admin[data-leitura=vertical] .tabela-pedidos td[colspan]::before{content:none}
+[data-theme="dark"] body.admin[data-leitura=vertical] .tabela-pedidos tbody tr{background:#1c1f33;border-color:#353a5c;box-shadow:none}
+[data-theme="dark"] body.admin[data-leitura=vertical] .tabela-pedidos tbody tr:hover{background:#232742}
+[data-theme="dark"] body.admin[data-leitura=vertical] .tabela-pedidos td{border-bottom-color:#353a5c;color:#e6e8f2}
+[data-theme="dark"] body.admin[data-leitura=vertical] .tabela-pedidos td::before{color:#ffb822}
+
+/* ===== TICKS do acompanhamento (precisam ser legiveis com fonte grande) =====
+   Cada passo do pedido e uma linha com bolinha, o nome do status, a hora
+   exata e ha quanto tempo. Tudo com quebra de linha e sem altura fixa,
+   para o A grande do painel nao cortar nada. */
+.ficha-tick{
+    display:flex;align-items:flex-start;gap:9px;
+    padding:8px 2px;border-bottom:1px dashed var(--borda,#d8dbe6);
+    line-height:1.5;overflow-wrap:anywhere;min-height:34px;
+}
+.ficha-tick:last-of-type{border-bottom:0}
+.ficha-tick > i.fa-circle{color:var(--primary-color,#3d4465);font-size:.62rem;flex:0 0 auto;margin-top:.5em}
+.ficha-tick b{color:var(--primary-color,#3d4465)}
+.ficha-tick .sub{display:inline;color:var(--text-muted)}
+[data-theme="dark"] .ficha-tick{border-bottom-color:#353a5c}
+[data-theme="dark"] .ficha-tick > i.fa-circle,
+[data-theme="dark"] .ficha-tick b{color:#ffb822}
+/* fonte grande: a linha cresce com a letra, nunca fica com altura travada */
+[data-fonte="grande"] .ficha-tick,
+[data-fonte="muitogrande"] .ficha-tick{min-height:42px;padding:10px 2px}
+[data-fonte="muitogrande"] .ficha-tick > i.fa-circle{font-size:.75rem;margin-top:.45em}
+
 /* ===== campos grandes das ferramentas do vendedor ===== */
 .ferramenta-input{
     width:100%;min-height:54px;padding:14px 16px;
@@ -200,7 +272,7 @@ body.admin[data-layout="compacto"] .btn-st{min-height:38px;padding:8px 14px}
 
 /* ===== minimizar blocos do painel (so do vendedor) ===== */
 .btn-mini-bloco{
-    display:inline-flex;align-items:center;gap:7px;min-height:38px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;min-height:44px;cursor:pointer;
     padding:8px 14px;border:0;border-radius:18px;
     background:var(--primary-color,#3d4465);color:#fff;
     font:800 .8rem/1 'Segoe UI',sans-serif;white-space:nowrap;
@@ -254,7 +326,7 @@ body.admin[data-layout="compacto"] .btn-st{min-height:38px;padding:8px 14px}
 .ni-texto{font-size:.84rem;color:#4a5170;line-height:1.4;margin-bottom:8px}
 .ni-acoes{display:flex;gap:6px}
 .ni-btn{
-    display:inline-flex;align-items:center;gap:5px;min-height:38px;padding:0 11px;
+    display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:0 13px;
     border:1.5px solid #d8dbe6;background:#fff;border-radius:9px;
     font-size:.8rem;font-weight:700;color:#3d4465;cursor:pointer;
 }
@@ -507,8 +579,8 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261016d"></script>
-<script src="telegram.js?v=20261016d"></script>
+<script src="script.js?v=20261016e"></script>
+<script src="telegram.js?v=20261016e"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -599,12 +671,12 @@ function mostrarPainel() {
     renderAdmin();
     var chk = document.getElementById("cfgBotComandos");
     if (chk) {
-        try { chk.checked = (typeof TelegramBot !== "undefined") ? TelegramBot.cfg().ligado : true; } catch (e) {}
+        try { chk.checked = (typeof TelegramBot !== "undefined") ? TelegramBot.cfg().ligado : true; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     }
     /* ferramentas + config do painel */
-    try { resumoDoDia(); carregarNotas(); historicoPrecos(); } catch (e) { }
-    try { carregarConfigVendedor(); } catch (e) { }
-    try { marcarConfigVendedor(); mostrarVersoes(); } catch (e) { }
+    try { resumoDoDia(); carregarNotas(); historicoPrecos(); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    try { carregarConfigVendedor(); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    try { marcarConfigVendedor(); mostrarVersoes(); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     var bv = document.getElementById("btnInstalarVendedor");
     if (bv && window.__promptInstalacao) bv.style.display = "inline-flex";
     /* pedidos de TODOS os aparelhos (nuvem), no tempo escolhido pelo dono */
@@ -612,7 +684,7 @@ function mostrarPainel() {
         sincronizarPedidosNuvem(function (ok) {
             try { localStorage.setItem("vendedorPrefs", JSON.stringify(
                 Object.assign({}, JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"), { ultimaSync: Date.now() }))); }
-            catch (e) {}
+            catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
             if (ok) renderAdmin();
             mostrarVersoes();
             chegarNovosPedidos();
@@ -620,10 +692,20 @@ function mostrarPainel() {
                 var sync = document.getElementById("avisoSincroniaAdmin");
                 if (sync) {
                     sync.style.display = "block";
-                    sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado às ' + dataHoraSegundos(Date.now())
-                        + ' · ' + getPedidos().length + ' pedido(s) neste painel, de todos os aparelhos.';
+                    /* nuvem fora do ar: mostra o que esta vendo, para o dono
+                       nao achar que a lista esta vazia ou errada */
+                    if (ok) {
+                        sync.style.background = "";
+                        sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado às ' + dataHoraSegundos(Date.now())
+                            + ' · ' + getPedidos().length + ' pedido(s) neste painel, de todos os aparelhos.';
+                    } else {
+                        sync.style.background = "#8a6100";
+                        sync.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Nao consegui falar com a nuvem agora ('
+                            + dataHoraSegundos(Date.now()) + '). A lista abaixo e a ultima que baixou: '
+                            + getPedidos().length + ' pedido(s). Confira a internet e a URL do banco nas Configuracoes.';
+                    }
                 }
-            } catch (e) {}
+            } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
         });
         if (!window._syncPedidosTimer) iniciarSyncPedidos();
     }
@@ -637,7 +719,7 @@ function salvarPrefVendedor(campo, valor) {
         var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
         p[campo] = valor;
         localStorage.setItem("vendedorPrefs", JSON.stringify(p));
-    } catch (e) {}
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
 }
 function marcarOpcaoVendedor(id, valor) {
     document.querySelectorAll("#" + id + " .op-btn").forEach(function (b) {
@@ -668,7 +750,7 @@ function iniciarSyncPedidos() {
     if (typeof sincronizarPedidosNuvem !== "function") return;
     if (window._syncPedidosTimer) { clearInterval(window._syncPedidosTimer); window._syncPedidosTimer = null; }
     var ms = 60000;
-    try { ms = parseInt((JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").cfgSyncMs), 10) || 60000; } catch (e) {}
+    try { ms = parseInt((JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").cfgSyncMs), 10) || 60000; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     window._syncPedidosTimer = setInterval(function () {
         if (sessionStorage.getItem("adminLogado") === "1") {
             sincronizarPedidosNuvem(function (ok) { if (ok) renderAdmin(); chegarNovosPedidos(); });
@@ -703,9 +785,9 @@ function chegarNovosPedidos() {
                 sync.style.display = "block";
                 sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado às ' + dataHoraSegundos(Date.now()) + ' · ' + total + ' pedido(s) neste painel, de todos os aparelhos.';
             }
-        } catch (e) {}
+        } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     }
-    try { if (navigator.vibrate) navigator.vibrate([90, 60, 90]); } catch (e) {}
+    try { if (navigator.vibrate) navigator.vibrate([90, 60, 90]); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     if (typeof renderAdmin === "function") renderAdmin();
 }
 function fecharAvisoNovos() {
@@ -751,8 +833,8 @@ function mostrarVersoes() {
     if (!box) return;
     var painelV = (typeof VERSAO_APP !== "undefined") ? VERSAO_APP : "?";
     var pedidos = 0, sync = 0;
-    try { pedidos = getPedidos().length; } catch (e) {}
-    try { sync = (JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").ultimaSync) || 0; } catch (e) {}
+    try { pedidos = getPedidos().length; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    try { sync = (JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").ultimaSync) || 0; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     box.innerHTML = '<div style="background:var(--bg-alt);border:1px solid var(--borda);border-radius:12px;padding:12px;font-size:.86rem">'
         + '<div class="resumo-linha"><span>Versão deste painel (seu APK)</span><b>' + painelV + '</b></div>'
         + '<div class="resumo-linha"><span>Versão publicada do site</span><b id="versaoSite"> conferindo...</b></div>'
@@ -772,7 +854,7 @@ function mostrarVersoes() {
                 el.textContent = (t || "").trim() || "ainda não gerados nesta versão";
             })
             .catch(function () {});
-    } catch (e) {}
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     try {
         fetch("versao.txt", { cache: "no-store" })
             .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
@@ -784,20 +866,20 @@ function mostrarVersoes() {
                 var el = document.getElementById("versaoSite");
                 if (el) el.innerHTML = '<span style="color:#c62828">sem resposta do site</span>';
             });
-    } catch (e) {}
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
 }
 function setTemaVendedor(btn){
     try {
         var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
         p.cfgTema = btn.dataset.tema;
         localStorage.setItem("vendedorPrefs", JSON.stringify(p));
-    } catch(e){}
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     marcarTemaVendedor();
     if (typeof aplicarTema === "function") aplicarTema();
 }
 function marcarTemaVendedor(){
     var tema = "claro";
-    try { tema = (JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").cfgTema) || "claro"; } catch(e){}
+    try { tema = (JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").cfgTema) || "claro"; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     document.querySelectorAll("#temasVendedor .tema-btn").forEach(function(b){
         b.classList.toggle("ativo", b.dataset.tema === tema);
     });
@@ -810,14 +892,14 @@ function salvarConfigBot(btn){
         p.cfgTelegramToken = tok.trim();
         p.cfgTelegramChatId = chat.trim();
         localStorage.setItem("vendedorPrefs", JSON.stringify(p));
-    } catch(e){}
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     var msg = document.getElementById("configBotMsg");
     if (msg) { msg.style.color = "#2e7d32"; msg.textContent = "Salvo neste painel (não afeta o site do cliente)."; }
     if (btn) { btn.innerHTML = '<i class="fa fa-check"></i> Salvo'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-save"></i> Salvar'; }, 1500); }
 }
 function carregarConfigVendedor(){
     var p = {};
-    try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch(e){}
+    try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     var t = document.getElementById("cfgTGToken");
     if (t && document.activeElement !== t) t.value = p.cfgTelegramToken || "";
     var c = document.getElementById("cfgTGChat");
@@ -828,7 +910,7 @@ function carregarConfigVendedor(){
 /* marca as opcoes do painel com o que esta salvo nele */
 function marcarConfigVendedor() {
     var p = {};
-    try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch (e) {}
+    try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     marcarOpcaoVendedor("opcoesFonteVendedor", p.cfgFonteTamanho || "normal");
     marcarOpcaoVendedor("opcoesLeituraVendedor", p.cfgLeitura || "horizontal");
     marcarOpcaoVendedor("opcoesSyncVendedor", String(p.cfgSyncMs || 60000));
@@ -911,7 +993,7 @@ function tabelaPedidos(lista) {
             + '<td data-label="Status">' + statusBadge(p.status) + '</td>'
             + '<td data-label="Ações" class="td-acoes" onclick="event.stopPropagation()">' + botoesStatus(p) + '</td>'
             + '</tr>';
-        if (aberto) h += '<tr><td data-label="" colspan="8" style="padding:0 6px 10px">' + fichaPedido(p) + '</td></tr>';
+        if (aberto) h += '<tr class="linha-ficha"><td data-label="" colspan="8" style="padding:0 6px 10px">' + fichaPedido(p) + '</td></tr>';
     });
     h += '</tbody></table></div>';
     return h;
@@ -988,7 +1070,7 @@ function copiarTexto(txt) {
             navigator.clipboard.writeText(s).catch(function () {});
             return pronto();
         }
-    } catch (e) {}
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     try {
         var t = document.createElement("textarea");
         t.value = s;
@@ -1048,7 +1130,7 @@ function ferramentasDados() {
     catch (e) { return {}; }
 }
 function salvarFerramentas(d) {
-    try { localStorage.setItem(K_FERRAMENTAS, JSON.stringify(d)); } catch (e) { }
+    try { localStorage.setItem(K_FERRAMENTAS, JSON.stringify(d)); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
 }
 
 function numero(v) {
@@ -1391,9 +1473,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261016d"></script>
-<script src="firebase-appcheck.js?v=20261016d"></script>
-<script src="app-update.js?v=20261016d"></script>
+<script src="app.js?v=20261016e"></script>
+<script src="firebase-appcheck.js?v=20261016e"></script>
+<script src="app-update.js?v=20261016e"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
@@ -1414,7 +1496,7 @@ function prefsPainel() {
     try { return JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch (e) { return {}; }
 }
 function salvarPrefsPainel(p) {
-    try { localStorage.setItem("vendedorPrefs", JSON.stringify(p)); } catch (e) {}
+    try { localStorage.setItem("vendedorPrefs", JSON.stringify(p)); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
 }
 function blocosMinimizados() {
     var p = prefsPainel();
@@ -1482,7 +1564,7 @@ if (document.readyState !== "loading") { prepararMini(); aplicarMini(); }
     var el = document.getElementById("editorPrecos");
     if(!el || typeof PD === "undefined" || !PD.length) return;
     var ov = {};
-    try{ ov = JSON.parse(localStorage.getItem("productPriceOverrides")||"{}"); }catch(e){}
+    try{ ov = JSON.parse(localStorage.getItem("productPriceOverrides")||"{}"); }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     var url = (typeof precosURLCfg === "function") ? precosURLCfg() : "";
 
     var h = "";
@@ -1578,8 +1660,8 @@ if (document.readyState !== "loading") { prepararMini(); aplicarMini(); }
             if (typeof registrarPreco === "function") registrarPreco(p.nm, antigos[k] || p.pr, novos[k]);
           }
         });
-      } catch (e) {}
-      try{ localStorage.setItem("productPriceOverrides", JSON.stringify(lerCampos())); }catch(e){}
+      } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+      try{ localStorage.setItem("productPriceOverrides", JSON.stringify(lerCampos())); }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
       if(typeof aplicarPrecosSalvar === "function") aplicarPrecosSalvar();
       if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Salvando...'; }
       if(typeof enviarPrecosNuvem === "function"){
@@ -1606,7 +1688,7 @@ if (document.readyState !== "loading") { prepararMini(); aplicarMini(); }
     },
     restaurar: function(btn){
       if(!confirm("Apagar todos os precos editados e voltar aos precos originais do site?")) return;
-      try{ localStorage.removeItem("productPriceOverrides"); }catch(e){}
+      try{ localStorage.removeItem("productPriceOverrides"); }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
       if(typeof aplicarPrecosSalvar === "function") aplicarPrecosSalvar();
       if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Restaurando...'; }
       if(typeof enviarPrecosNuvem === "function"){
@@ -1627,7 +1709,7 @@ window.painelPrecos.repintar = function () {
     try {
         var foco = document.activeElement;
         if (foco && foco.classList && foco.classList.contains("preco-input")) return;
-    } catch (e) {}
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     pintar();
 };
 })();
@@ -1648,7 +1730,7 @@ function salvarPrecosURLAdmin(btn){
     var p = JSON.parse(localStorage.getItem(chave) || "{}");
     p.cfgPrecosURL = url;
     localStorage.setItem(chave, JSON.stringify(p));
-  }catch(e){}
+  }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
   if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Salvando...'; }
   setTimeout(function(){
     if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-save"></i> Salvar URL'; }
@@ -1745,7 +1827,7 @@ document.addEventListener("DOMContentLoaded", function(){
       var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
       if(inp) inp.value = p.cfgPrecosURL || "";
     }
-  }catch(e){}
+  }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
   setTimeout(function(){ if (typeof checarNuvemPrecos === "function") checarNuvemPrecos(); }, 400);
 });
 </script>

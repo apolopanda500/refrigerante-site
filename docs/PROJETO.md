@@ -233,7 +233,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
   (ver `build-apk.ps1` e `.github/scripts`/fluxo documentado no histórico de commits).
 - **Versão dos APK = versão do site:** tanto `apk/android/build.js` quanto
   `build-apk.ps1` leem `versao.txt`. O `versionName` é a mesma versão publicada
-  (ex.: `20261016c`) e o `versionCode` é a data `YYYYMMDD` (vendedor recebe +100).
+  (ex.: `20261016d`) e o `versionCode` é a data `YYYYMMDD` (vendedor recebe +100).
   Depois de gerar, o script grava `apk/versao-apk.txt` e o painel mostra
   "APKs na versão" ao lado da versão publicada.
   **Build sem interação (usado nesta máquina):**
@@ -255,7 +255,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 ```bash
 node tests/manter-tudo.js            # versoes, datas, links, docs, robo
 node --check *.js                    # sintaxe
-node tests/rodar-todos.js            # 13 baterias (tem que dar TUDO 10/10)
+node tests/rodar-todos.js            # 22 baterias (tem que dar TUDO 10/10)
 node tests/13-validar-css.js         # CSS inteiro: sintaxe, classe sem uso, cobertura
 node tests/limpar-css-morto.js       # CSS morto: so o relatorio (--aplicar limpa)
 git add -A
@@ -398,7 +398,9 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
   e a cada minuto.
 
 ### Qualidade automatica (rodar certo sempre vai rodar certo)
-- Testes: node tests/rodar-todos.js - 13 baterias, TUDO 10/10 (a 13a e o lint do CSS).
+- Testes: node tests/rodar-todos.js - 22 baterias, TUDO 10/10. A 13a e o lint
+  do CSS; da 14a a 22a vem cor, imagem, letra/numero, tamanho, codigo, erro,
+  documento, repositorio e entrega (esta ultima com --online confere o site no ar).
 - Portao automatico: .github/workflows/check.yml roda sintaxe de todo
   JS (site, testes, robos) + a suite completa em TODO push e todo dia as 6h.
 - Versao: node tests/bump-versao.js <versao> antes de publicar.

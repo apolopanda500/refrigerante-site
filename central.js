@@ -24,7 +24,7 @@ function vigiaErro(onde, erro) {
         });
         if (lista.length > 50) lista = lista.slice(0, 50);
         localStorage.setItem("vigiaErros", JSON.stringify(lista));
-    } catch (e) {}
+    } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
 }
 function vigiaLerErros() {
     try { return JSON.parse(localStorage.getItem("vigiaErros") || "[]"); }
@@ -57,7 +57,7 @@ function notifPermitida() {
     try {
         var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
         if (p.cfgNotifPedido === false) return false;
-    } catch (e) {}
+    } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
     if (typeof Notification === "undefined") return false;
     if (Notification.permission === "granted") return true;
     return "pedir";
@@ -90,7 +90,7 @@ function notifTestar() {
     try {
         appInstalado = (window.matchMedia("(display-mode: standalone)").matches)
             || (window.navigator.standalone === true);
-    } catch (e) {}
+    } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
     var titulo = "Convenção: aviso ligado";
     var texto = appInstalado
         ? "É assim que você vai receber o status do pedido, mesmo com o app fechado."
@@ -98,7 +98,7 @@ function notifTestar() {
     var fez = false;
     try {
         var n = new Notification(titulo, { body: texto, tag: "teste-convencao" });
-        try { n.onclick = function () { window.focus(); n.close(); }; } catch (e2) {}
+        try { n.onclick = function () { window.focus(); n.close(); }; } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
         fez = true;
     } catch (e) {
         vigiaErro("notificacao-teste", e);
@@ -116,11 +116,11 @@ function notifTestar() {
    ============================================================ */
 function notifMapaLocal() {
     var mapa = {};
-    try { getPedidos().forEach(function (p) { if (p && p.id) mapa[p.id] = p.status; }); } catch (e) {}
+    try { getPedidos().forEach(function (p) { if (p && p.id) mapa[p.id] = p.status; }); } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
     return mapa;
 }
 function notifFotoStatus(mapa) {
-    try { localStorage.setItem("notifUltimoStatus", JSON.stringify(mapa)); } catch (e) {}
+    try { localStorage.setItem("notifUltimoStatus", JSON.stringify(mapa)); } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
 }
 function notifFotoAnterior() {
     try { return JSON.parse(localStorage.getItem("notifUltimoStatus") || "{}"); }
@@ -149,7 +149,7 @@ function notifToast(titulo, texto) {
     d.querySelector("button").addEventListener("click", function () { d.remove(); });
     d.addEventListener("click", function () { d.remove(); });
     document.body.appendChild(d);
-    setTimeout(function () { try { d.remove(); } catch (e) {} }, 12000);
+    setTimeout(function () { try { d.remove(); } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */} }, 12000);
 }
 /* uma rodada: traz a nuvem, compara, avisa o que mudou */
 function notifRodada() {
@@ -160,7 +160,7 @@ function notifRodada() {
         Object.keys(atuais).forEach(function (id) {
             if (antes[id] && antes[id] !== atuais[id]) {
                 var p = null;
-                try { p = getPedidos().find(function (x) { return x.id === id; }); } catch (e) {}
+                try { p = getPedidos().find(function (x) { return x.id === id; }); } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
                 if (p) notifAvisar(p, antes[id], atuais[id]);
             }
         });
@@ -176,7 +176,7 @@ function notifIniciar() {
     if (NOTIF_TIMER) return;
     if (typeof getPedidos === "undefined") return;
     if (notifPermitida() === false) return;
-    try { notifFotoStatus(notifMapaLocal()); } catch (e) {}
+    try { notifFotoStatus(notifMapaLocal()); } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
     NOTIF_TIMER = setInterval(notifRodada, NOTIF_INTERVALO);
 }
 /* se o cliente desligar nas Configuracoes, a vigia para na hora */
@@ -192,10 +192,10 @@ if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
                     } else if (p.cfgNotifPedido !== false && !NOTIF_TIMER && typeof notifIniciar === "function") {
                         notifIniciar();
                     }
-                } catch (err) {}
+                } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
             }
         });
-    } catch (e) {}
+    } catch(e){/* proposital: aviso do celular e um extra, a tela nao trava por causa dele */}
 }
 
 /* ---------- boot: comeca a vigiar os pedidos do cliente ---------- */

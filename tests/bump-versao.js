@@ -44,6 +44,18 @@ if (fs.existsSync(upd)) {
     const t = fs.readFileSync(upd, "utf8");
     fs.writeFileSync(upd, t.replace(/(var VERSAO_APP\s*=\s*")[^"]+(")/, "$1" + nova + "$2"), "utf8");
 }
+/* sw.js: o nome do cache leva a versao. Sem isso, publicar nao invalida
+   nada e o celular continua vendo a copia antiga (foi o bug do Historico) */
+const sw = path.join(dir, "sw.js");
+if (fs.existsSync(sw)) {
+    const t = fs.readFileSync(sw, "utf8");
+    fs.writeFileSync(sw, t.replace(/(var VERSAO\s*=\s*")[^"]+(")/, "$1" + nova + "$2"), "utf8");
+}
+/* app-update.js tambem guarda o nome do cache vivo, para nao apagar o certo */
+if (fs.existsSync(upd)) {
+    const t = fs.readFileSync(upd, "utf8");
+    fs.writeFileSync(upd, t.replace(/(var CACHE_ATUAL\s*=\s*")[^"]+(")/, "$1" + "convencao-cache-" + nova + "$2"), "utf8");
+}
 
 console.log("\nversao: " + antiga + " -> " + nova);
-console.log("versao.txt e VERSAO_APP atualizados (o celular vai pegar a versao nova)");
+console.log("versao.txt, VERSAO_APP, sw.js e o nome do cache atualizados (o celular vai pegar a versao nova)");

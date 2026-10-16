@@ -112,7 +112,6 @@ var REGIOES = [
 
 /* segunda-feira: dia de montar os pedidos */
 var DIA_SOMENTE_PEDIDOS = 1;
-var TEXTO_SOMENTE_PEDIDOS = "Segunda-feira é o dia de montar os pedidos. A entrega começa na terça.";
 
 /* A LOJA SO FUNCIONA DE SEGUNDA A SEXTA.
    Sábado e domingo: só entrega (sábado) ou nada (domingo). */
@@ -128,7 +127,6 @@ function diaSomenteEntrega(diaSemana) {
     return !lojaAbertaNoDia(diaSemana);
 }
 
-var OBS_CARGA = "O pedido é feito um dia antes da entrega. O caminhão carrega na véspera.";
 
 /* ============================================
    REGRA DE OURO DO ATENDIMENTO
@@ -420,7 +418,6 @@ var CAMINHOES = [
 ];
 
 /* ---------- NOMES DOS DIAS ---------- */
-var NOMES_DIA = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 var NOMES_DIA_LONGOS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira",
                         "Quinta-feira", "Sexta-feira", "Sábado"];
 
@@ -468,7 +465,6 @@ function diaDeHoje() {
 }
 
 /* nome curto dos dias: "qui", "sex" */
-var NOMES_DIA_CURTO = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
 /* "quinta e sexta" / "quarta, quinta e sexta" */
 function textoDiasPedido(regiao) {

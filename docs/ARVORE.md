@@ -54,7 +54,7 @@ refrigerante-site/
 ├─ DADOS
 │  ├─ catalogo.json ................. catálogo do dia (gerado pelo robô)
 │  ├─ precos-base.json .............. preços do dono (o robô NUNCA altera)
-│  └─ versao.txt .................... versão publicada (ex.: 20261016a)
+│  └─ versao.txt .................... versão publicada (ex.: 20261016d)
 │
 ├─ APP DE CELULAR
 │  ├─ manifest.json ................. PWA do cliente
@@ -87,12 +87,21 @@ refrigerante-site/
 │     └─ check.yml .................. sintaxe + TODOS os testes a cada push
 │
 ├─ TESTES E MANUTENÇÃO
-│  ├─ tests/rodar-todos.js .......... roda as 13 baterias (TUDO 10/10)
+│  ├─ tests/rodar-todos.js .......... roda as 22 baterias (TUDO 10/10)
 │  ├─ tests/manter-tudo.js .......... alinha versões, datas, links, docs, robô
 │  ├─ tests/bump-versao.js .......... sobe a versão em todos os arquivos
 │  ├─ tests/13-validar-css.js ....... confere o CSS todo (sintaxe, classe sem uso, cobertura, duplicata)
+│  ├─ tests/14-cores.js ........... contraste WCAG, cor que some, alto contraste
+│  ├─ tests/15-imagens.js ......... arquivo, alt, loading, reserva, icone
+│  ├─ tests/16-letras-numeros.js .. tamanho de letra, moeda, data, numero em coluna
+│  ├─ tests/17-tamanhos.js ........ alvo de toque, viewport, nada estourando
+│  ├─ tests/18-codigo.js .......... sintaxe, rascunho, escopo, codigo morto, segredo
+│  ├─ tests/19-erros.js ........... catch calado, promessa sem catch, aviso ao cliente
+│  ├─ tests/20-documentos.js ...... documentos em dia com o codigo
+│  ├─ tests/21-repositorio.js ..... gitignore, build fora do git, arquivo grande
+│  ├─ tests/22-entrega.js ......... commit, push e deploy na mesma versao
 │  ├─ tests/limpar-css-morto.js ..... apaga CSS morto (relatório; --aplicar limpa)
-│  ├─ tests/01..13-*.js ............. as 13 baterias
+│  ├─ tests/01..22-*.js ............. as 22 baterias
 │  └─ tests/LEIA-ME.md .............. como rodar e o que cada bateria confere
 │
 ├─ DOCUMENTAÇÃO
@@ -143,8 +152,9 @@ Tudo que mostra data passa por `dataHoraSegundos()` / `dataCurta()` em
 
 ```powershell
 node tests/manter-tudo.js      # versões, datas, links, docs, robô
-node tests/rodar-todos.js      # 13 baterias — tem que dar TUDO 10/10
+node tests/rodar-todos.js      # 22 baterias — tem que dar TUDO 10/10
 node tests/limpar-css-morto.js # CSS morto: relatório (--aplicar limpa)
+node tests/22-entrega.js --online  # commit, push e deploy na mesma versão
 node tests/bump-versao.js 20261016c
 node apk/android/build.js      # projeto Android na MESMA versão do site
 gradle -p apk/android :cliente:assembleRelease :vendedor:assembleRelease

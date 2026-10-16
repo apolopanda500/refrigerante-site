@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016d">
+<link rel="manifest" href="manifest.json?v=20261016e">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Finalizar Pedido - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016d">
-<script src="theme.js?v=20261016d"></script>
+<link rel="stylesheet" href="style.css?v=20261016e">
+<script src="theme.js?v=20261016e"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
@@ -38,8 +38,8 @@
 .resumo-row { display:flex; justify-content:space-between; padding:9px 0; font-size:1rem; }
 .resumo-row.gratis { color:#2e7d32; font-weight:bold; }
 .resumo-row.total { border-top:2px solid #eee; margin-top:8px; padding-top:14px; font-size:1.35rem; font-weight:bold; color:var(--primary-color); }
-.btn-enviar { width:100%; padding:15px; background:#25D366; color:#fff; border:none; border-radius:26px; font-weight:bold; font-size:1.05rem; cursor:pointer; margin-top:14px; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
-.btn-enviar:hover { background:#1da851; }
+.btn-enviar { width:100%; padding:15px; background:#0e6b4f; color:#fff; border:none; border-radius:26px; font-weight:bold; font-size:1.05rem; cursor:pointer; margin-top:14px; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+.btn-enviar:hover { background:#0a5638; }
 .aviso { font-size:0.82rem; color:#6b7280; margin-top:10px; text-align:center; }
 @media (max-width: 768px){ .checkout-grid{grid-template-columns:1fr;} .resumo-lateral{position:static;} .linha2{grid-template-columns:1fr;} }
 .aviso-regiao{margin-top:8px;padding:11px 13px;border-radius:10px;font-size:.86rem;
@@ -137,6 +137,7 @@
 </nav></div></header>
 
 <section class="page"><div class="container">
+<div id="avisoNuvemFora" class="aviso-info" style="display:none;align-items:flex-start;gap:8px"></div>
 <div id="avisoAtendimento" class="regra-atendimento" style="display:none"></div>
   <div class="page-head"><h1><i class="fa fa-money-bill-wave"></i> Finalizar Pedido</h1></div>
 <div class="checkout-grid">
@@ -176,13 +177,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016d"></script>
-<script src="firebase-appcheck.js?v=20261016d"></script>
-<script src="app-update.js?v=20261016d"></script>
-<script src="ia.js?v=20261016d"></script>
-<script src="central.js?v=20261016d"></script>
-<script src="loja.js?v=20261016d"></script>
-<script src="script.js?v=20261016d"></script>
+<script src="conta.js?v=20261016e"></script>
+<script src="firebase-appcheck.js?v=20261016e"></script>
+<script src="app-update.js?v=20261016e"></script>
+<script src="ia.js?v=20261016e"></script>
+<script src="central.js?v=20261016e"></script>
+<script src="loja.js?v=20261016e"></script>
+<script src="script.js?v=20261016e"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');

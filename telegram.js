@@ -132,7 +132,7 @@ var TelegramBot = (function () {
         var antes = pedido.status;
         atualizarStatus(pedido.id, novo);
         log("Pedido " + pedido.id + " -> " + (STATUS_LABEL[antes] || antes) + " para " + (STATUS_LABEL[novo] || novo));
-        if (typeof renderAdmin === "function") { try { renderAdmin(); } catch (e) {} }
+        if (typeof renderAdmin === "function") { try { renderAdmin(); } catch(e){/* proposital: o bot nao pode derrubar o painel */} }
         return acharPedido(pedido.id) || pedido;
     }
 
@@ -181,8 +181,8 @@ var TelegramBot = (function () {
         alvo.historico = Array.isArray(alvo.historico) ? alvo.historico : [];
         alvo.historico.push({ status: alvo.status, quando: Date.now(), nota: "Editado: " + chave });
         savePedidos(lista);
-        if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(alvo); } catch (e) {} }
-        if (typeof renderAdmin === "function") { try { renderAdmin(); } catch (e) {} }
+        if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(alvo); } catch(e){/* proposital: o bot nao pode derrubar o painel */} }
+        if (typeof renderAdmin === "function") { try { renderAdmin(); } catch(e){/* proposital: o bot nao pode derrubar o painel */} }
         log("Bot: " + pedido.id + " - " + chave + ": " + (antes || "(vazio)") + " -> " + valor);
         var linha = CAMPOS_EDITAVEIS[chave].rotulo + ": " + (antes || "(vazio)") + "  ->  " + valor;
         return enviar("Pedido " + pedido.id + " atualizado\n" + linha
@@ -240,7 +240,7 @@ var TelegramBot = (function () {
         if (!automatico) status("ativando comandos...", "#8a6100");
         return api("setMyCommands", { commands: JSON.stringify(COMANDOS) })
             .then(function () {
-                try { localStorage.setItem(K_CMDS, "1"); } catch (e) {}
+                try { localStorage.setItem(K_CMDS, "1"); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
                 log("Comandos registrados no menu do bot");
                 if (!automatico) {
                     status("Comandos ativados no bot. Abra o Telegram e toque no botao / para ver a lista.", "#2e7d32");
@@ -251,10 +251,10 @@ var TelegramBot = (function () {
                 if (automatico) {
                     /* nao deixa o painel piscando vermelho toda vez que abre:
                        anota a tentativa e deixa o botao para o vendedor decidir */
-                    try { localStorage.setItem(K_CMDS, "tentou"); } catch (err) {}
+                    try { localStorage.setItem(K_CMDS, "tentou"); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
                     log("Menu de comandos nao registrado: " + e.message + " (use Ativar comandos)");
                 } else {
-                    try { localStorage.removeItem(K_CMDS); } catch (err) {}
+                    try { localStorage.removeItem(K_CMDS); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
                     status("Nao foi possivel ativar: " + e.message + ". Confira o token e o chat do bot em Configurações do painel.", "#c62828");
                     log("Falha ao registrar comandos: " + e.message);
                 }
@@ -266,7 +266,7 @@ var TelegramBot = (function () {
             var feito = localStorage.getItem(K_CMDS);
             if (feito === "1") { log("Menu de comandos ja registrado"); return Promise.resolve(); }
             if (feito === "tentou") { log("Menu de comandos: use o botao Ativar comandos para tentar de novo"); return Promise.resolve(); }
-        } catch (e) {}
+        } catch(e){/* proposital: o bot nao pode derrubar o painel */}
         return registrarComandos(null, true);
     }
 
@@ -296,9 +296,9 @@ var TelegramBot = (function () {
                 var msg = String(e.message || e);
                 if (/409|webhook/i.test(msg)) {
                     status("O Telegram tem outra conexao ativa (webhook). Removendo...", "#8a6100");
-                    try { localStorage.removeItem("convencao_tg_hook"); } catch (err) {}
+                    try { localStorage.removeItem("convencao_tg_hook"); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
                     api("deleteWebhook", {}).then(function () {
-                        try { localStorage.setItem("convencao_tg_hook", "1"); } catch (err) {}
+                        try { localStorage.setItem("convencao_tg_hook", "1"); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
                         status("Webhook removido. Toque em Verificar novamente.", "#2e7d32");
                     }).catch(function () {});
                 } else if (/fetch|network|failed/i.test(msg)) {
@@ -482,7 +482,7 @@ var TelegramBot = (function () {
                     })
                     .catch(function () {});
             }
-        } catch (e) {}
+        } catch(e){/* proposital: o bot nao pode derrubar o painel */}
         TIMER = setInterval(function () {
             if (document.getElementById("painelTela") && document.getElementById("painelTela").style.display !== "none") {
                 verificarAgora();
@@ -494,7 +494,7 @@ var TelegramBot = (function () {
     function ligadoMudou(checkbox) {
         var p = prefs();
         p.cfgBotComandos = checkbox.checked;
-        try { localStorage.setItem(K_PREFS, JSON.stringify(p)); } catch (e) {}
+        try { localStorage.setItem(K_PREFS, JSON.stringify(p)); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
         if (checkbox.checked) iniciar(); else parar();
         status(checkbox.checked ? "Comandos ligados." : "Comandos desligados.", checkbox.checked ? "#2e7d32" : "#8a6100");
     }

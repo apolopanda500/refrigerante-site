@@ -5,7 +5,7 @@
    Aqui conferimos a versao e, se houver versao nova,
    aparece uma barra para atualizar na hora.
    ============================================ */
-var VERSAO_APP = "20261016d";
+var VERSAO_APP = "20261016e";
 
 function barraAtualizar() {
     if (document.getElementById("barraAtualizar")) return;
@@ -24,7 +24,7 @@ function barraAtualizar() {
     btn.style.cssText = "background:#ffb822;color:#3d4465;border:0;border-radius:20px;"
         + "padding:9px 18px;font:800 .92rem/1 'Segoe UI',sans-serif;cursor:pointer;min-height:40px";
     btn.onclick = function () {
-        btn.disabled = true;
+        btn.disabled = true;   /* proposital: a pagina recarrega logo abaixo */
         txt.textContent = "Atualizando...";
         reiniciarCacheApp().then(function () {
             if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
@@ -49,13 +49,17 @@ function barraAtualizar() {
     document.body.appendChild(box);
 }
 
+/* nome do cache vivo: sw.js monta "convencao-cache-" + VERSAO.
+   Mantido aqui so para conferir; o service worker e a fonte da verdade. */
+var CACHE_ATUAL = "convencao-cache-20261016e";
+
 /* tira os caches ANTIGOS (o do service worker atual fica de pe:
    se apagassemos tudo, o app ficaria sem nada offline) */
 function limparCacheApp() {
     if (typeof caches === "undefined") return Promise.resolve();
     return caches.keys().then(function (chaves) {
         return Promise.all(chaves.map(function (c) {
-            if (c === "convencao-cache-v4") return null;   /* o cache ativo */
+            if (c === CACHE_ATUAL) return null;     /* o cache ativo */
             return caches.delete(c);
         }));
     }).catch(function () { });
@@ -108,11 +112,23 @@ function iniciarApp() {
         .then(function (v) {
             v = String(v || "").trim();
             if (!v) return;
+            /* o cache comeca a mudar de nome a cada publicacao:
+               o service worker novo usa o nome novo e apaga o antigo */
+            CACHE_ATUAL = "convencao-cache-" + v;
             try {
                 var antes = localStorage.getItem("versaoAppVista");
                 if (antes !== v) {
-                    /* versao nova vista pela primeira vez: limpa caches antigos */
-                    if (antes) limparCacheApp();
+                    /* versao nova vista pela primeira vez: garante que o
+                       service worker ja esteja na versao nova, senao o
+                       app continua servindo a copia antiga do cache */
+                    if (antes) {
+                        limparCacheApp();
+                        if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+                            navigator.serviceWorker.getRegistration().then(function (r) {
+                                if (r) r.update().catch(function () { });
+                            }).catch(function () { });
+                        }
+                    }
                     localStorage.setItem("versaoAppVista", v);
                 }
             } catch (e) { }

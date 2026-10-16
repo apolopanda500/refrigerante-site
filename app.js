@@ -164,7 +164,7 @@ function executarBanner(b){
             var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
             p.cfgTema = prox;
             localStorage.setItem("refrigerantePrefs", JSON.stringify(p));
-        } catch (e) {}
+        } catch (e) { /* proposital: nao pode travar a tela */ }
         if (typeof aplicarTema === "function") aplicarTema();
         return;
     }
@@ -249,7 +249,7 @@ function mostrarModal(titulo, html){
 function ampliarCaminhao(src, nome) {
     if (!src) return;
     mostrarModal("Caminhão " + (nome || ""),
-        '<img src="' + src + '" alt="Caminhão ' + (nome || "") + '"'
+        '<img src="' + src + '" alt="Caminhão ' + (nome || "") + '" loading="eager"'
         + ' style="width:100%;display:block;border-radius:10px">');
 }
 
@@ -357,28 +357,28 @@ function aplicarCatalogoJSON(cat) {
 
     PD = novos;
     /* catálogo novo na mão: a IA repinta as recomendações na hora */
-    if (typeof iaRepintarRecomendados === "function") { try { iaRepintarRecomendados(); } catch (e) {} }
+    if (typeof iaRepintarRecomendados === "function") { try { iaRepintarRecomendados(); } catch (e) { /* proposital: nao pode travar a tela */ } }
     if (cat.grupos && cat.grupos.length) {
         CT = cat.grupos.map(function (g) { return { id: g.id, nm: g.nm, ic: g.ic }; });
     }
     /* ordem das abas na tela */
     var ordem = { "2l": 1, "60": 2, "35": 3, re: 4, mx: 5, ag: 6, ch: 7 };
     PD.sort(function (a, b) { return (ordem[a.ct] === undefined ? 9 : ordem[a.ct]) - (ordem[b.ct] === undefined ? 9 : ordem[b.ct]); });
-    try { aplicarPrecosSalvar(); } catch (e) {}
-    try { rT(); rP(); uC(); } catch (e) {}
+    try { aplicarPrecosSalvar(); } catch (e) { /* proposital: nao pode travar a tela */ }
+    try { rT(); rP(); uC(); } catch (e) { /* proposital: nao pode travar a tela */ }
 /* os precos editados pelo vendedor (nuvem) tem prioridade sobre o do site oficial */
     if (typeof puxarPrecosNuvem === "function") {
         try {
             puxarPrecosNuvem(function () {
-                try { rP(); uC(); } catch (e) {}
+                try { rP(); uC(); } catch (e) { /* proposital: nao pode travar a tela */ }
                 /* o painel do vendedor repinta com os precos atuais */
-                try { if (window.painelPrecos && typeof window.painelPrecos.repintar === "function") window.painelPrecos.repintar(); } catch (e) {}
+                try { if (window.painelPrecos && typeof window.painelPrecos.repintar === "function") window.painelPrecos.repintar(); } catch (e) { /* proposital: nao pode travar a tela */ }
             });
-        } catch (e) {}
+        } catch (e) { /* proposital: nao pode travar a tela */ }
     }
     /* o editor de precos do painel so pode pintar DEPOIS do catalogo,
        senao ele usa a lista antiga e salva com a chave errada */
-try { if (window.painelPrecos && typeof window.painelPrecos.repintar === "function") window.painelPrecos.repintar(); } catch (e) {}
+try { if (window.painelPrecos && typeof window.painelPrecos.repintar === "function") window.painelPrecos.repintar(); } catch (e) { /* proposital: nao pode travar a tela */ }
     return true;
 }
 
@@ -393,10 +393,10 @@ function carregarCatalogo() {
 
 /* ---------- sobe a tela (depois do catalogo) ---------- */
 function iniciarPagina() {
-    try { rT(); } catch (e) {}
-    try { aplicarPrecosSalvar(); } catch (e) {}
-    try { rP(); } catch (e) {}
-    try { uC(); } catch (e) {}
+    try { rT(); } catch (e) { /* proposital: nao pode travar a tela */ }
+    try { aplicarPrecosSalvar(); } catch (e) { /* proposital: nao pode travar a tela */ }
+    try { rP(); } catch (e) { /* proposital: nao pode travar a tela */ }
+    try { uC(); } catch (e) { /* proposital: nao pode travar a tela */ }
     var l = document.getElementById("ldBox"); if (l) l.style.display = "none";
     carregarCatalogo();
 }
@@ -710,9 +710,7 @@ function pintarTabelaGeral(){
 
     var d = new Date().getDay();
     var rs = (typeof regioesDoDia === "function") ? regioesDoDia(d) : [];
-    var abrindo = (typeof regioesPedidoHoje === "function") ? regioesPedidoHoje(d) : [];
-    var nomeHoje = (typeof NOMES_DIA_LONGOS !== "undefined") ? NOMES_DIA_LONGOS[d] : "-";
-
+    var abrindo = (typeof regioesPedidoHoje === "function") ? regioesPedidoHoje(d) : [];
     function secao(titulo, icone, linhas){
         var h = '<tr class="tb-secao"><th colspan="3"><i class="fa ' + icone + '"></i> ' + titulo + '</th></tr>';
         linhas.forEach(function (l){
@@ -826,7 +824,7 @@ function tabelaInfoMiniSalvo() {
         var v = localStorage.getItem("tabelaInfoMini");
         if (v === "1") return true;
         if (v === "0") return false;
-    } catch (e) {}
+    } catch (e) { /* proposital: nao pode travar a tela */ }
     /* sem escolha do cliente: no celular em pe ja vem minimizado */
     try {
         return !!(window.matchMedia && window.matchMedia("(max-width:768px) and (orientation:portrait)").matches);
@@ -846,7 +844,7 @@ function aplicarEstadoTabelaInfo() {
 }
 
 function alternarTabelaInfo() {
-    try { localStorage.setItem("tabelaInfoMini", tabelaInfoMiniSalvo() ? "0" : "1"); } catch (e) {}
+    try { localStorage.setItem("tabelaInfoMini", tabelaInfoMiniSalvo() ? "0" : "1"); } catch (e) { /* proposital: nao pode travar a tela */ }
     aplicarEstadoTabelaInfo();
 }
 
@@ -996,7 +994,7 @@ function aplicarPrecosOverride(){
 function cabecalhosPrecos(){
   try {
     if (typeof AppCheck !== "undefined" && AppCheck.temChaves && AppCheck.temChaves()) return AppCheck.cabecalhos();
-  }catch(e){}
+  }catch(e){/* proposital: sem o App Check o banco pode recusar a gravacao, mas o app ainda funciona */}
   return { "Content-Type":"application/json" };
 }
 
@@ -1004,7 +1002,7 @@ function cabecalhosPrecos(){
 function appCheckPronto(){
   try {
     if (typeof AppCheck !== "undefined" && AppCheck.temChaves && AppCheck.temChaves()) AppCheck.iniciar();
-  }catch(e){}
+  }catch(e){/* proposital: App Check e opcional (o firebase ja exige acesso) */}
 }
 
 /* le os precos da nuvem, tentando os enderecos ate um responder */
@@ -1064,7 +1062,7 @@ function ouvirPrecosNuvem(){
       });
     });
     es.addEventListener("error", function(){ /* reconecta sozinho */ });
-  }catch(e){}
+  }catch(e){/* proposital: sem tempo real, o preco ainda baixa quando a tela chama */}
 }
 if(document.readyState === "loading"){
   document.addEventListener("DOMContentLoaded", function(){
