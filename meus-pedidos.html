@@ -23,13 +23,13 @@
 .page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
 .page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }
 
-/* ===== resumo do historico (veio do perfil) ===== */
+/* ===== resumo do historico (veio do perfil) - alinhado ===== */
 .stats-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px}
-.stat-box{flex:1;min-width:140px;background:#fff;border-radius:14px;
- box-shadow:0 2px 12px rgba(0,0,0,.07);padding:20px;text-align:center}
-.stat-box .stat-icon{font-size:1.8rem;color:var(--primary-color);margin-bottom:8px}
-.stat-box .stat-num{font-size:1.6rem;font-weight:bold;color:var(--text-color)}
-.stat-box .stat-label{font-size:.82rem;color:#6b7280;margin-top:4px}
+.stat-box{flex:1;min-width:150px;background:#fff;border-radius:14px;
+ box-shadow:0 2px 12px rgba(0,0,0,.07);padding:20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.stat-box .stat-icon{font-size:1.6rem;color:var(--primary-color);margin-bottom:6px}
+.stat-box .stat-num{font-size:1.5rem;font-weight:800;color:var(--text-color);line-height:1.2}
+.stat-box .stat-label{font-size:0.78rem;color:#6b7280;margin-top:4px;line-height:1.3}
 [data-theme="dark"] .stat-box{background:#232742}
 [data-theme="dark"] .stat-box .stat-num{color:#fff}
 [data-theme="dark"] .stat-box .stat-label{color:#a1a8c3}
@@ -52,17 +52,17 @@
 .timeline-item { display:flex; align-items:center; gap:8px; padding:4px 0; font-size:0.85rem; color:#666; }
 .timeline-item i { color:var(--primary-color); }
 
-/* ===== LINHA DO TEMPO VISUAL - acompanhamento rastreavel ===== */
-.timeline-linha{display:flex;flex-direction:column;gap:10px;margin:12px 0;padding-left:28px;position:relative}
-.timeline-linha::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:2px;background:#ddd}
+/* ===== LINHA DO TEMPO VISUAL - acompanhamento rastreavel (ticks reduzidos) ===== */
+.timeline-linha{display:flex;flex-direction:column;gap:8px;margin:10px 0;padding-left:26px;position:relative}
+.timeline-linha::before{content:"";position:absolute;left:13px;top:0;bottom:0;width:2px;background:#ddd}
 .timeline-passo{display:flex;align-items:flex-start;gap:10px;position:relative}
-.timeline-marcador{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;position:relative;z-index:2}
-.timeline-marcador i{font-size:0.95rem}
+.timeline-marcador{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;position:relative;z-index:2}
+.timeline-marcador i{font-size:0.8rem}
 .timeline-conteudo{min-width:0}
-.timeline-titulo{font-weight:800;font-size:0.9rem}
-.timeline-texto{font-size:0.78rem;opacity:0.85;margin-top:2px}
-.timeline-conector{height:30px;width:2px;align-self:flex-start;margin-left:15px}
-.timeline-status-atual{display:block;margin-top:6px;font-size:0.82rem;font-weight:bold;padding:6px 10px;border-radius:10px;background:var(--bg-alt,#f7f7f7);border:1px solid var(--borda,#eee)}
+.timeline-titulo{font-weight:800;font-size:0.95rem}
+.timeline-texto{font-size:0.8rem;opacity:0.9;margin-top:2px}
+.timeline-conector{height:20px;width:2px;align-self:flex-start;margin-left:10px}
+.timeline-status-atual{display:block;margin-top:6px;font-size:0.85rem;font-weight:bold;padding:8px 12px;border-radius:10px;background:var(--bg-alt,#f7f7f7);border:1px solid var(--borda,#eee)}
 [data-theme="dark"] .timeline-status-atual{background:#232742;border-color:#353a5c;color:#e6e8f2}
 [data-theme="dark"] .timeline-linha::before{background:#353a5c}
 [data-theme="dark"] .timeline-texto{color:#a1a8c3}
@@ -70,31 +70,28 @@
 /* historico real com data/hora */
 .timeline-historico{margin-top:10px}
 .timeline-item-real{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-left:3px solid #eee;margin-left:22px;position:relative}
-.timeline-marcador-real{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;background:#fff;box-shadow:0 0 0 3px var(--light-bg,#f2f2f2)}
+.timeline-marcador-real{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;background:#fff;box-shadow:0 0 0 3px var(--light-bg,#f2f2f2)}
 [data-theme="dark"] .timeline-marcador-real{background:#12121c;box-shadow:0 0 0 3px #12121c}
 .timeline-conteudo-real{min-width:0}
-.timeline-titulo-real{font-weight:700;font-size:0.88rem}
-.timeline-data-real{font-size:0.78rem;opacity:0.8;margin-top:2px;display:flex;align-items:center;gap:6px}
+.timeline-titulo-real{font-weight:700;font-size:0.9rem}
+.timeline-data-real{font-size:0.8rem;opacity:0.85;margin-top:2px;display:flex;align-items:center;gap:6px}
 .timeline-data-real i{font-size:0.7rem}
 [data-theme="dark"] .timeline-titulo-real{color:#e6e8f2}
 [data-theme="dark"] .timeline-data-real{color:#a1a8c3}
 .timeline-vazio{text-align:center;padding:20px;color:#a1a8c3;font-size:0.85rem}
 .timeline-vazio i{color:#666;margin-right:6px}
+/* botao minimizar / detalhe destacado */
+.btn-detalhe{background:none;border:none;color:var(--secondary-color);cursor:pointer;font-size:0.9rem;font-weight:700;padding:8px 14px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-detalhe:hover{background:rgba(61,68,101,.08);color:var(--primary-color)}
+[data-theme="dark"] .btn-detalhe{color:#ffb822}
+[data-theme="dark"] .btn-detalhe:hover{background:rgba(255,184,34,.15);color:#ffb822}
+.tick-min{background:none;border:none;color:var(--texto-erro);cursor:pointer;font-size:0.85rem;font-weight:800;padding:4px 10px;border-radius:6px;line-height:1;min-width:44px;min-height:44px}
+.tick-min:hover{background:rgba(198,40,40,.1)}
+[data-theme="dark"] .tick-min{color:#ff8a8a}
+[data-theme="dark"] .tick-min:hover{background:rgba(255,138,138,.2)}
 .vazio { text-align:center; padding:50px 20px; color:#6b7280; }
 .vazio i { font-size:3rem; color:#ddd; margin-bottom:12px; }
 .vazio p { margin-bottom:14px; }
-.aviso-info { background:#e3f2fd; border-left:4px solid var(--secondary-color); padding:12px 16px; border-radius:8px; font-size:0.88rem; color:#1565c0; margin-bottom:18px; }
-
-/* ===== barra de sessao ===== */
-.sessao-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-    background:var(--texto-ok-fundo);border-left:4px solid #43a047;
-    padding:12px 16px;border-radius:8px;font-size:.92rem;color:var(--texto-ok);margin-bottom:18px}
-.sessao-bar b{color:var(--texto-ok)}
-.btn-sair{margin-left:auto;background:none;border:1px solid #c62828;color:var(--texto-erro);
-    padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;
-    display:inline-flex;align-items:center;gap:6px}
-.btn-sair:hover{background:#c62828;color:#fff}
-
 /* ===== TEMA ESCURO legivel ===== */
 [data-theme="dark"] .page{background:#12121c !important}
 [data-theme="dark"] .pedido-card{background:#1c1f33 !important;border:1px solid #353a5c !important}
@@ -115,9 +112,6 @@
 [data-theme="dark"] .filtro.ativo{background:#ffb822 !important;color:#3d4465 !important;border-color:#ffb822 !important}
 [data-theme="dark"] .vazio{color:#a1a8c3 !important}
 [data-theme="dark"] .vazio i{color:#353a5c !important}
-[data-theme="dark"] .aviso-info{background:#232742 !important;border-left-color:#ffb822 !important;color:#e6e8f2 !important}
-[data-theme="dark"] .sessao-bar{background:#232742 !important;border-left-color:#ffb822 !important;color:#e6e8f2 !important}
-[data-theme="dark"] .sessao-bar b{color:#ffb822 !important}
 [data-theme="dark"] .btn-sair{border-color:#ff6b6b !important;color:#ff8a8a !important}
 [data-theme="dark"] .btn-sair:hover{background:#ff6b6b !important;color:#fff !important}
 
@@ -133,13 +127,18 @@ body[data-leitura="vertical"] .timeline-item{justify-content:space-between!impor
 body[data-leitura="vertical"] .avaliar-resumo{flex-direction:column!important;align-items:flex-start!important;gap:8px!important}
 [data-theme="dark"] body[data-leitura="vertical"] .pedido-itens div{background:#232742!important;border-color:#353a5c!important;color:#cdd2e6!important}
 
-/* ===== BOLETIM DE PEDIDOS: letras maiores e legiveis ===== */
+/* ===== BOLETIM DE PEDIDOS: alinhado e legivel ===== */
 .pedido-card{padding:22px 24px !important;margin-bottom:20px !important}
+.pedido-topo{display:flex!important;justify-content:space-between!important;align-items:center!important;flex-wrap:wrap!important;gap:10px!important;margin-bottom:12px!important}
 .pedido-topo b{font-size:1.22rem !important}
 .pedido-meta{font-size:1rem !important;color:#6b7280 !important;margin-top:4px}
 .pedido-meta i{margin-right:5px}
 .pedido-itens{font-size:1.04rem !important;color:#3d4465 !important;line-height:1.75}
 .pedido-itens b{color:#3d4465}
+.pedido-itens div{padding:4px 0 !important}
+.pedido-itens .item-nome{flex:1}
+.pedido-itens .item-qtd{text-align:center}
+.pedido-itens .item-preco{text-align:right}
 .pedido-total{margin-top:16px !important;padding-top:14px !important}
 .pedido-total .val{font-size:1.5rem !important}
 .btn-detalhe{font-size:1rem !important;padding:9px 12px !important}
@@ -462,15 +461,7 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
   <a href="index.html" style="color:#666;text-decoration:none"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
 </div>
 
-<div class="aviso-info"><i class="fa fa-info-circle"></i> Seus pedidos aparecem automaticamente, com data e hora. Não precisa digitar nada.</div>
 
-<div id="usuarioLogado" class="sessao-bar">
-  <i class="fa fa-user-check"></i>
-  <span id="sessaoTexto">Conectado como <b id="nomeUsuario">Cliente</b></span>
-  <button class="btn-sair" onclick="sair()"><i class="fa fa-sign-out-alt"></i> Sair</button>
-</div>
-
-<div id="avisoSincronia" class="aviso-info" style="display:none;align-items:flex-start;gap:8px"></div>
 
 <div class="filtros" id="filtros" style="display:none">
   <button class="filtro ativo" data-f="todos" onclick="filtrar('todos',this)">Todos</button>
@@ -562,19 +553,6 @@ function mostrarPedidos(){
       }
   }
 
-  var aviso = document.getElementById("avisoSincronia");
-  if (aviso) {
-      if (!sessao) {
-          aviso.style.display = "flex";
-          aviso.innerHTML = '<i class="fa fa-info-circle"></i> <span>Você não está identificado. Preencha seu <a href="perfil.html" style="color:#1565c0;font-weight:700">perfil</a> para ver apenas os seus pedidos. Abaixo, todos os pedidos salvos neste aparelho.</span>';
-      } else if (!porTelefone && lista.length) {
-          aviso.style.display = "flex";
-          aviso.innerHTML = '<i class="fa fa-sync-alt"></i> <span>Nenhum pedido antigo com o WhatsApp <b>' + sessao.tel + '</b>. Mostramos todos os pedidos salvos neste aparelho.</span>';
-      } else {
-          aviso.style.display = "none";
-      }
-  }
-
   var f = document.getElementById("filtros");
   if (f) f.style.display = lista.length ? "flex" : "none";
 
@@ -647,7 +625,7 @@ function render(){
        + (typeof tempoDesde === "function" && tempoDesde(p.criadoEm) ? " (" + tempoDesde(p.criadoEm) + ")" : "")
        + '</div></div>' + statusBadge(p.status) + '</div>';
     h += '<div class="pedido-itens">';
-    if (itens.length) itens.forEach(function(i){ h += '<div>' + (i.name || "item") + ' <b>x' + (i.qty || 0) + '</b></div>'; });
+    if (itens.length) itens.forEach(function(i){ h += '<div><span class="item-nome">' + (i.name || "item") + '</span><span class="item-qtd">x' + (i.qty || 0) + '</span><span class="item-preco"><b>' + formatBRL(parseFloat((i.price||0)*(i.qty||0))) + '</b></span></div>'; });
     else h += '<div class="pedido-sem-item">Itens deste pedido nao estao salvos neste aparelho.</div>';
     h += '</div>';
     h += '<div class="pedido-total"><button class="btn-detalhe" onclick="toggleDetalhe(\'' + p.id + '\')"><i class="fa fa-chevron-down"></i> Ver detalhes</button><span class="val">' + formatBRL(p.total) + '</span></div>';
