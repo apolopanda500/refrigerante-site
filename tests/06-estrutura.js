@@ -410,10 +410,13 @@ else console.log("  ok  build-apk.ps1 usa a versao do site nos dois APK");
 });
 const versaoSite2 = fs.readFileSync(path.join(dir, "versao.txt"), "utf8").trim();
 let versaoApk = "";
-try { versaoApk = fs.readFileSync(path.join(dir, "apk", "versao-apk.txt"), "utf8").trim(); } catch (e) {}
+try { versaoApk = fs.readFileSync(path.join(dir, "apk", "versao-apk.txt"), "utf8").replace(/^\uFEFF/, "").trim(); } catch (e) {}
 if (versaoApk === versaoSite2) console.log("  ok  os APK publicados estao na versao do site (" + versaoSite2 + ")");
 else if (!versaoApk) console.log("  ok  ainda nao ha APK assinado nesta sessao (rode build-apk.ps1 para gerar na versao " + versaoSite2 + ")");
 else console.log("  ATENCAO  APK em " + versaoApk + " e o site esta em " + versaoSite2 + " - rebuild necessario");
+if (versaoApk && /^\uFEFF/.test(fs.readFileSync(path.join(dir, "apk", "versao-apk.txt"), "utf8"))) {
+    falha("apk/versao-apk.txt tem BOM (o painel nao consegue ler a versao)");
+}
 
 /* ---------- 14. o que o dono pediu nesta rodada ---------- */
 console.log("\n=== 14. AVISO REAL, FERRAMENTAS E BOTOES DO BOT ===");

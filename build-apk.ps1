@@ -74,7 +74,7 @@ bubblewrap build --manifest "manifest-vendedor-local.json" --appName "Painel Ven
 Copy-Item "app-release-signed.apk" "apk\convencao-vendedor.apk" -Force -ErrorAction SilentlyContinue
 Remove-Item "manifest-vendedor-local.json" -Force -ErrorAction SilentlyContinue
 
-Set-Content -Path "apk\versao-apk.txt" -Value $versaoSite -Encoding UTF8
+[System.IO.File]::WriteAllText("apk\versao-apk.txt", $versaoSite, (New-Object System.Text.UTF8Encoding($false)))
 Say "    APK cliente e vendedor gravados na versao $versaoSite"
 
 Say "Pronto!"
