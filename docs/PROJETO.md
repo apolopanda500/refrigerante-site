@@ -261,7 +261,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 ```bash
 node tests/manter-tudo.js            # versoes, datas, links, docs, robo
 node --check *.js                    # sintaxe
-node tests/rodar-todos.js            # 23 baterias (tem que dar TUDO 10/10)
+node tests/rodar-todos.js            # 24 baterias (tem que dar TUDO 10/10)
 node tests/13-validar-css.js         # CSS inteiro: sintaxe, classe sem uso, cobertura
 node tests/limpar-css-morto.js       # CSS morto: so o relatorio (--aplicar limpa)
 git add -A
@@ -422,8 +422,8 @@ sumia. A bateria `14-cores` confere o contraste das duas versões.
   e a cada minuto.
 
 ### Qualidade automatica (rodar certo sempre vai rodar certo)
-- Testes: node tests/rodar-todos.js - 23 baterias, TUDO 10/10. A 13a e o lint
-  do CSS; da 14a a 23a vem cor, imagem, letra/numero, tamanho, codigo, erro,
+- Testes: node tests/rodar-todos.js - 24 baterias, TUDO 10/10. A 13a e o lint
+  do CSS; da 14a a 24a vem cor, imagem, letra/numero, tamanho, codigo, erro,
   documento, repositorio e entrega (esta ultima com --online confere o site no ar).
 - Portao automatico: .github/workflows/check.yml roda sintaxe de todo
   JS (site, testes, robos) + a suite completa em TODO push e todo dia as 6h.

@@ -35,6 +35,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `20-documentos.js` | **Documentos**: os 5 documentos existem, listam todas as baterias, falam da versão atual e nenhum tem caractere corrompido |
 | `21-repositorio.js` | **Repositório**: `.gitignore`, nenhum build/`.gradle` versionado, sem arquivo grande demais, sem segredo de verdade no histórico |
 | `22-entrega.js` | **Entrega**: commit feito, push na frente, versão do repositório igual à do site no ar |
+`24-textos.js` | **Texto do cliente**: palavra na tela sem o acento certo, caractere corrompido, menu e nome das regioes (so o que aparece na tela; codigo com acento seria erro)
 | `23-acesso-vendedor.js` | **Acesso do vendedor**: um acesso só de usuário e senha, trava de 5 tentativas, usuário sem differentiate maiúscula (o dono não fica trancado fora) e o painel baixando os pedidos de **todo** aparelho pela nuvem |
 
 ## CSS: como confere e como limpa
