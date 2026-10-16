@@ -51,6 +51,35 @@
 .timeline { margin-top:10px; }
 .timeline-item { display:flex; align-items:center; gap:8px; padding:4px 0; font-size:0.85rem; color:#666; }
 .timeline-item i { color:var(--primary-color); }
+
+/* ===== LINHA DO TEMPO VISUAL - acompanhamento rastreavel ===== */
+.timeline-linha{display:flex;flex-direction:column;gap:10px;margin:12px 0;padding-left:28px;position:relative}
+.timeline-linha::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:2px;background:#ddd}
+.timeline-passo{display:flex;align-items:flex-start;gap:10px;position:relative}
+.timeline-marcador{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;position:relative;z-index:2}
+.timeline-marcador i{font-size:0.95rem}
+.timeline-conteudo{min-width:0}
+.timeline-titulo{font-weight:800;font-size:0.9rem}
+.timeline-texto{font-size:0.78rem;opacity:0.85;margin-top:2px}
+.timeline-conector{height:30px;width:2px;align-self:flex-start;margin-left:15px}
+.timeline-status-atual{display:block;margin-top:6px;font-size:0.82rem;font-weight:bold;padding:6px 10px;border-radius:10px;background:var(--bg-alt,#f7f7f7);border:1px solid var(--borda,#eee)}
+[data-theme="dark"] .timeline-status-atual{background:#232742;border-color:#353a5c;color:#e6e8f2}
+[data-theme="dark"] .timeline-linha::before{background:#353a5c}
+[data-theme="dark"] .timeline-texto{color:#a1a8c3}
+[data-theme="dark"] .timeline-titulo{color:#e6e8f2}
+/* historico real com data/hora */
+.timeline-historico{margin-top:10px}
+.timeline-item-real{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-left:3px solid #eee;margin-left:22px;position:relative}
+.timeline-marcador-real{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;background:#fff;box-shadow:0 0 0 3px var(--light-bg,#f2f2f2)}
+[data-theme="dark"] .timeline-marcador-real{background:#12121c;box-shadow:0 0 0 3px #12121c}
+.timeline-conteudo-real{min-width:0}
+.timeline-titulo-real{font-weight:700;font-size:0.88rem}
+.timeline-data-real{font-size:0.78rem;opacity:0.8;margin-top:2px;display:flex;align-items:center;gap:6px}
+.timeline-data-real i{font-size:0.7rem}
+[data-theme="dark"] .timeline-titulo-real{color:#e6e8f2}
+[data-theme="dark"] .timeline-data-real{color:#a1a8c3}
+.timeline-vazio{text-align:center;padding:20px;color:#a1a8c3;font-size:0.85rem}
+.timeline-vazio i{color:#666;margin-right:6px}
 .vazio { text-align:center; padding:50px 20px; color:#6b7280; }
 .vazio i { font-size:3rem; color:#ddd; margin-bottom:12px; }
 .vazio p { margin-bottom:14px; }
@@ -629,25 +658,63 @@ function render(){
     h += '<div><b>Pagamento:</b> ' + (p.pagamento || "—") + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</div>';
     h += '<div><b>Frete:</b> ' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete || 0)) + '</div>';
     h += '<div class="subtotal"><b>Subtotal:</b> ' + formatBRL(sub) + '</div>';
-    /* ACOMPANHAMENTO: fica recolhido (so o resumo) e abre com um toque,
-       para a tela nao crescer a cada pedido */
+    /* ACOMPANHAMENTO: linha do tempo visual com icones, cores e data/hora */
     var ultimo = hist.length ? hist[hist.length - 1] : null;
+    var ultIdx = ultimo ? statusIndice(ultimo.status) : -1;
     var parado = ultimo
-        ? (STATUS_LABEL[ultimo.status] || ultimo.status) + " ha " + (typeof tempoDesde === "function" ? tempoDesde(ultimo.quando) : "")
-        : "aguardando";
+        ? (STATUS_LABEL[ultimo.status] || ultimo.status) + " — " + (typeof dataHoraSegundos === "function" ? dataHoraSegundos(ultimo.quando) : "")
+        : "Aguardando";
     h += '<div class="timeline-resumo">'
-       + '<button type="button" class="btn-detalhe" onclick="toggleTicks(\'' + p.id + '\')">'
+       + '<button type="button" class="btn-detalhe" onclick="toggleTicks('' + p.id + '')">'
        + '<i class="fa fa-clock"></i> Acompanhamento</button>'
-       + '<button type="button" class="tick-min" onclick="toggleTicks(\'' + p.id + '\')" title="Minimizar">—</button>'
-       + '<span>' + parado + '</span></div>';
+       + '<span class="timeline-status-atual">' + parado + '</span></div>';
     h += '<div class="timeline" id="ticks-' + p.id + '" style="display:none">';
-    if (hist.length) hist.forEach(function(ev){
-        h += '<div class="timeline-item"><i class="fa fa-circle"></i> ' + (STATUS_LABEL[ev.status] || ev.status)
-           + " — " + (typeof dataHoraSegundos === "function" ? dataHoraSegundos(ev.quando) : dataHora(ev.quando))
-           + ' <span class="sub">(' + (typeof tempoDesde === "function" ? tempoDesde(ev.quando) : "") + ')</span></div>';
+    var passos = [
+        {s:"aguardando", lbl:"Pedido recebido", ic:"fa-clock", txt:"O vendedor ainda não confirmou o pedido."},
+        {s:"confirmado", lbl:"Pedido confirmado", ic:"fa-check-circle", txt:"O vendedor confirmou seu pedido."},
+        {s:"separacao", lbl:"Em separação", ic:"fa-box", txt:"Seus produtos estão sendo separados."},
+        {s:"enviado", lbl:"Saiu para entrega", ic:"fa-truck", txt:"O pedido está a caminho."},
+        {s:"entregue", lbl:"Entregue", ic:"fa-check-double", txt:"Pedido entregue com sucesso."}
+    ];
+    h += '<div class="timeline-linha">';
+    passos.forEach(function(st, i){
+        var feito = i <= ultIdx;
+        var ativo = (i === ultIdx);
+        var iconeClasse = ativo ? (STATUS_ICON[st.s] || "fa-circle") : "fa-circle";
+        var cor = ativo ? STATUS_COR[st.s] : "#ccc";
+        var bg = ativo ? STATUS_COR[st.s] : "#eee";
+        var txtCor = ativo ? "#fff" : "#999";
+        h += '<div class="timeline-passo" style="--cor:' + cor + ';--bg:' + bg + ';--txt:' + txtCor + '">'
+           + '<div class="timeline-marcador"><i class="fa ' + iconeClasse + '"></i></div>'
+           + '<div class="timeline-conteudo">'
+           + '<div class="timeline-titulo">' + st.lbl + '</div>'
+           + '<div class="timeline-texto">' + st.txt + '</div>'
+           + '</div>'
+           + '</div>';
+        if (i < passos.length - 1) {
+            h += '<div class="timeline-conector" style="background:' + (feito ? STATUS_COR[st.s] : "#ddd") + '"></div>';
+        }
     });
-    else h += '<div class="timeline-item"><i class="fa fa-circle"></i> aguardando — sem histórico salvo</div>';
     h += '</div>';
+    if (hist.length) {
+        h += '<div class="timeline-historico">';
+        hist.forEach(function(ev){
+            var ic = STATUS_ICON[ev.status] || "fa-circle";
+            var cor = STATUS_COR[ev.status] || "#777";
+            h += '<div class="timeline-item-real" style="border-left-color:' + cor + '">'
+               + '<div class="timeline-marcador-real"><i class="fa ' + ic + '"></i></div>'
+               + '<div class="timeline-conteudo-real">'
+               + '<div class="timeline-titulo-real">' + (STATUS_LABEL[ev.status] || ev.status) + '</div>'
+               + '<div class="timeline-data-real"><i class="fa fa-clock"></i> ' + (typeof dataHoraSegundos === "function" ? dataHoraSegundos(ev.quando) : dataHora(ev.quando)) + '</div>'
+               + '</div>'
+               + '</div>';
+        });
+        h += '</div>';
+    } else {
+        h += '<div class="timeline-vazio"><i class="fa fa-info-circle"></i> Sem histórico de alterações salvo ainda.</div>';
+    }
+    h += '</div>';
+
     /* avaliacao de estrelas: so no pedido entregue */
     if (p.status === "entregue") {
         var av = (typeof avaliacaoDoPedido === "function") ? avaliacaoDoPedido(p.id) : null;
@@ -728,6 +795,36 @@ window.addEventListener("storage", function(e){
 document.addEventListener("visibilitychange", function(){
     if (!document.hidden && typeof mostrarPedidos === "function") mostrarPedidos();
 });
+</script>
+<script>
+/* destaca a pagina atual no menu */
+(function(){
+  try{
+    var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    document.querySelectorAll('.nav-links a').forEach(function(a){
+      var alvo = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
+      if (alvo === atual) a.classList.add('ativo');
+    });
+  }catch(e){}
+})();
+</script>
+<script>
+/* ===== ACOMPANHAMENTO QUASE TEMPO REAL =====
+   Verifica a cada 15s se o localStorage de pedidos mudou e atualiza a tela automaticamente. */
+(function(){
+    var ultimaVersao = null;
+    function checarMudancas(){
+        try{
+            var pedidos = localStorage.getItem("convencao_pedidos");
+            if (pedidos !== ultimaVersao) {
+                ultimaVersao = pedidos;
+                if (typeof mostrarPedidos === "function") mostrarPedidos();
+            }
+        }catch(e){/* silencioso */ }
+    }
+    setInterval(checarMudancas, 15000);
+    checarMudancas();
+})();
 </script>
 <script>
 /* destaca a pagina atual no menu */

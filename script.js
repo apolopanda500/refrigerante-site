@@ -288,12 +288,24 @@ function mesmoTelefone(a, b) {
 }
 
 const STATUS_LABEL = {
-    aguardando: "Aguardando confirmação",
-    confirmado: "Confirmado",
-    separacao: "Em separação",
-    enviado: "Saiu para entrega",
-    entregue: "Entregue",
-    cancelado: "Cancelado"
+    aguardando: "⏳ Aguardando confirmação",
+    confirmado: "✅ Confirmado",
+    separacao: "📦 Em separação",
+    enviado: "🚚 Saiu para entrega",
+    entregue: "🎉 Entregue",
+    cancelado: "❌ Cancelado"
+};
+const STATUS_ICON = {
+    aguardando: "fa-clock",
+    confirmado: "fa-check-circle",
+    separacao: "fa-box",
+    enviado: "fa-truck",
+    entregue: "fa-check-double",
+    cancelado: "fa-times-circle"
+};
+const STATUS_COR = {
+    aguardando: "#FF9800", confirmado: "#2e7d32", separacao: "#9C27B0",
+    enviado: "#00BCD4", entregue: "#4CAF50", cancelado: "#f44336"
 };
 
 function getPedidos() {
@@ -700,13 +712,14 @@ function tick(ts) {
         + (tempoDesde(ts) ? ' <em>(' + tempoDesde(ts) + ')</em>' : '') + "</span>";
 }
 function statusBadge(status) {
-    const cores = {
-        aguardando: "#FF9800", confirmado: "#2e7d32", separacao: "#9C27B0",
-        enviado: "#00BCD4", entregue: "#4CAF50", cancelado: "#f44336"
-    };
-    const cor = cores[status] || "#777";
-    return '<span style="background:' + cor + ';color:#fff;padding:4px 12px;border-radius:14px;font-size:0.8rem;font-weight:bold;white-space:nowrap">' + (STATUS_LABEL[status] || status) + "</span>";
+    const cor = STATUS_COR[status] || "#777";
+    const icone = STATUS_ICON[status] || "fa-circle";
+    return '<span style="background:' + cor + ';color:#fff;padding:6px 14px;border-radius:14px;font-size:0.85rem;font-weight:bold;white-space:nowrap;display:inline-flex;align-items:center;gap:6px"><i class="fa ' + icone + '"></i> ' + (STATUS_LABEL[status] || status) + "</span>";
 }
+
+/* ===== ordem dos passos da linha do tempo (para destacar o atual) ===== */
+const STATUS_ORDEM = ["aguardando", "confirmado", "separacao", "enviado", "entregue"];
+function statusIndice(status) { return STATUS_ORDEM.indexOf(status); }
 
 
 
