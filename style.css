@@ -102,6 +102,33 @@
 [data-theme="dark"][data-layout="compacto"] .ci-qtd{background:#2a2e44!important}
 [data-theme="dark"][data-layout="compacto"] .qv{background:#222643!important;color:#e6e8f2!important}
 
+/* chip Bot Clientes no painel IA - destaque como ação direta */
+.ia-chip-clientes{background:var(--accent-color,#ffb822)!important;color:#1a1a2e!important;border:none!important}
+.ia-chip-clientes i{margin-right:6px}
+[data-theme="dark"] .ia-chip-clientes{background:#ffb822!important;color:#1a1a2e!important}
+
+/* ===== status da loja: ícones maiores e cores destacadas ===== */
+.wgt-status{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-weight:800;font-size:.85rem}
+.wgt-status i{font-size:1rem}
+.wgt-status.aberto{background:#e8f5e9;border:1px solid #4caf50;color:#2e7d32}
+.wgt-status.aberto i{color:#2e7d32}
+.wgt-status.fechado{background:#ffebee;border:1px solid #f44336;color:#c62828}
+.wgt-status.fechado i{color:#c62828}
+.wgt-status.pedido{background:#fff3e0;border:1px solid #ff9800;color:#ef6c00}
+.wgt-status.pedido i{color:#ef6c00}
+[data-theme="dark"] .wgt-status.aberto{background:#14331f;border-color:#4caf50;color:#8fe0a8}
+[data-theme="dark"] .wgt-status.aberto i{color:#8fe0a8}
+[data-theme="dark"] .wgt-status.fechado{background:#3a1f22;border-color:#f44336;color:#ff9a9a}
+[data-theme="dark"] .wgt-status.fechado i{color:#ff9a9a}
+[data-theme="dark"] .wgt-status.pedido{background:#3a2f14;border-color:#ff9800;color:#ffc75c}
+[data-theme="dark"] .wgt-status.pedido i{color:#ffc75c}
+
+/* ícone carrinho no header: pulso suave quando tem itens */
+.main-header .cart-icon{position:relative}
+.main-header .cart-icon::after{content:"";position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#fc0758;border-radius:50%;border:2px solid var(--primary-color,#3d4465);opacity:0;transform:scale(.8);transition:all .2s}
+.main-header .cart-icon.tem-itens::after{opacity:1;transform:scale(1)}
+[data-theme="dark"] .main-header .cart-icon::after{border-color:#232742}
+
 /* forcar nova versao para quebrar cache do navegador: v=20261017m */
 
 

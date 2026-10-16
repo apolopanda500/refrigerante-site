@@ -92,6 +92,18 @@
 [data-theme="dark"] .btn-sair{border-color:#ff6b6b !important;color:#ff8a8a !important}
 [data-theme="dark"] .btn-sair:hover{background:#ff6b6b !important;color:#fff !important}
 
+/* ===== MODO LEITURA VERTICAL - meus pedidos ===== */
+body[data-leitura="vertical"] .pedido-card{display:flex;flex-direction:column!important;gap:8px!important}
+body[data-leitura="vertical"] .pedido-topo{flex-direction:column!important;align-items:flex-start!important;gap:6px!important}
+body[data-leitura="vertical"] .pedido-itens{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(120px,1fr))!important;gap:6px!important}
+body[data-leitura="vertical"] .pedido-itens div{background:var(--bg-alt,#f7f7f7)!important;border:1px solid var(--borda,#eee)!important;border-radius:8px!important;padding:8px!important;text-align:center!important;font-size:.85rem!important}
+body[data-leitura="vertical"] .pedido-total{flex-direction:column!important;align-items:flex-start!important;gap:8px!important}
+body[data-leitura="vertical"] .detalhe-extra{display:block!important}
+body[data-leitura="vertical"] .detalhe-extra div{border-bottom:1px solid var(--borda,#eee)!important;padding:6px 0!important}
+body[data-leitura="vertical"] .timeline-item{justify-content:space-between!important}
+body[data-leitura="vertical"] .avaliar-resumo{flex-direction:column!important;align-items:flex-start!important;gap:8px!important}
+[data-theme="dark"] body[data-leitura="vertical"] .pedido-itens div{background:#232742!important;border-color:#353a5c!important;color:#cdd2e6!important}
+
 /* ===== BOLETIM DE PEDIDOS: letras maiores e legiveis ===== */
 .pedido-card{padding:22px 24px !important;margin-bottom:20px !important}
 .pedido-topo b{font-size:1.22rem !important}

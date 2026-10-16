@@ -546,6 +546,7 @@ function iaMontarWidget() {
         + '<button type="button" class="ia-chip" data-q="Quando voces entregam?">Quando entregam?</button>'
         + '<button type="button" class="ia-chip" data-q="Quanto custa o frete?">Quanto e o frete?</button>'
         + '<button type="button" class="ia-chip" data-q="Quais formas de pagamento?">Pagamento?</button>'
+        + '<button type="button" class="ia-chip ia-chip-clientes" data-clientes="1"><i class="fa fa-phone"></i> Bot Clientes</button>'
         + '</div>'
         + '<div class="ia-form"><input type="text" id="iaTexto" placeholder="Pergunte a IA..." autocomplete="off">'
         + '<button type="button" class="ia-enviar" aria-label="Enviar"><i class="fa fa-paper-plane"></i></button></div>';
@@ -579,7 +580,15 @@ function iaMontarWidget() {
         painel.classList.remove("aberto");
     });
     painel.querySelectorAll(".ia-chip").forEach(function (c) {
-        c.addEventListener("click", function () { iaEnviarPergunta(c.getAttribute("data-q") || c.textContent); });
+        c.addEventListener("click", function () {
+            if (c.classList.contains("ia-chip-clientes")) {
+                var tel = "5521983158911";
+                var txt = "Olá, sou cliente da Convencao. Quero falar com o bot de clientes.";
+                window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(txt), "_blank");
+                return;
+            }
+            iaEnviarPergunta(c.getAttribute("data-q") || c.textContent);
+        });
     });
     var enviarBtn = painel.querySelector(".ia-enviar");
     var campo = document.getElementById("iaTexto");

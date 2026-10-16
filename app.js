@@ -450,13 +450,13 @@ function pintarHorario() {
     var statusLoja;
     var lojaAbertaDia = (typeof lojaAbertaNoDia === "function") ? lojaAbertaNoDia(a2.dia) : true;
     if (!lojaAbertaDia) {
-        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-door-closed"></i> Loja fechada ' + (a2.dia === 6 ? "no sábado (só entrega)" : "no domingo") + '</div>';
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-door-closed"></i><span class="wgt-status-texto">Loja fechada ' + (a2.dia === 6 ? "no sábado (só entrega)" : "no domingo") + '</span></div>';
     } else if (lojaOk) {
-        statusLoja = '<div class="wgt-status aberto"><i class="fa fa-check-circle"></i> Loja aberta agora</div>';
+        statusLoja = '<div class="wgt-status aberto"><i class="fa fa-store"></i><span class="wgt-status-texto">Loja aberta agora</span></div>';
     } else if (a2.hh < HORARIOS.loja.abre) {
-        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja abre ' + horaTexto(HORARIOS.loja.abre, 0) + '</div>';
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i><span class="wgt-status-texto">Loja abre ' + horaTexto(HORARIOS.loja.abre, 0) + '</span></div>';
     } else {
-        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i> Loja fechou às ' + horaTexto(HORARIOS.loja.fecha, 0) + '</div>';
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i><span class="wgt-status-texto">Loja fechou às ' + horaTexto(HORARIOS.loja.fecha, 0) + '</span></div>';
     }
 
     /* ---- status dos PEDIDOS ---- */

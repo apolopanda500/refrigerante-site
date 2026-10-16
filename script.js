@@ -149,6 +149,11 @@ function adicionarAoCarrinho(btn) {
 function updateCartCount() {
     const el = document.querySelector(".cart-count");
     if (el) el.innerText = calcTotalItens();
+    const total = calcTotalItens ? calcTotalItens() : 0;
+    document.querySelectorAll(".cart-icon").forEach(function (icon) {
+        if (total > 0) icon.classList.add("tem-itens");
+        else icon.classList.remove("tem-itens");
+    });
 }
 
 // ---------- Feedback visual (toast) ----------
