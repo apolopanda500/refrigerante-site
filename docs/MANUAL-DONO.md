@@ -150,7 +150,11 @@ para não ter duas versões do valor.
 
 ## 7. Aplicativo no celular
 
-**Configurações → Aplicativo do celular → Baixar aplicativo (APK)**.
+- **Configurações → Aplicativo do celular → Baixar aplicativo (APK)**.
+- Os arquivos atualizados ficam em `Downloads\APK Convencao\` e no repositório,
+  em `apk\`:
+  - `convencao-cliente.apk` — app do cliente
+  - `convencao-vendedor.apk` — **só você**, o painel
 
 Depois de baixar:
 1. Abra o arquivo `.apk`.
@@ -159,6 +163,19 @@ Depois de baixar:
 
 No iPhone não existe APK: use o botão **Compartilhar** e depois
 **Adicionar à Tela de Início**.
+
+### Gerar APK novo (quando precisar)
+
+```powershell
+node apk/android/build.js                     # gera o projeto Android (versao = versao.txt)
+gradle -p apk/android :cliente:assembleRelease :vendedor:assembleRelease
+```
+
+Precisa de **JDK 17** e do **Android SDK 34**. O APK do cliente sai em
+`apk/android/cliente/build/outputs/apk/release/` e o do vendedor em
+`apk/android/vendedor/build/outputs/apk/release/`; depois é só copiar para
+`apk\` e para `Downloads\APK Convencao\`. A versão nunca é digitada à mão:
+o script lê `versao.txt` (é a mesma do site).
 
 ---
 

@@ -233,10 +233,17 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
   (ver `build-apk.ps1` e `.github/scripts`/fluxo documentado no histórico de commits).
 - **Versão dos APK = versão do site:** tanto `apk/android/build.js` quanto
   `build-apk.ps1` leem `versao.txt`. O `versionName` é a mesma versão publicada
-  (ex.: `20261015f`) e o `versionCode` é a data `YYYYMMDD` (vendedor recebe +100,
-  para nunca colidir). Depois de gerar, o script grava `apk/versao-apk.txt` e o
-  painel mostra "APKs na versão" ao lado da versão publicada. Rebuild:
-  `powershell -ExecutionPolicy Bypass -File build-apk.ps1`.
+  (ex.: `20261016c`) e o `versionCode` é a data `YYYYMMDD` (vendedor recebe +100).
+  Depois de gerar, o script grava `apk/versao-apk.txt` e o painel mostra
+  "APKs na versão" ao lado da versão publicada.
+  **Build sem interação (usado nesta máquina):**
+  ```powershell
+  node apk/android/build.js
+  gradle -p apk/android :cliente:assembleRelease :vendedor:assembleRelease
+  # saem em apk/android/<cliente|vendedor>/build/outputs/apk/release/
+  ```
+  (o Bubblewrap do `build-apk.ps1` é interativo: ele pergunta domínio, caminho e
+  senha do keystore, então precisa ser rodado na mão, num terminal.)
 - **Chave de assinatura:** guardada fora do repositório (`apk/*.jks` ignorado pelo git).
   **Guarde esse arquivo com cuidado**: sem ele não dá para publicar atualização
   do mesmo aplicativo.

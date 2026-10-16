@@ -142,7 +142,9 @@ Tudo que mostra data passa por `dataHoraSegundos()` / `dataCurta()` em
 ```powershell
 node tests/manter-tudo.js      # versões, datas, links, docs, robô
 node tests/rodar-todos.js      # 12 baterias — tem que dar TUDO 10/10
-node tests/bump-versao.js 20261016b
+node tests/bump-versao.js 20261016c
+node apk/android/build.js      # projeto Android na MESMA versão do site
+gradle -p apk/android :cliente:assembleRelease :vendedor:assembleRelease
 git add -A
 git commit -m "descrição curta em português"
 git push origin main
