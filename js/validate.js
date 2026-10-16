@@ -50,3 +50,96 @@ var Validacao = (function () {
         var s = String(tel || "").replace(/\D/g, "");
         return s.length >= 10 && s.length <= 11;
     }
+
+    /* ---------- Valida Perfil ---------- */
+    function validarPerfil(dados) {
+        var erros = [];
+        if (!validarNome(dados.nome)) erros.push("Nome é obrigatório (mínimo 3 letras)");
+        if (!validarTelefone(dados.tel)) erros.push("WhatsApp inválido (10 ou 11 dígitos)");
+        if (dados.email && !validarEmail(dados.email)) erros.push("E-mail inválido");
+        if (dados.cpf && !validarCPF(dados.cpf)) erros.push("CPF inválido");
+        if (dados.cep && !validarCEP(dados.cep)) erros.push("CEP inválido (8 dígitos)");
+        return { valido: erros.length === 0, erros: erros };
+    }
+
+    /* ---------- Valida Pedido ---------- */
+    function validarPedido(dados) {
+        var erros = [];
+        if (!validarNome(dados.nome)) erros.push("Nome é obrigatório");
+        if (!validarTelefone(dados.tel)) erros.push("WhatsApp inválido");
+        if (!dados.regiao) erros.push("Selecione a região");
+        if (!dados.itens || dados.itens.length === 0) erros.push("Adicione pelo menos um produto ao carrinho");
+        return { valido: erros.length === 0, erros: erros };
+    }
+
+    /* ---------- Valida Contato ---------- */
+    function validarContato(dados) {
+        var erros = [];
+        if (!validarNome(dados.nome)) erros.push("Nome é obrigatório");
+        if (!validarTelefone(dados.tel)) erros.push("WhatsApp inválido");
+        if (dados.email && !validarEmail(dados.email)) erros.push("E-mail inválido");
+        if (!dados.mensagem || dados.mensagem.length < 5) erros.push("Mensagem deve ter pelo menos 5 caracteres");
+        return { valido: erros.length === 0, erros: erros };
+    }
+
+    /* ---------- Mostra Erros ---------- */
+    function mostrarErros(containerId, erros) {
+        var box = document.getElementById(containerId);
+        if (!box) return;
+        box.innerHTML = "";
+        if (!erros.length) return;
+        var html = '<div class="aviso aviso-erro"><i class="fa fa-circle-exclamation"></i><ul>';
+        erros.forEach(function (e) { html += '<li>' + e + '</li>'; });
+        html += '</ul></div>';
+        box.innerHTML = html;
+        box.style.display = "block";
+        setTimeout(function () { box.style.display = "none"; }, 5000);
+    }
+
+    /* ---------- Limpa Erros ---------- */
+    function limparErros(containerId) {
+        var box = document.getElementById(containerId);
+        if (box) { box.innerHTML = ""; box.style.display = "none"; }
+    }
+
+    /* ---------- Valida Formulário Genérico ---------- */
+    function validarFormulario(formId, regras) {
+        var form = document.getElementById(formId);
+        if (!form) return { valido: false, erros: ["Formulário não encontrado"] };
+        var erros = [];
+        var inputs = form.querySelectorAll("input, select, textarea");
+        inputs.forEach(function (input) {
+            var valor = input.value.trim();
+            var nome = input.name || input.id || input.placeholder || "";
+            var regra = regras[nome] || regras[input.id] || {};
+            if (regra.obrigatorio && !valor) erros.push("Campo '" + (input.placeholder || nome) + "' é obrigatório");
+            if (regra.email && valor && !validarEmail(valor)) erros.push("E-mail inválido: " + valor);
+            if (regra.telefone && valor && !validarTelefone(valor)) erros.push("Telefone inválido: " + valor);
+            if (regra.cpf && valor && !validarCPF(valor)) erros.push("CPF inválido: " + valor);
+            if (regra.cep && valor && !validarCEP(valor)) erros.push("CEP inválido: " + valor);
+            if (regra.preco && valor && !validarPreco(valor)) erros.push("Preço inválido: " + valor);
+            if (regra.quantidade && valor && !validarQuantidade(valor)) erros.push("Quantidade inválida: " + valor);
+        });
+        return { valido: erros.length === 0, erros: erros };
+    }
+
+    /* ---------- Exportar ---------- */
+    return {
+        validarCPF: validarCPF,
+        validarTelefone: validarTelefone,
+        validarEmail: validarEmail,
+        validarNome: validarNome,
+        validarCEP: validarCEP,
+        validarPreco: validarPreco,
+        validarQuantidade: validarQuantidade,
+        validarPerfil: validarPerfil,
+        validarPedido: validarPedido,
+        validarContato: validarContato,
+        validarFormulario: validarFormulario,
+        mostrarErros: mostrarErros,
+        limparErros: limparErros
+    };
+
+})();
+
+window.Validacao = Validacao;
