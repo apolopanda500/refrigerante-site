@@ -5,6 +5,12 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+/* O Gradle pode rodar num Java novo (o da maquina), mas a compilacao do app
+   continua em Java 17. O foojay deixa o Gradle baixar o JDK 17 sozinho,
+   na pasta dele - nao e preciso instalar nada no Windows. */
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {

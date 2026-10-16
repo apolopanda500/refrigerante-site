@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016e">
+<link rel="manifest" href="manifest.json?v=20261016f">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016e">
-<script src="theme.js?v=20261016e"></script>
+<link rel="stylesheet" href="style.css?v=20261016f">
+<script src="theme.js?v=20261016f"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
@@ -31,7 +31,7 @@
 .ci-qtd button:focus-visible { outline:3px solid var(--accent-color,#ffb822); outline-offset:2px; }
 .ci-qtd span { min-width:30px; text-align:center; font-weight:bold; font-size:1.05rem; }
 .ci-subtotal { font-weight:bold; color:var(--primary-color); min-width:90px; text-align:right; }
-.ci-remove { background:none; border:none; color:#c62828; font-size:1.1rem; cursor:pointer; padding:6px; }
+.ci-remove { background:none; border:none; color:var(--texto-erro); font-size:1.1rem; cursor:pointer; padding:6px; }
 .cart-vazio { text-align:center; padding:50px 20px; color:#6b7280; }
 .cart-vazio i { font-size:3rem; color:#ddd; margin-bottom:14px; }
 .resumo { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px; margin-top:20px; }
@@ -97,10 +97,10 @@
 /* ===== botao de limpar: dentro da barra de acoes (sempre visivel,
    tanto com o carrinho cheio quanto vazio) ===== */
 .btn-limpar-item{
-    background:#fff;color:#c62828;border:2px solid #f3c9c9;
+    background:#fff;color:var(--texto-erro);border:2px solid #f3c9c9;
     font-weight:700;
 }
-.btn-limpar-item:hover{background:#c62828;border-color:#c62828;color:#fff}
+.btn-limpar-item:hover{background:#c62828;border-color:var(--texto-erro);color:#fff}
 [data-theme="dark"] .btn-limpar-item{background:#2a1a1c;color:#ff8a8a;border-color:#5a2a2e}
 [data-theme="dark"] .btn-limpar-item:hover{background:#c62828;color:#fff}
 .btn-limpar-item i{margin-right:6px}
@@ -115,7 +115,7 @@
 .vend-dia:last-child{border-bottom:0}
 .vend-dia .dia-nome{font-size:.92rem;font-weight:700;color:var(--primary-color)}
 .vend-dia .reg-dias{font-size:.82rem;color:var(--text-muted);text-align:right}
-.vend-dia .reg-dias b{color:#2e7d32}
+.vend-dia .reg-dias b{color:var(--texto-ok)}
 [data-theme="dark"] .vend-dia{border-bottom-color:#353a5c}
 [data-theme="dark"] .vend-dia .dia-nome{color:#ffb822}
 [data-theme="dark"] .vend-dia .reg-dias{color:#a1a8c3}
@@ -234,13 +234,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016e"></script>
-<script src="firebase-appcheck.js?v=20261016e"></script>
-<script src="app-update.js?v=20261016e"></script>
-<script src="ia.js?v=20261016e"></script>
-<script src="central.js?v=20261016e"></script>
-<script src="loja.js?v=20261016e"></script>
-<script src="script.js?v=20261016e"></script>
+<script src="conta.js?v=20261016f"></script>
+<script src="firebase-appcheck.js?v=20261016f"></script>
+<script src="app-update.js?v=20261016f"></script>
+<script src="ia.js?v=20261016f"></script>
+<script src="central.js?v=20261016f"></script>
+<script src="loja.js?v=20261016f"></script>
+<script src="script.js?v=20261016f"></script>
 <script>
 cart = getCart();
 

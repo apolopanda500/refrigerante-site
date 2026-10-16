@@ -55,9 +55,10 @@ const combina = [
     ["botao do WhatsApp da home (branco no verde)", "#ffffff", "#0e6b4f"],
     ["botao do WhatsApp do painel (branco no verde)", "#ffffff", "#0e6b4f"],
     ["botao de confirmar do carrinho (branco no verde)", "#ffffff", "#0b6b3a"],
-    ["botao enviar tema guara", "#ffffff", "#0b6b3a"],
+["botao enviar tema guara", "#ffffff", "#0b6b3a"],
     ["botao enviar tema rosa", "#ffffff", "#c2185b"]
 ];
+
 const minimo = 4.5;            /* WCAG AA para texto normal */
 let ruins = 0;
 combina.forEach(function (c) {
@@ -71,6 +72,45 @@ combina.forEach(function (c) {
 });
 if (!ruins) ok("todas as combinacoes passam em " + minimo + ":1");
 
+console.log("\n=== 2b. AS MESMAS CORES NO TEMA ESCURO ===");
+/* Regressao: o verde/red/ambar de "deu certo", "deu ruim" e "atencao" eram
+   fixos (#2e7d32, #c62828, #8a6100) e no fundo escuro ficavam em ~3:1 -
+   o cliente lia a frase e a frase sumia. Agora sao variaveis de tema. */
+const escuro = "[data-theme=\"dark\"]";
+const statusCor = [
+    ["verde de sucesso", "--texto-ok", "--bg-alt"],
+    ["vermelho de erro", "--texto-erro", "--bg-alt"],
+    ["ambar de atencao", "--texto-aviso", "--bg-alt"],
+    ["verde no card", "--texto-ok", "--light-bg"],
+    ["verde na faixa de fundo", "--texto-ok", "--texto-ok-fundo"],
+    ["vermelho na faixa de fundo", "--texto-erro", "--texto-erro-fundo"],
+    ["ambar na faixa de fundo", "--texto-aviso", "--texto-aviso-fundo"]
+];
+let ruinsEscuro = 0;
+statusCor.forEach(function (c) {
+    const vt = mapa[":root " + c[1]], ve = mapa[escuro + " " + c[1]];
+    if (!vt || !ve) { falha(c[1] + " sem versao clara/escura (falta no :root ou no tema escuro)"); ruinsEscuro++; return; }
+    const vf = mapa[escuro + " " + c[2]] || mapa[":root " + c[2]];
+    if (!vf) { falha("fundo " + c[2] + " nao encontrado"); ruinsEscuro++; return; }
+    const r = C.contraste(C.paraRgb(ve), C.paraRgb(vf));
+    if (r < minimo) { falha(c[0] + " no tema escuro = " + r.toFixed(2) + ":1 (minimo " + minimo + ":1)"); ruinsEscuro++; }
+    else ok(c[0] + " no escuro = " + r.toFixed(1) + ":1");
+});
+/* nenhuma pagina pode gravar a cor antiga na mao (some no escuro de novo) */
+const coresFixas = [];
+paginas.concat(["app.js", "telegram.js"]).forEach(function (f) {
+    const txt = fs.readFileSync(path.join(dir, f), "utf8");
+    ["#2e7d32", "#c62828", "#8a6100"].forEach(function (cor) {
+        const re = new RegExp("color\\s*:\\s*" + cor + "|color\\s*=\\s*['\"]" + cor
+            + "|,\\s*['\"]" + cor + "['\"]\\s*\\)", "i");
+        txt.split("\n").forEach(function (l, i) {
+            /* so incomoda quando a cor e de TEXTO: nao background/border */
+            if (re.test(l)) coresFixas.push(f + ":" + (i + 1));
+        });
+    });
+});
+if (!coresFixas.length) ok("nenhuma pagina grava verde/vermelho/ambar fixo como texto (usam var(--texto-*))");
+else falha(coresFixas.length + " cor(es) de texto ainda fixas (sumem no tema escuro): " + coresFixas.slice(0, 4).join(", "));
 console.log("\n=== 3. TEXTO CLARO SO NO FUNDO CLARO (tema escuro nao vaza) ===");
 /* cor de texto em bloco com fundo da MESMA regra: se os dois se escondem
    um no outro, o texto some. Cor com transparencia (rgba) nao conta:

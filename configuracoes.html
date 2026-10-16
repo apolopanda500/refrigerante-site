@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016e">
+<link rel="manifest" href="manifest.json?v=20261016f">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Configurações - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016e">
-<script src="theme.js?v=20261016e"></script>
+<link rel="stylesheet" href="style.css?v=20261016f">
+<script src="theme.js?v=20261016f"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -33,7 +33,7 @@
 .toggle input:checked + .slider::before { transform:translateX(24px); }
 .btn-perigo { padding:10px 24px; background:#ff5252; color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; }
 .btn-perigo:hover { background:#d32f2f; }
-.info-box { background:#e8f5e9; border-left:4px solid #43a047; padding:14px 18px; border-radius:8px; font-size:0.9rem; color:#2e7d32; margin-bottom:18px; }
+.info-box { background:var(--texto-ok-fundo); border-left:4px solid #43a047; padding:14px 18px; border-radius:8px; font-size:0.9rem; color:var(--texto-ok); margin-bottom:18px; }
 .version-info { text-align:center; color:#6b7280; font-size:0.82rem; padding:20px 0 10px; }
 
 /* ===== linhas de configuracao empilhadas ===== */
@@ -84,8 +84,8 @@
     display:inline-flex;align-items:center;gap:7px;font-family:inherit;
 }
 .btn-mini:hover{background:#646c9a}
-.btn-mini.neutro{background:#f2f2f2;color:#c62828}
-.btn-mini.neutro:hover{background:#ffebee}
+.btn-mini.neutro{background:#f2f2f2;color:var(--texto-erro)}
+.btn-mini.neutro:hover{background:var(--texto-erro-fundo)}
 
 /* ===== tema escuro ===== */
 [data-theme="dark"] .config-col{background:#1c1f33}
@@ -402,13 +402,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016e"></script>
-<script src="firebase-appcheck.js?v=20261016e"></script>
-<script src="app-update.js?v=20261016e"></script>
-<script src="ia.js?v=20261016e"></script>
-<script src="central.js?v=20261016e"></script>
-<script src="loja.js?v=20261016e"></script>
-<script src="script.js?v=20261016e"></script>
+<script src="conta.js?v=20261016f"></script>
+<script src="firebase-appcheck.js?v=20261016f"></script>
+<script src="app-update.js?v=20261016f"></script>
+<script src="ia.js?v=20261016f"></script>
+<script src="central.js?v=20261016f"></script>
+<script src="loja.js?v=20261016f"></script>
+<script src="script.js?v=20261016f"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -507,20 +507,20 @@ document.addEventListener("DOMContentLoaded", function(){
     p.cfgIAModelo = ((document.getElementById("cfgIAModelo") || {}).value || "").trim();
     salvarPrefs(p);
     var m = document.getElementById("iaConfigMsg");
-    if (m){ m.style.color = "#2e7d32"; m.textContent = "Salvo somente neste dispositivo."; }
+    if (m){ m.style.color = "var(--texto-ok)"; m.textContent = "Salvo somente neste dispositivo."; }
     if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> Salvo'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-save"></i> Salvar'; }, 1500); }
 }
 function testarIA(btn){
     var m = document.getElementById("iaConfigMsg");
-    if (m){ m.style.color = "#8a6100"; m.textContent = "Testando o assistente..."; }
+    if (m){ m.style.color = "var(--texto-aviso)"; m.textContent = "Testando o assistente..."; }
     try { sessionStorage.setItem("iaCache", "{}"); } catch(e){}
     if (typeof iaResponder !== "function") {
-        if (m){ m.style.color = "#c62828"; m.textContent = "Assistente indisponível nesta página."; }
+        if (m){ m.style.color = "var(--texto-erro)"; m.textContent = "Assistente indisponível nesta página."; }
         return;
     }
     iaResponder("ola, voce e quem?", function(txt, fonte){
         var curto = String(txt).slice(0, 130) + (String(txt).length > 130 ? "..." : "");
-        if (m){ m.style.color = "#2e7d32"; m.textContent = "Funcionando (" + fonte + "): " + curto; }
+        if (m){ m.style.color = "var(--texto-ok)"; m.textContent = "Funcionando (" + fonte + "): " + curto; }
         if (btn){ btn.innerHTML = '<i class="fa fa-check"></i> OK'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-flask"></i> Testar'; }, 2500); }
     });
 }
@@ -535,26 +535,26 @@ function mostrarEstadoNotificacao() {
     if (!el) return;
     var p = carregarPrefs();
     if (p.cfgNotifPedido === false) {
-        el.style.color = "#8a6100";
+        el.style.color = "var(--texto-aviso)";
         el.textContent = "desligado";
         return;
     }
     if (typeof Notification === "undefined") {
-        el.style.color = "#c62828";
+        el.style.color = "var(--texto-erro)";
         el.textContent = "este navegador nao tem aviso";
         return;
     }
     if (Notification.permission === "granted") {
-        el.style.color = "#2e7d32";
+        el.style.color = "var(--texto-ok)";
         el.textContent = "ligado - avisando quando o status mudar";
         return;
     }
     if (Notification.permission === "denied") {
-        el.style.color = "#c62828";
+        el.style.color = "var(--texto-erro)";
         el.textContent = "bloqueado no navegador: libere nas configuracoes do aparelho";
         return;
     }
-    el.style.color = "#8a6100";
+    el.style.color = "var(--texto-aviso)";
     el.textContent = "ligado - toque para o aparelho permitir";
 }
 /* liga/desliga com um toque, sem complicacao */
@@ -610,7 +610,7 @@ function mostrarVersaoCliente() {
             var v = (t || "").trim();
             el.innerHTML = "v" + instalada + " · site publicado em v" + v
                 + (v === instalada
-                    ? ' <span style="color:#2e7d32">atualizado</span>'
+                    ? ' <span style="color:var(--texto-ok)">atualizado</span>'
                     : ' <button type="button" class="btn-mini" style="margin-left:6px" onclick="location.reload()">'
                       + '<i class="fa fa-sync"></i> Atualizar agora</button>');
         })

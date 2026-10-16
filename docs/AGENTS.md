@@ -13,6 +13,11 @@
   - o menu que desliza para fora da tela vale só no painel (body.admin).
     Nas páginas do cliente a lista é faixa rolável dentro do header.
   - datas sempre por dataHoraSegundos/dataCurta (script.js): dd/mm/aaaa hh:mm:ss
+  - dinheiro sempre por formatBRL (script.js): 2 casas, virgula e ponto de
+    milhar (R$ 4.260,00). nunca monte "R$ " + valor.toFixed na mao.
+  - cor de texto de sucesso/erro/atencao sempre por var(--texto-ok),
+    var(--texto-erro) e var(--texto-aviso): no tema escuro a cor fixa
+    ficava em ~3:1 e a frase sumia.
   - avisos reais do cliente ficam em central.js (Notification + toast);
     o caminhão azul é img/608AZUL.jpeg (a foto vem de CAMINHOES em loja.js)
   ANTES DE PUBLICAR

@@ -49,6 +49,38 @@ console.log("\n=== precoNumeroBR (sem o R$) ===");
 });
 console.log("  ok");
 
+console.log("\n=== formatBRL: o dinheiro como o cliente ve (carrinho, checkout, painel) ===");
+/* formatBRL e a fonte unica de dinheiro do site inteiro (carrinho, checkout,
+   meus-pedidos, painel e a mensagem do Telegram). Sem separador de milhar o
+   total do carrinho aparecia "R$ 4260,00" e o cliente nao via a quebra. */
+const scriptTxt = fs.readFileSync(path.join(dir, "script.js"), "utf8");
+const iniFmt = scriptTxt.indexOf("function formatBRL");
+const fimFmt = scriptTxt.indexOf("\n}", iniFmt) + 2;
+const sbF = { console, parseFloat, isFinite, isNaN, Math, String };
+vm.createContext(sbF);
+vm.runInContext(scriptTxt.slice(iniFmt, fimFmt), sbF, { filename: "script.js" });
+[[27.5, "R$ 27,50"], [27, "R$ 27,00"], [0, "R$ 0,00"], [0.9, "R$ 0,90"],
+[999.99, "R$ 999,99"],
+[1000, "R$ 1.000,00"], [1375, "R$ 1.375,00"], [4260, "R$ 4.260,00"],
+[12345.67, "R$ 12.345,67"], [1000000, "R$ 1.000.000,00"],
+[-12.5, "R$ -12,50"],
+[NaN, "R$ 0,00"], [undefined, "R$ 0,00"], [null, "R$ 0,00"], ["abc", "R$ 0,00"]
+].forEach(function (e) {
+    const got = sbF.formatBRL(e[0]);
+    if (got !== e[1]) falha("formatBRL(" + e[0] + ") = \"" + got + "\" (esperado \"" + e[1] + "\")");
+});
+console.log("  ok  2 casas, virgula, ponto de milhar e valor quebrado vira 0,00");
+/* nenhuma pagina pode montar dinheiro na mao (regressao do milhar) */
+const paginasDinheiro = ["app.js", "carrinho.html", "checkout.html", "meus-pedidos.html",
+    "pedido-sucesso.html", "admin.html"].map(f => [f, fs.readFileSync(path.join(dir, f), "utf8")]);
+const montaNaMao = [];
+paginasDinheiro.forEach(function (par) {
+    [...par[1].matchAll(/R\$\s*["']?\s*\+?\s*[a-zA-Z_$][\w.$]*\.toFixed/g)]
+        .forEach(m => montaNaMao.push(par[0] + ": " + m[0]));
+});
+if (!montaNaMao.length) console.log("  ok  ninguem escreve \"R$ \" + valor.toFixed na mao");
+montaNaMao.forEach(m => falha("dinheiro montado na mao (use formatBRL): " + m));
+
 console.log("\n=== NENHUM PRECO CRU NA TELA (sem formatar) ===");
 const app = fs.readFileSync(path.join(dir, "app.js"), "utf8");
 const cart = fs.readFileSync(path.join(dir, "carrinho.html"), "utf8");

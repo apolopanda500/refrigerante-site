@@ -62,8 +62,14 @@ tudo roda no navegador do cliente e os dados ficam em `localStorage`
 | `catalogo.json` (no repositório) | — | catálogo do dia, gerado pelo robô |
 
 **Regra de ouro do preço:** a chave é `k:` + o código do produto no site oficial.
-Nunca usar o nome — se o nome mudar, o preço se perde. Nunca deixar a chave vazia
+Nunca usar o nome - se o nome mudar, o preço se perde. Nunca deixar a chave vazia
 (o código já protege isso: `chavePreco()` cai para `n:categoria|nome`).
+
+**Regra de ouro do dinheiro:** todo valor na tela passa por `formatBRL()` em
+`script.js` (carrinho, checkout, meus-pedidos, pedido-sucesso, painel e a
+mensagem do Telegram). Ela devolve sempre **2 casas, vírgula e ponto de milhar**
+(`R$ 4.260,00`). Nunca monte `"R$ " + valor.toFixed(...)` na mão: foi assim que
+o total do carrinho aparecia como `R$ 4260,00`.
 
 ---
 
@@ -363,6 +369,14 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - App: PWA instalado + APK (cliente e vendedor) disponíveis para download.
 - Temas: claro, guaraná, rosa, vermelho e escuro.
 - Pagamento: Pix e Dinheiro.
+
+### Cores de texto que mudam com o tema
+
+`--texto-ok`, `--texto-erro` e `--texto-aviso` (com os pares `--texto-*-fundo`)
+são as cores de **texto** de sucesso, erro e atenção. Têm duas versões: a escura
+no tema claro e a clara no tema escuro. **Nunca grave `#2e7d32`, `#c62828` ou
+`#8a6100` como cor de texto** — no fundo escuro elas ficavam em ~3:1 e a frase
+sumia. A bateria `14-cores` confere o contraste das duas versões.
 ---
 
 ## 13. Inteligencia artificial, MCP e qualidade automatica

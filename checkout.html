@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016e">
+<link rel="manifest" href="manifest.json?v=20261016f">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <title>Finalizar Pedido - Refrigerantes Convenção</title>
-<link rel="stylesheet" href="style.css?v=20261016e">
-<script src="theme.js?v=20261016e"></script>
+<link rel="stylesheet" href="style.css?v=20261016f">
+<script src="theme.js?v=20261016f"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
@@ -36,7 +36,7 @@
 .resumo-lateral { position:sticky; top:100px; }
 .resumo-item { display:flex; justify-content:space-between; font-size:0.9rem; padding:5px 0; color:#555; }
 .resumo-row { display:flex; justify-content:space-between; padding:9px 0; font-size:1rem; }
-.resumo-row.gratis { color:#2e7d32; font-weight:bold; }
+.resumo-row.gratis { color:var(--texto-ok); font-weight:bold; }
 .resumo-row.total { border-top:2px solid #eee; margin-top:8px; padding-top:14px; font-size:1.35rem; font-weight:bold; color:var(--primary-color); }
 .btn-enviar { width:100%; padding:15px; background:#0e6b4f; color:#fff; border:none; border-radius:26px; font-weight:bold; font-size:1.05rem; cursor:pointer; margin-top:14px; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
 .btn-enviar:hover { background:#0a5638; }
@@ -44,8 +44,8 @@
 @media (max-width: 768px){ .checkout-grid{grid-template-columns:1fr;} .resumo-lateral{position:static;} .linha2{grid-template-columns:1fr;} }
 .aviso-regiao{margin-top:8px;padding:11px 13px;border-radius:10px;font-size:.86rem;
     line-height:1.45;display:flex;gap:9px;align-items:flex-start}
-.aviso-regiao.ok{background:#e8f5e9;color:#1b5e20;border-left:4px solid #43a047}
-.aviso-regiao.aviso{background:#fff8e1;color:#8a6100;border-left:4px solid #ffb822}
+.aviso-regiao.ok{background:var(--texto-ok-fundo);color:var(--texto-ok);border-left:4px solid #43a047}
+.aviso-regiao.aviso{background:var(--texto-aviso-fundo);color:var(--texto-aviso);border-left:4px solid #ffb822}
 .aviso-regiao i{flex:0 0 auto;margin-top:2px}
 [data-theme="dark"] .aviso-regiao.ok{background:#14331f;color:#8fe0a8}
 [data-theme="dark"] .aviso-regiao.aviso{background:#3a3319;color:#ffd97a}
@@ -55,7 +55,7 @@
     display:flex;align-items:flex-start;gap:11px;
     padding:13px 15px;border-radius:12px;margin-bottom:18px;
     background:#fff3cd;border-left:4px solid #ffb822;
-    color:#8a6100;font-size:.92rem;font-weight:600;line-height:1.5;
+    color:var(--texto-aviso);font-size:.92rem;font-weight:600;line-height:1.5;
 }
 .regra-atendimento i{flex:0 0 auto;margin-top:2px;font-size:1.05rem}
 .regra-atendimento b{font-weight:800}
@@ -177,13 +177,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261016e"></script>
-<script src="firebase-appcheck.js?v=20261016e"></script>
-<script src="app-update.js?v=20261016e"></script>
-<script src="ia.js?v=20261016e"></script>
-<script src="central.js?v=20261016e"></script>
-<script src="loja.js?v=20261016e"></script>
-<script src="script.js?v=20261016e"></script>
+<script src="conta.js?v=20261016f"></script>
+<script src="firebase-appcheck.js?v=20261016f"></script>
+<script src="app-update.js?v=20261016f"></script>
+<script src="ia.js?v=20261016f"></script>
+<script src="central.js?v=20261016f"></script>
+<script src="loja.js?v=20261016f"></script>
+<script src="script.js?v=20261016f"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -262,7 +262,7 @@ function calcular() {
                 + '</b> para o frete ficar <b>GRÁTIS</b>';
         } else if (r.subtotal > 0 && r.gratis) {
             av.style.display = "";
-            av.innerHTML = '<i class="fa fa-check-circle" style="color:#2e7d32"></i> <b style="color:#2e7d32">Frete grátis!</b> Pedido acima de ' + formatBRL(r.minimo);
+            av.innerHTML = '<i class="fa fa-check-circle" style="color:var(--texto-ok)"></i> <b style="color:var(--texto-ok)">Frete grátis!</b> Pedido acima de ' + formatBRL(r.minimo);
         } else {
             av.style.display = "none";
             av.innerHTML = "";

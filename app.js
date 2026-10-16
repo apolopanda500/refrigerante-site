@@ -182,7 +182,7 @@ function mostrarInfoFrete(){
         });
     }
 var t = (typeof horarioDeHoje === "function") ? horarioDeHoje() : null;
-    var st = t ? (t.aberto ? '<b style="color:#2e7d32">Aberto agora</b>' : '<b style="color:#c62828">Fechado agora</b>') : "";
+    var st = t ? (t.aberto ? '<b style="color:var(--texto-ok)">Aberto agora</b>' : '<b style="color:var(--texto-erro)">Fechado agora</b>') : "";
     var minimo = (typeof freteGratisMinimo === "function") ? freteGratisMinimo() : 150;
     var menor = (typeof freteMinimo === "function") ? freteMinimo() : 8;
     var maior = 0;

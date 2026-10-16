@@ -15,7 +15,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 |---|---|
 | `01-semana.js` | Dias de pedido e entrega das 4 regiões, sábado só entrega, domingo parado, loja só de segunda a sexta |
 | `02-horarios.js` | Loja 9h–15h, pedidos 08:50–15:00, entrega 06:00–18:00, e o texto que o cliente vê |
-| `03-precos.js` | Ler preço do jeito que o dono digita, trava do erro de dígito (275 no lugar de 27,50) e `R$ 27,50` sempre com 2 casas |
+| `03-precos.js` | Ler preço do jeito que o dono digita, trava do erro de dígito (275 no lugar de 27,50), `R$ 27,50` sempre com 2 casas e **`formatBRL` com ponto de milhar** (fonte única de dinheiro do site) |
 | `04-catalogo.js` | 45 produtos, imagens, preços e classes — usando o **código real do robô** |
 | `05-home.js` | Mini calendário, tabela geral e tabela de ofertas montam sem erro |
 | `06-estrutura.js` | Scripts de cada página, links que existem, segurança, versão dos assets igual em todas |
@@ -26,7 +26,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `11-tema-escuro.js` | Todo componente novo tem versão escura |
 | `12-ia.js` | Assistente: fatos locais, cadeia da nuvem, recomendações, widget, cache offline, MCP e portão automático |
 | `13-validar-css.js` | CSS inteiro: chaves e parênteses fecham, `attr()` com rótulo, **nenhuma classe sem uso**, cobertura do que o código gera e nada de propriedade repetida |
-| `14-cores.js` | **Todas as cores**: contraste do texto com o fundo (WCAG 4.5:1), cor que some, informação que não depende só da cor, painel e alto contraste |
+| `14-cores.js` | **Todas as cores**: contraste do texto com o fundo (WCAG 4.5:1), **as mesmas cores no tema escuro** (verde/vermelho/âmbar de sucesso, erro e atenção), cor que some, informação que não depende só da cor, painel e alto contraste |
 | `15-imagens.js` | **Todas as imagens**: arquivo existe, `alt` preenchido, `loading`, reserva quando a foto falha, ícone do app e foto pesada |
 | `16-letras-numeros.js` | **Letras e números**: nada abaixo de 11px, os 3 tamanhos de letra, `R$ 0,00` com 2 casas, data `dd/mm/aaaa hh:mm:ss`, número em coluna |
 | `17-tamanhos.js` | **Tamanhos**: alvo de toque de 44px, viewport certo, nada estourando a tela do celular, tabela em caixa, tick sem altura travada |
@@ -104,6 +104,10 @@ Estos problemas existiram e foram resolvidos porque os testes acusaram:
 | Falha ao gravar o pedido na nuvem era engolida em silêncio: o painel podia não ver o pedido | `19-erros` |
 | Documento citing versão antiga e sem as baterias novas | `20-documentos` |
 | `.gitignore` sem `node_modules` nem `.DS_Store` | `21-repositorio` |
+| Total do carrinho aparecia "R$ 4260,00" (sem ponto de milhar) — `formatBRL` era a fonte de dinheiro do site inteiro e **não tinha teste nenhum** | `03-precos` |
+| Verde/vermelho/âmbar de "deu certo", "deu ruim" e "atenção" fixos no código: no tema escuro ficavam em ~3:1 e a frase sumia | `14-cores` |
+| `02-horarios` falhava conforme o horário do relógio (o teste conferia 15:00 usando a hora real, não a hora do caso) | `02-horarios` |
+| Amostra do tema "Escuro" esticada por hundreds de pixels no seletor de cores | `13-validar-css` + conferência visual |
 
 ## Cache: por que a página mostrava versão velha
 

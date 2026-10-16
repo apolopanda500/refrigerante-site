@@ -234,9 +234,11 @@ function bairroAtendido(bairro) {
 /* devolve {liberado, motivo} - motivo: horario | ok
    ATENCAO: bairro vazio NAO pode travar o pedido (o campo
    so e preenchido no perfil). Quem decide a area de entrega
-   e a regiao escolhida no checkout. */
-function pedidosLiberados(bairro) {
-    var a = (typeof agoraSP === "function") ? agoraSP() : { dia: new Date().getDay(), minutos: new Date().getHours() * 60 + new Date().getMinutes() };
+   e a regiao escolhida no checkout.
+   agora: opcional, {dia, minutos}. Sem isso usa o relogio de SP.
+   (os testes passam o horario para nao depender da hora do dia) */
+function pedidosLiberados(bairro, agora) {
+    var a = agora || ((typeof agoraSP === "function") ? agoraSP() : { dia: new Date().getDay(), minutos: new Date().getHours() * 60 + new Date().getMinutes() });
     var m = a.minutos;
 
     /* a loja nao abre sabado nem domingo */

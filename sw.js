@@ -21,7 +21,7 @@
    ============================================ */
 
 /* precisa bater com a versao do site: o bump-versao.js troca os dois */
-var VERSAO = "20261016e";
+var VERSAO = "20261016f";
 var BASE = "convencao-cache-" + VERSAO;
 var LIMITE_MS = 3000;          /* tempo de espera antes de cair no cache */
 

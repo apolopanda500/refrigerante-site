@@ -40,7 +40,7 @@ console.log("\n=== ESTADO DA LOJA AO LONGO DO DIA (quarta = pedido + entrega) ==
 [7, 8, 8.5, 9, 10, 12, 14.5, 15, 15.1, 16, 17.5, 18, 19].forEach(function (h) {
     const hh = Math.floor(h), mm = Math.round((h - hh) * 60);
     const a = { dia: 3, hh: hh, mm: mm, minutos: hh * 60 + mm };
-    const pl = sandbox.pedidosLiberados("");
+    const pl = sandbox.pedidosLiberados("", a);
     const loja = sandbox.lojaAberta(a);
     const ent = sandbox.entregaAberta(a);
     console.log("  " + String(hh).padStart(2, "0") + ":" + String(mm).padStart(2, "0")
@@ -53,8 +53,14 @@ console.log("\n=== ESTADO DA LOJA AO LONGO DO DIA (quarta = pedido + entrega) ==
 console.log("\n=== REGRA IMPORTANTE ===");
 const as15 = { dia: 3, hh: 15, mm: 0, minutos: 900 };
 const as17 = { dia: 3, hh: 17, mm: 0, minutos: 1020 };
-if (sandbox.pedidosLiberados("").liberado) falha("as 15:00 os pedidos ainda deveriam estar abertos");
+if (sandbox.pedidosLiberados("", as15).liberado) falha("as 15:00 os pedidos ainda deveriam estar abertos");
 else console.log("  ok  15:00 - pedidos encerram");
+if (sandbox.pedidosLiberados("", { dia: 3, hh: 14, mm: 59, minutos: 899 }).liberado !== true) falha("as 14:59 os pedidos ainda deveriam estar abertos");
+else console.log("  ok  14:59 - pedidos ainda abertos (fecham em ponto)");
+if (sandbox.pedidosLiberados("", { dia: 3, hh: 8, mm: 49, minutos: 529 }).liberado !== false) falha("as 08:49 os pedidos ainda nao deveriam ter aberto");
+else console.log("  ok  08:49 - pedidos ainda fechados (abrem as 08:50)");
+if (sandbox.pedidosLiberados("", { dia: 6, hh: 10, mm: 0, minutos: 600 }).liberado !== false) falha("sabado nao deveria aceitar pedido");
+else console.log("  ok  sabado - so dia de entrega, nunca de pedido");
 if (!sandbox.entregaAberta(as17)) falha("as 17:00 a entrega deveria continuar");
 else console.log("  ok  17:00 - entrega ainda em andamento (vai ate 18:00)");
 if (sandbox.entregaAberta({ dia: 3, hh: 18, mm: 30, minutos: 1110 })) falha("as 18:30 a entrega ja deveria ter parado");

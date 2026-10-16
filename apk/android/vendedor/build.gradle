@@ -3,6 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+/* compila em Java 17 mesmo quando o Gradle roda no Java do sistema */
+java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
+
 android {
     namespace 'br.com.convencao.vendedor'
     compileSdk 34
@@ -12,7 +15,7 @@ android {
         minSdk 24
         targetSdk 34
         versionCode 20261116
-        versionName "20261016e"
+        versionName "20261016f"
     }
 
     signingConfigs {

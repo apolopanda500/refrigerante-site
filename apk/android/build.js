@@ -189,6 +189,9 @@ function buildGradleApp(app) {
     id 'org.jetbrains.kotlin.android'
 }
 
+/* compila em Java 17 mesmo quando o Gradle roda no Java do sistema */
+java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
+
 android {
     namespace '${app.pacote}'
     compileSdk 34
@@ -246,6 +249,12 @@ escrever(path.join(PROJ, "settings.gradle"), `pluginManagement {
         gradlePluginPortal()
     }
 }
+/* O Gradle pode rodar em um Java antigo (o da maquina), mas o AGP 8 precisa
+   do Java 17 para compilar. Com o foojay o proprio Gradle baixa o JDK 17
+   certo na pasta dele - nao e preciso instalar nada no Windows. */
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -258,12 +267,17 @@ include ':app'
 `);
 
 escrever(path.join(PROJ, "build.gradle"), `plugins {
-    id 'com.android.application' version '8.1.4' apply false
-    id 'org.jetbrains.kotlin.android' version '1.9.25' apply false
+    id 'com.android.application' version '8.11.0' apply false
+    id 'org.jetbrains.kotlin.android' version '2.2.0' apply false
 }
+
+/* O Gradle roda no Java do sistema (25 nesta maquina, que o Gradle 9 aceita),
+   mas a COMPILACAO do app continua em Java 17: o toolchain de cada modulo faz
+   o Gradle usar um JDK 17 para compilar. O AGP 8 exige Java 11+ para rodar. */
 `);
 
 escrever(path.join(PROJ, "gradle.properties"), `org.gradle.jvmargs=-Xmx2048m
+org.gradle.java.installations.auto-download=true
 android.useAndroidX=true
 kotlin.code.style=official
 `);
@@ -286,6 +300,12 @@ escrever(path.join(PROJ, "settings.gradle"), `pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+}
+/* O Gradle pode rodar num Java novo (o da maquina), mas a compilacao do app
+   continua em Java 17. O foojay deixa o Gradle baixar o JDK 17 sozinho,
+   na pasta dele - nao e preciso instalar nada no Windows. */
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -314,4 +334,4 @@ try {
 console.log("\nPronto. Para gerar os APKs:");
 console.log("  cd apk/android");
 console.log("  gradle :cliente:assembleRelease :vendedor:assembleRelease");
-console.log("  (use o gradle 8.4 com JDK 17)");
+console.log("  (use o gradle 9.1: ele roda no Java do sistema e baixa o JDK 17 do toolchain)");

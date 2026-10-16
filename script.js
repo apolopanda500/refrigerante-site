@@ -17,10 +17,15 @@ function parsePreco(str) {
     return parseFloat(m[0].replace(/\./g, "").replace(",", "."));
 }
 // formatBRL: converte 27.5 -> "R$ 27,50" (trata NaN/null/undefined como 0,00)
+// Milhar com ponto: 4260 -> "R$ 4.260,00" (padrao brasileiro; sem isso o
+// total do carrinho aparecia "R$ 4260,00" e o cliente nao via a quebra)
 function formatBRL(n) {
     var v = parseFloat(n);
     if (isNaN(v) || !isFinite(v)) return "R$ 0,00";
-    return "R$ " + v.toFixed(2).replace(".", ",");
+    var inteiro = Math.abs(v).toFixed(2).split(".")[0];
+    var centavos = Math.abs(v).toFixed(2).split(".")[1];
+    inteiro = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return "R$ " + (v < 0 ? "-" : "") + inteiro + "," + centavos;
 }
 // ---------- DINHEIRO: arredonda sempre para centavos ----------
 // Sem isso, 10.10 + 20.20 = 30.299999999999997 e o pedido grava valor errado.

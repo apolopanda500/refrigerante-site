@@ -11,6 +11,14 @@
     --destaque: #fc0758;
     --info: #5d78ff;
     --sucesso: #1dc9b7;
+    /* verde de "deu certo": texto, nao fundo. No tema escuro o #2e7d32
+       ficava em 3.2:1 e a frase sumia; o claro de baixo passa de 9:1 */
+    --texto-ok: #2e7d32;
+    --texto-ok-fundo: #e8f5e9;
+    --texto-erro: #c62828;
+    --texto-erro-fundo: #ffebee;
+    --texto-aviso: #8a6100;
+    --texto-aviso-fundo: #fff8e1;
     --text-color: #3d4465;
     /* cinza escuro: antes era lilás claro e as palavras sumiam no branco */
     --text-muted: #5f677f;
@@ -46,6 +54,12 @@
     --primary-color: #4d5480;
     --secondary-color: #646c9a;
     --accent-color: #ffb822;
+    --texto-ok: #8fe0a8;
+    --texto-ok-fundo: #14331f;
+    --texto-erro: #ff9a9a;
+    --texto-erro-fundo: #3a1f22;
+    --texto-aviso: #ffc75c;
+    --texto-aviso-fundo: #3a2f14;
     --card-shadow: 0 4px 12px rgba(0,0,0,0.3);
     --card-shadow-hover: 0 8px 24px rgba(0,0,0,0.5);
 }
@@ -1207,7 +1221,10 @@ body.admin[data-leitura="vertical"][data-theme="dark"] .tabela-pedidos td{border
 [data-theme="vermelho"] .wgt-linha b { color: var(--primary-color); }
 
 /* ---------- SELETOR DE TEMA ---------- */
-.temas{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:4px}
+/* align-items:start: cada botao fica com a altura natural. Sem isso o
+   botao ativo herda a altura da linha e a amostra "Escuro" esticava
+   hundreds de pixels, parecendo outra coisa. */
+.temas{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:4px;align-items:start}
 .tema-btn{
     display:flex;flex-direction:column;align-items:center;gap:9px;
     padding:13px 10px;border:2px solid transparent;border-radius:12px;

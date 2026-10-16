@@ -109,7 +109,7 @@ var TelegramBot = (function () {
     }
     function status(txt, cor) {
         var el = document.getElementById("botStatus");
-        if (el) { el.innerHTML = txt; el.style.color = cor || "#666"; }
+        if (el) { el.innerHTML = txt; el.style.color = cor || "var(--text-muted)"; }
     }
 
     /* ---------- procura o pedido pelo numero (CV20261014-001, 001, cv...) ---------- */
@@ -237,13 +237,13 @@ var TelegramBot = (function () {
 
     /* ---------- 1) registra os comandos no menu do bot ---------- */
     function registrarComandos(btn, automatico) {
-        if (!automatico) status("ativando comandos...", "#8a6100");
+        if (!automatico) status("ativando comandos...", "var(--texto-aviso)");
         return api("setMyCommands", { commands: JSON.stringify(COMANDOS) })
             .then(function () {
                 try { localStorage.setItem(K_CMDS, "1"); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
                 log("Comandos registrados no menu do bot");
                 if (!automatico) {
-                    status("Comandos ativados no bot. Abra o Telegram e toque no botao / para ver a lista.", "#2e7d32");
+                    status("Comandos ativados no bot. Abra o Telegram e toque no botao / para ver a lista.", "var(--texto-ok)");
                     if (btn) { btn.innerHTML = '<i class="fa fa-check"></i> Comandos ativados'; }
                 }
             })
@@ -255,7 +255,7 @@ var TelegramBot = (function () {
                     log("Menu de comandos nao registrado: " + e.message + " (use Ativar comandos)");
                 } else {
                     try { localStorage.removeItem(K_CMDS); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
-                    status("Nao foi possivel ativar: " + e.message + ". Confira o token e o chat do bot em Configurações do painel.", "#c62828");
+                    status("Nao foi possivel ativar: " + e.message + ". Confira o token e o chat do bot em Configurações do painel.", "var(--texto-erro)");
                     log("Falha ao registrar comandos: " + e.message);
                 }
             });
@@ -273,8 +273,8 @@ var TelegramBot = (function () {
     /* ---------- 2) le as mensagens/comandos do vendedor ---------- */
     function verificarAgora(btn) {
         var c = cfg();
-        if (!c.ligado) { status("Comandos desligados (veja a opcao acima).", "#8a6100"); return; }
-        status("verificando...", "#8a6100");
+        if (!c.ligado) { status("Comandos desligados (veja a opcao acima).", "var(--texto-aviso)"); return; }
+        status("verificando...", "var(--texto-aviso)");
         var offset = Number(localStorage.getItem(K_OFFSET) || 0);
         return api("getUpdates", { offset: offset || undefined, timeout: 0, limit: 20 })
             .then(function (ups) {
@@ -290,21 +290,21 @@ var TelegramBot = (function () {
                 status(lista.length
                     ? "Verificado as " + horaAgora() + " - " + lista.length + " novidade(s)."
                     : "Verificado as " + horaAgora() + " - nada novo.",
-                    "#2e7d32");
+                    "var(--texto-ok)");
             })
             .catch(function (e) {
                 var msg = String(e.message || e);
                 if (/409|webhook/i.test(msg)) {
-                    status("O Telegram tem outra conexao ativa (webhook). Removendo...", "#8a6100");
+                    status("O Telegram tem outra conexao ativa (webhook). Removendo...", "var(--texto-aviso)");
                     try { localStorage.removeItem("convencao_tg_hook"); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
                     api("deleteWebhook", {}).then(function () {
                         try { localStorage.setItem("convencao_tg_hook", "1"); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
-                        status("Webhook removido. Toque em Verificar novamente.", "#2e7d32");
+                        status("Webhook removido. Toque em Verificar novamente.", "var(--texto-ok)");
                     }).catch(function () {});
                 } else if (/fetch|network|failed/i.test(msg)) {
-                    status("Sem conexao com o Telegram agora - comandos ficam em espera.", "#8a6100");
+                    status("Sem conexao com o Telegram agora - comandos ficam em espera.", "var(--texto-aviso)");
                 } else {
-                    status("Falha ao verificar: " + msg, "#c62828");
+                    status("Falha ao verificar: " + msg, "var(--texto-erro)");
                 }
                 log("Falha no getUpdates: " + msg);
             });
@@ -496,7 +496,7 @@ var TelegramBot = (function () {
         p.cfgBotComandos = checkbox.checked;
         try { localStorage.setItem(K_PREFS, JSON.stringify(p)); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
         if (checkbox.checked) iniciar(); else parar();
-        status(checkbox.checked ? "Comandos ligados." : "Comandos desligados.", checkbox.checked ? "#2e7d32" : "#8a6100");
+        status(checkbox.checked ? "Comandos ligados." : "Comandos desligados.", checkbox.checked ? "var(--texto-ok)" : "var(--accent-color)");
     }
 
     return {
