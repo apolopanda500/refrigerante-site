@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261017h">
+<link rel="manifest" href="manifest-vendedor.json?v=20261017i">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017h">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017i">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017h">
-<script src="theme.js?v=20261017h"></script>
+<link rel="stylesheet" href="style.css?v=20261017i">
+<script src="theme.js?v=20261017i"></script>
 
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -61,6 +61,22 @@
 }
 .painel-busca input[type=text]:focus{outline:none;border-color:#3d4465}
 .painel-busca select{padding:12px 14px;border:1px solid #d8dbe6;border-radius:10px;font-size:1rem;background:#fff;color:#3d4465;font-family:inherit}
+
+/* ===== seletor de periodo ampliado ===== */
+.periodo-barra{margin-bottom:14px;background:var(--bg,#fff)}
+.periodo-linha{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.periodo-linha > label{font-weight:800;color:var(--primary-color,#3d4465);display:inline-flex;align-items:center;gap:6px}
+.periodo-linha select{padding:11px 12px;border:1px solid #d8dbe6;border-radius:10px;font-size:1rem;background:#fff;color:#3d4465;font-family:inherit;font-weight:700;min-height:44px;max-width:280px}
+.periodo-faixa{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.periodo-faixa input[type=date]{padding:10px 12px;border:1px solid #d8dbe6;border-radius:10px;font-size:.95rem;background:#fff;color:#3d4465;font-family:inherit;min-height:44px}
+.periodo-faixa .sep{color:#8a90a6;font-weight:700}
+.periodo-resumo{margin-top:9px;font-size:.88rem;font-weight:700;color:#5d6478;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.periodo-resumo .chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg-alt,#f4f5fa);border:1px solid var(--borda,#e6e8f3);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.periodo-resumo .chip i{color:var(--primary-color,#3d4465)}
+.periodo-resumo .aviso{color:var(--texto-erro,#d32f2f)}
+[data-theme="dark"] .periodo-linha select,
+[data-theme="dark"] .periodo-faixa input[type=date]{background:#232742;color:#e6e8f2;border-color:#353a5c}
+[data-theme="dark"] .periodo-resumo .chip{background:#1c1f33;border-color:#353a5c}
 
 .tab-wrap{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border:1px solid var(--borda)}
 .tabela-pedidos{width:100%;border-collapse:collapse;font-size:.95rem}
@@ -428,7 +444,48 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     <h1><i class="fa fa-tachometer-alt"></i> Pedidos</h1>
     <span style="color:#888;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
   </div>
-  <div style="margin-bottom:12px"><label style="margin-right:6px">Período:</label><select id="periodoVendas" onchange="renderAdmin()"><option value="hoje">Hoje</option><option value="sem">Semana</option><option value="mes">Mês</option><option value="ano">Ano</option><option value="all">Tudo</option></select></div>
+  <div class="periodo-barra">
+    <div class="periodo-linha">
+      <label for="periodoVendas"><i class="fa fa-calendar-day"></i> Período:</label>
+      <select id="periodoVendas" onchange="mudarPeriodo()" aria-label="Período">
+        <optgroup label="Dias">
+          <option value="hoje">Hoje</option>
+          <option value="ontem">Ontem</option>
+          <option value="anteontem">Anteontem</option>
+          <option value="d3">Últimos 3 dias</option>
+          <option value="d7">Últimos 7 dias</option>
+          <option value="d15">Últimos 15 dias</option>
+          <option value="d30">Últimos 30 dias</option>
+          <option value="d60">Últimos 60 dias</option>
+          <option value="d90">Últimos 90 dias</option>
+        </optgroup>
+        <optgroup label="Semanas">
+          <option value="estaSemana">Esta semana</option>
+          <option value="semPassada">Semana passada</option>
+        </optgroup>
+        <optgroup label="Meses">
+          <option value="mes">Este mês</option>
+          <option value="mesPassado">Mês passado</option>
+          <option value="m6">Últimos 6 meses</option>
+          <option value="m12">Últimos 12 meses</option>
+        </optgroup>
+        <optgroup label="Anos">
+          <option value="ano">Este ano</option>
+          <option value="anoPassado">Ano passado</option>
+        </optgroup>
+        <optgroup label="Outros">
+          <option value="custom">Personalizado…</option>
+          <option value="all">Tudo</option>
+        </optgroup>
+      </select>
+      <span class="periodo-faixa" id="periodoFaixa" style="display:none">
+        <input type="date" id="periodoDe" onchange="mudarPeriodo()" aria-label="Data inicial">
+        <span class="sep">até</span>
+        <input type="date" id="periodoAte" onchange="mudarPeriodo()" aria-label="Data final">
+      </span>
+    </div>
+    <div class="periodo-resumo" id="periodoResumo"></div>
+  </div>
   <div id="avisoSincroniaAdmin" style="display:none;margin-bottom:12px;padding:12px 14px;border-radius:12px;background:var(--bg-alt);border:1px solid var(--borda);font-size:.88rem;font-weight:700"></div>
 <div id="avisoNovos">
   <i class="fa fa-bell"></i>
@@ -607,8 +664,8 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261017h"></script>
-<script src="telegram.js?v=20261017h"></script>
+<script src="script.js?v=20261017i"></script>
+<script src="telegram.js?v=20261017i"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -715,6 +772,7 @@ function mostrarPainel() {
     document.getElementById("loginTela").style.display = "none";
     document.getElementById("painelTela").style.display = "block";
     document.getElementById("btnSair").style.display = "inline";
+    try { carregarPeriodo(); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
     renderAdmin();
     var chk = document.getElementById("cfgBotComandos");
     if (chk) {
@@ -972,7 +1030,11 @@ function filtrarAdmin(f, btn) {
 function renderAdmin() {
     const selPeriodo = document.getElementById("periodoVendas");
     const periodo = selPeriodo ? selPeriodo.value : "all";
-    const pedidos = filtrarPeriodo(getPedidos(), periodo);
+    const deEl = document.getElementById("periodoDe");
+    const ateEl = document.getElementById("periodoAte");
+    const de = deEl ? deEl.value : "";
+    const ate = ateEl ? ateEl.value : "";
+    const pedidos = filtrarPeriodo(getPedidos(), periodo, de, ate);
 
     /* ---------- indicadores ---------- */
     const total = pedidos.length;
@@ -991,6 +1053,8 @@ function renderAdmin() {
         '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>' +
         '<div class="stat"><div class="num">' + formatBRL(ticket) + '</div><div class="lbl">Ticket médio</div></div>' +
         '<div class="stat"><div class="num" style="color:var(--texto-erro)">' + cancelados + '</div><div class="lbl">Cancelados</div></div>';
+
+    renderResumoPeriodo(periodo, de, ate, pedidos, faturamento);
 
     /* ---------- contadores nos filtros ---------- */
     var rotulos = {todos:"Todos", aguardando:"Aguardando", confirmado:"Confirmados", enviado:"Enviados", entregue:"Entregues"};
@@ -1490,25 +1554,143 @@ function copiarAntigo(txt) {
     document.body.removeChild(ta);
 }
 
-// periodo: hoje | sem | mes | ano | tudo
-function filtrarPeriodo(pedidos, periodo) {
-    if (!periodo || periodo === "all") return pedidos;
+/* ============================================================
+   SELETOR DE PERIODO AMPLIADO (dias, semanas, meses, anos,
+   faixa personalizada) + resumo "inteligente" na tela.
+   t0 = null  -> sem inicio;  t1 = null -> ate agora.
+   ============================================================ */
+var MS_DIA = 86400000;
+function inicioDoDia(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }
+function isoData(ms) {
+    var d = new Date(ms);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function dataCurta(ms) {
+    var d = new Date(ms);
+    return String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + d.getFullYear();
+}
+function parseDataInput(v) {
+    /* "aaaa-mm-dd" (input date) montado no fuso LOCAL, sem escorregar
+       um dia por causa do UTC. */
+    if (!v) return null;
+    var p = String(v).split("-");
+    if (p.length !== 3) return null;
+    var d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+    return isNaN(d.getTime()) ? null : d;
+}
+function calcularIntervalo(periodo, de, ate) {
     var agora = new Date();
-    var inicio;
-    if (periodo === "hoje") {
-        inicio = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
-    } else if (periodo === "sem") {
-        var diaSemana = (agora.getDay() + 6) % 7; // segunda = 0
-        inicio = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() - diaSemana);
-    } else if (periodo === "mes") {
-        inicio = new Date(agora.getFullYear(), agora.getMonth(), 1);
-    } else if (periodo === "ano") {
-        inicio = new Date(agora.getFullYear(), 0, 1);
-    } else {
-        return pedidos;
+    var hoje0 = inicioDoDia(agora);
+    var ds = (agora.getDay() + 6) % 7;              /* segunda = 0 */
+    var iniSemana = hoje0 - ds * MS_DIA;
+    var t0 = null, t1 = null, label = "Tudo", erro = false;
+    function ultimosDias(n) { t0 = hoje0 - (n - 1) * MS_DIA; }
+    function desdeMes(qtd)  { t0 = new Date(agora.getFullYear(), agora.getMonth() - (qtd - 1), 1).getTime(); }
+    switch (periodo) {
+        case "hoje":       t0 = hoje0; label = "Hoje"; break;
+        case "ontem":      t0 = hoje0 - MS_DIA; t1 = hoje0 - 1; label = "Ontem"; break;
+        case "anteontem":  t0 = hoje0 - 2 * MS_DIA; t1 = hoje0 - MS_DIA - 1; label = "Anteontem"; break;
+        case "d3":         ultimosDias(3); label = "Últimos 3 dias"; break;
+        case "d7":         ultimosDias(7); label = "Últimos 7 dias"; break;
+        case "d15":        ultimosDias(15); label = "Últimos 15 dias"; break;
+        case "d30":        ultimosDias(30); label = "Últimos 30 dias"; break;
+        case "d60":        ultimosDias(60); label = "Últimos 60 dias"; break;
+        case "d90":        ultimosDias(90); label = "Últimos 90 dias"; break;
+        case "estaSemana": t0 = iniSemana; label = "Esta semana"; break;
+        case "semPassada": t0 = iniSemana - 7 * MS_DIA; t1 = iniSemana - 1; label = "Semana passada"; break;
+        case "mes":        desdeMes(1); label = "Este mês"; break;
+        case "mesPassado":
+            t0 = new Date(agora.getFullYear(), agora.getMonth() - 1, 1).getTime();
+            t1 = new Date(agora.getFullYear(), agora.getMonth(), 1).getTime() - 1;
+            label = "Mês passado"; break;
+        case "m6":         desdeMes(6);  label = "Últimos 6 meses"; break;
+        case "m12":        desdeMes(12); label = "Últimos 12 meses"; break;
+        case "ano":        t0 = new Date(agora.getFullYear(), 0, 1).getTime(); label = "Este ano"; break;
+        case "anoPassado":
+            t0 = new Date(agora.getFullYear() - 1, 0, 1).getTime();
+            t1 = new Date(agora.getFullYear(), 0, 1).getTime() - 1;
+            label = "Ano passado"; break;
+        case "custom": {
+            var dd = parseDataInput(de), da = parseDataInput(ate);
+            if (dd) t0 = inicioDoDia(dd);
+            if (da) t1 = inicioDoDia(da) + MS_DIA - 1;
+            label = "Personalizado";
+            if (dd && da && dd.getTime() > da.getTime()) {
+                erro = true;                       /* datas invertidas */
+                t0 = inicioDoDia(da);
+                t1 = inicioDoDia(dd) + MS_DIA - 1;
+            }
+            break;
+        }
+        default: label = "Tudo"; break;
     }
-    var t0 = inicio.getTime();
-    return pedidos.filter(function(p) { return (p.criadoEm || 0) >= t0; });
+    return { t0: t0, t1: t1, label: label, erro: erro };
+}
+function filtrarPeriodo(pedidos, periodo, de, ate) {
+    if (!periodo || periodo === "all") return pedidos.slice();
+    var iv = calcularIntervalo(periodo, de, ate);
+    return pedidos.filter(function (p) {
+        var tn = p.criadoEm || 0;
+        if (iv.t0 != null && tn < iv.t0) return false;
+        if (iv.t1 != null && tn > iv.t1) return false;
+        return true;
+    });
+}
+function mudarPeriodo() {
+    var sel = document.getElementById("periodoVendas");
+    if (!sel) return;
+    var faixa = document.getElementById("periodoFaixa");
+    var de = document.getElementById("periodoDe");
+    var ate = document.getElementById("periodoAte");
+    if (sel.value === "custom") {
+        if (faixa) faixa.style.display = "inline-flex";
+        if (de && !de.value) de.value = isoData(Date.now() - 29 * MS_DIA);
+        if (ate && !ate.value) ate.value = isoData(Date.now());
+    } else if (faixa) {
+        faixa.style.display = "none";
+    }
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        p.cfgPeriodo = sel.value;
+        p.cfgPeriodoDe = de ? de.value : "";
+        p.cfgPeriodoAte = ate ? ate.value : "";
+        localStorage.setItem("vendedorPrefs", JSON.stringify(p));
+    } catch (e) {/* proposital: nao pode travar o painel */}
+    renderAdmin();
+}
+function carregarPeriodo() {
+    var sel = document.getElementById("periodoVendas");
+    if (!sel) return;
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        if (p.cfgPeriodo) sel.value = p.cfgPeriodo;
+        var de = document.getElementById("periodoDe");
+        var ate = document.getElementById("periodoAte");
+        if (de && p.cfgPeriodoDe) de.value = p.cfgPeriodoDe;
+        if (ate && p.cfgPeriodoAte) ate.value = p.cfgPeriodoAte;
+    } catch (e) {/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    var faixa = document.getElementById("periodoFaixa");
+    if (faixa) faixa.style.display = (sel.value === "custom") ? "inline-flex" : "none";
+}
+function renderResumoPeriodo(periodo, de, ate, pedidos, faturamento) {
+    var box = document.getElementById("periodoResumo");
+    if (!box) return;
+    var iv = (periodo === "all") ? { t0: null, t1: null, label: "Tudo", erro: false } : calcularIntervalo(periodo, de, ate);
+    var chips = [];
+    chips.push('<span class="chip"><i class="fa fa-tag"></i> ' + iv.label + "</span>");
+    if (iv.t0 != null || iv.t1 != null) {
+        chips.push('<span class="chip"><i class="fa fa-calendar"></i> ' + (iv.t0 != null ? dataCurta(iv.t0) : "início") + " → " + (iv.t1 != null ? dataCurta(iv.t1) : "agora") + "</span>");
+    }
+    var t0 = iv.t0 != null ? iv.t0 : pedidos.reduce(function (m, p) { return Math.min(m, p.criadoEm || Infinity); }, Infinity);
+    var t1 = iv.t1 != null ? iv.t1 : Date.now();
+    if (isFinite(t0)) {
+        var nDias = Math.max(1, Math.round((t1 - t0) / MS_DIA) + 1);
+        chips.push('<span class="chip"><i class="fa fa-clock"></i> ' + nDias + " dia(s)</span>");
+    }
+    chips.push('<span class="chip"><i class="fa fa-receipt"></i> ' + pedidos.length + " pedido(s)</span>");
+    chips.push('<span class="chip"><i class="fa fa-dollar-sign"></i> ' + formatBRL(faturamento) + "</span>");
+    if (iv.erro) chips.push('<span class="aviso"><i class="fa fa-triangle-exclamation"></i> A data inicial é maior que a final — mostrando o intervalo invertido.</span>');
+    box.innerHTML = chips.join("");
 }
 function mudarStatus(id, status) {
     atualizarStatus(id, status);
@@ -1522,9 +1704,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261017h"></script>
-<script src="firebase-appcheck.js?v=20261017h"></script>
-<script src="app-update.js?v=20261017h"></script>
+<script src="app.js?v=20261017i"></script>
+<script src="firebase-appcheck.js?v=20261017i"></script>
+<script src="app-update.js?v=20261017i"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
