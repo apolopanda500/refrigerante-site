@@ -24,6 +24,33 @@ var TelegramBot = (function () {
     var TIMER = null;
     var LOG = [];
 
+    /* ---------- offset COMPARTILHADO com o robo 24/7 ----------
+       O painel e o robo do servidor (.github/scripts/bot-telegram.js)
+       usam o MESMO offset, guardado no Firebase (/bot/offset.json).
+       Assim, quem processar o toque primeiro avanca o offset e o
+       outro nao repete o mesmo status/aviso. */
+    var NUVEM_BASE = "https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com";
+    function baseNuvem() {
+        try {
+            if (typeof nuvemEnderecos === "function") {
+                var l = nuvemEnderecos();
+                if (l && l.length) return l[0];
+            }
+        } catch (e) { /* proposital: o bot nao pode derrubar o painel */ }
+        return NUVEM_BASE;
+    }
+    function lerOffsetNuvem() {
+        return fetch(baseNuvem() + "/bot/offset.json?t=" + Date.now(), { cache: "no-store" })
+            .then(function (r) { return r.text(); })
+            .then(function (t) { var v = parseInt(String(t).replace(/[^0-9]/g, ""), 10); return isNaN(v) ? 0 : v; })
+            .catch(function () { return 0; });
+    }
+    function gravarOffsetNuvem(v) {
+        try {
+            fetch(baseNuvem() + "/bot/offset.json", { method: "PUT", body: String(v) }).catch(function () {});
+        } catch (e) { /* proposital: o bot nao pode derrubar o painel */ }
+    }
+
     /* ---------- config (token/chat do dono) ---------- */
     function prefs() {
         try { return JSON.parse(localStorage.getItem(K_PREFS) || "{}"); }

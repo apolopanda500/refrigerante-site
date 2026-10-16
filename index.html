@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016w">
+<link rel="manifest" href="manifest.json?v=20261016x">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,11 +14,11 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="preload" as="style" href="style.css?v=20261016w">
+<link rel="preload" as="style" href="style.css?v=20261016x">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261016w">
-<script src="theme.js?v=20261016w"></script>
+<link rel="stylesheet" href="style.css?v=20261016x">
+<script src="theme.js?v=20261016x"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;line-height:1.5;color:#333;background:#f0f2f5;padding-top:0;padding-bottom:80px}
@@ -351,33 +351,20 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
 
 <footer class="ft"></footer>
 
-<div id="btnRecuperacao" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:99999;background:#ff3d3d;color:#fff;padding:14px 24px;border-radius:30px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);">
-  <i class="fa fa-bolt"></i> Limpar cache e recarregar
+<!-- Botão de atualizar página visível -->
+<div style="text-align:center;margin:10px 0;">
+  <button id="btnAtualizar" style="background:#3d4465;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer;box-shadow:0 2px 6px rgba(61,68,101,.2);">
+    <i class="fa fa-sync"></i> Atualizar página
+  </button>
 </div>
-<style>
-#btnRecuperacao:hover{background:#e52d2d}
-</style>
-<script>
-document.getElementById('btnRecuperacao')?.addEventListener('click', function(){
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.getRegistrations().then(function(regs){
-      regs.forEach(function(r){ r.unregister(); });
-      sessionStorage.setItem('swLimpo','1');
-      location.reload();
-    });
-  } else {
-    location.reload();
-  }
-});
-</script>
 
-<script defer src="conta.js?v=20261016w"></script>
-<script defer src="loja.js?v=20261016w"></script>
-<script defer src="app.js?v=20261016w"></script>
-<script defer src="firebase-appcheck.js?v=20261016w"></script>
-<script defer src="app-update.js?v=20261016w"></script>
-<script defer src="ia.js?v=20261016w"></script>
-<script defer src="central.js?v=20261016w"></script>
+<script defer src="conta.js?v=20261016x"></script>
+<script defer src="loja.js?v=20261016x"></script>
+<script defer src="app.js?v=20261016x"></script>
+<script defer src="firebase-appcheck.js?v=20261016x"></script>
+<script defer src="app-update.js?v=20261016x"></script>
+<script defer src="ia.js?v=20261016x"></script>
+<script defer src="central.js?v=20261016x"></script>
 <script>
 (function(){
   var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
@@ -387,14 +374,9 @@ document.getElementById('btnRecuperacao')?.addEventListener('click', function(){
   });
 })();
 
-// Botao de emergencia se houver erro de carregamento
-window.addEventListener('error', function(){
-  var b = document.getElementById('btnRecuperacao');
-  if(b) b.style.display = 'block';
-});
-window.addEventListener('unhandledrejection', function(){
-  var b = document.getElementById('btnRecuperacao');
-  if(b) b.style.display = 'block';
+// Botao atualizar pagina
+document.getElementById('btnAtualizar')?.addEventListener('click', function(){
+  location.reload();
 });
 </script>
 </body>
