@@ -8,11 +8,12 @@
     - Ativacao: apaga caches antigos imediatamente
    ============================================ */
 
-var VERSAO = "20261016m";
+var VERSAO = "20261016n";
 var BASE = "convencao-cache-" + VERSAO;
-/* 3 s: tempo maximo de espera pela rede antes de usar o cache.
-   8 s era demais: no celular o site ficava travado ou dava ERR_FAILED. */
-var LIMITE_MS = 3000;
+/* 8 s: tempo maximo de espera pela rede antes de cair no cache.
+   No 4G a rede frequentemente passa de 3 s, entao um prazo curto demais
+   fazia a pagina falhar antes da resposta chegar. */
+var LIMITE_MS = 8000;
 
 var ESSENCIAL = [
     "./",

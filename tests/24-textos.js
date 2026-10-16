@@ -70,13 +70,31 @@ if (!achados) ok("nenhum texto da tela sem acento (" + paginas.length + " pagina
 else console.log("       (total de ocorrencias: " + achados + ")");
 
 console.log("\n=== 2. CARACTERE CORROMPIDO (ACENTO QUE SE PERDEU AO GRAVAR) ===");
+/* o defeito que quebrou o site uma vez: o arquivo foi gravado com o encoding
+   errado e TODO acento virou "Ã" seguido de outro caractere (CaminhÃ£o).
+   Aqui varre html, js, css, json, md e txt: nao sobra arquivo de fora. */
+const todos = fs.readdirSync(dir).filter(function (f) {
+    return /\.(html|js|css|json|md|txt)$/.test(f) && f !== "produtos_ref.html";
+});
 let corrompidos = 0;
-paginas.concat(fs.readdirSync(dir).filter(function (f) { return /\.js$/.test(f); }))
-    .forEach(function (arq) {
-        const n = (fs.readFileSync(path.join(dir, arq), "utf8").match(/\uFFFD/g) || []).length;
-        if (n) { falha(arq + " tem " + n + " caractere(s) corrompido(s)"); corrompidos++; }
-    });
-if (!corrompidos) ok("nenhum caractere corrompido: os acentos estao salvos certo");
+todos.forEach(function (arq) {
+    const t = fs.readFileSync(path.join(dir, arq), "utf8");
+    const moji = (t.match(/\u00C3[\u0080-\u00BF]/g) || []).length;
+    const subst = (t.match(/\uFFFD/g) || []).length;
+    if (moji || subst) {
+        falha(arq + " corrompido: " + moji + " acento(s) virado(s) em 'Ã…' e " + subst + " caractere(s) invalido(s)");
+        corrompidos++;
+    }
+});
+if (!corrompidos) ok("nenhum arquivo corrompido (" + todos.length + " arquivos: html, js, css, json, md, txt)");
+
+console.log("\n=== 2b. OS JSON ABREM SEM ERRO ===");
+let jsonOk = 0;
+todos.filter(function (f) { return /\.json$/.test(f); }).forEach(function (arq) {
+    try { JSON.parse(fs.readFileSync(path.join(dir, arq), "utf8")); jsonOk++; }
+    catch (e) { falha(arq + " nao e um JSON valido: " + e.message); }
+});
+ok(jsonOk + " JSON(s) validos");
 
 console.log("\n=== 3. O MENU E OS NOMES DAS REGI0ES ===");
 const loja = fs.readFileSync(path.join(dir, "loja.js"), "utf8");
