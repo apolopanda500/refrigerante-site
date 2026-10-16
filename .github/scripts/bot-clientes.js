@@ -1,7 +1,172 @@
+"use strict";
+
+var TOKEN = process.env.TG_TOKEN_CLIENTES || "";
+var CHAT_ID_CLIENTE = process.env.TG_CHAT_CLIENTES || "";
+
+var COMANDOS = [
+    { command: "start", description: "Iniciar o bot" },
+    { command: "ajuda", description: "Lista de comandos" },
+    { command: "meuspedidos", description: "Ver meus pedidos" },
+    { command: "status", description: "Status de um pedido: /status CV20261016-001" },
+    { command: "telefone", description: "Cadastrar WhatsApp: /telefone 21999999999" }
+];
+
+function tg(metodo, params) {
+    if (!TOKEN) return Promise.reject(new Error("TOKEN não configurado"));
+    var url = "https://api.telegram.org/bot" + TOKEN + "/" + metodo;
+    return fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params)
+    }).then(function (r) { return r.ok ? r.json() : null; }).catch(function (e) { console.log("Erro Telegram:", e.message); return null; });
+}
+
+function fbGet(caminho) {
+    var url = "https://refrigerantes-convencao-default-rtdb.firebaseio.com/" + caminho + ".json";
+    return fetch(url, { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function (e) { console.log("Erro FB GET:", e.message); return null; });
+}
+
+function fbPut(caminho, dados) {
+    var url = "https://refrigerantes-convencao-default-rtdb.firebaseio.com/" + caminho + ".json";
+    return fetch(url, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+    }).then(function (r) { return r.ok ? r.json() : null; }).catch(function (e) { console.log("Erro FB PUT:", e.message); return null; });
+}
+
+function formatBRL(n) {
+    var v = parseFloat(n);
+    if (isNaN(v)) return "R$ 0,00";
+    return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function dataHoraSegundos(ts) {
+    var d = new Date(ts || Date.now());
+    var p = function (n) { return ("0" + n).slice(-2); };
+    return p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear()
+        + " " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+}
+
+function textoStart() {
+    return (
+        "🤖 *Bem-vindo ao Refrigerantes Convenção!*\n\n" +
+        "Sou o bot da loja. Posso te ajudar com:\n\n" +
+        "• /meuspedidos - Ver seus pedidos\n" +
+        "• /status <ID> - Status de um pedido\n" +
+        "• /telefone <número> - Cadastrar seu WhatsApp\n" +
+        "• /ajuda - Lista de comandos\n\n" +
+        "Exemplo: /status CV20261016-001"
+    );
+}
+
+function textoAjuda() {
+    return (
+        "🤖 *Comandos disponíveis:*\n\n" +
+        "• /start - Iniciar o bot\n" +
+        "• /ajuda - Lista de comandos\n" +
+        "• /meuspedidos - Ver meus pedidos\n" +
+        "• /status <ID> - Status de um pedido\n" +
+        "• /telefone <número> - Cadastrar WhatsApp\n\n" +
+        "Exemplo: /status CV20261016-001"
+    );
+}
+
+function textoStatus(p) {
+    var STATUS_LABEL = {
+        aguardando: "⏳ Aguardando confirmação",
+        confirmado: "✅ Confirmado",
+        separacao: "📦 Em separação",
+        enviado: "🚚 Saiu para entrega",
+        entregue: "✅ Entregue",
+        cancelado: "❌ Cancelado"
+    };
+    var status = STATUS_LABEL[p.status] || p.status;
+    return (
+        "📦 *Pedido " + p.id + "*\n" +
+        "Status: " + status + "\n" +
+        "Data: " + dataHoraSegundos(p.criadoEm) + "\n" +
+        "Total: " + formatBRL(p.total) + "\n"
+    );
+}
+
+function textoMeusPedidos(pedidos) {
+    if (!pedidos || pedidos.length === 0) {
+        return "📭 Você não tem pedidos cadastrados.";
+    }
+    var texto = "📋 *Seus Pedidos:*\n\n";
+    pedidos.slice(0, 5).forEach(function (p) {
+        texto += "• " + p.id + " - " + p.status + " - " + formatBRL(p.total) + "\n";
+    });
+    texto += "\nPara detalhes: /status <ID do pedido>";
+    return texto;
+}
+
+function buscarPedidosPorTelefone(tel) {
+    var telLimpo = String(tel).replace(/\D/g, "");
+    return fbGet("/pedidos.json").then(function (dados) {
+        if (!dados || typeof dados !== "object") return [];
+        var pedidos = Object.keys(dados).map(function (k) {
+            var p = dados[k];
+            p.id = k;
+            return p;
+        }).filter(function (p) {
+            var pTel = String(p.tel || "").replace(/\D/g, "");
+            return pTel === telLimpo;
+        }).sort(function (a, b) {
+            return (b.criadoEm || 0) - (a.criadoEm || 0);
+        });
+        return pedidos;
+    });
+}
+
 /* ---------- Tratar mensagens ---------- */
 function tratarMensagem(m) {
     var texto = String(m.text || "").trim();
     var chatId = m.chat.id;
+function textoConfirmado(p) {
+    return (
+        "✅ *Pedido Confirmado!*\n" +
+        "Pedido: " + p.id + "\n" +
+        "Cliente: " + (p.nome || "Cliente") + "\n" +
+        "Total: " + formatBRL(p.total) + "\n" +
+        "Status: Confirmado\n" +
+        "Aguardando separação..."
+    );
+}
+
+function textoEnviado(p) {
+    return (
+        "🚚 *Pedido Enviado!*\n" +
+        "Pedido: " + p.id + "\n" +
+        "Cliente: " + (p.nome || "Cliente") + "\n" +
+        "Total: " + formatBRL(p.total) + "\n" +
+        "Status: Saiu para entrega\n" +
+        "Aguardando entrega..."
+    );
+}
+
+function textoEntregue(p) {
+    return (
+        "✅ *Pedido Entregue!*\n" +
+        "Pedido: " + p.id + "\n" +
+        "Cliente: " + (p.nome || "Cliente") + "\n" +
+        "Total: " + formatBRL(p.total) + "\n" +
+        "Status: Entregue\n" +
+        "Obrigado pela preferência!"
+    );
+}
+
+function textoCancelado(p) {
+    return (
+        "❌ *Pedido Cancelado*\n" +
+        "Pedido: " + p.id + "\n" +
+        "Cliente: " + (p.nome || "Cliente") + "\n" +
+        "Status: Cancelado\n" +
+        "Entre em contato para mais informações."
+    );
+}
+
     var nome = m.chat.first_name || "Cliente";
     var tel = m.text ? String(m.text).replace(/\D/g, "") : "";
 
