@@ -7,10 +7,12 @@
     - Ctrl+F5 / limpar cache: ignora cache e vai direto na rede
    ============================================ */
 
-var VERSAO = "20261016j";
+var VERSAO = "20261016k";
 var BASE = "convencao-cache-" + VERSAO;
-/* 3 s: tempo maximo de espera pela rede antes de usar o cache */
-var LIMITE_MS = 3000;
+/* 8 s: tempo maximo de espera pela rede antes de usar o cache.
+   No 4G a rede passa de 3 s com facilidade; com 3 s o site caia no cache
+   velho (ou vazio) e abria a tela branca depois de publicar. */
+var LIMITE_MS = 8000;
 
 /* Arquivos essenciais para abrir o site rapido e funcionar offline */
 var ESSENCIAL = [
@@ -131,6 +133,19 @@ function redeComPrazo(req) {
     });
 }
 
+/* ultimo recurso antes de devolver vazio: procura o arquivo em QUALQUER
+   cache. Publicou versao nova e o cache antigo ainda nao foi limpo? O
+   arquivo pode estar la, e melhor servir ele do que a tela branca. */
+function pegarEmQualquerCache(req) {
+    return caches.keys().then(function (nomes) {
+        return Promise.all(nomes.map(function (n) {
+            return caches.open(n).then(function (c) { return c.match(req); });
+        })).then(function (achados) {
+            return achados.find(function (r) { return r; }) || null;
+        });
+    });
+}
+
 self.addEventListener("install", function (e) {
     e.waitUntil(
         caches.open(BASE).then(function (cache) {
@@ -187,7 +202,9 @@ self.addEventListener("fetch", function (e) {
                             if (!pagina) cache.put(new Request(caminho), copia.clone());
                             return r.resp;
                         }
-                        return cacheRes || new Response("", { status: 504, statusText: "offline" });
+                        return cacheRes || pegarEmQualquerCache(req).then(function (qualquer) {
+                            return qualquer || new Response("", { status: 504, statusText: "offline" });
+                        });
                     });
                 }
 
@@ -217,7 +234,9 @@ self.addEventListener("fetch", function (e) {
                             cache.put(new Request(caminho), copia.clone());
                             return r.resp;
                         }
-                        return cacheRes || new Response("", { status: 504, statusText: "offline" });
+                        return cacheRes || pegarEmQualquerCache(req).then(function (qualquer) {
+                            return qualquer || new Response("", { status: 504, statusText: "offline" });
+                        });
                     });
                 }
 
