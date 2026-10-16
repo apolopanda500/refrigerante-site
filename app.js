@@ -664,6 +664,8 @@ function pintarCalendarioSemanal() {
     if (!el) return;
 
     var hoje = (typeof agoraSP === "function") ? agoraSP().dia : new Date().getDay();
+    var agora = (typeof agoraSP === "function") ? agoraSP() : null;
+    var fechaMinutos = HORARIOS.loja.fecha * 60;   /* 15:00 = 900 min */
     var abre = [1, 2, 3, 4, 5];              /* seg a sex */
     var ordem = [1, 2, 3, 4, 5, 6, 0];       /* segunda primeiro */
 
@@ -676,7 +678,8 @@ function pintarCalendarioSemanal() {
     ordem.forEach(function (d) {
         var pedidos = regioesPedidoHoje(d);
         var entregas = regioesDoDia(d);
-        var lojaOk = abre.indexOf(d) >= 0;
+        /* loja fecha depois do horario: se for hoje e ja passou da hora, fecha */
+        var lojaOk = abre.indexOf(d) >= 0 && !(hoje === d && agora && agora.minutos >= fechaMinutos);
         var ehHoje = d === hoje;
 
         var estado = !lojaOk

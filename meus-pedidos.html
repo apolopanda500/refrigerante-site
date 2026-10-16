@@ -530,38 +530,56 @@ function sair(){
 
 /* ===== SEMPRE mostra os pedidos, sem pedir numero nem nome ===== */
 function mostrarPedidos(){
-  var todos = getPedidos();
-  var sessao = (typeof Conta !== "undefined" && !Conta.estaVazia())
-        ? { nome: Conta.dados().nome, tel: Conta.dados().tel, cpf: Conta.dados().cpf }
-        : null;
-  var lista = [];
-  var porTelefone = false;
-  if (sessao && sessao.tel) {
-    lista = todos.filter(function(p){ return mesmoTelefone(p.tel, sessao.tel); });
-    if (lista.length) porTelefone = true;
+  try {
+    var todos = getPedidos();
+    var sessao = (typeof Conta !== "undefined" && !Conta.estaVazia())
+          ? { nome: Conta.dados().nome, tel: Conta.dados().tel, cpf: Conta.dados().cpf }
+          : null;
+    var lista = [];
+    var porTelefone = false;
+    if (sessao && sessao.tel) {
+      lista = todos.filter(function(p){ return mesmoTelefone(p.tel, sessao.tel); });
+      if (lista.length) porTelefone = true;
+    }
+    // nao achou pelo telefone (ou nao esta logado): mostra tudo que este aparelho tem
+    if (!lista.length) lista = todos.slice();
+
+    /* identidade do historico = PERFIL (fonte unica). Sem perfil, nao finge login */
+    var textoEl = document.getElementById("sessaoTexto");
+    if (textoEl) {
+        if (sessao && sessao.nome) {
+            textoEl.innerHTML = 'Conectado como <b>' + sessao.nome + '</b>';
+        } else {
+            textoEl.innerHTML = 'Sem perfil — preencha o perfil para ver so os seus pedidos';
+        }
+    }
+
+    var f = document.getElementById("filtros");
+    if (f) f.style.display = lista.length ? "flex" : "none";
+
+    pedidosAtuais = lista;
+    filtroAtual = "todos";
+    document.querySelectorAll(".filtro").forEach(function(b){
+      b.classList.toggle("ativo", b.dataset.f === "todos");
+    });
+    /* tenta sincronizar com a nuvem (pedidos do vendedor mudaram de status) */
+    if (typeof sincronizarPedidosCliente === "function") {
+        sincronizarPedidosCliente(function(junto){
+            pedidosAtuais = junto;
+            filtroAtual = "todos";
+            document.querySelectorAll(".filtro").forEach(function(b){
+                b.classList.toggle("ativo", b.dataset.f === "todos");
+            });
+            render();
+        });
+    } else {
+        render();
+    }
+  } catch(e) {
+    console.log("erro mostrarPedidos:", e);
+    var box = document.getElementById("listaPedidos");
+    if (box) box.innerHTML = '<div class="vazio"><i class="fa fa-exclamation-triangle"></i><p>Erro ao carregar pedidos. Tente novamente.</p></div>';
   }
-  // nao achou pelo telefone (ou nao esta logado): mostra tudo que este aparelho tem
-  if (!lista.length) lista = todos.slice();
-
-  /* identidade do historico = PERFIL (fonte unica). Sem perfil, nao finge login */
-  var textoEl = document.getElementById("sessaoTexto");
-  if (textoEl) {
-      if (sessao && sessao.nome) {
-          textoEl.innerHTML = 'Conectado como <b>' + sessao.nome + '</b>';
-      } else {
-          textoEl.innerHTML = 'Sem perfil — preencha o perfil para ver so os seus pedidos';
-      }
-  }
-
-  var f = document.getElementById("filtros");
-  if (f) f.style.display = lista.length ? "flex" : "none";
-
-  pedidosAtuais = lista;
-  filtroAtual = "todos";
-  document.querySelectorAll(".filtro").forEach(function(b){
-    b.classList.toggle("ativo", b.dataset.f === "todos");
-  });
-  render();
 }
 /* ---------- resumo: pedidos, itens e total gasto (veio do perfil) ---------- */
 function resumoHistorico() {
