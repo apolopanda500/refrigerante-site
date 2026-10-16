@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261016x">
+<link rel="manifest" href="manifest.json?v=20261016y">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,11 +14,11 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="img/G.svg">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="preload" as="style" href="style.css?v=20261016x">
+<link rel="preload" as="style" href="style.css?v=20261016y">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261016x">
-<script src="theme.js?v=20261016x"></script>
+<link rel="stylesheet" href="style.css?v=20261016y">
+<script src="theme.js?v=20261016y"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;line-height:1.5;color:#333;background:#f0f2f5;padding-top:0;padding-bottom:80px}
@@ -194,9 +194,10 @@ a{text-decoration:none;color:inherit}
 [data-theme="vermelho"] .qb{background:#4a2a2f;color:#ff9d9d}
 [data-theme="vermelho"] .qb:hover{background:#5a343b}
 
-/* Botão Adicionar dos produtos */
-.qa{flex:1;height:auto;min-height:44px;background:var(--accent-color,#ffb822);color:#1a1a2e;border:none;border-radius:8px;font-weight:800;font-size:.82rem}
+/* Botão Adicionar dos produtos - bem visível e fácil de clicar */
+.qa{flex:1;height:auto;min-height:48px;background:var(--accent-color,#ffb822);color:#1a1a2e;border:none;border-radius:10px;font-weight:900;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px}
 .qa:hover{filter:brightness(1.06)}
+.qa:active{transform:scale(.94)}
 [data-theme="dark"] .qa{background:#ffb822;color:#1a1a2e}
 [data-theme="guara"] .qa{background:#1b7f3b;color:#fff}
 [data-theme="guara"] .qa:hover{filter:brightness(1.08)}
@@ -358,13 +359,13 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
   </button>
 </div>
 
-<script defer src="conta.js?v=20261016x"></script>
-<script defer src="loja.js?v=20261016x"></script>
-<script defer src="app.js?v=20261016x"></script>
-<script defer src="firebase-appcheck.js?v=20261016x"></script>
-<script defer src="app-update.js?v=20261016x"></script>
-<script defer src="ia.js?v=20261016x"></script>
-<script defer src="central.js?v=20261016x"></script>
+<script defer src="conta.js?v=20261016y"></script>
+<script defer src="loja.js?v=20261016y"></script>
+<script defer src="app.js?v=20261016y"></script>
+<script defer src="firebase-appcheck.js?v=20261016y"></script>
+<script defer src="app-update.js?v=20261016y"></script>
+<script defer src="ia.js?v=20261016y"></script>
+<script defer src="central.js?v=20261016y"></script>
 <script>
 (function(){
   var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
