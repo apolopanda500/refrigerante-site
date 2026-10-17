@@ -600,7 +600,14 @@ function estrelasHTML(media, total) {
 function gerarId() {
     const d = new Date();
     const n = getPedidos().length + 1;
-    return "CV" + d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0") + "-" + String(n).padStart(3, "0");
+    const base = "CV" + d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0") + "-" + String(n).padStart(3, "0");
+    /* Dois clientes em aparelhos diferentes podem gerar o mesmo numero no
+       mesmo dia (os dois CV20261016-001). No banco um sobrescrevia o pedido
+       do outro cliente: o sufixo curto mantem o numero legivel e garante
+       que cada pedido tenha o seu. */
+    const hora = String(Date.now() % 1000).padStart(3, "0");   /* sempre 3 digitos */
+    const sorte = 10 + Math.floor(Math.random() * 90);  /* 2 digitos */
+    return base + "-" + String(hora) + String(sorte);
 }
 function criarPedido(dados) {
     const pedidos = getPedidos();

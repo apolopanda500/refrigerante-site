@@ -76,7 +76,7 @@ vm.runInContext("criarPedido", ctx)({
 const guardados = vm.runInContext("getPedidos()", ctx);
 if (!guardados.length) falha("sem rede o pedido sumiu do aparelho");
 else ok("pedido continua salvo no aparelho (" + guardados.length + ") mesmo sem rede");
-if (!/^CV\d{8}-\d{3}$/.test(guardados[0].id)) falha("numero do pedido fora do padrao: " + guardados[0].id);
+if (!/^CV\d{8}-\d{3}-\d{5}$/.test(guardados[0].id)) falha("numero do pedido fora do padrao: " + guardados[0].id);
 else ok("numero do pedido: " + guardados[0].id);
 
 console.log("\n=== 4. O PAINEL BAIXA E JUNTA OS PEDIDOS DE TODOS ===");

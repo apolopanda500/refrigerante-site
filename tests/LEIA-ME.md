@@ -8,7 +8,7 @@ Toda alteração passa por aqui antes de ir para o ar.
 node tests/rodar-todos.js
 ```
 
-O comando roda **todas** as 34 baterias e só termina com `TUDO 10/10`
+O comando roda **todas** as 35 baterias e só termina com `TUDO 10/10`
 se nenhuma falhar. Acompanhe cada arquivo:
 
 | Arquivo | O que confere |
@@ -47,6 +47,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `32-nuvem.js` | **Nuvem**: pedido vai para `/pedidos/<id>.json` com PUT, sem rede o pedido fica no aparelho, base reserva é tentada, merge sem duplicar e o App Check carregado |
 | `33-robo-catalogo.js` | **Robô do catálogo**: lê o site oficial, nunca mexe em preço, aborta se o site quebrar, catalálogo com nome/preço/foto/categoria e agenda às 10h e 14h de SP (seg a sex) |
 | `34-acessibilidade.js` | **Acessibilidade**: idioma, título e viewport em toda página, botão/link com nome, `alt` nas imagens, `:focus-visible`, alvo de 44px e nada só de mouse |
+| `35-dia-de-trabalho.js` | **Dia de trabalho (simulação)**: 5 clientes de 4 regiõesCriam pedido em 5 aparelhos, o painel junta tudo, o dono confirma/separa/envia/entrega, edita o bairro, cancela, reabre, fecha o dia (faturamento, ticket, itens), busca por nome/telefone/bairro, exporta CSV e o botão do Telegram aplica o mesmo passo |
 
 ## CSS: como confere e como limpa
 

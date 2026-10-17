@@ -104,8 +104,8 @@ const pedido = api.criarPedido({
     itens: [{ name: "Guarana 350ml", qty: 3, price: 19, priceNum: 19, subtotal: 57 }],
     subtotal: api.calcSubtotal(), total: calc.total
 });
-if (!/^CV\d{8}-\d{3}$/.test(pedido.id)) falha("numero de pedido fora do padrao CV: " + pedido.id);
-else ok("numero do pedido: " + pedido.id + " (padrao CVAAAAMMDD-000)");
+if (!/^CV\d{8}-\d{3}-\d{5}$/.test(pedido.id)) falha("numero de pedido fora do padrao CV: " + pedido.id);
+else ok("numero do pedido: " + pedido.id + " (padrao CVAAAAMMDD-000-00000)");
 if (pedido.status !== "aguardando") falha("pedido nasce com status errado");
 else ok("status inicial: aguardando");
 if (!Array.isArray(pedido.historico) || pedido.historico.length !== 1) falha("pedido sem historico inicial");
