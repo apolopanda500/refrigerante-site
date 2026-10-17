@@ -4,8 +4,8 @@
 > ordem, e **qual bateria prova** cada passo. Nenhum passo aqui e
 > palavra: tudo foi executado em sandbox (`node tests/rodar-todos.js`).
 
-Data da validacao: **17/10/2026** · Versao validada: **20261017t**
-· Baterias: **37**, todas 10/10.
+Data da validacao: **17/10/2026** · Versao validada: **20261017v**
+· Baterias: **39**, todas 10/10.
 
 ---
 
@@ -18,6 +18,7 @@ Data da validacao: **17/10/2026** · Versao validada: **20261017t**
 | 3 | Monta o carrinho (quantidades, editar item, limpar) | `carrinho.html` + `script.js` | 10, 30, 37 |
 | 4 | Escolhe **bairro e região** — define frete e dia de entrega | `loja.js` (`calcularFrete`) | 27, 30, 37 |
 | 5 | Vê se o pedido passa do **mínimo de R$ 100,00** | `entregaMinima()` + `bloqueioFinalizar()` | 27, 37 |
+| 5b | Se ainda tem vaga hoje (2 do cliente, 80 da loja) — senão o botão desliga e ele fala com o dono | `checaLimitePedidos()` | 39 |
 | 6 | Informa endereço, referência e pagamento (Pix ou Dinheiro + troco) | `carrinho.html` | 27, 30 |
 | 7 | **Finaliza na mesma página** (não existe mais `checkout.html`) | `finalizarPedidoCarrinho()` | 30 |
 | 8 | Pedido nasce `CVAAAAMMDD-NNN-XXXXX` com histórico datado e vai para a nuvem | `criarPedido()` | 30, 32, 35 |
@@ -51,6 +52,7 @@ Data da validacao: **17/10/2026** · Versao validada: **20261017t**
 | Data sempre `dd/mm/aaaa hh:mm:ss` | `dataHoraSegundos()` | 28 |
 | **O preço é do dono**: o robô nunca altera | `sync-catalogo.js` + `precos-base.json` | 33 |
 | Número do pedido único por aparelho (sufixo) | `gerarId()` | 30, 35 |
+| **Máximo de pedidos por dia** (2 por cliente, 80 na loja) | `checaLimitePedidos()` em `loja.js` | 39 |
 
 ## 4. Entradas hostis já testadas (erros futuros)
 
@@ -59,11 +61,15 @@ Data da validacao: **17/10/2026** · Versao validada: **20261017t**
 - Nome com HTML, aspas, quebra de linha, emoji ou 200 letras → nada quebra (37).
 - Dois clientes no mesmo dia com o mesmo número → não se sobrescrevem mais (35).
 - Telefone de outra pessoa no mesmo aparelho → não vê o pedido alheio (30, 37).
+- Histórico de pedidos corrompido (JSON inválido) no carrinho → a válvula lê por
+  um leitor protegido, **não vira tela branca** e não impede a compra (39).
+- Preferência de limite corrompida, lista sem telefone ou pedido sem `criadoEm`
+  → a trava volta ao padrão e **ninguém fica trancado fora** (39).
 
 ## 5. O que ainda é responsabilidade do dono
 
 1. **Ajustar os 8 preços de chopp** que divergem do site oficial (o robô avisou no Telegram).
-2. Rodar `node tests/rodar-tudos.js` antes de mexer em qualquer coisa (`rodar-todos.js`).
+2. Rodar `node tests/rodar-todos.js` antes de mexer em qualquer coisa.
 3. Trocar o número do WhatsApp em **um lugar só**: `CONTATO_LOJA` em `loja.js`.
 4. Trocar horário/região/troco: `loja.js` (`HORA_ABRE_PEDIDOS`, `REGIOES`, `BAIRROS`).
 
@@ -121,14 +127,19 @@ o proxy - nunca para o site.
 - A senha do painel esta em texto puro no `script.js` (limitacao
   documentada): o login esconde a tela, nao protege o dado. Com o banco
   fechado isso deixa de importar tanto.
+- O limite de pedidos por cliente é contado **no aparelho**: o mesmo
+  cliente em dois celulares teria duas contagens. O limite da loja já é
+  global (vem do painel). Para o do cliente ser global também, a contagem
+  tem de passar pelo gateway (passo 2 de `docs/FECHAR-BANCO.md`).
 - O dono ainda precisa **testar no celular de verdade** um pedido
   completo (as baterias rodam a logica em sandbox, nao ha navegador).
 - 8 precos de chopp divergem do site oficial: decisao de negocio.
 
 ### 6.4 O QUE JA ESTA PRONTO (so para deixar claro)
 
-- 37 baterias, todas 10/10, rodando o codigo de verdade.
-- Site no ar na versao vigente, com APK do cliente e do vendedor.
+- 39 baterias, todas 10/10, rodando o codigo de verdade.
+- Site no ar na versao vigente (20261017v), com APK do cliente e do
+  vendedor **rebuildados e assinados na mesma versao**.
 - Robo do catalogo, robo do Telegram 24/7 e bot do painel funcionando.
 - Documentacao: `PROJETO`, `ARVORE`, `MANUAL-DONO`, `LEIA-ME`,
   `VALIDACAO` (este) e `REGISTRO` (o que foi feito).

@@ -38,3 +38,7 @@ logo.png
 # Cloudflare Wrangler (cache local e estado do deploy)
 .wrangler/
 
+# ferramenta de uso LOCAL (so desta maquina): abre um servidor em localhost
+# e captura o codigo do Google na mao. Nao e parte do site e nao entra no git
+tools/login-google.js
+

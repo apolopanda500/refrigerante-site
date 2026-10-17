@@ -54,6 +54,55 @@ uma vez (chave desbalanceada), criei regras CSS órfãs
 sandbox, callback fora do escopo) e apaguei a tabela de preços que o
 `checkout.html` usava. Todos detectados pelos próprios testes.
 
+## 2b. A válvula do dia (17/10/2026, versão 20261017v)
+
+Pedido do dono: **limite de pedidos por dia, para o site nunca travar**.
+
+| # | O que | Decisão |
+|---|---|---|
+| 1 | Limite por cliente/dia | **2** pedidos por telefone (`LIMITE_PEDIDOS_CLIENTE_DIA`) |
+| 2 | Limite da loja/dia | **80** (`LIMITE_PEDIDOS_LOJA_DIA`), mudável no painel |
+| 3 | Ao estourar | **bloqueia e oferece falar com o dono** (WhatsApp de `contatoLoja()`) |
+
+Como ficou (tudo com fonte única em `loja.js`, `checaLimitePedidos()`):
+
+- **O dia zera sozinho:** chave `AAAA-MM-DD` do horário de São Paulo.
+  Virou a meia-noite e a cota recomeça — ninguém precisa liberar nada.
+- **Cancelado não come cota** (nem do cliente nem da loja).
+- Telefone por **só dígitos**: a máscara não conta como outra pessoa.
+- **Duas camadas:** o carrinho desliga o botão, e `criarPedido()` confere
+  de novo na hora de gravar e devolve `null` — chamar `criarPedido()` pelo
+  console do navegador **não burla**. Se recusar, o cliente não cai numa
+  tela de sucesso falsa e **não perde o carrinho**.
+- **O global vale para todo mundo:** só o painel vê pedidos de todos os
+  aparelhos, então só ele publica as vagas do dia em `/capacidade.json`
+  (chave pública, **só números** — nome/CPF/telefone/endereço não vão ali;
+  a bateria 38 fiscaliza isso). O cliente lê e trava.
+- **Falha para o lado seguro:** registro de outro dia (painel fechado)
+  **não bloqueia** — melhor vender a mais do que travar venda.
+
+### Bugs/defeitos que apareceram no caminho
+
+| # | Defeito | Como foi achado | Correção |
+|---|---|---|---|
+| 16 | `getPedidos()` não protege JSON corrompido: chamado na tela do carrinho, histórico quebrado virava **tela branca** | leitura do código antes de usar | `pedidosParaValvula()` encapsula a leitura no carrinho |
+| 17 | `soDigitos` já existia em `telegram.js` com **outro sentido** (maiúsculas, para número de pedido) | varredura de colisão de nomes | helper da válvula renomeado para `digitosTel()` |
+| 18 | `/capacidade` abriu leitura pública sem a bateria 38 saber | `38-banco-fechado` acusou | allow-list com justificativa + bloco novo provando que só leva número |
+| 19 | Comentário com telefone escrito à mao no `loja.js` | `28-consistencia` | comentário reescrito (fonte única é `contatoLoja()`) |
+| 20 | `tools/login-google.js` (auxiliar local, não é do site) ficou sem commit e derrubava `22-entrega` | `22-entrega` | `.gitignore` (arquivo preservado na máquina, fora do repo público) |
+
+### Publicação (versão 20261017v)
+
+- Os **dois APKs foram rebuildados de verdade** — sem JDK 17 e sem `gradle`
+  no PATH achei que não daria, mas o `build.gradle` já previa: Gradle 9.1
+  roda no Java do sistema e baixa o JDK 17 do toolchain. Build em 30 s.
+- **Conferi dentro dos APK** com `aapt2` antes de gravar a versão:
+  `versionName 20261017v` nos dois, versionCode 20261017 (cliente) e
+  20261117 (vendedor), **mesma chave de assinatura** — dá para atualizar
+  por cima do que o cliente já tem.
+- `tools/login-google.js` ficou **fora do commit de propósito**: não é meu e
+  tem `CLIENT_ID` público dentro; o dono decide se versiona.
+
 ## 3. Decisões
 
 - **Preço é do dono.** O robô do catálogo **detecta** a mudança de preço
@@ -65,16 +114,47 @@ sandbox, callback fora do escopo) e apaguei a tabela de preços que o
   ler, único por aparelho.
 - **37 baterias** em vez de 27: cada uma prova uma camada, executando o
   código de verdade (não só lendo arquivo).
+- **Válvula em duas travas (2 por cliente, 80 por loja).** Escolha do dono:
+  bloquear e oferecer falar com o vendedor, em vez de aviso em voz alta.
+  Um limite que só avisa não impede o dia de afogar; um limite que só
+  bloqueia perde venda — então bloqueia **e** dá o caminho.
+- **O teto da loja é global (o painel publica), o do cliente é por
+  aparelho.** O que der para ser exato sem depender de servidor novo,
+  é exato; o resto ficou escrito como limitação, não como promessa.
+- **Falha da trava é para o lado seguro:** registro velho **não** bloqueia
+  a venda. Uma válvula que derruba o dia inteiro por número velho é pior
+  que o travamento que ela evita.
 
 ## 4. Como continuar
 
 ```powershell
-node tests/rodar-todos.js            # as 37 baterias, tem que dar TUDO 10/10
+node tests/rodar-todos.js            # as 39 baterias, tem que dar TUDO 10/10
 node tests/manter-tudo.js            # versão, datas, links, docs, robô
 node .github/scripts/sync-catalogo.js  # conferir o catálogo e a divergência de preço
-node tests/bump-versao.js 20261017u  # só na hora de publicar
+node tests/bump-versao.js 20261017v  # só na hora de publicar
+node apk/android/build.js            # projeto Android na MESMA versão do site
+gradle -p apk/android :cliente:assembleRelease :vendedor:assembleRelease
 ```
 
 Detalhes por arquivo em `docs/ARVORE.md`, regras em `docs/PROJETO.md`,
 guia do dono em `docs/MANUAL-DONO.md` e o mapa validado em
 `docs/VALIDACAO.md`.
+
+## 5. O que ainda NÃO está pronto (o próximo da fila)
+
+Nada aqui é stabilized só porque os testes passam — são buracos que **só o
+dono fecha**, porque exigem conta, senha e decisão de negócio:
+
+1. 🔴 **O banco do Firebase está aberto** (leitura e escrita): qualquer
+   pessoa com a URL do projeto lê os pedidos com CPF e ainda apaga.
+   Passo a passo em `docs/FECHAR-BANCO.md` (o gateway já está escrito e
+   testado pela bateria 38 — falta publicar no Cloudflare e colar as
+   regras).
+2. 🔴 **O token do Telegram está no código público** (`script.js`,
+   `telegram.js` e os workflows). Trocar o bot e guardar o token novo
+   em **GitHub Secrets** + no gateway, nunca no site.
+3. 🟡 O limite por cliente é contado **por aparelho**: para valer entre
+   dois celulares do mesmo cliente, a contagem tem que ir para o gateway.
+4. 🟡 Testar um pedido completo **no celular de verdade** (as baterias
+   rodam a lógica em sandbox, não há navegador).
+5. 🟡 8 preços de chopp divergem do site oficial: decisão de negócio.
