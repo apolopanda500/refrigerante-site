@@ -8,7 +8,7 @@ Toda alteração passa por aqui antes de ir para o ar.
 node tests/rodar-todos.js
 ```
 
-O comando roda **todas** as 41 baterias e só termina com `TUDO 10/10`
+O comando roda **todas** as 42 baterias e só termina com `TUDO 10/10`
 se nenhuma falhar. Acompanhe cada arquivo:
 
 | Arquivo | O que confere |
@@ -54,6 +54,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `39-limite-pedidos.js` | **Limite de pedidos por dia** (a válvula): 2 por cliente/dia e 80 por loja/dia, fonte única em `loja.js`, o dia zera sozinho na virada (chave `AAAA-MM-DD` de SP), cancelado não come cota, `criarPedido` recusa acima do limite mesmo se o console burlar a tela, o carrinho desliga o botão e oferece falar com o vendedor, o painel publica `/capacidade.json` e entrada hostil não trava ninguém |
 | `40-botoes-vivos.js` | **Botões que respondem de verdade** (navegador de verdade, sem sandbox): o botão da IA abre e fecha o painel do assistente em todas as páginas do cliente, o Compartilhar cumpre a ação, o Minimizar recolhe e volta com 44 px, nenhum botão/controle visível fica abaixo de 44 px e nenhuma página deixa erro de JavaScript |
 | `41-painel-de-verdade.js` | **Painel do vendedor de verdade** (navegador de verdade): tela de login segura o painel, senha errada não abre e não trava nada, senha certa abre, o pedido aparece na tabela e no resumo do dia, os botões de status mudam o status e o histórico cresce, a busca filtra e volta, a ficha mostra a hora, Minimizar recolhe e volta, tema e leitura das tabelas aplicam, Exportar monta o CSV com as 13 colunas, nenhum controle abaixo de 44 px e nenhum erro de JavaScript |
+| `42-codigo-inline.js` | **Código inline das páginas**: extrai cada bloco `<script>` sem `src` de cada página e compila de verdade (`node --check`), caça palavra-chave colada no nome (`functionx()` derruba o bloco inteiro e deixa todo botão dele morto sem aviso) e confere que as funções que os botões chamam existem de verdade |
 | `36-37` | Fluxo completo com o robô, o cliente e o dono, incluindo entradas que quebram sistemas de verdade |
 
 ## CSS: como confere e como limpa
