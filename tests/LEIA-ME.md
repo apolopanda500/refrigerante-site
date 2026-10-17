@@ -8,7 +8,7 @@ Toda alteração passa por aqui antes de ir para o ar.
 node tests/rodar-todos.js
 ```
 
-O comando roda **todas** as 39 baterias e só termina com `TUDO 10/10`
+O comando roda **todas** as 40 baterias e só termina com `TUDO 10/10`
 se nenhuma falhar. Acompanhe cada arquivo:
 
 | Arquivo | O que confere |
@@ -52,6 +52,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `37-vida-do-site.js` | **Vida completa do site**: carrinho → mínimo → pedido → confirmação → avaliação, mais entrada hostil (pedido sem nome, carrinho corrompido, nome com HTML, 200 letras) sem quebrar nada |
 | `38-banco-fechado.js` | **Banco fechado**: as regras nao abrem nada, o gateway so fala com o banco pela conta de servico, preco continua publico, so o dono lista e muda status, o cliente ve so o pedido dele com a chave dele, pedido malformado e recusado e o robo so entra com o segredo |
 | `39-limite-pedidos.js` | **Limite de pedidos por dia** (a válvula): 2 por cliente/dia e 80 por loja/dia, fonte única em `loja.js`, o dia zera sozinho na virada (chave `AAAA-MM-DD` de SP), cancelado não come cota, `criarPedido` recusa acima do limite mesmo se o console burlar a tela, o carrinho desliga o botão e oferece falar com o vendedor, o painel publica `/capacidade.json` e entrada hostil não trava ninguém |
+| `40-botoes-vivos.js` | **Botões que respondem de verdade** (navegador de verdade, sem sandbox): o botão da IA abre e fecha o painel do assistente em todas as páginas do cliente, o Compartilhar cumpre a ação, o Minimizar recolhe e volta com 44 px, nenhum botão/controle visível fica abaixo de 44 px e nenhuma página deixa erro de JavaScript |
 | `36-37` | Fluxo completo com o robô, o cliente e o dono, incluindo entradas que quebram sistemas de verdade |
 
 ## CSS: como confere e como limpa
