@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261017m">
+<link rel="manifest" href="manifest.json?v=20261017n">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017m">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017n">
 <title>Histórico - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017m">
-<script src="theme.js?v=20261017m"></script>
+<link rel="stylesheet" href="style.css?v=20261017n">
+<script src="theme.js?v=20261017n"></script>
 
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -136,9 +136,12 @@ body[data-leitura="vertical"] .avaliar-resumo{flex-direction:column!important;al
 .pedido-itens{font-size:1.04rem !important;color:#3d4465 !important;line-height:1.75}
 .pedido-itens b{color:#3d4465}
 .pedido-itens div{padding:4px 0 !important}
-.pedido-itens .item-nome{flex:1}
-.pedido-itens .item-qtd{text-align:center}
-.pedido-itens .item-preco{text-align:right}
+/* linha do item: nome | quantidade | preco, com espaco e preco a direita
+   (sem isto o nome ficava colado no "x6" e no valor) */
+body:not([data-leitura="vertical"]) .pedido-itens div{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.pedido-itens .item-nome{flex:1 1 160px;min-width:0;word-break:break-word}
+.pedido-itens .item-qtd{flex:0 0 auto;min-width:34px;text-align:center;color:#6b7280;font-weight:700}
+.pedido-itens .item-preco{flex:0 0 auto;margin-left:auto;text-align:right;min-width:96px}
 .pedido-total{margin-top:16px !important;padding-top:14px !important}
 .pedido-total .val{font-size:1.5rem !important}
 .btn-detalhe{font-size:1rem !important;padding:9px 12px !important}
@@ -159,6 +162,7 @@ body[data-leitura="vertical"] .avaliar-resumo{flex-direction:column!important;al
 [data-theme="dark"] .pedido-itens b,
 [data-theme="dark"] .timeline-item{color:#cdd2e6 !important}
 [data-theme="dark"] .detalhe-extra b{color:#ffb822 !important}
+[data-theme="dark"] .pedido-itens .item-qtd{color:#a1a8c3 !important}
 [data-theme="dark"] .filtro{font-size:1rem !important}
 
 /* ===== NAVEGACAO HORIZONTAL (igual a home) ===== */
@@ -478,13 +482,13 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
 <div id="listaPedidos"></div>
 </div></section>
 
-<script src="conta.js?v=20261017m"></script>
-<script src="firebase-appcheck.js?v=20261017m"></script>
-<script src="app-update.js?v=20261017m"></script>
-<script src="ia.js?v=20261017m"></script>
-<script src="central.js?v=20261017m"></script>
-<script src="loja.js?v=20261017m"></script>
-<script src="script.js?v=20261017m"></script>
+<script src="conta.js?v=20261017n"></script>
+<script src="firebase-appcheck.js?v=20261017n"></script>
+<script src="app-update.js?v=20261017n"></script>
+<script src="ia.js?v=20261017n"></script>
+<script src="central.js?v=20261017n"></script>
+<script src="loja.js?v=20261017n"></script>
+<script src="script.js?v=20261017n"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -609,6 +613,19 @@ function resumoHistorico() {
 
 var pedidosAtuais = [];
 
+/* valor do item: pedido novo grava subtotal; pedido antigo (ou vindo da nuvem)
+   so tem price/priceNum. sem isto a linha saia com R$ 0,00. */
+function totalDoItem(i) {
+    if (!i) return 0;
+    var q = (typeof i.qty === "number" && i.qty > 0) ? i.qty : 1;
+    if (typeof i.subtotal === "number" && isFinite(i.subtotal)) return i.subtotal;
+    var unit = 0;
+    if (typeof i.price === "number") unit = i.price;
+    else if (typeof i.priceNum === "number") unit = i.priceNum;
+    else if (typeof i.price === "string") unit = (typeof parsePreco === "function") ? parsePreco(i.price) : parseFloat(i.price);
+    return (unit || 0) * q;
+}
+
 function filtrar(tipo, btn){
   filtroAtual = tipo;
   document.querySelectorAll(".filtro").forEach(function(b){ b.classList.remove("ativo"); });
@@ -651,7 +668,7 @@ function render(){
        + (typeof tempoDesde === "function" && tempoDesde(p.criadoEm) ? " (" + tempoDesde(p.criadoEm) + ")" : "")
        + '</div></div>' + statusBadge(p.status) + '</div>';
     h += '<div class="pedido-itens">';
-    if (itens.length) itens.forEach(function(i){ h += '<div><span class="item-nome">' + (i.name || "item") + '</span><span class="item-qtd">x' + (i.qty || 0) + '</span><span class="item-preco"><b>' + formatBRL(parseFloat((i.price||0)*(i.qty||0))) + '</b></span></div>'; });
+    if (itens.length) itens.forEach(function(i){ h += '<div><span class="item-nome">' + (i.name || "item") + '</span><span class="item-qtd">x' + (i.qty || 0) + '</span><span class="item-preco"><b>' + formatBRL(totalDoItem(i)) + '</b></span></div>'; });
     else h += '<div class="pedido-sem-item">Itens deste pedido nao estao salvos neste aparelho.</div>';
     h += '</div>';
     h += '<div class="pedido-total"><button class="btn-detalhe" onclick="toggleDetalhe(\'' + p.id + '\')"><i class="fa fa-chevron-down"></i> Ver detalhes</button><span class="val">' + formatBRL(p.total) + '</span></div>';
