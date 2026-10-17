@@ -4,7 +4,7 @@
 > ordem, e **qual bateria prova** cada passo. Nenhum passo aqui e
 > palavra: tudo foi executado em sandbox (`node tests/rodar-todos.js`).
 
-Data da validacao: **17/10/2026** · Versao validada: **20261018a**
+Data da validacao: **17/10/2026** · Versao validada: **20261018b**
 · Baterias: **42**, todas 10/10.
 
 ---
@@ -138,7 +138,7 @@ o proxy - nunca para o site.
 ### 6.4 O QUE JA ESTA PRONTO (so para deixar claro)
 
 - 42 baterias, todas 10/10, rodando o codigo de verdade.
-- Site no ar na versao vigente (20261018a), com APK do cliente e do
+- Site no ar na versao vigente (20261018b), com APK do cliente e do
   vendedor **rebuildados e assinados na mesma versao**.
 - Robo do catalogo, robo do Telegram 24/7 e bot do painel funcionando.
 - Documentacao: `PROJETO`, `ARVORE`, `MANUAL-DONO`, `LEIA-ME`,

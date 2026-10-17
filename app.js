@@ -1003,7 +1003,15 @@ var PRECOS_ENDERECOS = [
 ];
 
 function ehArquivoEstatico(url){ return /\.json(\?|$)/i.test(String(url || "")); }
-function caminhoPrecos(url){ return ehArquivoEstatico(url) ? url : url + "/precos.json"; }
+function caminhoPrecos(url){
+  /* modo gateway: a rota do preco la e /api/precos (o Worker nao tem
+     /precos.json, e pedir isso daria 404 sem motivo) */
+  if (typeof gatewayLigado === "function" && gatewayLigado() && typeof gatewayURL === "function") {
+    var g = gatewayURL();
+    if (g) return g + "/api/precos";
+  }
+  return ehArquivoEstatico(url) ? url : url + "/precos.json";
+}
 function listaEnderecos(){
   var out = [], salvo = precosURLCfg();
   if (salvo) out.push(salvo);
@@ -1049,6 +1057,28 @@ function appCheckPronto(){
 /* le os precos da nuvem, tentando os enderecos ate um responder */
 function puxarPrecosNuvem(cb){
   if (typeof fetch !== "function"){ aplicarPrecosSalvar(); if (cb) cb(false); return; }
+  /* modo gateway: o preco vem de /api/precos. No Worker nao existe
+     /precos.json, entao pedir o caminho antigo daria 404 a toa e o preco
+     acabaria vindo por cima do caminho antigo, mascarando o erro. */
+  if (typeof gatewayLigado === "function" && gatewayLigado() && typeof gatewayURL === "function") {
+    var gw = gatewayURL();
+    if (gw) {
+      fetch(gw + "/api/precos", { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (dados) {
+          if (!dados || typeof dados !== "object") { aplicarPrecosSalvar(); if (cb) cb(false); return; }
+          var ov = precosLocais(), mudou = false;
+          for (var k in dados) {
+            if (typeof dados[k] === "string" && ov[k] !== dados[k]) { ov[k] = dados[k]; mudou = true; }
+          }
+          salvarPrecosLocais(ov);
+          aplicarPrecosSalvar();
+          if (cb) cb(mudou);
+        })
+        .catch(function () { aplicarPrecosSalvar(); if (cb) cb(false); });
+      return;
+    }
+  }
   appCheckPronto();
   var lista = listaEnderecos();
   if (!lista.length){ aplicarPrecosSalvar(); if (cb) cb(false); return; }
