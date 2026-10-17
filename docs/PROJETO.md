@@ -206,6 +206,14 @@ de propósito para não apagar o catálogo.
   `sincronizarPedidosNuvem()` (na abertura e a cada minuto) para baixar e
   juntar com os locais. **Privacidade:** o banco está aberto (modo teste) —
   reforce as regras do Firebase em produção.
+- **O gateway é o caminho padrão do site** (`GATEWAY_PADRAO` em `script.js`):
+  o cliente não tem campo para colar URL — ele simplesmente usa o gateway,
+  e o caminho antigo (direto no Firebase) fica de **reserva** para quando o
+  gateway não responde (a venda nunca para). O painel continua com o campo
+  *Banco* para trocar a URL.
+  **Válvula de escape:** `cfgGatewayOff: true` em `vendedorPrefs` (painel) ou
+  `refrigerantePrefs` (cliente) **desliga o gateway** mesmo com a URL
+  preenchida. Sem isso, se o Worker caísse não haveria como reverter.
 - O site tenta achar o banco sozinho (`PRECOS_ENDERECOS` em `app.js`).
 - Para publicar: painel do vendedor → editar preço → **Salvar e aplicar**.
 - Para conferir: painel → "Banco ligado! N preço(s) publicado(s)".

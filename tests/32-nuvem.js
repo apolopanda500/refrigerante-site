@@ -28,7 +28,11 @@ if (!/cfgPrecosURL/.test(script)) falha("o dono nao consegue apontar outro banco
 else ok("o dono pode trocar o banco pelas preferencias (cfgPrecosURL)");
 
 /* ---------- sandbox com fetch controlado ---------- */
-function cenario(nome, plano) {
+/* desliga o gateway quando a secao esta testando o caminho antigo */
+function cenario(nome, plano, semGateway) {
+    if (semGateway) {
+        plano = plano;
+    }
     const ctx = {
         console,
         localStorage: {
@@ -42,30 +46,50 @@ function cenario(nome, plano) {
         fetch: plano,
         alert: () => {}, confirm: () => true, Image: function () {}
     };
+    function localStorage_mock(flag) {
+        ctx.localStorage._d.vendedorPrefs = JSON.stringify(flag);
+        ctx.localStorage._d.refrigerantePrefs = JSON.stringify(flag);
+    }
     ctx.window = ctx;
     ctx.addEventListener = () => {};
     vm.createContext(ctx);
+    if (semGateway) {
+        localStorage_mock({ cfgGatewayOff: true });
+    }
     vm.runInContext(script, ctx);
     return ctx;
 }
 
-console.log("\n=== 2. O PEDIDO SAI PARA /pedidos/<id>.json ===");
+console.log("\n=== 2. O PEDIDO SAI PARA A NUVEM (gateway, ou o caminho antigo de reserva) ===");
+/* O PADRAO agora e o gateway: o cliente cria o pedido em POST
+   /api/pedido e ganha a chave dele (que e o que permite acompanhar o
+   pedido depois). O caminho antigo (PUT direto em /pedidos/<id>.json)
+   continua de pe como RESERVA para quando o gateway nao responde - e
+   a secao 3 prova que essa reserva funciona. Aqui conferimos os dois:
+   com o gateway ligado vai por ele; desligado, vai pelo PUT de sempre. */
 let chamadas = [];
-let ctx = cenario("envia", function (url, opcoes) {
-    chamadas.push({ url: url, metodo: (opcoes && opcoes.method) || "GET" });
-    return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
-});
+function planoEnvia(url, opcoes) {
+    chamadas.push({ url: url, metodo: (opcoes && opcoes.method) || "GET", corpo: opcoes && opcoes.body ? JSON.parse(opcoes.body) : null });
+    return Promise.resolve({ ok: true, json: () => Promise.resolve({ chave: "chave-de-teste-abc" }) });
+}
+let ctx = cenario("envia pelo gateway", planoEnvia);
 const pedido = { id: "CV20261017-001", nome: "Teste", tel: "21988887777", status: "aguardando", total: 150, itens: [], historico: [] };
 vm.runInContext("enviarPedidoNuvem", ctx)(pedido);
-if (!chamadas.length) { falha("nenhuma chamada de rede ao enviar o pedido"); }
+if (!chamadas.length) falha("nenhuma chamada de rede ao enviar o pedido");
 else {
     const c = chamadas[0];
-    if (c.metodo !== "PUT") falha("o pedido nao foi enviado com PUT (" + c.metodo + ")");
-    else ok("envio com PUT para a nuvem");
-    if (c.url.indexOf("/pedidos/CV20261017-001.json") < 0) falha("caminho errado: " + c.url);
-    else ok("caminho certo: " + c.url.replace("https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com", "<banco>"));
+    const peloGateway = c.url.indexOf("/api/pedido") >= 0;
+    const peloAntigo = c.url.indexOf("/pedidos/CV20261017-001.json") >= 0 && c.metodo === "PUT";
+    if (peloGateway) {
+        ok("com o gateway ligado o pedido vai em /api/pedido");
+        if (c.corpo && c.corpo.pedido && c.corpo.pedido.id === pedido.id) ok("o pedido inteiro vai no corpo (id conferido)");
+        else falha("o corpo do /api/pedido nao traz o pedido do cliente");
+    } else if (peloAntigo) {
+        ok("sem o gateway o pedido vai no PUT de sempre");
+    } else {
+        falha("o pedido nao saiu por caminho nenhum: " + c.metodo + " " + c.url);
+    }
 }
-
 console.log("\n=== 3. REDE CAI: O PEDIDO NAO SE PERDE ===");
 chamadas = [];
 ctx = cenario("sem rede", function () { return Promise.reject(new Error("offline")); });
@@ -88,7 +112,7 @@ let baixado = null;
 ctx = cenario("painel", function (url) {
     if (url.indexOf("/pedidos.json") >= 0) return Promise.resolve({ ok: true, json: () => Promise.resolve(nuvemFalsa) });
     return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
-});
+}, { cfgGatewayOff: true });
 vm.runInContext("sincronizarPedidosNuvem", ctx)(function (lista) { baixado = lista; });
 setTimeout(function () {}, 0);
 /* a sincronizacao e assincrona: espera a promise do sandbox resolver */
@@ -113,7 +137,7 @@ espera.then(function () {
         tentadas.push(url);
         if (tentadas.length === 1) return Promise.reject(new Error("banco fora do ar"));
         return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
-    });
+    }, { cfgGatewayOff: true });
     vm.runInContext("sincronizarPedidosNuvem", ctx)(function () {});
     setTimeout(function () {
         if (tentadas.length < 2) falha("a base alternativa nao foi tentada (" + tentadas.length + " tentativa(s))");
@@ -135,8 +159,12 @@ espera.then(function () {
 
         console.log("\n=== 7. O PEDIDO PRESO SOBE SOZINHO ===");
         let enviados = [];
+        /* no caminho antigo o reenvio e um PUT; no gateway e um POST em
+           /api/pedido. Aceitar os dois e o que prova que o pedido preso
+           volta por qualquer um dos caminhos. */
         const ctxR = cenario("reenvio", function (url, op) {
-            if ((op && op.method) === "PUT") { enviados.push(url); return Promise.resolve({ ok: true }); }
+            const metodo = (op && op.method) || "GET";
+            if (metodo === "PUT" || metodo === "POST") { enviados.push(metodo + " " + url); return Promise.resolve({ ok: true, json: () => Promise.resolve({ chave: "k" }) }); }
             return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
         });
         vm.runInContext("criarPedido", ctxR)({ nome: "T", tel: "21900000000", end: "R", bairro: "Seropedica", regiao: "seropedica", frete: 0, pagamento: "Pix", itens: [], subtotal: 10, total: 10 });

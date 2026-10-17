@@ -362,19 +362,43 @@ function nuvemEnderecos() {
 var GW_CHAVES = "convencaoChaves";      /* pedido -> chave do gateway */
 var GW_TOKEN = "convencaoToken";        /* token do dono (12h) */
 
+/* ---------- O GATEWAY DA LOJA (padrao do site) ----------
+   Endereco do Worker que guarda os pedidos. Ele entra aqui como
+   PADRAO: o cliente nao tem campo para colar nada, e mesmo teria
+   que colar em cada celular. Como o pedido do cliente e gravado no
+   aparelho ANTES de ir para a nuvem, se o gateway estiver fora do
+   ar a funcao simply devolve "" e o pedido tenta o caminho antigo
+   - a venda nunca para por causa disso. */
+var GATEWAY_PADRAO = "https://convencao-gateway.rickjax123.workers.dev";
+
 /* a URL do gateway, se o dono colar no campo "Banco".
    navegador do cliente = refrigerantePrefs; painel = vendedorPrefs */
 function gatewayURL() {
     try {
         var noPainel = /admin\.html$/i.test((typeof location !== "undefined" && location.pathname) || "");
         var chave = noPainel ? "vendedorPrefs" : "refrigerantePrefs";
-        var u = "";
-        try { u = String((JSON.parse(localStorage.getItem(chave) || "{}")).cfgPrecosURL || ""); } catch (e) { u = ""; }
-        u = u.trim().replace(/\/+$/, "");
+        var p = JSON.parse(localStorage.getItem(chave) || "{}");
+        /* ---------- A VALVULA DE ESCAPE ----------
+           cfgGatewayOff = true DESLIGA o gateway e volta tudo para o
+           caminho antigo, mesmo com a URL do gateway preenchida. Sem
+           isso, se o Worker caisse nao haveria como reverter - o dono
+           ficaria preso num caminho so. E o que as baterias usam para
+           conferir o modo antigo de verdade. */
+        if (p.cfgGatewayOff === true) return "";
+        var u = String(p.cfgPrecosURL || "").trim();
+        u = u.replace(/\/+$/, "");
         /* so mesmo e o gateway: URL de arquivo .json ou de outro
            banco NAO entra neste modo */
         if (u && !/\.json$/i.test(u) && /\/api|workers\.dev|convencao-gateway/i.test(u)) return u;
     } catch (e) { /* proposital: sem preferencia e o modo antigo */ }
+    /* ---------- O GATEWAY JA EH O PADRAO ----------
+       O cliente nao tem campo para colar a URL: pedir isso a cada
+       aparelho seria pedir para o cliente instalar errado. Entao o
+       gateway vem aqui como padrao e o caminho antigo fica de
+       reserva: se o gateway cair, a funcao devolve "" e cada
+       chamada cai no banco aberto (quando ele ainda estiver
+       aberto) - ou seja, a venda nunca para. */
+    if (typeof GATEWAY_PADRAO === "string" && GATEWAY_PADRAO) return GATEWAY_PADRAO;
     return "";
 }
 function gatewayLigado() { return gatewayURL() !== ""; }
@@ -586,11 +610,15 @@ function guardarCapacidade(dados) {
 }
 function puxarCapacidadeNuvem(cb) {
     if (typeof fetch !== "function") { if (cb) cb(false); return; }
-    /* modo gateway: a valva tambem passa pelo caminho seguro */
-    if (typeof gatewayLigado === "function" && gatewayLigado()) {
-        return puxarCapacidadeGateway(cb);
-    }
-    var lista = nuvemEnderecos(), i = 0;
+/* modo gateway: a valva tambem passa pelo caminho seguro */
+      if (typeof gatewayLigado === "function" && gatewayLigado()) {
+          return puxarCapacidadeGateway(cb);
+      }
+      /* a reserva tambem ignora o gateway (mesmo motivo do pedido) */
+var lista = nuvemEnderecos().filter(function (b) {
+          return !/\/api|workers\.dev|convencao-gateway/i.test(String(b || ""));
+      });
+    var i = 0;
     (function tentar() {
         if (i >= lista.length) { if (cb) cb(false); return; }
         var url = lista[i++];
@@ -618,7 +646,11 @@ function enviarPedidoNuvem(pedido) {
 function enviarPedidoNuvemDireto(pedido) {
     if (!pedido || !pedido.id) return;
     var corpo = JSON.stringify(pedido);
-    var bases = nuvemEnderecos();
+    /* a reserva NAO tenta o gateway: la o caminho e /api/pedido, e
+       um PUT em /pedidos/<id>.json daria 404 a toa */
+    var bases = nuvemEnderecos().filter(function (b) {
+        return !/\/api|workers\.dev|convencao-gateway/i.test(String(b || ""));
+    });
     var caminho = "/pedidos/" + encodeURIComponent(pedido.id) + ".json";
     var i = 0;
     /* tenta um banco atras do outro. se todos falharem, tenta de novo:

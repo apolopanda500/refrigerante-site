@@ -102,6 +102,11 @@ const painelCtx = {
 };
 painelCtx.window = painelCtx;
 painelCtx.addEventListener = () => {};
+/* esta simula o painel no CAMINHO ANTIGO (o das bases do Firebase).
+   O modo gateway (padrao do site) e coberto pelas baterias 32 e 38;
+   aqui o que importa e o dono juntar os pedidos de todos os aparelhos,
+   que e o caminho cru. A valvula de escape e cfgGatewayOff. */
+painelCtx.localStorage.setItem("vendedorPrefs", JSON.stringify({ cfgGatewayOff: true }));
 vm.createContext(painelCtx);
 vm.runInContext(ler("loja.js"), painelCtx);
 vm.runInContext(ler("script.js"), painelCtx);
