@@ -71,7 +71,7 @@ vm.runInContext(scriptTxt.slice(iniFmt, fimFmt), sbF, { filename: "script.js" })
 });
 console.log("  ok  2 casas, virgula, ponto de milhar e valor quebrado vira 0,00");
 /* nenhuma pagina pode montar dinheiro na mao (regressao do milhar) */
-const paginasDinheiro = ["app.js", "carrinho.html", "checkout.html", "meus-pedidos.html",
+const paginasDinheiro = ["app.js", "carrinho.html", "meus-pedidos.html",
     "pedido-sucesso.html", "admin.html"].map(f => [f, fs.readFileSync(path.join(dir, f), "utf8")]);
 const montaNaMao = [];
 paginasDinheiro.forEach(function (par) {

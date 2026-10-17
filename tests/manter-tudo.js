@@ -27,7 +27,7 @@ const ONLINE = process.argv.includes("--online");
 const COM_CATALOGO = process.argv.includes("--com-catalogo");
 const CORRIGIR = process.argv.includes("--corrigir");
 
-const PAGS_CLIENTE = ["index.html", "carrinho.html", "checkout.html", "perfil.html",
+const PAGS_CLIENTE = ["index.html", "carrinho.html", "perfil.html",
     "meus-pedidos.html", "pedido-sucesso.html", "configuracoes.html"];
 const TODAS = PAGS_CLIENTE.concat(["admin.html"]);
 

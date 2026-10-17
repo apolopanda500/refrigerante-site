@@ -48,6 +48,37 @@
 .btn-secundario { background:#fff; color:var(--primary-color); border:2px solid var(--primary-color); }
 .btn-secundario:hover { background:#fff3f3; }
 
+/* ===== FINALIZAR O PEDIDO NA MESMA PAGINA (carrinho) =====
+   endereco, pagamento (Pix/Dinheiro), troco e o botao que fecha o pedido */
+.cb-pag { margin-top:12px; }
+.cb-pag .cb-rot { margin-bottom:8px; }
+.pag-opcao { display:flex; align-items:center; gap:10px; border:2px solid #eee; border-radius:11px; padding:13px 14px; margin-bottom:10px; cursor:pointer; min-height:44px; }
+.pag-opcao:hover { border-color:var(--secondary-color,#646c9a); }
+.pag-opcao.ativa { border-color:var(--primary-color); background:var(--bg-alt,#f2f3f8); }
+.pag-opcao i { font-size:1.3rem; color:var(--primary-color); width:26px; text-align:center; }
+.pag-opcao span { font-weight:600; color:var(--text-color); }
+.troco-campo { margin-top:4px; }
+.troco-campo input { width:100%; }
+.btn-finalizar { width:100%; margin-top:14px; background:#0e6b4f; color:#fff; border:none; border-radius:26px; padding:16px; font-weight:bold; font-size:1.05rem; cursor:pointer; min-height:44px; display:inline-flex; align-items:center; justify-content:center; gap:9px; text-decoration:none; }
+.btn-finalizar:hover { background:#0a5638; }
+.btn-finalizar:disabled { background:#9aa0ae; cursor:not-allowed; }
+.fin-aviso { margin-top:12px; font-size:0.92rem; display:none; }
+.fin-aviso.on { display:block; }
+.fin-aviso.bloqueado { background:var(--bg-alt,#f7f7f7); border:1px solid var(--borda,#eee); border-radius:10px; padding:12px 14px; color:var(--texto-aviso); }
+.fin-aviso.liberado { background:var(--bg-alt,#f7f7f7); border:1px solid var(--borda,#eee); border-radius:10px; padding:12px 14px; color:var(--texto-ok); }
+[data-theme="dark"] .pag-opcao{background:#232742!important;border-color:#3d4470!important}
+[data-theme="dark"] .pag-opcao.ativa{background:#3a2f14!important;border-color:#ffb822!important}
+[data-theme="dark"] .pag-opcao i{color:#ffb822!important}
+[data-theme="dark"] .pag-opcao span{color:#e6e8f2!important}
+[data-theme="dark"] .btn-finalizar{background:#1e7d46!important;color:#fff!important}
+[data-theme="dark"] .btn-finalizar:hover{background:#186838!important}
+[data-theme="dark"] .btn-finalizar:disabled{background:#353a5c!important;color:#a1a8c3!important}
+[data-theme="dark"] .fin-aviso.bloqueado{background:#232742!important;border-color:#353a5c!important;color:#ffc75c!important}
+[data-theme="dark"] .fin-aviso.liberado{background:#232742!important;border-color:#353a5c!important;color:#8fe0a8!important}
+[data-theme="guara"] .pag-opcao.ativa{border-color:#1b7f3b!important}
+[data-theme="rosa"] .pag-opcao.ativa{border-color:#8e2f6b!important}
+[data-theme="vermelho"] .pag-opcao.ativa{border-color:#a11b0f!important}
+
 /* ===== ALVO DE TOQUE MINIMO 44px (celular) ===== */
 .qb,.qa,.btn-mini,.op-btn,.filtro,.btn,.btn-primario,.btn-secundario,.btn-enviar,.btn-salvar,.btn-detalhe,.btn-sair{
     min-height:44px;
@@ -481,10 +512,32 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
   <div class="cb-dias" id="diasCarrinho"></div>
 </div>
 
+<!-- ===== FINALIZAR O PEDIDO AQUI MESMO: nao existe mais pagina de checkout ===== -->
+<div class="caixa-bairro" id="caixaFinalizar">
+  <div class="cb-cab"><i class="fa fa-credit-card"></i> Entrega e pagamento</div>
+  <div class="cb-grade">
+    <label class="cb-rot">Endere&ccedil;o completo
+      <input type="text" id="enderecoCarrinho" placeholder="Rua, n&uacute;mero" autocomplete="address-line1">
+    </label>
+    <label class="cb-rot">Complemento / refer&ecirc;ncia (opcional)
+      <input type="text" id="refCarrinho" placeholder="Ex.: ao lado da padaria, apto 21">
+    </label>
+  </div>
+  <div class="cb-pag">
+    <div class="cb-rot">Forma de pagamento</div>
+    <div class="pag-opcao ativa" id="opcPix" onclick="selecionarPagamento(this,'Pix')"><input type="radio" name="pagCarrinho" value="Pix" checked style="display:none"><i class="fa fa-qrcode"></i><span>Pix</span></div>
+    <div class="pag-opcao" id="opcDinheiro" onclick="selecionarPagamento(this,'Dinheiro')"><input type="radio" name="pagCarrinho" value="Dinheiro" style="display:none"><i class="fa fa-money-bill-wave"></i><span>Dinheiro</span></div>
+    <label class="cb-rot troco-campo" id="trocoCarrinho" style="display:none">Troco para
+      <input type="text" id="trocoValor" placeholder="Ex.: 100,00" inputmode="decimal" autocomplete="off">
+    </label>
+  </div>
+  <div class="fin-aviso" id="avisoFinalizar"></div>
+  <button type="button" class="btn-finalizar" id="btnFinalizar" onclick="finalizarPedidoCarrinho()"><i class="fa fa-circle-check"></i> Finalizar pedido</button>
+</div>
+
 <div class="acoes">
   <a class="btn btn-secundario" href="index.html"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
   <button class="btn btn-limpar-item" onclick="confirmarLimpar()" title="Esvaziar o carrinho"><i class="fa fa-trash"></i> Limpar carrinho</button>
-  <a class="btn btn-primario" href="checkout.html" id="btnCheckout"><i class="fa fa-credit-card"></i> Finalizar pedido</a>
 </div>
 </div></section>
 
@@ -501,16 +554,18 @@ cart = getCart();
 function renderCarrinho() {
     const box = document.getElementById("cartBox");
     const res = document.getElementById("resumoBox");
-    const btn = document.getElementById("btnCheckout");
     updateCartCount();
 
     if (cart.length === 0) {
         box.innerHTML = '<div class="cart-vazio"><i class="fa fa-shopping-cart"></i><p>Seu carrinho est&aacute; vazio.</p></div>';
         res.innerHTML = ""; res.style.display = "none";
-        btn.style.display = "none";
+        var blocoF = document.getElementById("caixaFinalizar");
+        if (blocoF) blocoF.style.display = "none";
         return;
     }
-    btn.style.display = ""; res.style.display = "";
+    res.style.display = "";
+    var blocoFinal = document.getElementById("caixaFinalizar");
+    if (blocoFinal) blocoFinal.style.display = "";
 
     /* ---------- preco SEMPRE o do catalogo ----------
        o item guardado no navegador pode estar velho (ex.: preco antigo).
@@ -607,6 +662,7 @@ function renderCarrinho() {
         + '<div class="resumo-row total"><span>Total final</span><span>' + formatBRL(calc.total) + '</span></div>';
 
     atualizarDiasCarrinho(regiao);
+    atualizarAvisoFinalizar();
 }
 
 function mudarQtdCarrinho(idx, delta) {
@@ -797,6 +853,133 @@ function montarSeletorBairro() {
     }
 }
 
+/* ===== FINALIZAR O PEDIDO NO PROPRIO CARRINHO =====
+   nao existe mais pagina de checkout: o cliente preenche endereco e
+   pagamento aqui e o botao fecha o pedido. as regras continuam as de
+   sempre (horario da loja 08:50-15:00, bairro atendido, valor minimo). */
+function pagamentoCarrinho() {
+    var r = document.querySelector('input[name="pagCarrinho"]:checked');
+    return r ? r.value : "Pix";
+}
+function selecionarPagamento(opcao, valor) {
+    var todas = document.querySelectorAll(".pag-opcao");
+    for (var i = 0; i < todas.length; i++) todas[i].classList.remove("ativa");
+    if (opcao) opcao.classList.add("ativa");
+    var troco = document.getElementById("trocoCarrinho");
+    if (troco) troco.style.display = (valor === "Dinheiro") ? "" : "none";
+    atualizarAvisoFinalizar();
+}
+function valorCampoCarrinho(id) {
+    var el = document.getElementById(id);
+    return el ? String(el.value || "").trim() : "";
+}
+/* endereco e referencia vem do perfil: o cliente nao digita de novo */
+function preencherEnderecoCarrinho() {
+    var end = document.getElementById("enderecoCarrinho");
+    var ref = document.getElementById("refCarrinho");
+    if ((!end || !end.value) && (!ref || !ref.value) && typeof Conta !== "undefined" && Conta.dados) {
+        var d = Conta.dados();
+        if (end && !end.value) end.value = d.endereco || (d.rua ? d.rua + (d.numero ? ", " + d.numero : "") : "");
+        if (ref && !ref.value) ref.value = d.complemento || d.observacao || "";
+    }
+}
+/* o que ainda impede o pedido de sair (fonte unica: as regras da loja) */
+function bloqueioFinalizar() {
+    if (!cart.length) return {
+        texto: "Seu carrinho está vazio. Escolha os produtos no catálogo.",
+        aviso: "Escolha os produtos no catálogo para continuar." };
+    var bairro = valorCampoCarrinho("bairroCarrinho");
+    if (!bairro) return { texto: "Informe seu bairro.", aviso: "Informe o bairro onde quer receber." };
+    var regiao = regiaoCarrinho();
+    if (!regiao) return { texto: "Escolha a região de entrega.", aviso: "Escolha a região de entrega." };
+    if (!valorCampoCarrinho("enderecoCarrinho")) return {
+        texto: "Informe o endereço completo.", aviso: "Informe o endereço completo (rua e número)." };
+    var regra = (typeof pedidosLiberados === "function")
+        ? pedidosLiberados(bairro) : { liberado: true, texto: "" };
+    if (!regra.liberado) return {
+        texto: "Pedido não aceito agora.\n\n" + regra.texto,
+        aviso: "<b>Pedidos pausados.</b> " + regra.texto };
+    if (typeof bairroForaDaArea === "function" && bairroForaDaArea(bairro)) return {
+        texto: 'O bairro "' + bairro + '" não está na nossa área de entrega. Corrija o bairro no Perfil.',
+        aviso: 'O bairro <b>' + bairro + '</b> não está na nossa área de entrega (' + BAIRROS_ATENDIDOS_TEXTO + '). Corrija no Perfil.' };
+    var min = (typeof entregaMinima === "function") ? entregaMinima() : 100;
+    var sub = arredonda(calcSubtotal());
+    if (sub > 0 && sub < min) return {
+        texto: "Pedido mínimo para entrega: " + formatBRL(min)
+             + ".\nFaltam " + formatBRL(arredonda(min - sub)) + ".",
+        aviso: "Pedido mínimo para entrega: <b>" + formatBRL(min) + "</b>. Faltam <b>"
+              + formatBRL(arredonda(min - sub)) + "</b>." };
+    return null;
+}
+/* pinta o aviso e liga/desliga o botao conforme as regras */
+function atualizarAvisoFinalizar() {
+    var aviso = document.getElementById("avisoFinalizar");
+    var botao = document.getElementById("btnFinalizar");
+    var bloqueio = bloqueioFinalizar();
+    if (aviso) {
+        if (bloqueio) {
+            aviso.className = "fin-aviso on bloqueado";
+            aviso.innerHTML = '<i class="fa fa-circle-exclamation"></i> ' + bloqueio.aviso;
+        } else {
+            aviso.className = "fin-aviso on liberado";
+            aviso.innerHTML = '<i class="fa fa-circle-check"></i> Tudo certo para enviar. '
+                + 'O vendedor recebe o pedido no Telegram.';
+        }
+    }
+    if (botao) botao.disabled = !!bloqueio;
+}
+/* fecha o pedido: criarPedido (numero CV, historico e nuvem) vem do script.js */
+function finalizarPedidoCarrinho() {
+    var bloqueio = bloqueioFinalizar();
+    if (bloqueio) { alert(bloqueio.texto); atualizarAvisoFinalizar(); return; }
+    var d = (typeof Conta !== "undefined" && Conta.dados) ? Conta.dados() : {};
+    if (!d.nome || !d.tel) {
+        alert("Preencha nome e WhatsApp no Perfil antes de finalizar o pedido.");
+        window.location.href = "perfil.html";
+        return;
+    }
+    var bairro = valorCampoCarrinho("bairroCarrinho");
+    var regiao = regiaoCarrinho();
+    var subtotal = arredonda(calcSubtotal());
+    var calc = (typeof calcularFrete === "function")
+        ? calcularFrete(subtotal, regiao.id)
+        : { subtotal: subtotal, frete: 0, total: subtotal };
+    var itens = cart.map(function (i) {
+        var qtd = (typeof i.qty === "number" && i.qty > 0) ? i.qty : 1;
+        var unit = arredonda((typeof i.priceNum === "number") ? i.priceNum : parsePreco(i.price));
+        return { name: i.name, qty: qtd, price: unit, priceNum: unit, subtotal: arredonda(unit * qtd) };
+    });
+    var pagamento = pagamentoCarrinho();
+    var pedido = criarPedido({
+        nome: String(d.nome || "").trim(),
+        tel: String(d.tel || "").trim(),
+        cpf: String(d.cpf || "").trim(),
+        end: valorCampoCarrinho("enderecoCarrinho"),
+        comp: valorCampoCarrinho("refCarrinho"),
+        bairro: bairro,
+        regiao: regiao.id,
+        frete: calc.frete,
+        pagamento: pagamento,
+        troco: (pagamento === "Dinheiro") ? valorCampoCarrinho("trocoValor") : "",
+        itens: itens,
+        subtotal: calc.subtotal,
+        total: calc.total
+    });
+    /* guarda o que o cliente digitou no perfil (fonte unica dos dados) */
+    try {
+        Conta.salvar({
+            endereco: valorCampoCarrinho("enderecoCarrinho"),
+            complemento: valorCampoCarrinho("refCarrinho"),
+            bairro: bairro
+        });
+    } catch (e) { /* perfil bloqueado nao pode travar o pedido */ }
+    /* avisa o dono no Telegram (criarPedido ja gravou na nuvem) */
+    if (typeof notificarTelegramPedido === "function") { try { notificarTelegramPedido(pedido); } catch (e) {} }
+    limparCarrinho();
+    try { localStorage.setItem("ultimoPedido", pedido.id); } catch (e) {}
+    window.location.href = "pedido-sucesso.html";
+}
+
 /* mostra os dias de pedido e de entrega da regiao escolhida */
 function atualizarDiasCarrinho(r) {
     const el = document.getElementById("diasCarrinho");
@@ -821,7 +1004,7 @@ function atualizarDiasCarrinho(r) {
     el.innerHTML = '<div class="aviso ' + classe + '"><i class="' + icone + ' tag-hoje"></i> <span>' + texto + '</span></div>';
 }
 
-/* lista simplificada de regioes (sem duplicar com a caixa-bairro) */
+/* lista simplificada de regioes (junto da caixa-bairro) */
 function pintarRegiaoCarrinho(){
     var el = document.getElementById("diasCarrinho");
     if (!el || typeof REGIOES === "undefined") return;
@@ -832,23 +1015,18 @@ function pintarRegiaoCarrinho(){
         linhas += '<div class="reg-lista-item"><span class="reg-lista-nome">' + r.nome + '</span>'
                 + '<span class="reg-lista-dias">' + r.diasTexto + (hoje ? ' <span class="tag-hoje">HOJE</span>' : '') + '</span></div>';
     });
-    el.innerHTML += '<div class="reg-lista">' + linhas + '</div>';
+    el.innerHTML = '<div class="reg-lista">' + linhas + '</div>';
 }
-
-/* regiao e dia de entrega sao mostrados na caixa-bairro (sem repetir) */
-function pintarRegiaoCarrinho(){ /* mantido vazio: regiao ja aparece na caixa-bairro acima */ }
 
 /* ===== regra de atendimento: horario + bairro ===== */
 function atualizarAvisoCarrinho(){
     if (typeof pedidosLiberados !== "function") return;
     var box = document.getElementById("avisoAtendimento");
-    var btn = document.getElementById("btnCheckout");
     if (!box) return;
     var bairro = "";
     try { bairro = (typeof Conta !== "undefined") ? (Conta.dados().bairro || "") : ""; } catch(e) {}
     var regra = pedidosLiberados("");
     var fora = (typeof bairroForaDaArea === "function") && bairroForaDaArea(bairro);
-    var btnMostrar = function () { if (btn) btn.style.display = ""; };
 
     /* fora do horario: pausa */
     if (!regra.liberado) {
@@ -856,7 +1034,6 @@ function atualizarAvisoCarrinho(){
         box.style.display = "flex";
         box.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> ' + regra.texto
             + ' Atendemos das <b>08:50</b> às <b>15:00</b>.</span>';
-        if (btn) btn.style.display = "none";
         return;
     }
     /* bairro fora da area: avisa aqui; o checkout bloqueia o envio */
@@ -866,12 +1043,10 @@ function atualizarAvisoCarrinho(){
         box.innerHTML = '<i class="fa fa-map-marker-alt"></i> <span><b>Atenção:</b> o bairro "' + bairro
             + '" não está na nossa lista de entregas (' + BAIRROS_ATENDIDOS_TEXTO
             + '). O pedido será bloqueado na finalização: corrija o bairro no perfil.</span>';
-        btnMostrar();
         return;
     }
     box.style.display = "none";
     box.innerHTML = "";
-    btnMostrar();
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", atualizarAvisoCarrinho);
 else atualizarAvisoCarrinho();
@@ -882,9 +1057,21 @@ else pintarRegiaoCarrinho();
 /* monta o seletor de bairro/regiao e ja calcula o total final */
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () {
     montarSeletorBairro();
+    preencherEnderecoCarrinho();
     renderCarrinho();
+    atualizarAvisoFinalizar();
+    /* qualquer campo mexido reavalia o botao de finalizar */
+    ["bairroCarrinho", "enderecoCarrinho", "refCarrinho", "trocoValor"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener("input", atualizarAvisoFinalizar);
+    });
 });
-else { montarSeletorBairro(); renderCarrinho(); }
+else {
+    montarSeletorBairro();
+    preencherEnderecoCarrinho();
+    renderCarrinho();
+    atualizarAvisoFinalizar();
+}
 
 </script>
 <script>document.addEventListener("DOMContentLoaded",function(){var d=(typeof Conta!=="undefined")?Conta.dados():{};if(!d.nome||!d.tel){var b=document.createElement("div");b.style="max-width:720px;margin:10px auto;padding:12px;background:#fff3cd;border:2px solid #ffc107;border-radius:10px;color:#856404";b.innerHTML="<b>Atenção:</b> identifique-se (nome e WhatsApp no Perfil) antes de finalizar o pedido.";var m=document.querySelector("section.page .container");if(m)m.appendChild(b);}});</script></body>

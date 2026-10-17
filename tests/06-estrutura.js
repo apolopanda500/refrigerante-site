@@ -16,7 +16,7 @@ const html = fs.readdirSync(dir).filter(f => f.endsWith(".html") && f !== "produ
 /* ---------- 1. scripts basicos em toda pagina ---------- */
 console.log("=== 1. SCRIPTS DE BASE EM TODA PAGINA ===");
 const basicos = ["theme.js", "conta.js", "app-update.js", "loja.js"];
-const cliente = ["index.html", "carrinho.html", "checkout.html", "perfil.html", "meus-pedidos.html",
+const cliente = ["index.html", "carrinho.html", "perfil.html", "meus-pedidos.html",
     "pedido-sucesso.html", "configuracoes.html"];
 cliente.forEach(function (p) {
     const t = fs.readFileSync(path.join(dir, p), "utf8");

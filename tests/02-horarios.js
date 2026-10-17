@@ -67,7 +67,7 @@ if (sandbox.entregaAberta({ dia: 3, hh: 18, mm: 30, minutos: 1110 })) falha("as 
 else console.log("  ok  18:30 - entrega encerrada");
 
 console.log("\n=== NENHUM TEXTO FIXO DIZENDO 15H PARA ENTREGA ===");
-["app.js", "loja.js", "checkout.html", "index.html", "admin.html"].forEach(function (f) {
+["app.js", "loja.js", "index.html", "admin.html"].forEach(function (f) {
     const t = fs.readFileSync(path.join(dir, f), "utf8");
     t.split("\n").forEach(function (l, i) {
         if (/entrega/i.test(l) && /15h|15:00/.test(l) && !/pedido/i.test(l)) {

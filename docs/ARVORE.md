@@ -10,8 +10,11 @@ refrigerante-site/
 ├─ PAGINAS DO CLIENTE (o que o cliente vê)
 │  ├─ index.html .................... vitrine: busca, calendário, tabela de
 │  │                                informações (Minimizar), catálogo, ofertas
-│  ├─ carrinho.html ................. itens, +/− grandes, frete, limpar carrinho
-│  ├─ checkout.html ................. resumo, região, pagamento (Pix/Dinheiro)
+│  ├─ carrinho.html ................. ITENS + FINALIZACAO na mesma pagina:
+│  │                                quantidades, editar item, limpar carrinho,
+│  │                                bairro/regiao, endereco, pagamento
+│  │                                (Pix/Dinheiro) e o botao Finalizar pedido
+│  │                                (nao existe mais checkout.html)
 │  ├─ perfil.html ................... SÓ dados pessoais e contato + foto
 │  ├─ meus-pedidos.html ............. HISTÓRICO (pedidos, itens, total gasto,
 │  │                                avaliação por estrelas) — é a página do menu

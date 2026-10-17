@@ -27,7 +27,7 @@ tudo roda no navegador do cliente e os dados ficam em `localStorage`
 ```
                   navegador do cliente                    navegador do vendedor
   ┌──────────────────────────────────────────┐   ┌──────────────────────────────────┐
-  │ index / carrinho / checkout / meus-pedidos│   │ admin.html (painel)              │
+  │ index / carrinho / meus-pedidos│   │ admin.html (painel)              │
   │                                          │   │  - tabela de pedidos             │
   │  app.js      catálogo + preços + robbed │   │  - editor de preços              │
   │  loja.js     regiões, frete, horários   │   │  - ferramentas (calculadoras...)  │
@@ -66,7 +66,7 @@ Nunca usar o nome - se o nome mudar, o preço se perde. Nunca deixar a chave vaz
 (o código já protege isso: `chavePreco()` cai para `n:categoria|nome`).
 
 **Regra de ouro do dinheiro:** todo valor na tela passa por `formatBRL()` em
-`script.js` (carrinho, checkout, meus-pedidos, pedido-sucesso, painel e a
+`script.js` (carrinho, meus-pedidos, pedido-sucesso, painel e a
 mensagem do Telegram). Ela devolve sempre **2 casas, vírgula e ponto de milhar**
 (`R$ 4.260,00`). Nunca monte `"R$ " + valor.toFixed(...)` na mão: foi assim que
 o total do carrinho aparecia como `R$ 4260,00`.
@@ -79,8 +79,7 @@ o total do carrinho aparecia como `R$ 4260,00`.
 | Arquivo | Função |
 |---|---|
 | `index.html` | vitrine: header, busca, abas de categoria, grade de produtos, widgets, ajuda rápida |
-| `carrinho.html` | itens, quantidades, aviso de frete, **botão limpar carrinho** |
-| `checkout.html` | resumo, região de entrega, pagamento (Pix/Dinheiro), finalizar pedido |
+| `carrinho.html` | itens, quantidades, aviso de frete, **botão limpar carrinho**, bairro/região, endereço, pagamento (Pix/Dinheiro) e **finalizar pedido** — a finalização acontece nesta própria página (não existe mais `checkout.html`) |
 | `perfil.html` | dados do cliente (nome, CPF, endereço, foto) |
 | `meus-pedidos.html` | histórico e status dos pedidos do cliente |
 | `pedido-sucesso.html` | confirmação do pedido criado |
@@ -118,8 +117,8 @@ o total do carrinho aparecia como `R$ 4260,00`.
 
 - **Pedidos** só abrem das **08:50 às 15:00** (horário de São Paulo, `agoraSP()`).
 - **Bairros atendidos:** Japeri, Engenho Pedreira, Paracambi, Seropédica.
-  Bairro fora da lista **bloqueia** a finalização no checkout: o aviso aparece
-  no carrinho e no checkout e o pedido só sai depois que o cliente corrigir
+  Bairro fora da lista **bloqueia** a finalização: o aviso aparece
+  no carrinho e o pedido só sai depois que o cliente corrigir
   o bairro no perfil.
 - **Pedido um dia antes da entrega.** O pedido pode ser feito em **qualquer dia que antecede
   uma entrega** — ou seja, no dia anterior de cada dia de entrega da região:
@@ -131,7 +130,7 @@ o total do carrinho aparecia como `R$ 4260,00`.
   | Seropédica | Quinta e sexta | Sexta e Sábado |
   Fonte: `diasPedidoDaRegiao()` em `loja.js` (calcula: dia anterior de cada dia de entrega).
   Sábado e domingo não abrem pedidos. Quando hoje não é dia de pedidos da região,
-  o checkout **avisa** (não bloqueia).
+  o carrinho **avisa** (não bloqueia).
 - **Segunda-feira** não tem entrega: é o dia de pedidos do Japeri e Engenho Pedreira.
 - **Frete:** `calcularFrete(subtotal, regiaoId)` em `loja.js` é a fonte única.
   Grátis a partir de `freteGratisMinimo()` (padrão R$ 150, ajustável em Configurações).
@@ -312,7 +311,7 @@ Duas regras ao mexer nisso:
 ## 10. Como testar antes de publicar
 
 - `node .github/scripts/sync-catalogo.js` (confere o robô)
-- Abrir o site e testar: carrinho → checkout → finalizar → painel muda o status.
+- Abrir o site e testar: carrinho → finalizar → painel muda o status.
 - Painel: busca, tabela, ficha do pedido, calculadoras, exportar CSV.
 - Tema: trocar para cada um dos 5 temas e conferir legibilidade.
 - No celular: installed app, barra "Atualizar agora", tamanho da letra.
@@ -327,8 +326,8 @@ O site é como uma **loja de verdade em miniatura**:
   robô copia o que está no site oficial.
 - **Carrinho** = cesto; você escolhe a quantidade e vê quanto falta para o
   frete sair de graça.
-- **Checkout** = balcão: você escolhe a região (muda o frete e o dia de entrega)
-  e como quer pagar.
+- **Carrinho** = balcão: os itens, a região (que muda o frete e o dia de
+  entrega) e o pagamento ficam na mesma página do cesto.
 - **Painel do vendedor** = parte de trás da loja: tudo que entrou, com busca,
   botões de status e calculadoras.
 - **Telegram** = telefone interno: o pedido chega lá e você responde com
@@ -377,7 +376,7 @@ pede para limpar o histórico). Os preços é a única coisa compartilhada, pelo
 - Bairro fora da área de entrega: pedido **bloqueado** na finalização.
 - Bot: aviso de novo pedido + comandos (`/confirmar`, `/separacao`, `/enviado`, `/entregue`, `/cancelar`, `/ultimos`, `/status`, `/hoje`, `/ajuda`) + botões.
 - Bot 24/7: o robo `.github/scripts/bot-telegram.js` (workflow `.github/workflows/bot.yml`, a cada 5 min) processa os botoes e comandos no servidor, entao o bot funciona **mesmo com o painel fechado**; o status vai para o Firebase (`/pedidos`) e a mensagem e atualizada no chat. O painel e o robo compartilham o **mesmo offset** (`/bot/offset.json` no Firebase), entao o mesmo toque nunca e processado duas vezes.
-- Valor minimo para entrega: **R$ 100,00** (fonte unica em `loja.js`, `entregaMinima()`). Abaixo disso o checkout nao finaliza e o carrinho mostra quanto falta.
+- Valor minimo para entrega: **R$ 100,00** (fonte unica em `loja.js`, `entregaMinima()`). Abaixo disso a pagina nao finaliza e mostra quanto falta.
 - App: PWA instalado + APK (cliente e vendedor) disponíveis para download.
 - Temas: claro, guaraná, rosa, vermelho e escuro.
 - Pagamento: Pix e Dinheiro.

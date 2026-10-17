@@ -85,7 +85,7 @@ else ok("a chave de assinatura nao esta nesta pasta");
 console.log("\n=== 8. NENHUM SEGREDO DE VERDADE NO ARQUIVO ===");
 /* o projeto tem uma senha do painel em texto puro (limitacao conhecida,
    documentada). o que nao pode e chave de API/TOKEN_PRIVATE do firebase */
-const publicos = ["index.html", "carrinho.html", "checkout.html", "perfil.html", "meus-pedidos.html",
+const publicos = ["index.html", "carrinho.html", "perfil.html", "meus-pedidos.html",
     "pedido-sucesso.html", "configuracoes.html", "admin.html", "app.js", "script.js", "loja.js",
     "ia.js", "central.js", "conta.js", "theme.js", "telegram.js", "app-update.js", "sw.js"];
 const vazamentos = [];

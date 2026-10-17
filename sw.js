@@ -19,7 +19,6 @@ var ESSENCIAL = [
     "./",
     "index.html",
     "carrinho.html",
-    "checkout.html",
     "perfil.html",
     "meus-pedidos.html",
     "pedido-sucesso.html",

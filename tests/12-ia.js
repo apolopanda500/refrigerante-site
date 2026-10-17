@@ -12,7 +12,7 @@ const falha = (m) => { console.log("  ERRO " + m); erros++; };
 const ia = fs.readFileSync(path.join(dir, "ia.js"), "utf8");
 
 console.log("=== 1. IA NAS PAGINAS CERTAS ===");
-["index.html", "carrinho.html", "checkout.html", "perfil.html",
+["index.html", "carrinho.html", "perfil.html",
  "meus-pedidos.html", "pedido-sucesso.html", "configuracoes.html"].forEach(function (p) {
     const t = fs.readFileSync(path.join(dir, p), "utf8");
     if (t.indexOf("ia.js") < 0) falha(p + " nao carrega ia.js");

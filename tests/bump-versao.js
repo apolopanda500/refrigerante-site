@@ -14,7 +14,7 @@ if (!nova) {
 
 /* a versao atual e a que esta na maioria dos arquivos */
 const contas = {};
-["index.html", "carrinho.html", "checkout.html", "admin.html"].forEach(f => {
+["index.html", "carrinho.html", "admin.html"].forEach(f => {
     const t = fs.readFileSync(path.join(dir, f), "utf8");
     const m = t.match(/\?v=(2026\d+[a-z])/);
     if (m) contas[m[1]] = (contas[m[1]] || 0) + 1;
@@ -23,7 +23,7 @@ const antiga = Object.keys(contas).sort((a, b) => contas[b] - contas[a])[0];
 if (!antiga) { console.log("nao achei a versao atual"); process.exit(1); }
 if (antiga === nova) { console.log("ja esta na versao " + nova); process.exit(0); }
 
-const paginas = ["index.html", "carrinho.html", "checkout.html", "perfil.html", "meus-pedidos.html",
+const paginas = ["index.html", "carrinho.html", "perfil.html", "meus-pedidos.html",
     "pedido-sucesso.html", "configuracoes.html", "admin.html"];
 
 paginas.forEach(function (f) {

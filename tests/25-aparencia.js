@@ -60,7 +60,7 @@ else {
 }
 
 console.log("\n=== 6. A OPCAO VALE NAS PAGINAS DO CLIENTE ===");
-const paginas = ["index.html", "carrinho.html", "checkout.html", "perfil.html",
+const paginas = ["index.html", "carrinho.html", "perfil.html",
     "meus-pedidos.html", "pedido-sucesso.html", "configuracoes.html"];
 const semTema = paginas.filter(function (f) { return !/theme\.js/.test(ler(f)); });
 if (semTema.length) falha("estas paginas nao carregam o theme.js: " + semTema.join(", "));
