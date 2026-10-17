@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261017x">
+<link rel="manifest" href="manifest-vendedor.json?v=20261017y">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017x">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017y">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017x">
-<script src="theme.js?v=20261017x"></script>
+<link rel="stylesheet" href="style.css?v=20261017y">
+<script src="theme.js?v=20261017y"></script>
 
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -159,7 +159,7 @@ body.admin .filtro{font-size:.98rem;min-height:44px}
  background:#1b7f3b;color:#fff;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.18)}
 #avisoNovos .spacer{flex:1}
 #avisoNovos button{background:rgba(255,255,255,.2);border:0;color:#fff;cursor:pointer;
- border-radius:20px;padding:9px 16px;font-weight:800;min-height:42px}
+ border-radius:20px;padding:9px 16px;font-weight:800;min-height:44px}
 #avisoNovos .fechar{background:none;font-size:1.2rem;padding:0 6px;min-height:0}
 
 /* ===== CABECALHO DO PAINEL (so aqui, nao herda o da loja) =====
@@ -243,7 +243,7 @@ body.admin[data-leitura=vertical] .tabela-pedidos .td-id{margin-bottom:2px}
 body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes{display:flex;flex-wrap:wrap;gap:6px;white-space:normal;justify-content:flex-end}
 body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes::before{width:100%}
 body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-st,
-body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-zap{flex:1 1 auto;min-width:40px;max-width:64px;min-height:42px;padding:9px 6px}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-zap{flex:1 1 auto;min-width:40px;max-width:64px;min-height:44px;padding:9px 6px}
 /* a ficha do pedido (linha extra) fica dentro do mesmo cartao */
 body.admin[data-leitura=vertical] .tabela-pedidos .linha-ficha{
     margin:-6px 0 12px;box-shadow:none;background:none;border:0;padding:0;
@@ -354,7 +354,7 @@ body.admin[data-leitura=vertical] .ficha-tick .sub{display:block;margin-top:2px}
 .calc-destaque small{flex-basis:100%;font-size:.78rem;color:#767d95}
 .calc-divisor{border-top:2px solid #d5daf0;margin-top:6px;padding-top:8px}
 .calc-fim{margin-top:10px}
-.calc-copiar{margin-top:10px;min-height:42px;padding:10px 16px}
+.calc-copiar{margin-top:10px;min-height:44px;padding:10px 16px}
 .notas-lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .notas-item{
     border:1px solid #e6e8f0;border-radius:12px;padding:11px 12px;background:#fbfcfe;
@@ -444,7 +444,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     <h1><i class="fa fa-tachometer-alt"></i> Pedidos</h1>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">
       <span style="color:#888;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
-      <a class="btn-st b-copiar" href="apk/convencao-vendedor.apk" download target="_blank" rel="noopener" style="min-height:42px;padding:10px 14px;text-decoration:none"><i class="fa fa-android"></i> Baixar APK do painel</a>
+      <a class="btn-st b-copiar" href="apk/convencao-vendedor.apk" download target="_blank" rel="noopener" style="min-height:44px;padding:10px 14px;text-decoration:none"><i class="fa fa-android"></i> Baixar APK do painel</a>
     </div>
   </div>
   <div class="periodo-barra">
@@ -534,7 +534,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
         Depois de criar, volte aqui e clique em <b>Testar</b>. Se aparecer “Tudo certo”, é só editar os preços e clicar em <b>Salvar e aplicar</b>: todos os clientes veem na hora.
       </p>
     </div>
-    <button class="btn-st b-copiar" style="margin-top:10px;min-height:40px;padding:9px 16px" onclick="verPassoFirebase()"><i class="fa fa-question-circle"></i> Como criar o banco</button>
+    <button class="btn-st b-copiar" style="margin-top:10px;min-height:44px;padding:9px 16px" onclick="verPassoFirebase()"><i class="fa fa-question-circle"></i> Como criar o banco</button>
   </div>
   <div class="card" id="caixaFerramentas" style="margin-top:12px">
     <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-briefcase"></i> Ferramentas do vendedor</h3>
@@ -679,9 +679,9 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261017x"></script>
-<script src="loja.js?v=20261017x"></script>
-<script src="telegram.js?v=20261017x"></script>
+<script src="script.js?v=20261017y"></script>
+<script src="loja.js?v=20261017y"></script>
+<script src="telegram.js?v=20261017y"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -1807,9 +1807,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261017x"></script>
-<script src="firebase-appcheck.js?v=20261017x"></script>
-<script src="app-update.js?v=20261017x"></script>
+<script src="app.js?v=20261017y"></script>
+<script src="firebase-appcheck.js?v=20261017y"></script>
+<script src="app-update.js?v=20261017y"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
