@@ -34,3 +34,7 @@ app-debug.apk
 manifest-local.json
 manifest-vendedor-local.json
 logo.png
+
+# Cloudflare Wrangler (cache local e estado do deploy)
+.wrangler/
+

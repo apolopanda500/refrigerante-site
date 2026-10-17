@@ -1,0 +1,15 @@
+# ============================================
+#  CLOUDFLARE WORKER DO GATEWAY (plano gratuito)
+#  Gerado para a conta 03071acfcc40e9b53fa953e22d15942c
+#  Uso:  wrangler deploy   (depois de  wrangler login )
+# ============================================
+name = "convencao-gateway"
+main = "worker/convencao-gateway.js"
+compatibility_date = "2024-11-06"
+workers_dev = true
+
+# Plano gratuito do Cloudflare: 100.000 requisicoes por dia.
+# O site consulta o gateway em intervalos grandes (15 s a 2 min),
+# entao a folga e enorme mesmo com muitos clientes ao mesmo tempo.
+[observability]
+enabled = false
