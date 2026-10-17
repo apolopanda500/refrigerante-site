@@ -459,13 +459,14 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
 </nav></div></header>
 
 <section class="page"><div class="container">
-<div id="avisoAtendimento" class="regra-atendimento" style="display:none"></div>
 <div class="page-head">
   <h1><i class="fa fa-shopping-cart"></i> Meu Carrinho</h1>
 </div>
+<div id="avisoAtendimento" class="regra-atendimento" style="display:none"></div>
+
 <div class="cart-box" id="cartBox"></div>
+
 <div class="resumo" id="resumoBox"></div>
-<div class="caixa-limpar" id="infoRegiao" style="background:var(--bg-alt);border-color:var(--borda)"></div>
 
 <div class="caixa-bairro" id="caixaBairro">
   <div class="cb-cab"><i class="fa fa-map-marker-alt"></i> Onde você quer receber?</div>
@@ -481,9 +482,9 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
 </div>
 
 <div class="acoes">
-  <button class="btn btn-limpar-item" onclick="confirmarLimpar()" title="Esvaziar o carrinho"><i class="fa fa-trash"></i> Limpar carrinho</button>
   <a class="btn btn-secundario" href="index.html"><i class="fa fa-arrow-left"></i> Voltar ao catálogo</a>
-  <a class="btn btn-primario" href="checkout.html" id="btnCheckout"><i class="fa fa-credit-card"></i> Entrega e Pagamento</a>
+  <button class="btn btn-limpar-item" onclick="confirmarLimpar()" title="Esvaziar o carrinho"><i class="fa fa-trash"></i> Limpar carrinho</button>
+  <a class="btn btn-primario" href="checkout.html" id="btnCheckout"><i class="fa fa-credit-card"></i> Finalizar pedido</a>
 </div>
 </div></section>
 
@@ -765,7 +766,7 @@ function salvarBairroRegiao() {
     } catch (e) { }
 }
 
-/* monta o <select> e ja deixa o que estava salvo */
+/* monta o <select> de regiao e o input de bairro (simples, sem repetir) */
 function montarSeletorBairro() {
     const sel = document.getElementById("regiaoCarrinho");
     const inp = document.getElementById("bairroCarrinho");
@@ -773,30 +774,16 @@ function montarSeletorBairro() {
 
     let salvo = "";
     try { salvo = localStorage.getItem(K_REGIAO) || ""; } catch (e) { }
-    /* se o cliente ja tem bairro no perfil, usa como bairro */
     let bairroSalvo = "";
     try { bairroSalvo = localStorage.getItem(K_BAIRRO) || ""; } catch (e) { }
     if (!bairroSalvo) {
         try { bairroSalvo = (typeof Conta !== "undefined" && Conta.dados) ? (Conta.dados().bairro || "") : ""; } catch (e) { }
     }
-    /* se nao escolheu regiao antes, escolhe a do proprio bairro */
-    if (!salvo) {
-        try {
-            REGIOES.forEach(function (r) {
-                if (!salvo && (r.regioes || []).length) { /* nada a fazer aqui */ }
-            });
-            const peloNome = REGIOES.find(function (r) {
-                const b = semAcento(bairroSalvo);
-                return b && (semAcento(r.nome).indexOf(b) >= 0 || b.indexOf(semAcento(r.nome)) >= 0);
-            });
-            if (peloNome) salvo = peloNome.id;
-        } catch (e) { }
-    }
 
     sel.innerHTML = '<option value="">Escolha a regiao...</option>'
         + REGIOES.map(function (r) {
             return '<option value="' + r.id + '"' + (salvo === r.id ? " selected" : "") + '>'
-                 + r.nome + ' - entrega ' + r.diasTexto + '</option>';
+                 + r.nome + ' - ' + r.diasTexto + '</option>';
         }).join("");
 
     if (inp) inp.value = bairroSalvo;
@@ -831,29 +818,25 @@ function atualizarDiasCarrinho(r) {
         texto = "Pedidos de <b>" + r.nome + "</b> na " + (typeof textoDiasPedido === "function" ? textoDiasPedido(r) : "-")
               + ". Entrega " + r.diasTexto.toLowerCase() + ", das " + r.horario + ".";
     }
-    el.innerHTML = '<div class="aviso ' + classe + '"><i class="' + icone + '"></i> <span>' + texto + '</span></div>';
+    el.innerHTML = '<div class="aviso ' + classe + '"><i class="' + icone + ' tag-hoje"></i> <span>' + texto + '</span></div>';
 }
 
-/* ===== regiao e dia de entrega no carrinho (simples, sem repetir) ===== */
+/* lista simplificada de regioes (sem duplicar com a caixa-bairro) */
 function pintarRegiaoCarrinho(){
-    var el = document.getElementById("infoRegiao");
+    var el = document.getElementById("diasCarrinho");
     if (!el || typeof REGIOES === "undefined") return;
     var d = new Date().getDay();
-    var h = '<div class="cl-tx" style="color:var(--text-color)"><b><i class="fa fa-truck"></i> Sua entrega</b>'
-          + '</div>';
     var linhas = "";
     REGIOES.forEach(function (r) {
         var hoje = r.dias.indexOf(d) >= 0;
-        linhas += '<div class="vend-dia' + (hoje ? " hoje" : "") + '">'
-                + '<span class="dia-nome">' + r.nome + (hoje ? ' <span class="tag-hoje">HOJE</span>' : '') + '</span>'
-                + '<span class="reg-dias">' + r.diasTexto + '</span></div>';
+        linhas += '<div class="reg-lista-item"><span class="reg-lista-nome">' + r.nome + '</span>'
+                + '<span class="reg-lista-dias">' + r.diasTexto + (hoje ? ' <span class="tag-hoje">HOJE</span>' : '') + '</span></div>';
     });
-    el.innerHTML = '<div class="cl-tx" style="color:var(--text-color);margin-bottom:8px">'
-        + '<b><i class="fa fa-map-marker-alt"></i> Regioes de atendimento</b>'
-        + '<span style="display:block;font-weight:500;color:var(--text-color);margin-top:2px">'
-        + 'Cada bairro tem dias proprios de entrega.</span></div>'
-        + '<div class="reg-lista">' + linhas + '</div>';
+    el.innerHTML += '<div class="reg-lista">' + linhas + '</div>';
 }
+
+/* regiao e dia de entrega sao mostrados na caixa-bairro (sem repetir) */
+function pintarRegiaoCarrinho(){ /* mantido vazio: regiao ja aparece na caixa-bairro acima */ }
 
 /* ===== regra de atendimento: horario + bairro ===== */
 function atualizarAvisoCarrinho(){
@@ -892,6 +875,7 @@ function atualizarAvisoCarrinho(){
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", atualizarAvisoCarrinho);
 else atualizarAvisoCarrinho();
+
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintarRegiaoCarrinho);
 else pintarRegiaoCarrinho();
 
