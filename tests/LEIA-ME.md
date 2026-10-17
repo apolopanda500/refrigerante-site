@@ -8,7 +8,7 @@ Toda alteração passa por aqui antes de ir para o ar.
 node tests/rodar-todos.js
 ```
 
-O comando roda **todas** as 37 baterias e só termina com `TUDO 10/10`
+O comando roda **todas** as 38 baterias e só termina com `TUDO 10/10`
 se nenhuma falhar. Acompanhe cada arquivo:
 
 | Arquivo | O que confere |
@@ -50,6 +50,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `35-dia-de-trabalho.js` | **Dia de trabalho (simulação)**: 5 clientes de 4 regiõesCriam pedido em 5 aparelhos, o painel junta tudo, o dono confirma/separa/envia/entrega, edita o bairro, cancela, reabre, fecha o dia (faturamento, ticket, itens), busca por nome/telefone/bairro, exporta CSV e o botão do Telegram aplica o mesmo passo |
 | `36-robo-telegram.js` | **Robô do Telegram de verdade**: roda o bot com Telegram e banco falsos — botão Confirmar grava status, 6 comandos respondem, intruso é recusado, dado quebrado não derruba e 8 horários (08:45, 09:00, 14:59, 15:00, 17:00, sábado, domingo) batem entre loja, pedido e entrega |
 | `37-vida-do-site.js` | **Vida completa do site**: carrinho → mínimo → pedido → confirmação → avaliação, mais entrada hostil (pedido sem nome, carrinho corrompido, nome com HTML, 200 letras) sem quebrar nada |
+| `38-banco-fechado.js` | **Banco fechado**: as regras nao abrem nada, o gateway so fala com o banco pela conta de servico, preco continua publico, so o dono lista e muda status, o cliente ve so o pedido dele com a chave dele, pedido malformado e recusado e o robo so entra com o segredo |
 | `36-37` | Fluxo completo com o robô, o cliente e o dono, incluindo entradas que quebram sistemas de verdade |
 
 ## CSS: como confere e como limpa

@@ -1,0 +1,37 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "_observacao": [
+      "BANCO FECHADO DE VERDADE.",
+      "Nao existe mais nenhum caminho aberto: quem fala com o banco e o",
+      "GATEWAY (worker/convencao-gateway.js) usando a conta de servico do",
+      "Firebase (Admin SDK contorna estas regras por design).",
+      "O preco continua publico de leitura, porque todo cliente precisa ver",
+      "o preco da bebida - porem a ESCRITA e do gateway (o dono publica).",
+      "Sem o gateway no ar, o site para de sincronizar: faca o passo a passo",
+      "em docs/FECHAR-BANCO.md e so entao cole estas regras."
+    ],
+
+    "precos": {
+      ".read": true,
+      ".write": false
+    },
+
+    "pedidos": {
+      ".read": false,
+      ".write": false
+    },
+
+    "avaliacoes": {
+      ".read": false,
+      ".write": false
+    },
+
+    "bot": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}
