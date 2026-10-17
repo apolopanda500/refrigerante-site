@@ -89,13 +89,51 @@ function enviar(texto) {
     return tg("sendMessage", { chat_id: CHAT, text: texto, disable_web_page_preview: true }).catch(() => {});
 }
 
-/* ---------- Firebase Realtime Database ---------- */
+/* ---------- Firebase Realtime Database ----------
+   MODO GATEWAY (o banco fechado): com GATEWAY_URL e BOT_SEGREDO no
+   GitHub, o robo passa a falar com o gateway, que e o unico que
+   tem permissao no banco. Sem essas variaveis, ele continua no
+   caminho antigo (banco aberto) - que e o botao de voltar.
+
+   O gateway ja entrega tudo que o robo precisa em uma chamada:
+   GET /api/bot devolve {pedidos, offset}; POST /api/bot grava o
+   offset e o pedido inteiro (o robo muda o status localmente e
+   devolve o pedido, como sempre fez). */
+const GATEWAY = (process.env.GATEWAY_URL || "").trim().replace(/\/+$/, "");
+const BOT_SEGREDO = (process.env.BOT_SEGREDO || "").trim();
+const VIA_GATEWAY = Boolean(GATEWAY && BOT_SEGREDO);
+const CAB_BOT = { "Content-Type": "application/json", "X-Bot-Segredo": BOT_SEGREDO };
+
+function gatewayGet() {
+    return fetch(GATEWAY + "/api/bot?t=" + Date.now(), { cache: "no-store", headers: CAB_BOT })
+        .then((r) => {
+            if (r.status === 403) throw new Error("o gateway nao aceitou o segredo do robo (BOT_SEGREDO)");
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+        });
+}
+function gatewayGravar(valores) {
+    /* valores = {offset?, pedido?} */
+    return fetch(GATEWAY + "/api/bot", { method: "POST", headers: CAB_BOT, body: JSON.stringify(valores) })
+        .then((r) => {
+            if (r.status === 403) throw new Error("o gateway nao aceitou o segredo do robo (BOT_SEGREDO)");
+            if (!r.ok) throw new Error("HTTP " + r.status);
+        });
+}
+
 function fbGet(path) {
+    if (VIA_GATEWAY) return gatewayGet().then((d) => (d || {})[path.replace(/\.json$/, "")] || null);
     return fetch(BASE + path + "?t=" + Date.now(), { cache: "no-store" })
         .then((r) => r.text())
         .then((t) => { try { return JSON.parse(t); } catch (e) { return null; } });
 }
 function fbPut(path, valor) {
+    if (VIA_GATEWAY) {
+        if (/\/pedidos\//.test(path)) {
+            return gatewayGravar({ pedido: valor }).then(function () { return fbGet("/pedidos.json"); });
+        }
+        if (/\/bot\/offset\.json/.test(path)) return gatewayGravar({ offset: valor });
+    }
     return fetch(BASE + path, {
         method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(valor)
     }).then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); });

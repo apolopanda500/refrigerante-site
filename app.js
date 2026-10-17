@@ -1076,6 +1076,21 @@ function puxarPrecosNuvem(cb){
 /* grava os precos editados (so banco; arquivo estatico e so leitura) */
 function enviarPrecosNuvem(cb){
   if (typeof fetch !== "function"){ if (cb) cb(false, "nuvem nao configurada"); return; }
+  /* modo gateway: o dono publica pelo caminho seguro (com token) */
+  if (typeof gatewayLigado === "function" && gatewayLigado() && typeof gatewayCabecalhoDono === "function"){
+    fetch(gatewayURL() + "/api/precos", {
+      method: "PUT",
+      headers: Object.assign({ "Content-Type":"application/json" }, gatewayCabecalhoDono()),
+      body: JSON.stringify({ precos: precosLocais() })
+    })
+      .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
+      .then(function(res){
+        if (!res.ok) { if (cb) cb(false, (res.d && res.d.erro) || "recusado"); return; }
+        if (cb) cb(true, "ok");
+      })
+      .catch(function(){ if (cb) cb(false, "gateway nao respondeu"); });
+    return;
+  }
   var lista = listaEnderecos(), i = 0;
   (function tentar(){
     if (i >= lista.length){ if (cb) cb(false, "nuvem nao configurada"); return; }

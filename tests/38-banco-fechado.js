@@ -223,6 +223,103 @@ console.log("\n=== 2. O GATEWAY CARREGA E TEM AS ROTAS CERTAS ===");
     });
     ok("guia cobre conta de servico, Cloudflare e as regras");
 
+    /* ============================================================
+       11. O SITE SABE FALAR COM O GATEWAY
+       Sem isto o gateway e um beco sem salida: o navegador
+       continuaria falando direto no Firebase e, com o banco
+       fechado, o cliente pararia de fazer pedido. Aqui
+       conferimos que cada tela usa a rota certa e que o modo
+       antigo continua de pe (o botao de voltar).
+       ============================================================ */
+    console.log("\n=== 11. O SITE FALA COM O GATEWAY (e sabe voltar) ===");
+    const script = ler("script.js");
+    const app = ler("app.js");
+    const admin = ler("admin.html");
+
+    if (!/function gatewayURL\s*\(/.test(script)) falha("script.js nao tem gatewayURL() (o site nao sabe onde esta o gateway)");
+    else ok("script.js tem gatewayURL() - le a URL do campo Banco");
+    if (!/vendedorPrefs[\s\S]{0,400}refrigerantePrefs|refrigerantePrefs[\s\S]{0,400}vendedorPrefs/.test(script) &&
+        !/noPainel\s*\?\s*"vendedorPrefs"/.test(script)) {
+        falha("gatewayURL() nao separa painel (vendedorPrefs) de cliente (refrigerantePrefs)");
+    } else ok("cada lado le o seu proprio prefs (painel e cliente nao se misturam)");
+
+    /* campo vazio = modo antigo. E o botao de voltar. */
+    if (!/return "";/.test(script) || !/modo antigo/i.test(script)) falha("o modo antigo (campo Banco vazio) ficou sem caminho");
+    else ok("campo Banco vazio = modo antigo: o botao de voltar continua de pe");
+
+    /* o cliente cria pelo /api/pedido e GUARDA a chave */
+    if (!/POST|\/api\/pedido/.test(script) || script.indexOf("/api/pedido") < 0) falha("o cliente nao cria pedido pelo /api/pedido");
+    else ok("cliente cria pedido em /api/pedido");
+    if (!/gwGuardarChave/.test(script)) falha("o cliente nao guarda a chave do pedido");
+    else ok("o cliente guarda a chave dele (localStorage) - sem ela nao acompanha o pedido");
+    /* o cliente so le o pedido DELE, com a chave no cabecalho */
+    if (script.indexOf("/api/meu-pedido") < 0) falha("o cliente nao acompanha o pedido pelo /api/meu-pedido");
+    else ok("cliente acompanha em /api/meu-pedido");
+    if (!/X-Chave-Pedido/.test(script)) falha("a chave nao vai no cabecalho X-Chave-Pedido");
+    else ok("a chave vai no cabecalho X-Chave-Pedido (so o gateway le)");
+
+    /* o dono entra e leva o token */
+    if (!/function gatewayEntrar\s*\(/.test(script)) falha("nao ha login do dono no gateway");
+    else ok("gatewayEntrar(): a senha do painel vira token de 12h");
+    if (!/Authorization\s*=\s*"Bearer\s*"/.test(script)) falha("o token nao vai no cabecalho Authorization");
+    else ok("o token vai como Authorization: Bearer");
+    /* o gateway tem de aceitar o prefixo Bearer (bug que ja aconteceu) */
+    if (!/bearer/i.test(ler(ARQ_GW))) falha("o gateway nao aceita 'Authorization: Bearer ...' (so o token cru)");
+    else ok("o gateway aceita 'Bearer <token>' e o token cru (mudou so num lado e quebrou o outro)");
+
+    /* listar, mudar status e editar pelo caminho seguro */
+    if (script.indexOf("/api/pedidos") < 0) falha("o dono nao lista pedidos pelo /api/pedidos");
+    else ok("dono lista em /api/pedidos (so com token)");
+    if (script.indexOf("/api/status") < 0) falha("o dono nao muda status pelo /api/status");
+    else ok("dono muda status em /api/status");
+    if (app.indexOf("/api/precos") < 0) falha("o painel nao publica preco pelo gateway");
+    else ok("preco sai por /api/precos (com token)");
+    if (script.indexOf("/api/avaliar") < 0) falha("a avaliacao do cliente nao passa pelo gateway");
+    else ok("avaliacao do cliente em /api/avaliar");
+    /* a valva tambem precisa funcionar com o banco fechado */
+    if (script.indexOf("/api/capacidade") < 0) falha("a valva do dia nao tem rota no gateway");
+    else ok("valva do dia em /api/capacidade (leitura publica, escrita so com token)");
+    if (!/rota === "\/api\/capacidade"/.test(ler(ARQ_GW))) falha("o gateway nao tem a rota /api/capacidade");
+    else ok("o gateway tem a rota /api/capacidade");
+
+    /* o ROBO DO TELEGRAM tambem tem que falar com o gateway: com o
+       banco fechado, ele nao consegue mais ler nem mudar pedido */
+    const bot = ler(".github/scripts/bot-telegram.js");
+    if (!/GATEWAY_URL/.test(bot)) falha("o robo do Telegram nao sabe onde esta o gateway");
+    else ok("o robo do Telegram le GATEWAY_URL do GitHub");
+    if (!/BOT_SEGREDO/.test(bot)) falha("o robo do Telegram nao manda o segredo dele");
+    else ok("o robo manda X-Bot-Segredo (o segredo so dele)");
+    if (bot.indexOf("/api/bot") < 0) falha("o robo nao usa a rota /api/bot do gateway");
+    else ok("o robo le e grava por /api/bot");
+    if (!/VIA_GATEWAY/.test(bot)) falha("o robo nao tem modo gateway");
+    else ok("robo tem os dois caminhos: com gateway no GitHub usa o seguro; sem ele, o modo antigo");
+    /* o /editar do bot: ele grava o pedido inteiro, que o gateway aceita */
+    if (!/gatewayGravar\(\{ pedido: valor \}\)/.test(bot)) falha("o robo nao devolve o pedido inteiro pelo gateway");
+    else ok("quando o robo muda o status, ele devolve o pedido inteiro pelo /api/bot");
+
+    /* cada rede tem o caminho antigo como reserva: nada some no meio da troca */
+    ["enviarPedidoNuvem", "sincronizarPedidosNuvem", "sincronizarPedidosCliente"].forEach(function (fn) {
+        const i = script.indexOf("function " + fn + "(");
+        const bloco = script.slice(i, i + 700);
+        if (i < 0) falha("perdi a funcao " + fn);
+        else if (!/gatewayLigado\(\)/.test(bloco)) falha(fn + " nao olha o modo gateway: sem isso o site nemouz no caminho seguro");
+        else ok(fn + " tem os dois caminhos (gateway ou modo antigo)");
+    });
+    if (!/function enviarPedidoNuvemDireto/.test(script)) falha("perdi o caminho direto do pedido (reserva do modo antigo)");
+    else ok("o caminho direto continua existindo: se o gateway cair, o pedido tenta o banco de antes");
+    /* o login do painel tem que passar pelo gateway antes de abrir */
+    if (!/gatewayEntrar/.test(admin)) falha("o login do painel nao pede token ao gateway");
+    else ok("o painel so abre depois que o gateway aceita a senha");
+    /* a ferramenta de teste ao vivo existe e avisa que cria pedido de teste */
+    const arqTeste = path.join(dir, "tools", "testar-gateway.js");
+    if (!fs.existsSync(arqTeste)) falha("faltou tools/testar-gateway.js (o teste ao vivo do Worker)");
+    else {
+        ok("tools/testar-gateway.js testa o Worker de verdade");
+        const txt = fs.readFileSync(arqTeste, "utf8");
+        if (!/nao apaga pedido|não apaga pedido|NAO apaga pedido/.test(txt)) falha("o teste ao vivo nao avisa que o pedido de teste NAO e apagado");
+        else ok("o teste ao vivo avisa que o pedido de teste fica cancelado, nao apagado");
+    }
+
     console.log("\n" + (erros === 0 ? "*** BANCO FECHADO 10/10 ***" : "*** " + erros + " ERRO(S) NO BANCO FECHADO ***"));
     process.exit(erros ? 1 : 0);
 })();

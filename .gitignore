@@ -38,6 +38,12 @@ logo.png
 # Cloudflare Wrangler (cache local e estado do deploy)
 .wrangler/
 
+# SEGREDOS: chave da conta de servico e senhas do gateway.
+# NUNCA no git. O tools/subir-gateway.js apaga ao final, mas fica
+# ignorado aqui para o caso de o script morrer no meio do caminho.
+worker/secrets.json
+worker/SEGREDOS-LOCAIS.txt
+
 # ferramenta de uso LOCAL (so desta maquina): abre um servidor em localhost
 # e captura o codigo do Google na mao. Nao e parte do site e nao entra no git
 tools/login-google.js

@@ -334,11 +334,12 @@ Duas regras ao mexer nisso:
 - **O usuário não diferencia maiúscula de minúscula** (`credenciaisConfere()` /
   `normalizarUsuario()`). Senão digitar `Apolopanda500` ou `apolopanda500` trava
   o dono fora depois de 5 tentativas — e o painel inteiro fica inacessível.
-- **O login é só para esconder a tela.** O `script.js` é público: quem abrir o
-  código-fonte vê as duas linhas. Quem protege os dados de verdade são as
-  **regras do Firebase** — o banco está em modo teste, então os pedidos e as
-  avaliações são públicos para quem tiver a URL. Em produção, restrinja pelo
-  Firebase.
+- O banco está em modo teste, então os pedidos e as avaliações são públicos. **O
+  gateway já está publicado** (`worker/convencao-gateway.js`, Cloudflare Worker)
+  e o site tem os **dois modos**: campo *Banco* vazio = caminho antigo; com a
+  URL do gateway = cliente cria pedido em `/api/pedido` e ganha uma chave, dono
+  entra em `/api/entrar` e leva token de 12 h. Fechar as regras só é seguro
+  depois de apontar o painel para o gateway (`docs/FECHAR-BANCO.md`).
 ---
 
 ## 10. Como testar antes de publicar

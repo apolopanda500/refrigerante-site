@@ -763,6 +763,25 @@ function entrar() {
            com a conta certa, veja os pedidos de todo mundo */
         sessionStorage.setItem("adminLogado", "1");
         sessionStorage.setItem("adminDono", String(Date.now()));
+        /* modo gateway: a MESMA senha libera o token de 12h do gateway,
+           que e o que passa a falar com o banco fechado. Senha errada
+           no gateway = painel sem token = nenhum pedido carrega. */
+        if (typeof gatewayLigado === "function" && gatewayLigado() && typeof gatewayEntrar === "function") {
+            gatewayEntrar(s, function (ok, motivo) {
+                if (ok) { mostrarPainel(); return; }
+                sessionStorage.removeItem("adminLogado");
+                sessionStorage.removeItem("adminDono");
+                document.getElementById("painelTela").style.display = "none";
+                if (typeof gatewaySair === "function") gatewaySair();
+                var aviso = document.getElementById("loginErro") || erro;
+                if (aviso) {
+                    aviso.innerText = "O gateway recusou a senha (" + String(motivo || "") +
+                        "). Sem ele o painel não consegue ler os pedidos. Confira a senha e a URL do Banco.";
+                    aviso.style.display = "block";
+                }
+            });
+            return;
+        }
         mostrarPainel();
     } else {
         tentativas++;
@@ -887,9 +906,12 @@ function limiteLojaDiaAdmin() {
 function publicarCapacidadeLoja(cb) {
     if (typeof fetch !== "function" || typeof diaLimite !== "function") { if (cb) cb(false); return; }
     var doDia = (typeof pedidosDoDia === "function") ? pedidosDoDia(getPedidos()) : [];
-    var corpo = JSON.stringify({
-        dia: diaLimite(), pedidos: doDia.length, limite: limiteLojaDiaAdmin(), quando: Date.now()
-    });
+    var dia = diaLimite(), quantos = doDia.length, teto = limiteLojaDiaAdmin();
+    /* modo gateway: publica pelo caminho seguro (o dono, com token) */
+    if (typeof gatewayLigado === "function" && gatewayLigado()) {
+        return publicarCapacidadeGateway(dia, quantos, teto, cb);
+    }
+    var corpo = JSON.stringify({ dia: dia, pedidos: quantos, limite: teto, quando: Date.now() });
     var bases = (typeof nuvemEnderecos === "function") ? nuvemEnderecos() : [];
     var i = 0;
     (function tentar() {

@@ -75,8 +75,13 @@ async function assinar(conteudo) {
 }
 async function tokenValido(token) {
     try {
-        if (!token || String(token).indexOf(".") < 0) return false;
-        const partes = String(token).split(".");
+        /* o cliente manda "Authorization: Bearer <token>". Aceitamos
+           os dois formatos (com e sem o prefixo), porque mudar so num
+           lado quebraria o outro - e o gateway ja estava publicado. */
+        let bruto = String(token || "").trim();
+        if (/^bearer\s+/i.test(bruto)) bruto = bruto.replace(/^bearer\s+/i, "");
+        if (!bruto || bruto.indexOf(".") < 0) return false;
+        const partes = bruto.split(".");
         const dado = JSON.parse(new TextDecoder().decode(b64.dec(partes[0])));
         if (!dado.exp || dado.exp < Date.now()) return false;
         const esperado = await assinar(partes[0]);
@@ -267,6 +272,25 @@ async function rotear(req, env) {
         if (corpo.offset !== undefined) await banco("/bot/offset.json", "PUT", corpo.offset);
         if (corpo.pedido) await banco("/pedidos/" + encodeURIComponent(corpo.pedido.id) + ".json", "PUT", corpo.pedido);
         return json({ ok: true });
+    }
+
+    /* 12) a valva do dia: quantas vagas de pedidos ainda tem.
+       Leitura publica (sao SO numeros: dia/pedidos/limite, nenhum dado
+       de cliente); escrita so o dono, com o token da sessao. */
+    if (rota === "/api/capacidade") {
+        if (metodo === "GET") return json(await banco("/capacidade.json", "GET"));
+        if (metodo === "PUT") {
+            if (!(await tokenValido(req.headers.get("Authorization")))) return json({ erro: "faça login" }, 401);
+            const c = await lerCorpo(req);
+            const dia = String(c.dia || "").slice(0, 10);
+            const pedidos = parseInt(c.pedidos, 10);
+            const limite = parseInt(c.limite, 10);
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(dia)) return json({ erro: "dia invalido" }, 400);
+            if (isNaN(pedidos) || pedidos < 0 || isNaN(limite) || limite < 1) return json({ erro: "contagem invalida" }, 400);
+            return json(await banco("/capacidade.json", "PUT", {
+                dia: dia, pedidos: pedidos, limite: limite, quando: Date.now()
+            }));
+        }
     }
 
     return json({ erro: "rota nao encontrada" }, 404);

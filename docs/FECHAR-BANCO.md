@@ -90,13 +90,36 @@ https://SUA_URL/api/precos
 
 ## Passo 4 — Apontar o site para o gateway
 
-No painel do vendedor, em **Configurações do painel → Banco**, cole a
-URL do gateway e salve. Enquanto o campo ficar **vazio**, o site
-continua no modo antigo (direto no banco) — é o botão de voltar.
+O site tem **dois modos**, e a troca é só o campo **Banco**:
+
+| Campo "Banco" | O que acontece | Quando usar |
+|---|---|---|
+| **vazio** | modo antigo: o navegador fala direto no Firebase (banco aberto) | botão de voltar; antes de fechar |
+| **URL do gateway** | tudo passa pelo gateway: o cliente cria o pedido em `/api/pedido` e ganha uma **chave**, o dono entra em `/api/entrar` e leva um **token de 12 h** | para poder fechar o banco |
+
+**No painel:** *Configurações do painel → Banco*, cole
+`https://convencao-gateway.rickjax123.workers.dev` e salve.
+**No cliente:** cada aparelho tem o campo dele (*Configurações → Banco*);
+enquanto estiver vazio, o pedido dele ainda sai pelo caminho antigo
+(também certo: o pedido fica gravado no aparelho e o dono consegue ver).
+
+**O que muda para o cliente:** nada na tela. O que muda é por onde o pedido
+passa — e que a **chave do pedido fica guardada só no aparelho dele**
+(`localStorage: convencaoChaves`). É essa chave que permite acompanhar o
+pedido depois; sem ela o gateway devolve 403, como deve ser.
+
+**Ordem que não quebra nada:** painel primeiro, cliente depois, regras por
+último. Cada passo tem teste:
+
+```powershell
+node tools/testar-gateway.js      # Worker de verdade: cria 1 pedido de teste,
+                                  # confere chave/token/403 e CANCELA o teste
+```
 
 Depois, no repositório, publique: o `.github/scripts/bot-telegram.js`
-passa a usar o gateway quando as variáveis `GATEWAY_URL` e
-`BOT_SEGREDO` estiverem no GitHub (**Settings → Secrets**).
+passa a usar o gateway quando `GATEWAY_URL` e `BOT_SEGREDO` estiverem no
+GitHub (**Settings → Secrets**). O valor do `BOT_SEGREDO` é o que está
+em `worker/SEGREDOS-LOCAIS.txt` (arquivo local, fora do git).
 
 ## Passo 5 — Fechar o banco (o passo que muda tudo)
 

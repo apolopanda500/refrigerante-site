@@ -342,6 +342,220 @@ function nuvemEnderecos() {
 }
 
 /* ============================================
+   MODO GATEWAY - O CAMINHO DO BANCO FECHADO
+   ============================================
+   Campo "Banco" VAZIO = modo antigo: o navegador fala direto
+   no Firebase (banco aberto). Esse e o botao de voltar.
+
+   Campo "Banco" com a URL do gateway = tudo passa por ele e o
+   banco pode ser fechado, porque quem fala com o Firebase e so
+   o gateway (com a conta de servico). A Diferenca de formato:
+     - o cliente cria o pedido em POST /api/pedido e GANHA UMA
+       CHAVE; so com essa chave ele volta a ler o pedido dele;
+     - o dono entra com a senha em POST /api/entrar e recebe um
+       token de 12h; so com ele ele lista e muda status;
+     - ninguem mais le o pedido dos outros.
+
+   A chave e o token NUNCA vao para a nuvem: ficam so neste
+   aparelho (localStorage e sessionStorage).
+   ============================================ */
+var GW_CHAVES = "convencaoChaves";      /* pedido -> chave do gateway */
+var GW_TOKEN = "convencaoToken";        /* token do dono (12h) */
+
+/* a URL do gateway, se o dono colar no campo "Banco".
+   navegador do cliente = refrigerantePrefs; painel = vendedorPrefs */
+function gatewayURL() {
+    try {
+        var noPainel = /admin\.html$/i.test((typeof location !== "undefined" && location.pathname) || "");
+        var chave = noPainel ? "vendedorPrefs" : "refrigerantePrefs";
+        var u = "";
+        try { u = String((JSON.parse(localStorage.getItem(chave) || "{}")).cfgPrecosURL || ""); } catch (e) { u = ""; }
+        u = u.trim().replace(/\/+$/, "");
+        /* so mesmo e o gateway: URL de arquivo .json ou de outro
+           banco NAO entra neste modo */
+        if (u && !/\.json$/i.test(u) && /\/api|workers\.dev|convencao-gateway/i.test(u)) return u;
+    } catch (e) { /* proposital: sem preferencia e o modo antigo */ }
+    return "";
+}
+function gatewayLigado() { return gatewayURL() !== ""; }
+
+/* headers do dono (painel). Sem token, o gateway recusa. */
+function gatewayCabecalhoDono(extra) {
+    var h = extra || {};
+    try {
+        var t = sessionStorage.getItem(GW_TOKEN);
+        if (t) h.Authorization = "Bearer " + t;
+    } catch (e) { /* proposital: aba anonima nao guarda sessao */ }
+    return h;
+}
+
+/* ---------- chave do pedido (o cliente guarda a dele) ---------- */
+function gwGuardarChave(id, chave) {
+    if (!id || !chave) return;
+    try {
+        var mapa = JSON.parse(localStorage.getItem(GW_CHAVES) || "{}");
+        mapa[id] = chave;
+        localStorage.setItem(GW_CHAVES, JSON.stringify(mapa));
+    } catch (e) { /* proposital: guardar preferencia nunca pode travar o pedido */ }
+}
+function gwChaveDoPedido(id) {
+    try { return (JSON.parse(localStorage.getItem(GW_CHAVES) || "{}"))[id] || ""; }
+    catch (e) { return ""; }
+}
+
+/* ---------- o dono entra e ganha o token de 12 horas ----------
+   Senha errada devolve 401 e nao guarda nada: o painel nao
+   entra no modo gateway e o dono ve o erro na tela. */
+function gatewayEntrar(senha, cb) {
+    var u = gatewayURL();
+    if (!u) { if (cb) cb(false, "sem gateway"); return; }
+    try {
+        fetch(u + "/api/entrar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ senha: String(senha || "") })
+        })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+            if (!res.ok || !res.d || !res.d.token) { if (cb) cb(false, "senha invalida"); return; }
+            try { sessionStorage.setItem(GW_TOKEN, res.d.token); } catch (e) { /* aba anonima */ }
+            if (cb) cb(true, "ok");
+        })
+        .catch(function () { if (cb) cb(false, "gateway nao respondeu"); });
+    } catch (e) { if (cb) cb(false, "erro"); }
+}
+function gatewayToken() {
+    try { return sessionStorage.getItem(GW_TOKEN) || ""; } catch (e) { return ""; }
+}
+function gatewaySair() { try { sessionStorage.removeItem(GW_TOKEN); } catch (e) {} }
+
+/* ============================================
+   PEDIDO NOVO PELO GATEWAY
+   O pedido ja esta salvo no aparelho: se o gateway falhar,
+   ele tenta o caminho antigo e o cliente nunca perde a venda.
+   ============================================ */
+function enviarPedidoGateway(pedido, cb) {
+    var u = gatewayURL();
+    if (!u || !pedido || !pedido.id) { if (cb) cb(false, "sem gateway"); return; }
+    try {
+        fetch(u + "/api/pedido", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pedido: pedido })
+        })
+            .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+            .then(function (res) {
+                if (!res.ok || !res.d || !res.d.chave) { if (cb) cb(false, "recusado"); return; }
+                /* a chave e o que permite acompanhar o pedido depois */
+                gwGuardarChave(pedido.id, res.d.chave);
+                if (cb) cb(true, "ok");
+            })
+            .catch(function () { if (cb) cb(false, "sem rede"); });
+    } catch (e) { if (cb) cb(false, "erro"); }
+}
+
+/* ---------- o cliente acompanha o pedido DELE (so com a chave) ---------- */
+function sincronizarPedidosGateway(callback) {
+    var u = gatewayURL();
+    var meus = getPedidos().filter(function (p) { return p && p.id && gwChaveDoPedido(p.id); });
+    if (!u || !meus.length) { if (callback) callback(getPedidos()); return; }
+    var n = meus.length, nuvem = [], respondeu = false;
+    function devolve() {
+        if (respondeu) return;
+        respondeu = true;
+        var junto = mesclarPedidos(getPedidos(), nuvem);
+        if (JSON.stringify(junto) !== JSON.stringify(getPedidos())) savePedidos(junto);
+        if (callback) callback(junto);
+    }
+    setTimeout(devolve, 8000);
+    meus.forEach(function (p) {
+        fetch(u + "/api/meu-pedido?id=" + encodeURIComponent(p.id), {
+            cache: "no-store",
+            headers: { "X-Chave-Pedido": gwChaveDoPedido(p.id) }
+        })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (d) { if (d && d.id) nuvem.push(d); })
+            .catch(function () { /* proposital: um pedido que nao respondeu nao derruba os outros */ });
+    });
+    setTimeout(devolve, 1500 + n * 120);
+}
+
+/* ---------- o dono lista tudo pelo gateway (so com o token) ---------- */
+function sincronizarPedidosGatewayDono(callback) {
+    var u = gatewayURL();
+    if (!u) { if (callback) callback(null); return; }
+    try {
+        fetch(u + "/api/pedidos", { cache: "no-store", headers: gatewayCabecalhoDono() })
+            .then(function (r) {
+                if (r.status === 401) return { naoentrou: true };
+                if (!r.ok) throw new Error("http " + r.status);
+                return r.json();
+            })
+            .then(function (dados) {
+                if (dados && dados.naoentrou) { if (callback) callback(null, "sem token"); return; }
+                var nuvem = (dados && typeof dados === "object")
+                    ? Object.keys(dados).map(function (k) { return dados[k]; }).filter(Boolean)
+                    : [];
+                var atual = getPedidos();
+                var junto = mesclarPedidos(atual, nuvem);
+                if (JSON.stringify(junto) !== JSON.stringify(atual)) savePedidos(junto);
+                if (callback) callback(junto);
+            })
+            .catch(function () { if (callback) callback(null); });
+    } catch (e) { if (callback) callback(null); }
+}
+
+/* ---------- o dono muda o status pelo gateway ---------- */
+function mudarStatusGateway(id, status, cb) {
+    var u = gatewayURL();
+    if (!u) { if (cb) cb(false, "sem gateway"); return; }
+    try {
+        fetch(u + "/api/status", {
+            method: "POST",
+            headers: Object.assign({ "Content-Type": "application/json" }, gatewayCabecalhoDono()),
+            body: JSON.stringify({ id: id, status: status })
+        })
+            .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+            .then(function (res) {
+                if (res.ok && res.d && res.d.pedido && res.d.pedido.id) {
+                    savePedidos(mesclarPedidos(getPedidos(), [res.d.pedido]));
+                    if (cb) cb(true, res.d.pedido);
+                    return;
+                }
+                if (cb) cb(false, "recusado");
+            })
+            .catch(function () { if (cb) cb(false, "sem rede"); });
+    } catch (e) { if (cb) cb(false, "erro"); }
+}
+
+/* ============================================
+   CAPACIDADE DO DIA PELO GATEWAY (a valva)
+   ============================================ */
+function publicarCapacidadeGateway(dia, pedidos, limite, cb) {
+    var u = gatewayURL();
+    if (!u) { if (cb) cb(false, "sem gateway"); return; }
+    try {
+        fetch(u + "/api/capacidade", {
+            method: "PUT",
+            headers: Object.assign({ "Content-Type": "application/json" }, gatewayCabecalhoDono()),
+            body: JSON.stringify({ dia: dia, pedidos: pedidos, limite: limite })
+        })
+            .then(function (r) { if (cb) cb(r.ok); })
+            .catch(function () { if (cb) cb(false); });
+    } catch (e) { if (cb) cb(false); }
+}
+function puxarCapacidadeGateway(cb) {
+    var u = gatewayURL();
+    if (!u) { if (cb) cb(false); return; }
+    try {
+        fetch(u + "/api/capacidade", { cache: "no-store" })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (d) { if (d) guardarCapacidade(d); if (cb) cb(!!d); })
+            .catch(function () { if (cb) cb(false); });
+    } catch (e) { if (cb) cb(false); }
+}
+
+/* ============================================
    CAPACIDADE DO DIA - a valva global da loja
    So o PAINEL publica: ele e o unico lugar que ve os
    pedidos de todos os aparelhos, entao e o unico que sabe
@@ -372,6 +586,10 @@ function guardarCapacidade(dados) {
 }
 function puxarCapacidadeNuvem(cb) {
     if (typeof fetch !== "function") { if (cb) cb(false); return; }
+    /* modo gateway: a valva tambem passa pelo caminho seguro */
+    if (typeof gatewayLigado === "function" && gatewayLigado()) {
+        return puxarCapacidadeGateway(cb);
+    }
     var lista = nuvemEnderecos(), i = 0;
     (function tentar() {
         if (i >= lista.length) { if (cb) cb(false); return; }
@@ -387,6 +605,17 @@ function puxarCapacidadeNuvem(cb) {
     })();
 }
 function enviarPedidoNuvem(pedido) {
+    if (!pedido || !pedido.id) return;
+    /* modo gateway: o pedido vai pelo caminho seguro e o cliente
+       ganha a CHAVE dele. Se o gateway nao responder, cai no
+       caminho antigo (modo em que o banco ainda esta aberto). */
+    if (typeof gatewayLigado === "function" && gatewayLigado() && typeof enviarPedidoGateway === "function") {
+        enviarPedidoGateway(pedido, function (ok) { if (!ok) enviarPedidoNuvemDireto(pedido); });
+        return;
+    }
+    enviarPedidoNuvemDireto(pedido);
+}
+function enviarPedidoNuvemDireto(pedido) {
     if (!pedido || !pedido.id) return;
     var corpo = JSON.stringify(pedido);
     var bases = nuvemEnderecos();
@@ -496,6 +725,10 @@ function mesclarPedidos(locais, nuvem) {
 /* baixa os pedidos de todos os aparelhos (primeiro banco responde vale);
    salva a juncao e chama o callback com a lista (ou null se ninguem respondeu) */
 function sincronizarPedidosNuvem(callback) {
+    /* modo gateway: so o dono logado lista, pelo caminho seguro */
+    if (typeof gatewayLigado === "function" && gatewayLigado()) {
+        return sincronizarPedidosGatewayDono(callback);
+    }
     var bases = nuvemEnderecos();
     var i = 0;
     function tentar() {
@@ -519,6 +752,11 @@ function sincronizarPedidosNuvem(callback) {
 /* baixa da nuvem SO os pedidos do telefone do cliente e junta com os locais.
    Para a notificacao acompanhar o status que o vendedor mudou. */
 function sincronizarPedidosCliente(callback) {
+    /* modo gateway: o cliente so ve o pedido DELE, e so com a chave
+       que o gateway devolveu na hora da criacao */
+    if (typeof gatewayLigado === "function" && gatewayLigado()) {
+        return sincronizarPedidosGateway(callback);
+    }
     if (typeof Conta === "undefined") { if (callback) callback(getPedidos()); return; }
     var tels = [];
     try { (Conta.dados().tel || "").toString(); } catch(e){/* proposital: a conta pode nao existir ainda */}
@@ -578,6 +816,17 @@ function saveAvaliacoesLocais(lista) {
 }
 function enviarAvaliacaoNuvem(av) {
     if (!av || !av.id) return;
+    /* modo gateway: a avaliacao tambem passa pelo caminho seguro */
+    if (typeof gatewayLigado === "function" && gatewayLigado()) {
+        try {
+            fetch(gatewayURL() + "/api/avaliar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ avaliacao: av })
+            }).catch(function () { /* proposital: avaliacao e um extra, nao pode travar o app */ });
+        } catch (e) { /* proposital: avaliacao e um extra, nao pode travar o app */ }
+        return;
+    }
     var corpo = JSON.stringify(av);
     nuvemEnderecos().forEach(function (base) {
         try {
@@ -793,7 +1042,12 @@ function atualizarStatus(id, novoStatus) {
         p.atualizadoEm = Date.now();
         savePedidos(pedidos);
         /* a mudanca tambem vai para a nuvem (outro aparelho enxerga na hora) */
-        if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(p); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */} }
+        if (typeof gatewayLigado === "function" && gatewayLigado()) {
+            /* modo gateway: o dono manda o status pelo caminho seguro */
+            if (typeof mudarStatusGateway === "function") {
+                try { mudarStatusGateway(id, novoStatus); } catch(e){/* proposital: mudar status nunca pode travar o painel */}
+            }
+        } else if (typeof enviarPedidoNuvem === "function") { try { enviarPedidoNuvem(p); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */} }
     }
     return p;
 }
