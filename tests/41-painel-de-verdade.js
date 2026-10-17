@@ -325,9 +325,9 @@ function conectar(url) {
     })()`);
     const texto = String(csv.valor || "");
     const temCabecalho = /Pedido;Data;Status/.test(texto);
-    const temColunas = texto.split(";")[0].split(";").length >= 13;
+    const colunas = (texto.split(/\r?\n/)[0] || "").split(";").length;
     const temOCliente = texto.indexOf("TESTE BATERIA 41") >= 0;
-    if (temCabecalho && temColunas && temOCliente) ok("Exportar montou o CSV com as 13 colunas e o pedido do cliente");
+    if (temCabecalho && colunas >= 13 && temOCliente) ok("Exportar montou o CSV com " + colunas + " colunas e o pedido do cliente");
     else falha("CSV sem cabecalho/13 colunas/cliente: " + texto.slice(0, 90));
 
     console.log("\n=== 11. NENHUM CONTROLE DO PAINEL ABAIXO DE 44PX ===");
