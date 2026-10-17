@@ -139,7 +139,8 @@ o total do carrinho aparecia como `R$ 4260,00`.
   Sem região selecionada, cobra-se a menor região — **nunca** frete grátis por engano.
 - **Pagamento:** somente Pix e Dinheiro. Cartão não existe mais.
 - **Preço:** o dono manda. O robô **nunca** altera preço; só usa o do site oficial
-  para produto **novo** que ainda não tem preço na base.
+  para produto **novo** que ainda não tem preço na base — e, se o site oficial
+  renomear um produto, o preço do dono é **resgatado pelo código** (ver §5).
 - **Catálogo:** o robô lê o site oficial às 10:00 e atualiza produtos e fotos.
 - **Limite de pedidos por dia (a válvula):** fonte única em `loja.js`.
   | Trava | Padrão | Quem conta | Onde é consultada |
@@ -178,6 +179,12 @@ node .github/scripts/sync-catalogo.js
 - Extrai nome, descrição, preço, foto e grupo de cada produto.
 - Escolhe a categoria **pelo produto** (ignora o grupo "DESTAQUES" do site oficial).
 - Mantém o preço de `precos-base.json`; produto novo usa o preço do site uma vez só.
+- **Preço é sempre o do dono — nunca o do site oficial.** O casamento com
+  `precos-base.json` é por palavra-chave, então o robô **resgata o preço anterior
+  pelo código do produto** (`key`, que não muda quando o nome muda) caso o site
+  oficial renomeie o item. Assim o preço do dono não se perde por mudança de nome,
+  e só produto **realmente novo** (sem preço seu e sem histórico) entra pelo preço
+  do site — uma vez só, e avisado no Telegram (`precosResgatados` no resumo).
 - Baixa as fotos novas para `img/cat/<código>.jpg`.
 - Grava `catalogo.json` e `ultimo-resumo.json`.
 

@@ -90,6 +90,8 @@ Como ficou (tudo com fonte única em `loja.js`, `checaLimitePedidos()`):
 | 18 | `/capacidade` abriu leitura pública sem a bateria 38 saber | `38-banco-fechado` acusou | allow-list com justificativa + bloco novo provando que só leva número |
 | 19 | Comentário com telefone escrito à mao no `loja.js` | `28-consistencia` | comentário reescrito (fonte única é `contatoLoja()`) |
 | 20 | `tools/login-google.js` (auxiliar local, não é do site) ficou sem commit e derrubava `22-entrega` | `22-entrega` | `.gitignore` (arquivo preservado na máquina, fora do repo público) |
+| 21 | O cabeçalho do `sync-catalogo.js` dizia **"preco vem sempre do site oficial"** — o contrário do que o código faz | leitura do robô ao auditar os preços | comentário corrigido para a regra real |
+| 22 | O casamento do preço é por palavra-chave: se o site oficial **renomear** um produto, o preço do dono se perde e o oficial entraria no catálogo | auditoria dos 44 preços contra o site oficial | **resgate pelo código do produto** (`key`), que não muda quando o nome muda + aviso no resumo/Telegram |
 
 ### Publicação (versão 20261017v)
 
@@ -104,6 +106,16 @@ Como ficou (tudo com fonte única em `loja.js`, `checaLimitePedidos()`):
   tem `CLIENT_ID` público dentro; o dono decide se versiona.
 
 ## 3. Decisões
+
+- **Preço é do dono — sempre.** O dono falou: *"os preços não é para ser igual do
+  site oficial. são meus preços"*. Auditei os 44 produtos contra `precos-base.json`
+  **e contra o site oficial**, rodando a lógica real do robô:
+  **42 no ar com o preço dele, 2 com preço que ele mesmo editou no painel,
+  0 vindos do site oficial** (o site oficial cobra menos em 43 dos 44 — a margem
+  é dele e o robô nunca aplica). Dois reforços para que isso não dependa de
+  sorte: o comentário do robô que dizia o contrário foi corrigido, e o preço
+  agora é **resgatado pelo código do produto** quando o site oficial renomeia o
+  item.
 
 - **Preço é do dono.** O robô do catálogo **detecta** a mudança de preço
   no site oficial e avisa no Telegram, mas **nunca aplica**. Motivo:

@@ -78,6 +78,85 @@ else ok("o workflow avisa no Telegram quando o preco diverge do site");
 if (!/id: deteccao/.test(yml)) falha("faltou o passo deteccao no workflow (o aviso nunca sairia)");
 else ok("passo deteccao existe no workflow (o aviso tem quando rodar)");
 
+console.log("\n=== 3c. NOME MUDOU: O PRECO DO DONO E RESGATADO (nunca vira preco oficial) ===");
+/* regra do dono: o preco e DELE. O casamento com precos-base.json e por
+   palavra chave, entao mudanca de nome no site oficial poderia fazer o
+   produto entrar pelo preco oficial. O robo resgata pelo CODIGO. */
+if (!/precoAnterior/.test(robo)) falha("o robo nao resgata o preco anterior do dono");
+else ok("o robo guarda o preco anterior por codigo de produto");
+if (!/precoResgatado/.test(robo)) falha("o robo nao marca o preco resgatado");
+else ok("produto que perdeu o casamento por nome fica marcado como resgatado");
+if (!/p\.key\s*\?\s*precoAnterior\[p\.key\]/.test(robo)) falha("o resgate nao e pelo codigo do produto (key)");
+else ok("o resgate e pelo CODIGO do produto, que nao muda quando o nome muda");
+if (!/resgatados/.test(robo)) falha("o robo nao avisa qual produto teve o nome mudado");
+else ok("o robo avisa no console qual produto teve o nome mudado no site oficial");
+if (!/precosResgatados/.test(robo)) falha("o resumo da rodada nao registra os precos resgatados");
+else ok("ultimo-resumo.json registra os precos resgatados (a bateria 33 le esse arquivo)");
+/* o que importa: hoje NENHUM produto publicado esta pelo preco do site */
+if (!Array.isArray(resumo.precosOficiaisNovos) || resumo.precosOficiaisNovos.length) {
+    falha("existe produto no catalogo usando preco do site oficial: " +
+        (resumo.precosOficiaisNovos || []).map(function (p) { return p.nm; }).join(", "));
+} else ok("nenhum produto esta usando preco do site oficial (so entra produto novo sem preco seu)");
+/* e a base cobre tudo que esta publicado */
+const basePrecos = JSON.parse(ler("precos-base.json"));
+const nmBase = basePrecos.map(function (b) { return String(b.nm).toLowerCase(); });
+if (!basePrecos.length) falha("precos-base.json esta vazio: o dono nao tem preco de nada");
+else ok("precos-base.json tem " + basePrecos.length + " preco(s) do dono");
+
+/* ---- EXECUTANDO o resgate de verdade (nao e so ler o arquivo) ----
+   Cenario: o site oficial renomeou um produto (o nome mudou, o codigo
+   nao). O preco do dono tem de continuar; so produto realmente novo
+   entra pelo preco do site, uma vez so. */
+const iniResg = robo.indexOf("const precoAnterior = {");
+const fimResg = robo.indexOf("const saida = {", iniResg);
+const bloco = (iniResg >= 0 && fimResg > iniResg) ? robo.slice(iniResg, fimResg) : null;
+if (!bloco) {
+    falha("nao achei o trecho do resgate para executar");
+} else {
+    const codigo = bloco + "\nreturn {precoAnterior, resgatados, semPrecoDono};";
+    const anterior = { produtos: [
+        { key: "K1", nm: "Guarana 2L", pr: "R$ 27,00" },      /* seu preco, de ontem */
+        { key: "K3", nm: "Guarana 350ml", pr: "R$ 19,00" }
+    ] };
+    const produtos = [
+        /* nome mudou no site, codigo igual: tem que resgatar R$ 27,00 */
+        { nm: "Guarana Convencao 2L", key: "K1", pr: 24.34, precoBase: null, precoOficial: 24.34 },
+        /* produto INEDITO: so este pode entrar pelo preco do site */
+        { nm: "Sabor Inedito 350ml", key: "K9", pr: 16.5, precoBase: null, precoOficial: 16.5 },
+        /* produto que ainda tem preco seu: nao entra no resgate */
+        { nm: "Guarana 350ml", key: "K3", pr: 19, precoBase: "19,00", precoOficial: 16.12 }
+    ];
+    let r;
+    try {
+        const f = new Function("anterior", "produtos", codigo);
+        r = f(anterior, produtos);
+    } catch (e) {
+        falha("o resgate quebrou ao executar: " + e.message);
+        r = null;
+    }
+    if (r) {
+        if (produtos[0].pr !== 27 || !produtos[0].precoResgatado) {
+            falha("nome mudou e o robo NAO rescatou o preco do dono: ficou " + produtos[0].pr);
+        } else {
+            ok("nome mudou, codigo igual: preco do dono RESGATADO (R$ 24,34 do site -> R$ 27,00 seu)");
+        }
+        if (r.resgatados.indexOf("Guarana Convencao 2L") < 0) falha("o robo nao avisou qual produto foi resgatado");
+        else ok("o robo avisa o nome que mudou (" + r.resgatados.join(", ") + ")");
+        if (produtos[1].precoResgatado) falha("produto inedito foi marcado como resgatado");
+        else if (produtos[1].pr !== 16.5) falha("produto inedito perdeu o preco");
+        else ok("produto realmente novo entra pelo preco do site (so uma vez) e fica na lista de aviso");
+        if (r.semPrecoDono.indexOf("Sabor Inedito 350ml") < 0) falha("produto inedito nao foi listado como preco pendente do dono");
+        else ok("produto inedito fica na lista 'ajuste o preco do dono' do resumo");
+        if (produtos[2].precoResgatado) falha("produto que ja tinha preco do dono foi marcado como resgatado");
+        else ok("produto que ja tem preco do dono nao e tocado");
+    }
+}
+if (resumo.precosResgatados) {
+    ok("ultima rodada registrada: " + resumo.precosResgatados.length + " preco(s) resgatado(s)");
+} else {
+    ok("ultimo-resumo.json e da rodada anterior a este recurso (o campo aparece na proxima)");
+}
+
 console.log("\n=== 4. O CATALOGO ESTA SAO (nome, preco, foto, categoria) ===");
 let semFoto = [], semNome = [], semCategoria = [];
 lista.forEach(function (p) {

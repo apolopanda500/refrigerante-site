@@ -9,11 +9,14 @@
    .github/workflows/catalogo.yml). Pode rodar na
    mao tambem:  node .github/scripts/sync-catalogo.js
 
-   Regras:
+Regras:
    - produto que some do site oficial sai do
      catalogo daqui tambem (esta em falta);
-   - preco vem sempre do site oficial;
-   - horarios, regiões e regras de pedido NAO sao
+   - preco NUNCA vem do site oficial: quem manda e o
+     dono, em precos-base.json. O preco do site so
+     entra para produto NOVO, sem preco seu ainda, e
+     uma vez so (para nunca aparecer sem preco);
+   - horarios, regiones e regras de pedido NAO sao
      tocados aqui (ficam em loja.js).
    ============================================ */
 
@@ -320,6 +323,38 @@ function principal() {
                     /* preco no formato do site: R$ 31,00 */
                     const brl = function (v) { return "R$ " + Number(v).toFixed(2).replace(".", ","); };
 
+                    /* ---------- RESGATE DO PRECO DO DONO ----------
+                       Regra do dono: o preco e DELE, nunca o do site oficial.
+                       O casamento de nome com precos-base.json e por palavra
+                       chave, entao se o site oficial mudar o nome do produto
+                       (sabor novo, "2L" virando "2 L") o casamento cai e o
+                       preco oficial entraria no catalogo.
+
+                       Aqui o preco anterior e resgatado pelo CODIGO do produto
+                       (key), que NAO muda quando o nome muda. Assim:
+                         - produto nunca perde o preco do dono por mudanca de nome;
+                         - nada nunca entra no catalogo pelo preco do site
+                           oficial sem ser produto realmente novo;
+                         - e o robo avisa qual ficou com o preco pendente. */
+                    const precoAnterior = {};
+                    (anterior ? (anterior.produtos || []) : []).forEach(function (p) {
+                        if (p.key && p.pr) precoAnterior[p.key] = p.pr;
+                    });
+                    const resgatados = [], semPrecoDono = [];
+                    produtos.forEach(function (p) {
+                        if (p.precoBase !== null) return;                 /* ja tem preco do dono */
+                        const velho = p.key ? precoAnterior[p.key] : null;
+                        const antigoNum = velho ? parseFloat(String(velho).replace(/R\$/i, "").replace(/\./g, "").replace(",", ".")) : null;
+                        if (!isNaN(antigoNum) && antigoNum > 0) {
+                            p.pr = antigoNum;
+                            p.precoResgatado = true;
+                            resgatados.push(p.nm);
+                        } else if (p.pr) {
+                            /* produto realmente novo: so agora entra pelo preco do site */
+                            semPrecoDono.push(p.nm);
+                        }
+                    });
+
                     const saida = {
                         geradoEm: new Date().toISOString(),
                         fonte: FONTE,
@@ -353,9 +388,12 @@ function principal() {
                     }
 
                     /* preco: o robo NUNCA muda. So produto novo (sem preco
-                       do dono) pega o preco do site uma unica vez. */
+                       do dono E sem preco anterior) pega o preco do site
+                       uma unica vez. */
                     const doDono = produtos.filter(function (p) { return p.precoBase !== null; }).length;
-                    const novosComPrecoOficial = produtos.filter(function (p) { return p.precoBase === null; });
+                    const novosComPrecoOficial = produtos.filter(function (p) {
+                        return p.precoBase === null && !p.precoResgatado;
+                    });
 
                     /* DETECCAO: o dono mudou o preco no site oficial.
                        O robo NAO aplica sozinho (preco e do dono): ele avisa
@@ -378,6 +416,7 @@ function principal() {
                         novos: novos,
                         sumiram: sumiram,
                         precosDoDono: doDono,
+                        precosResgatados: resgatados,
                         precosOficiaisNovos: novosComPrecoOficial.map(function (p) {
                             return { nm: p.nm, pr: p.precoOficial };
                         }),
@@ -391,6 +430,11 @@ function principal() {
                     console.log("Entraram: " + novos.length + (novos.length ? " -> " + novos.join(", ") : ""));
                     console.log("Saíram (acabaram): " + sumiram.length + (sumiram.length ? " -> " + sumiram.join(", ") : ""));
                     console.log("Preços do dono mantidos: " + doDono + " de " + saida.produtos.length + " (o robo não altera preços)");
+                    if (resgatados.length) {
+                        console.log("\n!! NOME MUDOU NO SITE OFICIAL - o preco do dono foi RESGATADO pelo codigo do produto:");
+                        resgatados.forEach(function (nm) { console.log("   " + nm + " (continua com o preco que voce cadastrou)"); });
+                        console.log("   Se o produto ganhou sabor/medida nova, cadastre o preco em precos-base.json.");
+                    }
                     if (novosComPrecoOficial.length) {
                         console.log("Produto NOVO usando preço do site (ajuste no painel quando quiser):");
                         novosComPrecoOficial.forEach(function (p) { console.log("   " + p.nm + " — R$ " + p.precoOficial); });
