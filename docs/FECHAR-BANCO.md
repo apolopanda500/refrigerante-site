@@ -41,6 +41,23 @@ e só o painel (ou o gateway) escreve nela.
 
 ## Passo 2 — Publicar o gateway no Cloudflare (10 min)
 
+> **Situação em 17/10/2026: o código JÁ ESTÁ PUBLICADO**
+> (`wrangler deploy` na conta `rickjax123`, versão `ca4141e1`) em
+> <https://convencao-gateway.rickjax123.workers.dev>.
+> O teste ao vivo deu `{"ok":true,"banco":true,"servo":false}` —
+> ou seja, **o Worker está de pé e esperando só a conta de serviço**
+> (passo 1). As rotas que exigem senha já recusam sem ela
+> (`/api/pedidos` → 401, `/api/bot` → 403), e `/api/precos` devolve 500
+> em vez de vazar preço. O site continua funcionando do jeito antigo:
+> ninguém aponta para o gateway ainda, então **nada quebrou**.
+>
+> O que falta é o passo 1 (a chave). Feito isso, é só rodar:
+> ```powershell
+> node tools/subir-gateway.js
+> ```
+> O script lê o JSON de `Downloads`, sobe os 6 segredos, republica e
+> testa ao vivo — e **apaga o JSON da chave do disco** no final.
+
 1. Crie uma conta em <https://dash.cloudflare.com> (tem plano grátis).
 2. **Workers & Pages → Create → Worker** → nome: `convencao-gateway` → Deploy.
 3. **Edit code**: cole o conteúdo de `worker/convencao-gateway.js` (deste repositório) e **Deploy**.

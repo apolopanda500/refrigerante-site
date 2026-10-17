@@ -159,9 +159,14 @@ dono fecha**, porque exigem conta, senha e decisão de negócio:
 
 1. 🔴 **O banco do Firebase está aberto** (leitura e escrita): qualquer
    pessoa com a URL do projeto lê os pedidos com CPF e ainda apaga.
-   Passo a passo em `docs/FECHAR-BANCO.md` (o gateway já está escrito e
-   testado pela bateria 38 — falta publicar no Cloudflare e colar as
-   regras).
+   **Confirmado ao vivo em 17/10/2026**: `GET /pedidos.json` → HTTP 200 com
+   nome, telefone, CPF, endereço e bairro preenchidos. Passo a passo em
+   `docs/FECHAR-BANCO.md`.
+   **O que já está pronto:** o gateway foi **publicado** na conta
+   Cloudflare do dono (`convencao-gateway.rickjax123.workers.dev`) e testado
+   ao vivo — de pé, com as rotas sensíveis recusando (401/403). Falta **só a
+   chave da conta de serviço** (5 min no console do Firebase), e depois
+   `node tools/subir-gateway.js` sobe os 6 segredos e apaga a chave do disco.
 2. 🔴 **O token do Telegram está no código público** (`script.js`,
    `telegram.js` e os workflows). Trocar o bot e guardar o token novo
    em **GitHub Secrets** + no gateway, nunca no site.
