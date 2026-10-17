@@ -436,12 +436,20 @@ function sincronizarPedidosCliente(callback) {
     if (!tels.length) { if (callback) callback(getPedidos()); return; }
     var bases = nuvemEnderecos();
     var i = 0;
+    var respondido = false;
+    function devolver(lista) {
+        if (respondido) return;
+        respondido = true;
+        if (callback) callback(lista);
+    }
+    setTimeout(function() { devolver(getPedidos()); }, 8000);
     function tentar() {
-        if (i >= bases.length) { if (callback) callback(getPedidos()); return; }
+        if (respondido || i >= bases.length) { devolver(getPedidos()); return; }
         var base = bases[i++];
         fetch(base + "/pedidos.json", { cache: "no-store" })
             .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
             .then(function (dados) {
+                if (respondido) return;
                 var nuvem = (dados && typeof dados === "object")
                     ? Object.keys(dados).map(function (k) { return dados[k]; }).filter(function (p) {
                         return p && p.id && tels.some(function (t) {
@@ -452,9 +460,9 @@ function sincronizarPedidosCliente(callback) {
                 var atual = getPedidos();
                 var junto = mesclarPedidos(atual, nuvem);
                 if (JSON.stringify(junto) !== JSON.stringify(atual)) savePedidos(junto);
-                if (callback) callback(junto);
+                devolver(junto);
             })
-            .catch(function () { tentar(); });
+            .catch(function () { if (!respondido) tentar(); });
     }
     tentar();
 }
