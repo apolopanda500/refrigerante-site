@@ -80,8 +80,9 @@ function iaContexto() {
     var linhas = [];
     try {
         linhas.push("Loja: Refrigerantes Convencao (delivery de bebidas).");
-        linhas.push("Horario de pedidos: 08:50 as 15:00, de segunda a sexta.");
-        linhas.push("Entrega nas ruas: 06:00 as 18:00.");
+        /* horario vem da loja.js (fonte unica): a IA nao pode discordar da tela */
+        linhas.push("Horario de pedidos: " + janelaPedidosTexto() + ", de segunda a sexta.");
+        linhas.push("Entrega nas ruas: " + janelaEntregaTexto() + ".");
         linhas.push("Pagamento: Pix ou Dinheiro na entrega (sem cartao).");
         linhas.push("Frete gratis em pedidos a partir de " +
             (typeof formatBRL === "function" ? formatBRL(typeof freteGratisMinimo === "function" ? freteGratisMinimo() : 150) : "R$ 150,00") + ".");
@@ -100,7 +101,7 @@ function iaContexto() {
                 return p.nm + " = " + p.pr;
             }).join("; ") + ".");
         }
-        linhas.push("Contato/WhatsApp: (21) 9-8315-8911.");
+        linhas.push("Contato/WhatsApp: " + iaZapFmt() + ".");
     } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
     var txt = linhas.join("\n");
     if (txt.length > 4000) txt = txt.slice(0, 3950) + "\n...(catalogo cortado)";
@@ -110,6 +111,126 @@ function iaContexto() {
 /* ---------- intents do motor local ----------
    devolve { texto, intencao, confianca, rapido }
    rapido = fato: responde SEMPRE local (nunca erra um fato) */
+/* ---------- RESPOSTAS ESPECIFICAS (antes das genericas) ----------
+   Aqui mora o que tem palavra propria: "sabado", "cancelar", "chave pix",
+   "prazo". Se ficassem depois, as regras genericas ("entrega", "horario",
+   "pagamento") engoliam a pergunta e a IA respondia a coisa errada. */
+function iaRespostaEspecifica(q, bruto, res) {
+    /* falar com humano (vendedor x motorista) */
+    if (/falar com|atendente|humano|alguem|reclamacao|reclamar|problema com|ajuda com|ligar|motorista/.test(q)) {
+        var alvoH = (typeof iaHumanoPara === "function") ? iaHumanoPara(bruto) : null;
+        if (alvoH && alvoH.numero) {
+            return res(alvoH.quem + ": " + alvoH.numeroFmtado + "\n" + alvoH.link +
+                (alvoH.motivo ? "\n(" + alvoH.motivo + ")" : ""), "humano", 0.96, true);
+        }
+        return res("Posso chamar o vendedor: WhatsApp " + iaZapFmt() + ".", "humano", 0.8, false);
+    }
+
+
+    /* 10) contato */
+    if (/telefone|whatsapp|zap|contato|numero/.test(q)) {
+        return res("WhatsApp da loja: " + iaZapFmt() + "\nhttps://wa.me/" + iaZapNum() + "\nE-mail: " + iaEmail(), "contato", 0.98, true);
+    }
+
+    /* 11) valor MINIMO do pedido (regra do carrinho) */
+    if (/minimo|minima|quanto.*(pedido|compra)|pedido minimo|valor minimo/.test(q)) {
+        var minE = (typeof entregaMinima === "function") ? entregaMinima() : 100;
+        return res("O pedido minimo para entrega e " +
+            (typeof formatBRL === "function" ? formatBRL(minE) : "R$ " + minE) +
+            ". Abaixo disso o site nao deixa fechar o pedido e mostra quanto falta.", "minimo", 0.97, true);
+    }
+
+    /* 12) entrega hoje / chega hoje / prazo */
+    if (/chega hoje|entrega hoje|hoje entrega|demora|prazo|quando chega|recebo hoje|entregam hoje/.test(q)) {
+        var stE = (typeof estadoEntrega === "function") ? estadoEntrega() : null;
+        var stL = (typeof estadoLoja === "function") ? estadoLoja() : null;
+        var regioesHoje = (typeof regioesDoDia === "function" && typeof agoraSP === "function")
+            ? regioesDoDia(agoraSP().dia).map(function (r) { return r.nome; }).join(", ") : "";
+        return res(
+            (regioesHoje ? "Hoje entregamos em: " + regioesHoje + ".\n" : "Hoje nao tem entrega na rua.\n")
+            + (stE ? "Freteiro: " + stE.texto.toLowerCase() + " (das " + janelaEntregaTexto() + ").\n" : "")
+            + (stL ? "Loja: " + stL.texto.toLowerCase() + ".\n" : "")
+            + "O pedido e feito um dia antes da entrega.",
+            "prazo", 0.95, true);
+    }
+
+    /* 13) saturday / sunday / fim de semana */
+    if (/sabado|domingo|fim de semana|final de semana/.test(q)) {
+        var stS = (typeof estadoLoja === "function") ? estadoLoja({ dia: 6, minutos: 10 * 60 }) : null;
+        return res("No sabado a loja fica fechada e sai so a entrega (" + (stS ? stS.texto.toLowerCase() : "so entrega") + ").\n"
+            + "No domingo a loja nao abre e o freteiro nao entrega.",
+            "fimDeSemana", 0.98, true);
+    }
+
+    /* 14) cancelar / mudar um pedido ja feito */
+    if (/cancel[a-z]*|desistir|nao quero mais|nao quero o pedido|alterar meu pedido|mudar o pedido|refazer o pedido/.test(q)) {
+        var meusC = (typeof getPedidos === "function") ? getPedidos().slice(0, 2) : [];
+        var ultimo = meusC[0];
+        if (ultimo) {
+            return res("Seu pedido mais recente e o " + ultimo.id + " (" +
+                (typeof STATUS_LABEL !== "undefined" ? (STATUS_LABEL[ultimo.status] || ultimo.status) : ultimo.status) + ").\n"
+                + "Para cancelar ou corrigir dados, chame a loja no WhatsApp " + iaZapFmt() + " e diga o numero do pedido. "
+                + "No painel o vendedor usa o comando /cancelar ou /editar.",
+                "cancelar", 0.94, true);
+        }
+        return res("Nao achei pedido seu neste aparelho. Se voce ja fez um pedido, chame a loja no WhatsApp " +
+            iaZapFmt() + " com o numero do pedido que o vendedor cancela ou corrige.", "cancelar", 0.9, true);
+    }
+
+    /* 15) dados / perfil / endereco (antes de cancelar: "corrigir o endereco" e perfil) */
+    if (/meus dados|meu perfil|cadastro|atualizar telefone|meu telefone|meu endereco|endereco|corrigir o endereco|alterar endereco|meu cep|\bcep\b/.test(q)) {
+        return res("Nome, WhatsApp, CPF, endereco e bairro ficam na pagina Perfil (menu superior).\n"
+            + "O endereco tambem aparece no carrinho, na parte \"Entrega e pagamento\", e o que voce digitar la e salvo no perfil.",
+            "perfil", 0.95, true);
+    }
+
+    /* 16) chave pix / como pagar */
+    if (/chave pix|como pagar|pagar por pix|qr.?code|gerar pix|transferir/.test(q)) {
+        return res("O Pix e confirmado na hora, na entrega.\nO que a loja precisa e so o nome e o WhatsApp no Perfil.\n"
+            + "Se preferir, leve dinheiro: o pedido tambem aceita Dinheiro (com troco).", "pix", 0.95, true);
+    }
+
+    /* 17) vou receber aviso? notificacao */
+    if (/vou ser avisado|recebo aviso|notificacao|avisam quando|me avisaram/.test(q)) {
+        return res("Sim. Ligue o aviso em Configuracoes > Notificacoes: o celular avisa cada mudanca de status "
+            + "(aguardando, confirmado, em separacao, saiu para entrega, entregue). Tem um botao \"Testar agora\" para conferir.",
+            "aviso", 0.95, true);
+    }
+
+    /* 18) limpar historico / apagar pedidos */
+    if (/limpar historico|apagar (meu |os |todos os )?(historico|pedido|pedidos)|remover (meu )?pedido|zerar historico/.test(q)) {
+        return res("O historico fica na pagina Historico (menu superior). Para nao ficar acumulando pedido antigo, "
+            + "o proprio site oferece o botao de limpar na pagina. Se precisar apagar tudo, chame a loja no WhatsApp " +
+            iaZapFmt() + ".", "limparHistorico", 0.92, true);
+    }
+
+    /* 19) recomendacao: o que beber / combina com */
+    if (/recomenda|o que beber|o que combina|qual escolho|sugestao|indicacao/.test(q)) {
+        if (typeof iaOfertaDoDia === "function") {
+            var odR = iaOfertaDoDia();
+            if (odR && odR.nm) {
+                return res("Hoje eu indicaria: " + odR.nm + " (" + odR.pr + ").\n"
+                    + "A vitrine tem a aba \"Escolhas para voce\", que muda com o catalogo do dia.",
+                    "recomendacao", 0.94, true);
+            }
+        }
+        return res("Olhe a aba \"Escolhas para voce\" na pagina inicial: ela monta a combinacao pelo que voce ja comprou.\n"
+            + "Quer que eu indique pelo dia da semana (churrasco, festa, drinks)?", "recomendacao", 0.85, true);
+    }
+
+
+
+    /* frete gratis (antes da regra geral de frete) */
+    if (/frete gratis|gratis/.test(q) && !/produto|refri|cerveja|agua|chopp/.test(q)) {
+        var mg = (typeof freteGratisMinimo === "function") ? freteGratisMinimo() : 150;
+        return res("Sim! Frete gratis em pedidos a partir de " +
+            (typeof formatBRL === "function" ? formatBRL(mg) : "R$ " + mg) + ".", "freteGratis", 0.96, true);
+    }
+
+
+    return null;
+}
+
 function iaRespostaLocal(pergunta) {
     var q = iaNormal(pergunta);
     var bruto = String(pergunta || "");
@@ -137,9 +258,19 @@ function iaRespostaLocal(pergunta) {
             (achados.length > 4 ? "\n...e mais. Use a busca do site para ver todos." : ""), "preco", 0.98, true);
     }
 
+    /* assunto com palavra propria? resolve antes das regras genericas */
+    var especifico = iaRespostaEspecifica(q, bruto, res);
+    if (especifico) return especifico;
+
     /* 2) horario de pedidos / funcionamento */
     if (/que horas|horario|abre|fecha|atendem|funciona|expediente/.test(q)) {
-        return res("Pedidos das 08:50 as 15:00, de segunda a sexta (sabado e domingo nao abrem pedido; sabado sai so entrega).\nA entrega nas ruas vai das 06:00 as 18:00.", "horario", 0.97, true);
+        var janPed = janelaPedidosTexto();
+        var janEnt = janelaEntregaTexto();
+        var stI = (typeof estadoLoja === "function") ? estadoLoja() : null;
+        return res("Pedidos das " + janPed + ", de segunda a sexta (sabado e domingo nao abrem pedido; sabado sai so entrega).\n"
+            + "A entrega nas ruas vai das " + janEnt + "."
+            + (stI ? "\nAgora: " + stI.texto.toLowerCase() + "." : ""),
+            "horario", 0.97, true);
     }
 
     /* 3) frete / custo de entrega */
@@ -147,13 +278,6 @@ function iaRespostaLocal(pergunta) {
         var min = (typeof freteGratisMinimo === "function") ? freteGratisMinimo() : 150;
         return res("O frete varia por regiao e aparece no carrinho antes de confirmar.\nAcima de " +
             (typeof formatBRL === "function" ? formatBRL(min) : "R$ " + min) + " o frete fica GRATIS em toda a regiao.", "frete", 0.97, true);
-    }
-
-    /* 4) frete gratis explicito */
-    if (/frete gratis|gratis/.test(q) && !/produto|refri|cerveja|agua|chopp/.test(q)) {
-        var mg = (typeof freteGratisMinimo === "function") ? freteGratisMinimo() : 150;
-        return res("Sim! Frete gratis em pedidos a partir de " +
-            (typeof formatBRL === "function" ? formatBRL(mg) : "R$ " + mg) + ".", "freteGratis", 0.96, true);
     }
 
     /* 5) dias de entrega / regiao */
@@ -185,7 +309,7 @@ function iaRespostaLocal(pergunta) {
     }
 
     /* 7) pagamento */
-    if (/pagamento|pagar|pix|dinheiro|cartao|credito|debito|boleto/.test(q)) {
+    if (/pagamento|\bpagar\b|pix|dinheiro|cartao|credito|debito|boleto/.test(q)) {
         return res("Aceitamos Pix e Dinheiro na entrega (sem cartao de credito).\nNo Pix a confirmacao e na hora; em dinheiro da para pedir troco no checkout.", "pagamento", 0.98, true);
     }
 
@@ -202,30 +326,25 @@ function iaRespostaLocal(pergunta) {
                 }
             } catch(e){/* proposital: o assistente e um extra, a tela nao pode travar por causa dele */}
         }
-        return res("Acompanhe na pagina Historico (menu superior). Se nao achar, chame a loja no WhatsApp (21) 9-8315-8911.", "meuPedido", 0.9, true);
+        return res("Acompanhe na pagina Historico (menu superior). Se nao achar, chame a loja no WhatsApp " + iaZapFmt() + ".", "meuPedido", 0.9, true);
     }
 
-    /* 9) contato */
-    if (/telefone|whatsapp|zap|contato|numero|falar com/.test(q)) {
-        return res("WhatsApp da loja: (21) 9-8315-8911\nhttps://wa.me/5521983158911\nE-mail: rickjax1234@gmail.com", "contato", 0.98, true);
-    }
-
-    /* 10) app / instalar */
+    /* 20) app / instalar */
     if (/aplicativo|instalar|baixar app/.test(q)) {
         return res("Da para instalar o site: Configuracoes > Aplicativo do celular > Baixar aplicativo (APK).\nNo iPhone: Compartilhar > Adicionar a Tela de Inicio.", "app", 0.95, true);
     }
 
-    /* 11) saudacao */
+    /* 21) saudacao */
     if (/^(ola|oi|bom dia|boa tarde|boa noite|e ai|salve)/.test(q.trim())) {
         return res("Oi! Sou o assistente da Convencao. Posso responder sobre precos, entrega, frete, pagamento e os seus pedidos.", "saudacao", 0.8, false);
     }
 
-    /* 12) compra / carrinho */
+    /* 22) compra / carrinho */
     if (/comprar|carrinho|adicionar|quero levar/.test(q)) {
         return res("Monte o carrinho na vitrine (toque em Adicionar) e finalize em Finalizar pedido. O site calcula o frete e o dia de entrega da sua regiao.", "comprar", 0.8, false);
     }
 
-    /* 13) oferta do dia (atualiza sozinha todo dia com o catalogo) */
+    /* 23) oferta do dia (atualiza sozinha todo dia com o catalogo) */
     if (/oferta do dia|oferta de hoje|promocao de hoje|promocao do dia|desconto de hoje/.test(q)) {
         var od = (typeof iaOfertaDoDia === "function") ? iaOfertaDoDia() : null;
         if (od && od.nm) {
@@ -235,18 +354,9 @@ function iaRespostaLocal(pergunta) {
         return res("Olhe a faixa \"Oferta da semana\" na pagina inicial e as \"Escolhas para voce\" (IA).", "ofertaDia", 0.8, false);
     }
 
-    /* 14) falar com humano: vendedor x motorista (redirecionamento real) */
-    if (/falar com|atendente|humano|alguem|reclamacao|reclamar|problema com|ajuda com|ligar/.test(q)) {
-        var alvo = (typeof iaHumanoPara === "function") ? iaHumanoPara(bruto) : null;
-        if (alvo && alvo.numero) {
-            return res(alvo.quem + ": " + alvo.numeroFmtado + "\n" + alvo.link +
-                (alvo.motivo ? "\n(" + alvo.motivo + ")" : ""), "humano", 0.96, true);
-        }
-        return res("Posso chamar o vendedor: WhatsApp (21) 9-8315-8911.", "humano", 0.8, false);
-    }
 
     /* fallback: baixa confianca (candidato a IA da nuvem) */
-    return res("Nao tenho essa resposta no motor local. Posso ajudar com precos, entrega, frete, pagamento e pedidos - ou fale com o vendedor: WhatsApp (21) 9-8315-8911.", "fallback", 0.35, false);
+    return res("Nao tenho essa resposta no motor local. Posso ajudar com precos, entrega, frete, pagamento e pedidos - ou fale com o vendedor: WhatsApp " + iaZapFmt() + ".", "fallback", 0.35, false);
 }
 
 /* ---------- IA na nuvem (opcional, com timeout) ---------- */
@@ -315,7 +425,7 @@ function iaResponder(pergunta, pronto) {
 
     var nuvem = (provedor === "puter") ? iaNuvemPuter : iaNuvemCustom;
     var contexto = pergunta +
-        "\n\nContexto da loja (responda so com isso; se nao souber diga que o vendedor responde no WhatsApp (21) 9-8315-8911):\n" +
+        "\n\nContexto da loja (responda so com isso; se nao souber diga que o vendedor responde no WhatsApp " + iaZapFmt() + "):\n" +
         iaContexto().slice(0, 2500);
     var concluido = false;
     nuvem(contexto).then(function (txt) {
@@ -484,13 +594,18 @@ function iaOfertaDoDia(cat) {
     var quando = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2);
     return { nm: p.nm, pr: p.pr, ct: p.ct, quando: quando, motivo: "escolha automatica da IA" };
 }
+/* contato da loja: tudo vem de loja.js (fonte unica) */
+function iaZapNum() { return (typeof contatoLoja === "function") ? contatoLoja().whatsapp : ""; }
+function iaZapFmt() { return (typeof contatoLoja === "function") ? contatoLoja().telefone : ""; }
+function iaEmail() { return (typeof contatoLoja === "function") ? contatoLoja().email : ""; }
+
 function iaZapLink(numero, texto) {
     return "https://wa.me/" + numero + (texto ? "?text=" + encodeURIComponent(texto) : "");
 }
 function iaHumanoPara(textoLivre) {
     var q = iaNormal(textoLivre);
-    var vendedorNum = "5521983158911";
-    var vendedorFmt = "(21) 9-8315-8911";
+var vendedorNum = iaZapNum();
+var vendedorFmt = iaZapFmt();
     /* motorista: entrega, atraso, caminhao, troca na hora */
     var eLogistica = /entrega|entregador|atras|atraso|demor|caminhao|motorista|rota|troca|devolu|erra(d|o)|faltan/.test(q);
     if (eLogistica && typeof CAMINHOES !== "undefined" && typeof caminhaoDaRegiao === "function") {
@@ -582,7 +697,7 @@ function iaMontarWidget() {
     painel.querySelectorAll(".ia-chip").forEach(function (c) {
         c.addEventListener("click", function () {
             if (c.classList.contains("ia-chip-clientes")) {
-                var tel = "5521983158911";
+                var tel = iaZapNum();
                 var txt = "Olá, sou cliente da Convencao. Quero falar com o bot de clientes.";
                 window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(txt), "_blank");
                 return;

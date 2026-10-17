@@ -415,8 +415,8 @@ function horaBrasil(){
 }
 
 /* ============================================
-   HORARIOS
-   Loja (empresa): 09:00 as 15:00  - monta os pedidos
+   HORARIOS (ver app.js:loja.js estadoLoja)
+   Loja (empresa): 08:50 as 15:00  - pedidos de segunda a sexta
    Entrega (rua): 06:00 as 18:00  - o freteiro entrega
    O caminhao carrega UM DIA ANTES de sair
    ============================================ */
@@ -486,7 +486,7 @@ function pintarHorario() {
         + '  <div class="hr-titulo"><i class="fa fa-store"></i> Loja (empresa)</div>'
         + statusLoja
         + '  <div class="wgt-linha"><span>Atende</span><b>segunda a sexta, '
-        + (stLoja ? stLoja.janela : "08:50 as 15:00") + '</b></div>'
+        + (stLoja ? stLoja.janela : janelaPedidosTexto()).replace(" as ", " às ") + '</b></div>'
         + '</div>'
         + '<div class="hr-bloco">'
         + '  <div class="hr-titulo"><i class="fa fa-cart-plus"></i> Pedidos</div>'
@@ -520,7 +520,7 @@ function pintarFaixaRegiao() {
     if (!regra.liberado) {
         el.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> '
             + regra.texto
-            + ' Atendemos das <b>08:50</b> às <b>15:00</b>, de segunda a sexta.</span>';
+            + ' Atendemos das <b>' + janelaPedidosTexto().replace(" as ", " às ") + '</b>, de segunda a sexta.</span>';
         return;
     }
 
@@ -529,7 +529,7 @@ function pintarFaixaRegiao() {
             + (t.dia === 6 ? "Sábado é só dia de entrega." : "A loja fecha no domingo.")
             + '</b> '
             + (rs.length ? 'Hoje entregamos em <b>' + rs.map(function (r) { return r.nome; }).join(", ") + '</b>. ' : '')
-            + 'Pedidos de segunda a sexta, das <b>08:50</b> às <b>15:00</b>.</span>';
+            + 'Pedidos de segunda a sexta, das <b>' + janelaPedidosTexto().replace(" as ", " às ") + '</b>.</span>';
         return;
     }
 
@@ -559,12 +559,22 @@ function pintarFaixaRegiao() {
             + '.</span>';
         return;
     }
-    if (t.hh < HORARIOS.loja.abre) {
+    /* o horario do cliente vem da fonte unica (loja.js), nunca do 09:00 do escritorio */
+    var st = (typeof estadoLoja === "function") ? estadoLoja(t) : null;
+    if (!st) { el.innerHTML = ""; return; }
+    if (!st.dia) {
+        el.innerHTML = '<i class="fa fa-truck"></i> <span><b>' + st.texto + '</b> '
+            + 'Pedidos de segunda a sexta, das <b>' + st.janela.replace(" as ", " às ") + '</b>.</span>';
+        return;
+    }
+    if (t.minutos < HORA_ABRE_PEDIDOS) {
         el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja abre às <b>'
-            + horaTexto(HORARIOS.loja.abre, 0) + '</b>. Enquanto isso monte o carrinho e agende.</span>';
+            + horaTexto(horaDeMinutos(HORA_ABRE_PEDIDOS).h, horaDeMinutos(HORA_ABRE_PEDIDOS).m)
+            + '</b>. Enquanto isso monte o carrinho e agende.</span>';
     } else {
         el.innerHTML = '<i class="fa fa-clock"></i> <span>A loja fecha às <b>'
-            + horaTexto(HORARIOS.loja.fecha, 0) + '</b>. Os pedidos de hoje saem na entrega de <b>'
+            + horaTexto(horaDeMinutos(HORA_FECHA_PEDIDOS).h, horaDeMinutos(HORA_FECHA_PEDIDOS).m)
+            + '</b>. Os pedidos de hoje saem na entrega de <b>'
             + NOMES_DIA_LONGOS[proximoDiaAtendente()] + '</b>.</span>';
     }
 }
@@ -783,7 +793,6 @@ function pintarTabelaGeral(){
     ];
 
     /* ---- 3. pagamento e entrega ---- */
-    var pix = (typeof PIX_CHAVE !== "undefined") ? PIX_CHAVE : "";
     var linhasPAG = [
         ['<b>Formas de pagamento</b>', '<span class="tb-passo"><i class="fa fa-qrcode"></i> Pix</span> <span class="tb-passo"><i class="fa fa-money-bill-wave"></i> Dinheiro</span>',
             'Sem cartão de crédito. O Pix é confirmado na hora.'],

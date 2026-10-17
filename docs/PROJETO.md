@@ -260,7 +260,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 ```bash
 node tests/manter-tudo.js            # versoes, datas, links, docs, robo
 node --check *.js                    # sintaxe
-node tests/rodar-todos.js            # 27 baterias (tem que dar TUDO 10/10)
+node tests/rodar-todos.js            # 34 baterias (tem que dar TUDO 10/10)
 node tests/13-validar-css.js         # CSS inteiro: sintaxe, classe sem uso, cobertura
 node tests/limpar-css-morto.js       # CSS morto: so o relatorio (--aplicar limpa)
 git add -A
@@ -422,8 +422,15 @@ sumia. A bateria `14-cores` confere o contraste das duas versões.
 - Pedidos: Firebase /pedidos.json, sincronizados na abertura do painel
   e a cada minuto.
 
+- **Horário e contato com fonte única:** `estadoLoja()`/`estadoEntrega()`/`janelaPedidosTexto()`
+  em `loja.js` alimentam a tabela da semana, o quadro de horários, o aviso do topo,
+  o carrinho e a IA; `CONTATO_LOJA` (WhatsApp/e-mail) é lido por todos. A bateria 28
+  quebra se alguém voltar a escrever horário ou telefone à mão.
+- **Sábado e domingo:** a loja não trabalha (`DIAS_LOJA` = seg a sex). No sábado sai
+  só entrega; domingo não tem loja nem freteiro.
+
 ### Qualidade automatica (rodar certo sempre vai rodar certo)
-- Testes: node tests/rodar-todos.js - 27 baterias, TUDO 10/10. A 13a e o lint
+- Testes: node tests/rodar-todos.js - 34 baterias, TUDO 10/10. A 13a e o lint
   do CSS; da 14a a 24a vem cor, imagem, letra/numero, tamanho, codigo, erro,
   documento, repositorio e entrega (esta ultima com --online confere o site no ar);
   a 25a confere a opcao "Aparência" (Animações reduzidas), a 26a o bot do

@@ -330,8 +330,10 @@ function lojaAberta(agora) {
     if (typeof lojaAbertaNoDia === "function" && !lojaAbertaNoDia(a.dia)) return false;
     if (typeof somentePedidos === "function" && somentePedidos(a.dia)) return false;
     if (regioesDoDia(a.dia).length === 0) return false;
-    var L = HORARIOS.loja;
-    return a.minutos >= L.abre * 60 && a.minutos < L.fecha * 60;
+    /* a janela do cliente e a dos PEDIDOS (08:50 as 15:00), nao a do
+       escritorio (HORARIOS.loja = 09:00): era por ai que um canto do
+       site abria as 9h e outro as 8h50 */
+    return a.minutos >= HORA_ABRE_PEDIDOS && a.minutos < HORA_FECHA_PEDIDOS;
 }
 
 /* ---------- a ENTREGA esta acontecendo agora? ---------- */
@@ -352,10 +354,30 @@ function entregaAberta(agora) {
    cliente e sempre a mesma: 08:50 as 15:00, segunda a sexta.
    ============================================================ */
 
-/* 530 -> "08:50" */
+/* "530" (minutos) -> "08:50" */
 function hhmm(minutos) {
     var h = Math.floor(minutos / 60), m = minutos % 60;
     return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+}
+/* janelas prontas para tela e para a IA (nada de horario escrito a mao) */
+function janelaPedidosTexto() { return hhmm(HORA_ABRE_PEDIDOS) + " as " + hhmm(HORA_FECHA_PEDIDOS); }
+function janelaEntregaTexto() { return hhmm(HORARIOS.entrega.abre * 60) + " as " + hhmm(HORARIOS.entrega.fecha * 60); }
+
+/* ============================================================
+   CONTATO DA LOJA - FONTE UNICA
+   O telefone estava escrito 9 vezes na IA, 1 no app e 1 nas
+   configuracoes. Agora todos leem daqui: trocar o numero e
+   mexer em um lugar so.
+   ============================================================ */
+var CONTATO_LOJA = {
+    whatsapp: "5521983158911",
+    telefone: "(21) 9-8315-8911",
+    email: "rickjax1234@gmail.com"
+};
+function contatoLoja() {
+    return (typeof CONTATO_LOJA !== "undefined" && CONTATO_LOJA)
+        ? CONTATO_LOJA
+        : { whatsapp: "5521983158911", telefone: "(21) 9-8315-8911", email: "rickjax1234@gmail.com" };
 }
 /* como a loja esta neste minuto */
 function estadoLoja(agora) {

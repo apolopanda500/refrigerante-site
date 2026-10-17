@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261017r">
+<link rel="manifest" href="manifest-vendedor.json?v=20261017s">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017r">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017s">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017r">
-<script src="theme.js?v=20261017r"></script>
+<link rel="stylesheet" href="style.css?v=20261017s">
+<script src="theme.js?v=20261017s"></script>
 
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -616,9 +616,9 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
     <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-text-height"></i> Tamanho da letra do painel</h4>
     <div class="opcoes" id="opcoesFonteVendedor">
-      <button class="op-btn op-fonte" data-v="pequeno" onclick="setFonteVendedor(this)"><span style="font-size:.8rem">A</span><span style="font-size:.8rem">-</span></button>
-      <button class="op-btn op-fonte" data-v="normal" onclick="setFonteVendedor(this)"><span style="font-size:1rem">A</span></button>
-      <button class="op-btn op-fonte" data-v="grande" onclick="setFonteVendedor(this)"><span style="font-size:1.2rem">A</span><span style="font-size:1.2rem">+</span></button>
+      <button class="op-btn op-fonte" data-v="pequeno" aria-label="Letra pequena" title="Letra pequena" onclick="setFonteVendedor(this)"><span style="font-size:.8rem">A</span><span style="font-size:.8rem">-</span></button>
+      <button class="op-btn op-fonte" data-v="normal" aria-label="Letra media" title="Letra media" onclick="setFonteVendedor(this)"><span style="font-size:1rem">A</span></button>
+      <button class="op-btn op-fonte" data-v="grande" aria-label="Letra grande" title="Letra grande" onclick="setFonteVendedor(this)"><span style="font-size:1.2rem">A</span><span style="font-size:1.2rem">+</span></button>
       <button class="op-btn op-fonte" data-v="muitogrande" onclick="setFonteVendedor(this)"><span style="font-size:1.4rem">A</span><span style="font-size:1.4rem">++</span></button>
     </div>
     <p style="font-size:.82rem;color:#777;margin:6px 0 0">Valendo só no painel. O cliente continua com a letra dele.</p>
@@ -666,8 +666,8 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261017r"></script>
-<script src="telegram.js?v=20261017r"></script>
+<script src="script.js?v=20261017s"></script>
+<script src="telegram.js?v=20261017s"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -1472,7 +1472,7 @@ function exportarPedidos() {
     var linhas = ["Pedido;Data;Status;Cliente;WhatsApp;Bairro;Regiao;Pagamento;Troco;Subtotal;Frete;Total;Itens"];
     pedidos.forEach(function (p) {
         var itens = (p.itens || []).map(function (i) { return i.name + " x" + i.qty; }).join(" | ");
-        var data = p.criadoEm ? new Date(p.criadoEm).toLocaleString("pt-BR") : "";
+        var data = p.criadoEm && typeof dataHoraSegundos === "function" ? dataHoraSegundos(p.criadoEm) : "";
         linhas.push([p.id, data, (STATUS_LABEL[p.status] || p.status), p.nome, p.tel,
             (p.bairro || "").replace(/;/g, ","), (p.regiao || "").replace(/;/g, ","), p.pagamento,
             (p.troco || ""), p.subtotal, p.frete, p.total, itens.replace(/;/g, ",")].join(";"));
@@ -1504,7 +1504,7 @@ function registrarPreco(nome, de, para) {
     d.historicoPrecos = d.historicoPrecos || [];
     d.historicoPrecos.unshift({
         nome: nome, de: de, para: para,
-        quando: new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
+        quando: (typeof dataCurta === "function" ? dataCurta(Date.now()) : "")
     });
     if (d.historicoPrecos.length > 60) d.historicoPrecos.length = 60;
     salvarFerramentas(d);
@@ -1706,9 +1706,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261017r"></script>
-<script src="firebase-appcheck.js?v=20261017r"></script>
-<script src="app-update.js?v=20261017r"></script>
+<script src="app.js?v=20261017s"></script>
+<script src="firebase-appcheck.js?v=20261017s"></script>
+<script src="app-update.js?v=20261017s"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
@@ -1852,7 +1852,7 @@ if (document.readyState !== "loading") { prepararMini(); aplicarMini(); }
   }
 /* aceita "29,50", "29.50", "2950", "1.234,56" e "1,234.56" sem errar a casa */
   function lerPreco(texto){
-    var s = String(texto == null ? "" : texto).trim().replace(/R\$\s*/i, "");
+    var s = String(texto == null ? "" : texto).trim().replace(/R$\s*/i, "");
     if (!s) return 0;
     s = s.replace(/\s/g, "");
     var temPonto = s.indexOf(".") >= 0;
@@ -1868,6 +1868,10 @@ if (document.readyState !== "loading") { prepararMini(); aplicarMini(); }
       var partes = s.split(".");
       if (partes.length === 2 && partes[1].length !== 3) { /* mantem o decimal */ }
       else s = s.replace(/\./g, "");
+    } else if (/^\d+$/.test(s) && s.length > 2 && s.length % 2 === 0) {
+      /* so digitos, tamanho par: o dono digitou em centavos (2950 = R$ 29,50).
+         sem isto o painel publicava R$ 2.950,00 no lugar de R$ 29,50 */
+      s = String(parseInt(s, 10) / 100);
     }
     var n = parseFloat(s);
     return isNaN(n) || n < 0 ? 0 : n;

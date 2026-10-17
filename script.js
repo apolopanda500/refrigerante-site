@@ -378,6 +378,51 @@ function marcarFalhaNuvem(pedido) {
             + 'mas a internet nao deixou enviar para o painel agora. Abrindo o app de novo ele tenta de novo.';
     }
 }
+/* AUTOMACAO: reenvia sozinho o pedido que ficou preso sem rede.
+   O cliente nao precisa pensar nisso: ao abrir o site (e a cada 2
+   minutos enquanto a tela estiver aberta) o pedido que ainda nao
+   chegou no painel volta a ser enviado. */
+function reenviarPedidosPresos() {
+    try {
+        var mapa = JSON.parse(localStorage.getItem("convencaoNuvemFalhou") || "{}");
+        var ids = Object.keys(mapa || {});
+        if (!ids.length) return 0;
+        var pedidos = getPedidos();
+        var enviados = 0;
+        ids.forEach(function (id) {
+            var p = pedidos.filter(function (x) { return x && x.id === id; })[0];
+            if (p) { enviarPedidoNuvem(p); enviados++; }
+        });
+        if (!enviados) return 0;
+        /* limpa o aviso depois do reenvio: o mapa some quando a rede volta */
+        setTimeout(function () {
+            try {
+                var ainda = JSON.parse(localStorage.getItem("convencaoNuvemFalhou") || "{}");
+                Object.keys(ainda).forEach(function (id) {
+                    var tem = getPedidos().filter(function (x) { return x && x.id === id; })[0];
+                    if (tem) enviarPedidoNuvem(tem);
+                    else delete ainda[id];
+                });
+                localStorage.setItem("convencaoNuvemFalhou", JSON.stringify(ainda));
+            } catch (e) { /* proposital: repetir mais uma vez nunca pode travar a tela */ }
+        }, 4000);
+        return enviados;
+    } catch (e) {
+        return 0;   /* automacao e extra: se falhar, o pedido segue salvo aqui */
+    }
+}
+/* AUTOMACAO: reenvia sozinho o pedido que ficou preso sem rede.
+   O cliente nao precisa fazer nada: ao abrir o site (e a cada 2
+   minutos com a tela aberta) o pedido que ainda nao chegou no painel
+   volta a ser enviado. */
+(function () {
+    if (typeof document === "undefined" || !document.addEventListener) return;
+/* os dois try/catch nao engoliram nada: so protegem a tela de uma
+       falha de ambiente (setInterval bloqueado, aba anonima) */
+    try { setTimeout(function () { reenviarPedidosPresos(); }, 1500); } catch (e) { /* ambiente sem timer */ }
+    try { setInterval(function () { reenviarPedidosPresos(); }, 120000); } catch (e) { /* ambiente sem timer */ }
+})();
+
 /* junta aparelho + nuvem; para o mesmo id vence o que tem
    mais historico (e, em empate, o mais recente) */
 function mesclarPedidos(locais, nuvem) {
