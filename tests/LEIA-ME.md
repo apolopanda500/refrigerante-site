@@ -8,7 +8,7 @@ Toda alteração passa por aqui antes de ir para o ar.
 node tests/rodar-todos.js
 ```
 
-O comando roda **todas** as 35 baterias e só termina com `TUDO 10/10`
+O comando roda **todas** as 37 baterias e só termina com `TUDO 10/10`
 se nenhuma falhar. Acompanhe cada arquivo:
 
 | Arquivo | O que confere |
@@ -48,6 +48,9 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `33-robo-catalogo.js` | **Robô do catálogo**: lê o site oficial, nunca mexe em preço, aborta se o site quebrar, catalálogo com nome/preço/foto/categoria e agenda às 10h e 14h de SP (seg a sex) |
 | `34-acessibilidade.js` | **Acessibilidade**: idioma, título e viewport em toda página, botão/link com nome, `alt` nas imagens, `:focus-visible`, alvo de 44px e nada só de mouse |
 | `35-dia-de-trabalho.js` | **Dia de trabalho (simulação)**: 5 clientes de 4 regiõesCriam pedido em 5 aparelhos, o painel junta tudo, o dono confirma/separa/envia/entrega, edita o bairro, cancela, reabre, fecha o dia (faturamento, ticket, itens), busca por nome/telefone/bairro, exporta CSV e o botão do Telegram aplica o mesmo passo |
+| `36-robo-telegram.js` | **Robô do Telegram de verdade**: roda o bot com Telegram e banco falsos — botão Confirmar grava status, 6 comandos respondem, intruso é recusado, dado quebrado não derruba e 8 horários (08:45, 09:00, 14:59, 15:00, 17:00, sábado, domingo) batem entre loja, pedido e entrega |
+| `37-vida-do-site.js` | **Vida completa do site**: carrinho → mínimo → pedido → confirmação → avaliação, mais entrada hostil (pedido sem nome, carrinho corrompido, nome com HTML, 200 letras) sem quebrar nada |
+| `36-37` | Fluxo completo com o robô, o cliente e o dono, incluindo entradas que quebram sistemas de verdade |
 
 ## CSS: como confere e como limpa
 

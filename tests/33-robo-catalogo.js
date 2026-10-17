@@ -53,6 +53,31 @@ if (!guarda.length && !/abort|sai sem gravar|não grava|nao grava/i.test(robo)) 
     falha("o robo nao tem trava para quando o site oficial mudar");
 } else ok("o robo aborta se o site oficial vier quebrado (menos de 5 produtos com preco)");
 
+console.log("\n=== 3b. DETECTA PRECO QUE MUDOU NO SITE (avisa, nao aplica) ===");
+const resumo = JSON.parse(ler(".github/scripts/ultimo-resumo.json"));
+const yml = ler(".github/workflows/catalogo.yml");
+if (!/precosOficiaisMudaram/.test(robo)) falha("o robo nao compara o preco do site com o do dono");
+else ok("o robo compara o preco do site com o preco do dono a cada rodada");
+if (!Array.isArray(resumo.precosOficiaisMudaram)) falha("o resumo da rodada nao traz precosOficiaisMudaram");
+else {
+    ok("ultima rodada: " + resumo.precosOficiaisMudaram.length + " preco(s) diferente(s) do site oficial");
+    if (resumo.precosOficiaisMudaram.length) {
+        const primeiro = resumo.precosOficiaisMudaram[0];
+        ok("exemplo: " + primeiro.nm + " - seu " + primeiro.base + " / site " + primeiro.oficial);
+    }
+}
+/* o preco publicado continua sendo o do dono, mesmo com divergencia */
+let precoErrado = lista.filter(function (p) {
+    const base = JSON.parse(ler("precos-base.json"));
+    return false;
+});
+if (!/o robo não altera preços|nao altera preços/i.test(ler(".github/scripts/sync-catalogo.js"))) falha("o robo perdeu a garantia de nao mexer no preco");
+else ok("o robo continua garantindo que nao altera o preco do dono");
+if (!/steps.deteccao.outputs.preciosMudaram/.test(yml)) falha("o workflow nao avisa o dono quando o preco muda");
+else ok("o workflow avisa no Telegram quando o preco diverge do site");
+if (!/id: deteccao/.test(yml)) falha("faltou o passo deteccao no workflow (o aviso nunca sairia)");
+else ok("passo deteccao existe no workflow (o aviso tem quando rodar)");
+
 console.log("\n=== 4. O CATALOGO ESTA SAO (nome, preco, foto, categoria) ===");
 let semFoto = [], semNome = [], semCategoria = [];
 lista.forEach(function (p) {
@@ -81,7 +106,6 @@ if (semArquivo.length) falha(semArquivo.length + " foto(s) do catalogo nao exist
 else ok("as fotos do catalogo existem no repositorio");
 
 console.log("\n=== 6. AGENDAMENTO: SEGUNDA A SEXA ===");
-const yml = ler(".github/workflows/catalogo.yml");
 const crons = (yml.match(/cron:\s*['"]?([^'"\n]+)['"]?/g) || []).map(c => c.replace(/cron:\s*/, "").replace(/['"]/g, "").trim());
 if (!crons.length) falha("catalogo.yml nao tem cron");
 else {

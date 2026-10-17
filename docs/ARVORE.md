@@ -1,4 +1,6 @@
 # Árvore do projeto — mapa completo
+  │  ├─ tests/36-robo-telegram.js ........ roda o bot do Telegram de verdade (sandbox)
+  │  ├─ tests/37-vida-do-site.js ......... vida completa do site + entrada hostil
 
 > Mapa para o dia a dia: **onde mexer** em cada assunto.
 > Se algo não estiver aqui, provavelmente não existe mais.
@@ -92,7 +94,7 @@ refrigerante-site/
 │     └─ check.yml .................. sintaxe + TODOS os testes a cada push
 │
 ├─ TESTES E MANUTENÇÃO
-│  ├─ tests/rodar-todos.js .......... roda as 35 baterias (TUDO 10/10)
+│  ├─ tests/rodar-todos.js .......... roda as 37 baterias (TUDO 10/10)
 │  ├─ tests/manter-tudo.js .......... alinha versões, datas, links, docs, robô
 │  ├─ tests/bump-versao.js .......... sobe a versão em todos os arquivos
 │  ├─ tests/13-validar-css.js ....... confere o CSS todo (sintaxe, classe sem uso, cobertura, duplicata)
@@ -106,7 +108,7 @@ refrigerante-site/
 │  ├─ tests/21-repositorio.js ..... gitignore, build fora do git, arquivo grande
 │  ├─ tests/22-entrega.js ......... commit, push e deploy na mesma versao
 │  ├─ tests/limpar-css-morto.js ..... apaga CSS morto (relatório; --aplicar limpa)
-│  ├─ tests/01..35-*.js ............. as 35 baterias
+│  ├─ tests/01..37-*.js ............. as 37 baterias
 │  └─ tests/LEIA-ME.md .............. como rodar e o que cada bateria confere
 │
 ├─ DOCUMENTAÇÃO
@@ -157,7 +159,7 @@ Tudo que mostra data passa por `dataHoraSegundos()` / `dataCurta()` em
 
 ```powershell
 node tests/manter-tudo.js      # versões, datas, links, docs, robô
-node tests/rodar-todos.js      # 35 baterias — tem que dar TUDO 10/10
+node tests/rodar-todos.js      # 37 baterias — tem que dar TUDO 10/10
 node tests/limpar-css-morto.js # CSS morto: relatório (--aplicar limpa)
 node tests/22-entrega.js --online  # commit, push e deploy na mesma versão
 node tests/bump-versao.js 20261016c

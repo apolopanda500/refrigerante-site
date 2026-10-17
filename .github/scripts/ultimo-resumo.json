@@ -1,10 +1,227 @@
 {
-  "geradoEm": "2026-10-17T02:05:03.500Z",
+  "geradoEm": "2026-10-17T02:34:05.765Z",
   "total": 44,
   "antes": 44,
   "novos": [],
   "sumiram": [],
   "precosDoDono": 44,
   "precosOficiaisNovos": [],
+  "precosOficiaisMudaram": [
+    {
+      "nm": "Chinotto 269ml",
+      "base": "25,00",
+      "oficial": 21.94
+    },
+    {
+      "nm": "Energético MSX 269 ml",
+      "base": "25,00",
+      "oficial": 22.26
+    },
+    {
+      "nm": "Frutaína Convenção 2L",
+      "base": "27,50",
+      "oficial": 24.34
+    },
+    {
+      "nm": "Guaraná Convenção Zero Açúcar Lata 269ml",
+      "base": "33,40",
+      "oficial": 32.35
+    },
+    {
+      "nm": "MSX Convenção 2L",
+      "base": "40,00",
+      "oficial": 31
+    },
+    {
+      "nm": "Abacaxi 2 litros",
+      "base": "27,50",
+      "oficial": 26.37
+    },
+    {
+      "nm": "Cola 2 litros",
+      "base": "29,00",
+      "oficial": 28.28
+    },
+    {
+      "nm": "Guaraná Convenção 2L",
+      "base": "27,00",
+      "oficial": 24.34
+    },
+    {
+      "nm": "Guaraná Convenção Zero Açúcar 2L",
+      "base": "27,00",
+      "oficial": 23.8
+    },
+    {
+      "nm": "Laranja 2 litros",
+      "base": "27,50",
+      "oficial": 26.37
+    },
+    {
+      "nm": "Limão 2 litros",
+      "base": "27,50",
+      "oficial": 26.37
+    },
+    {
+      "nm": "Uva 2 litros",
+      "base": "27,50",
+      "oficial": 26.37
+    },
+    {
+      "nm": "Vitts limão 2 litros",
+      "base": "28,00",
+      "oficial": 27.2
+    },
+    {
+      "nm": "Abacaxi 350ml",
+      "base": "19,00",
+      "oficial": 16.64
+    },
+    {
+      "nm": "Cola Convenção 350ml",
+      "base": "19,00",
+      "oficial": 18.37
+    },
+    {
+      "nm": "Guaraná 350ml",
+      "base": "19,00",
+      "oficial": 16.12
+    },
+    {
+      "nm": "Laranja 350ml",
+      "base": "19,00",
+      "oficial": 16.64
+    },
+    {
+      "nm": "Uva 350ml",
+      "base": "19,00",
+      "oficial": 16.64
+    },
+    {
+      "nm": "Vitt s limão 350ml",
+      "base": "19,00",
+      "oficial": 18.37
+    },
+    {
+      "nm": "Água 1500ml",
+      "base": "15,80",
+      "oficial": 14.8
+    },
+    {
+      "nm": "Água 510ml",
+      "base": "14,70",
+      "oficial": 13.69
+    },
+    {
+      "nm": "Água 510ml c/gás",
+      "base": "19,00",
+      "oficial": 18.97
+    },
+    {
+      "nm": "Agua C/Gas 1,5l",
+      "base": "22,50",
+      "oficial": 21.47
+    },
+    {
+      "nm": "Guaraná 600ml",
+      "base": "21,00",
+      "oficial": 18.88
+    },
+    {
+      "nm": "Laranja 600ml",
+      "base": "21,00",
+      "oficial": 19.81
+    },
+    {
+      "nm": "Uva 600ml",
+      "base": "21,00",
+      "oficial": 19.81
+    },
+    {
+      "nm": "Chopp Lev 500ml Pet",
+      "base": "29,50",
+      "oficial": 25.5
+    },
+    {
+      "nm": "Chopp Ravache Black 500ml Pet",
+      "base": "34,50",
+      "oficial": 33.49
+    },
+    {
+      "nm": "Chopp Ravache Gold Pet 500ml",
+      "base": "29,50",
+      "oficial": 27.4
+    },
+    {
+      "nm": "Chopp Ravache Ipa 500ml Pet",
+      "base": "29,50",
+      "oficial": 29.4
+    },
+    {
+      "nm": "Chopp Ravache Malzbier 500ml Pet",
+      "base": "33,30",
+      "oficial": 32.32
+    },
+    {
+      "nm": "Chopp Ravache Pilsen Pet 500ml",
+      "base": "29,50",
+      "oficial": 27.4
+    },
+    {
+      "nm": "Chopp Ravache Vinho 500ml Pet",
+      "base": "35,80",
+      "oficial": 34.81
+    },
+    {
+      "nm": "Chopp Lev Pet 30l",
+      "base": "260,00",
+      "oficial": 255
+    },
+    {
+      "nm": "Chopp Ravache Apa Pet 20l",
+      "base": "330,00",
+      "oficial": 328.63
+    },
+    {
+      "nm": "Chopp Ravache Apa Pet 30l",
+      "base": "455,00",
+      "oficial": 452.75
+    },
+    {
+      "nm": "Chopp Ravache Gold Pet 20l",
+      "base": "330,00",
+      "oficial": 328.63
+    },
+    {
+      "nm": "Chopp Ravache Gold Pet 30l",
+      "base": "455,00",
+      "oficial": 452.75
+    },
+    {
+      "nm": "Chopp Ravache Ipa Pet 20l",
+      "base": "330,00",
+      "oficial": 348.45
+    },
+    {
+      "nm": "Chopp Ravache Pilsen Pet 20l",
+      "base": "310,00",
+      "oficial": 308.4
+    },
+    {
+      "nm": "Chopp Ravache Pilsen Pet 30l",
+      "base": "425,00",
+      "oficial": 422.69
+    },
+    {
+      "nm": "Chopp Ravache Vinho Pet 20l",
+      "base": "320,00",
+      "oficial": 318.87
+    },
+    {
+      "nm": "Chopp Ravache Vinho Pet 30l",
+      "base": "440,00",
+      "oficial": 438.11
+    }
+  ],
   "catalogoMudou": false
 }

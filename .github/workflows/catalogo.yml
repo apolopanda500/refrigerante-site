@@ -63,8 +63,20 @@ jobs:
             echo "mudou=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Conferir se o dono mudou algum preco no site oficial
+        id: deteccao
+        run: |
+          # O robo nao aplica preco: ele so avisa. Aqui lemos o resumo para
+          # decidir se vale a pena mandar mensagem no Telegram.
+          node -e "
+            const r = require('./.github/scripts/ultimo-resumo.json');
+            const mudaram = (r.precosOficiaisMudaram || []).length;
+            console.log('precos diferentes do site oficial:', mudaram);
+            require('fs').writeFileSync(process.env.GITHUB_OUTPUT, 'preciosMudaram=' + (mudaram > 0 ? 'true' : 'false') + '\n');
+          "
+
       - name: Avisar no Telegram
-        if: steps.publicar.outputs.mudou == 'true'
+        if: steps.publicar.outputs.mudou == 'true' || steps.deteccao.outputs.preciosMudaram == 'true'
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN || '8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU' }}
           TG_CHAT:  ${{ secrets.TG_CHAT_ID || '1810807613' }}
@@ -79,6 +91,14 @@ jobs:
             t += '\nPreços: mantidos pelo dono (' + r.precosDoDono + '/' + r.total + '). O robô não altera preços.';
             if (r.precosOficiaisNovos && r.precosOficiaisNovos.length) {
               t += '\nNovos usando preço do site (ajuste no painel): ' + r.precosOficiaisNovos.map(p => p.nm).join(', ');
+            }
+            /* o dono mudou o preco no site oficial: o robo avisa, NAO aplica */
+            if (r.precosOficiaisMudaram && r.precosOficiaisMudaram.length) {
+              t += '\n\n!! PREÇO MUDOU NO SITE OFICIAL (' + r.precosOficiaisMudaram.length + '):';
+              r.precosOficiaisMudaram.slice(0, 12).forEach(p => {
+                t += '\n- ' + p.nm + ': seu ' + p.base + ' / site ' + p.oficial;
+              });
+              t += '\nO robo NAO mudou o preco do site. Ajuste no painel para acompanhar.';
             }
             require('fs').writeFileSync('telegram.txt', t);
           "

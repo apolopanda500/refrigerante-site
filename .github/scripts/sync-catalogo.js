@@ -357,6 +357,17 @@ function principal() {
                     const doDono = produtos.filter(function (p) { return p.precoBase !== null; }).length;
                     const novosComPrecoOficial = produtos.filter(function (p) { return p.precoBase === null; });
 
+                    /* DETECCAO: o dono mudou o preco no site oficial.
+                       O robo NAO aplica sozinho (preco e do dono): ele avisa
+                       para o painel receber a mudanca com um clique. */
+                    const precoOficialMudou = produtos.filter(function (p) {
+                        if (p.precoBase === null || p.precoOficial === null) return false;
+                        var doDono = parseFloat(String(p.precoBase).replace(/\./g, "").replace(",", "."));
+                        return !isNaN(doDono) && Math.abs(doDono - p.precoOficial) > 0.004;
+                    }).map(function (p) {
+                        return { nm: p.nm, base: p.precoBase, oficial: p.precoOficial };
+                    });
+
                     const catalogoMudou = novos.length > 0 || sumiram.length > 0 ||
                         JSON.stringify(anterior ? anterior.produtos : null) !== JSON.stringify(saida.produtos);
 
@@ -370,6 +381,7 @@ function principal() {
                         precosOficiaisNovos: novosComPrecoOficial.map(function (p) {
                             return { nm: p.nm, pr: p.precoOficial };
                         }),
+                        precosOficiaisMudaram: precoOficialMudou,
                         catalogoMudou: catalogoMudou
                     };
                     fs.writeFileSync(RESUMO, JSON.stringify(resumo, null, 2), "utf8");
@@ -382,6 +394,11 @@ function principal() {
                     if (novosComPrecoOficial.length) {
                         console.log("Produto NOVO usando preço do site (ajuste no painel quando quiser):");
                         novosComPrecoOficial.forEach(function (p) { console.log("   " + p.nm + " — R$ " + p.precoOficial); });
+                    }
+                    if (precoOficialMudou.length) {
+                        console.log("\n!! PRECO MUDOU NO SITE OFICIAL (" + precoOficialMudou.length + ") - o robo NAO alterou:");
+                        precoOficialMudou.forEach(function (p) { console.log("   " + p.nm + ": seu R$ " + p.base + " -> site R$ " + p.oficial); });
+                        console.log("   Ajuste no painel do vendedor para acompanhar o site.");
                     }
                     console.log("Catalogo mudou: " + (catalogoMudou ? "SIM" : "NAO"));
                     console.log("=======================\n");
