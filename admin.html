@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261017y">
+<link rel="manifest" href="manifest-vendedor.json?v=20261017z">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017y">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017z">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017y">
-<script src="theme.js?v=20261017y"></script>
+<link rel="stylesheet" href="style.css?v=20261017z">
+<script src="theme.js?v=20261017z"></script>
 
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -518,7 +518,7 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <input id="cfgPrecosURL" type="text" placeholder="https://seu-banco.firebaseio.com" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
       <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarPrecosURLAdmin(this)"><i class="fa fa-save"></i> Salvar URL</button>
-      <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="testarPrecosURLAdmin(this)"><i class="fa fa-plug"></i> Testar</button>
+      <button id="btnTestarBanco" class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="testarPrecosURLAdmin(this)"><i class="fa fa-plug"></i> Testar</button>
     </div>
     <div id="precosURLMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
     <div id="passoFirebase" style="display:none;margin-top:14px;background:var(--bg-alt);border:1px solid var(--borda);border-radius:12px;padding:16px">
@@ -679,9 +679,9 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261017y"></script>
-<script src="loja.js?v=20261017y"></script>
-<script src="telegram.js?v=20261017y"></script>
+<script src="script.js?v=20261017z"></script>
+<script src="loja.js?v=20261017z"></script>
+<script src="telegram.js?v=20261017z"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -1807,9 +1807,9 @@ function falarCliente(tel, id) {
 }
 if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
 </script>
-<script src="app.js?v=20261017y"></script>
-<script src="firebase-appcheck.js?v=20261017y"></script>
-<script src="app-update.js?v=20261017y"></script>
+<script src="app.js?v=20261017z"></script>
+<script src="firebase-appcheck.js?v=20261017z"></script>
+<script src="app-update.js?v=20261017z"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
@@ -2075,43 +2075,87 @@ function salvarPrecosURLAdmin(btn){
     precosMsgAdmin(url ? "URL salva. Os preços agora vão em tempo real para os clientes." : "URL apagada. Os preços voltam a valer só neste aparelho.");
   }, 400);
 }
+/* o campo "Banco" aceita duas coisas, e o teste precisa saber qual:
+   - URL do Firebase (ex.: https://projeto-default-rtdb.firebaseio.com): teste
+     de gravacao real (escreve, le e apaga uma chave de teste);
+   - URL do GATEWAY (o modo banco fechado): nao existe /precos.json la, entao
+     testar por escrita daria 404 e seria mentira. O teste certo e: o Worker
+     esta de pe com a conta de servico, a SENHA do painel bate com a do
+     gateway, e o dono consegue listar os pedidos. */
+function bancoEhGateway(url){
+  var u = String(url || "").trim().replace(/\/+$/, "");
+  if (!u || /\.json$/i.test(u)) return false;
+  return /\/api|workers\.dev|convencao-gateway/i.test(u);
+}
+function testarBancoGateway(url, btn){
+  precosMsgAdmin("Testando o gateway...", "var(--texto-aviso)");
+  fetch(url + "/api/saude", { cache: "no-store" })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (saude) {
+      if (!saude.ok || !saude.d || !saude.d.ok) throw new Error("o gateway nao respondeu");
+      if (!saude.d.servo) throw new Error("o gateway esta sem a conta de servico do Firebase");
+      return fetch(url + "/api/entrar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senha: (typeof VENDEDOR_SENHA !== "undefined" ? VENDEDOR_SENHA : "") })
+      }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); });
+    })
+    .then(function (login) {
+      if (!login.ok || !login.d || !login.d.token) throw new Error("a senha do painel nao bate com a do gateway");
+      return fetch(url + "/api/pedidos", { cache: "no-store", headers: { Authorization: "Bearer " + login.d.token } })
+        .then(function (r) { return { status: r.status }; });
+    })
+    .then(function (lista) {
+      if (lista.status !== 200) throw new Error("o dono entrou mas nao conseguiu listar os pedidos (HTTP " + lista.status + ")");
+      precosMsgAdmin("Tudo certo: o gateway esta de pe, a senha bate e o dono consegue ler os pedidos. Agora clique em Salvar URL.", "var(--texto-ok)");
+    })
+    .catch(function (e) {
+      var dica = "";
+      if (/Failed to fetch|NetworkError/.test(e.message)) dica = " O navegador bloqueou a conexao - confira a internet.";
+      if (/conta de servico/.test(e.message)) dica = " O gateway subiu sem a chave do Firebase (falta o tools/subir-gateway.js).";
+      precosMsgAdmin("Gateway nao deu conta: " + e.message + dica, "var(--texto-erro)");
+    });
+}
 function testarPrecosURLAdmin(btn){
   var inp = document.getElementById("cfgPrecosURL");
-  var url = (inp ? inp.value.trim() : "").replace(/\/+$/,"");
-  if(!url){ precosMsgAdmin("Cole a URL do banco antes de testar.", "var(--texto-aviso)"); return; }
-  if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Testando...'; }
-
+  var url = (inp ? inp.value.trim() : "").replace(/\/+$/, "");
+  if (!url) { precosMsgAdmin("Cole a URL do banco ou do gateway antes de testar.", "var(--texto-aviso)"); return; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Testando...'; }
+  functionacabou() { if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-plug"></i> Testar'; } }
+  /* modo gateway: testa o caminho do gateway, nao o do Firebase */
+  if (bancoEhGateway(url)) {
+    var p = testarBancoGateway(url, btn);
+    var t0 = setInterval(acabou, 250);
+    setTimeout(function () { clearInterval(t0); acabou(); }, 12000);
+    return;
+  }
   /* teste de verdade: escreve uma chave de teste, le de volta e apaga */
   appCheckPronto();
   var marca = "teste_" + Date.now();
   var caminho = url + "/__teste_convencao.json";
   fetch(caminho, {
-    method:"PUT",
+    method: "PUT",
     headers: cabecalhosPrecos(),
-    body: JSON.stringify({ ok:true, quando: marca })
+    body: JSON.stringify({ ok: true, quando: marca })
   })
-    .then(function(r){
-      if(!r.ok) throw new Error("gravação recusada (HTTP " + r.status + ")");
-      return fetch(caminho, {cache:"no-store", headers: cabecalhosPrecos()}).then(function(r2){
-        if(!r2.ok) throw new Error("leitura recusada (HTTP " + r2.status + ")");
+    .then(function (r) {
+      if (!r.ok) throw new Error("gravação recusada (HTTP " + r.status + ")");
+      return fetch(caminho, { cache: "no-store", headers: cabecalhosPrecos() }).then(function (r2) {
+        if (!r2.ok) throw new Error("leitura recusada (HTTP " + r2.status + ")");
         return r2.json();
       });
     })
-    .then(function(d){
-      if(!d || d.quando !== marca) throw new Error("o banco devolveu outro conteúdo");
-      return fetch(caminho, {method:"DELETE", headers: cabecalhosPrecos()});
+    .then(function (d) {
+      if (!d || d.quando !== marca) throw new Error("o banco devolveu outro conteudo");
+      return fetch(caminho, { method: "DELETE", headers: cabecalhosPrecos() });
     })
-    .then(function(){
-      precosMsgAdmin("Tudo certo: o banco aceita gravação e leitura. Agora é só salvar a URL.", "var(--texto-ok)");
-    })
-    .catch(function(e){
+    .then(function () { acabou(); precosMsgAdmin("Tudo certo: o banco aceita gravacao e leitura. Agora e so salvar a URL.", "var(--texto-ok)"); })
+    .catch(function (e) {
       var dica = "";
-      if(/Failed to fetch|NetworkError/.test(e.message)) dica = " O navegador bloqueou a conexão - confira se a URL começa com https:// e se o banco está em modo teste.";
-      if(/401|403|Permission|HTTP 4/.test(e.message)) dica = " As regras do banco estão bloqueando a escrita. No Firebase, use uma URL com ?ns= ou abra o banco em modo teste.";
-      precosMsgAdmin("Falha no teste: " + e.message + "." + dica, "var(--texto-erro)");
-    })
-    .then(function(){
-      if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-plug"></i> Testar'; }
+      if (/Failed to fetch|NetworkError/.test(e.message)) dica = " O navegador bloqueou a conexao - confira a internet.";
+      if (/404/.test(e.message)) dica = " Se a URL for do gateway, use o botao Testar de novo (ele detecta o modo).";
+      acabou();
+      precosMsgAdmin("Nao deu: " + e.message + dica, "var(--texto-erro)");
     });
 }
 

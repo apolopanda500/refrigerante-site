@@ -363,6 +363,42 @@ function conectar(url) {
     if (!peq.length) ok("todo controle visivel do painel com 44px ou mais");
     else falha("controle pequeno no painel: " + peq.join(" | "));
 
+
+    console.log("\n=== 13. O BOTAO TESTAR SABE DIFERENCIAR BANCO DE GATEWAY ===");
+    /* o dono cola a URL do gateway e aperta Testar. O teste tem de falar
+       com o caminho do gateway (/api/...), e nao com o do Firebase:
+       PUT /__teste_convencao.json no Worker devolve 404 e faz o teste
+       mentir, dizendo que o banco esta bloqueando a escrita. */
+    await abrirPainel();
+    const testeGateway = await esperarAte(`(function () {
+        if (typeof bancoEhGateway !== "function") return null;
+        var inp = document.getElementById("cfgPrecosURL");
+        if (!inp) return null;
+        inp.value = "https://convencao-gateway.rickjax123.workers.dev";
+        window.__msg = "";
+        var b = document.getElementById("btnTestarBanco");
+        if (!b) return "sem botao";
+        b.click();
+        return "clicou";
+    })()`, 15000);
+    if (testeGateway === "clicou") {
+        await esperar(9000);
+        const msg = await rodar(`(function () {
+            var m = document.getElementById("precosURLMsg");
+            return m ? m.innerText.replace(/\\s+/g, " ").trim() : "sem mensagem";
+        })()`);
+        const txt = String(msg.valor || "");
+        if (/Tudo certo/.test(txt)) ok("Testar com a URL do gateway: " + txt.slice(0, 90));
+        else if (/Testando/.test(txt)) falha("o Testar ficou parado em \"Testando...\" no gateway");
+        else falha("Testar com a URL do gateway nao deu certo: " + txt.slice(0, 110));
+        if (/HTTP 404/.test(txt)) falha("o Testar tentou gravar no Worker (404): ele nao sabe que a URL e do gateway");
+    } else {
+        falha("nao deu para clicar no Testar com a URL do gateway (" + testeGateway + ")");
+    }
+    /* e com a URL do Firebase (modo antigo), ele continua testando escrita */
+    const ehGateway = await rodar('(function(){ return bancoEhGateway("https://x-default-rtdb.firebaseio.com") + "|" + bancoEhGateway("https://convencao-gateway.rickjax123.workers.dev") + "|" + bancoEhGateway(""); })()');
+    if (String(ehGateway.valor) === "false|true|false") ok("o painel distingue: Firebase = modo antigo, Worker = gateway");
+    else falha("a deteccao de gateway errada: " + ehGateway.valor);
     console.log("\n=== 12. O PAINEL NAO DEIXA ERRO DE JAVASCRIPT ===");
     if (errosConsole().length) falha("erro de JavaScript no painel: " + errosConsole()[0].slice(0, 110));
     else ok("nenhum erro de JavaScript no painel do vendedor");
