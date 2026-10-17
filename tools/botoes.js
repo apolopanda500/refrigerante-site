@@ -121,13 +121,29 @@ const VARREDURA = String.raw`
     };
     lista.push(item);
 
-    /* --- BOTAO FALSO: parece clicavel mas nao faz nada --- */
+    /* --- BOTAO FALSO: parece clicavel mas nao faz nada ---
+       Cuidado com falso alarme: botao ligado por addEventListener
+       (o botao da IA e assim) nao tem onclick nenhum, e link com
+       href="#" que chama funcao de verdade (Compartilhar) tambem
+       nao e. Por isso, antes de acusar, a gente CLICA e ve se a
+       tela mudou - o que vale e o efeito, nao o atributo. */
     var semAcao = (!item.onclick && !item.oncliquesrc && !item.href)
-                  || item.href === "#"
                   || item.href === "javascript:void(0)"
                   || item.href === "javascript:;"
                   || (item.oncliquesrc && /^return\s*;?$/.test(item.oncliquesrc))
                   || (item.tag === "button" && item.tipo !== "submit" && !item.onclick && !item.oncliquesrc);
+    /* href="#" so e falso se NAO houver onclick chamando funcao */
+    if (item.href === "#" && item.oncliquesrc && item.oncliquesrc.length > 6) semAcao = false;
+    if (semAcao && visivel) {
+        item.indice = alvos.indexOf(b);
+        try {
+            var antes = document.body.innerHTML.length + "|" + document.body.className;
+            b.click();
+            var depois = document.body.innerHTML.length + "|" + document.body.className;
+            /* a tela mudou = o botao respondeu. So e falso se nada mudou */
+            if (antes !== depois) semAcao = false;
+        } catch (e) { /* botao que lanca ao clicar esta quebrado: continua falso */ }
+    }
     if (semAcao && visivel) falsos.push(item);
 
     /* --- BOTAO MORTO: chama funcao que nao existe ---

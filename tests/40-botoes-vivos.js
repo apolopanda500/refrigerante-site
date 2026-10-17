@@ -155,6 +155,34 @@ function conectar(url) {
         else falha(p + ": sem botao da IA (o cliente ficaria sem o assistente nessa tela)");
     }
 
+    console.log("\n=== 2b. O X DE FECHAR O ASSISTENTE TEM 44PX (so aparece aberto) ===");
+    /* o botao de fechar so existe visualmente depois que o painel abre,
+       entao so da para conferir depois do clique - e e por isso que a
+       auditoria achou ele e a bateria normal nao acharia */
+    for (const p of ["index.html", "carrinho.html", "perfil.html"]) {
+        await irParaPagina(p);
+        const r = await rodarNaPagina(`(function () {
+            var fab = document.getElementById("iaFab");
+            if (!fab) return "sem fab";
+            fab.click();
+            var fechar = document.querySelector(".ia-fechar");
+            if (!fechar) return "sem botao de fechar";
+            var q = fechar.getBoundingClientRect();
+            if (!(q.width && q.height)) return "invisivel";
+            var nome = fechar.getAttribute("aria-label") || "Fechar";
+            return Math.round(q.height) + "|" + Math.round(q.width) + "|" + nome;
+        })()`);
+        const v = String(r.valor || "");
+        if (v === "sem fab" || v === "sem botao de fechar" || v === "invisivel") {
+            falha(p + ": " + v);
+        } else {
+            const partes = v.split("|");
+            const h = parseInt(partes[0], 10), w = parseInt(partes[1], 10);
+            if (h >= 44 && w >= 44) ok(p + ": X de fechar " + h + "x" + w + "px (" + partes[2] + ")");
+            else falha(p + ": X de fechar tem " + h + "x" + w + "px - menor que 44, o dedo erra");
+        }
+    }
+
     console.log("\n=== 3. COMPARTILHAR CUMPRE A ACAO (carrinho) ===");
     await irParaPagina("carrinho.html");
     const antesShare = await rodarNaPagina(
