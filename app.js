@@ -435,28 +435,25 @@ function pintarHorario() {
     var el = document.getElementById("sideHorario");
     if (!el) return;
 
-    var a2 = (typeof agoraSP === "function") ? agoraSP() : { dia: new Date().getDay(), hh: new Date().getHours(), mm: new Date().getMinutes() };
-    var lojaOk = (typeof lojaAberta === "function") ? lojaAberta(a2) : false;
-    var entregaOk = (typeof entregaAberta === "function") ? entregaAberta(a2) : false;
+    var a2 = (typeof agoraSP === "function") ? agoraSP() : { dia: new Date().getDay(), minutos: new Date().getHours() * 60 + new Date().getMinutes() };
     var rs = (typeof regioesDoDia === "function") ? regioesDoDia(a2.dia) : [];
     var soPedidos = (typeof somentePedidos === "function") && somentePedidos(a2.dia);
+    var lojaAbertaDia = (typeof lojaAbertaNoDia === "function") ? lojaAbertaNoDia(a2.dia) : true;
 
     var hoje = rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "Nenhuma";
     var prox = (typeof proximoDiaAtendente === "function") ? proximoDiaAtendente() : 2;
     var abrindo = (typeof regioesPedidoHoje === "function") ? regioesPedidoHoje(a2.dia) : [];
     var pedidoHoje = abrindo.length ? abrindo.map(function (r) { return r.nome; }).join(", ") : "Nenhuma";
 
-    /* ---- status da LOJA ---- */
+    /* ---- status da LOJA: fonte unica (loja.js estadoLoja) ---- */
+    var stLoja = (typeof estadoLoja === "function") ? estadoLoja(a2) : null;
     var statusLoja;
-    var lojaAbertaDia = (typeof lojaAbertaNoDia === "function") ? lojaAbertaNoDia(a2.dia) : true;
-    if (!lojaAbertaDia) {
-        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-door-closed"></i><span class="wgt-status-texto">Loja fechada ' + (a2.dia === 6 ? "no sábado (só entrega)" : "no domingo") + '</span></div>';
-    } else if (lojaOk) {
-        statusLoja = '<div class="wgt-status aberto"><i class="fa fa-store"></i><span class="wgt-status-texto">Loja aberta agora</span></div>';
-    } else if (a2.hh < HORARIOS.loja.abre) {
-        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i><span class="wgt-status-texto">Loja abre ' + horaTexto(HORARIOS.loja.abre, 0) + '</span></div>';
+    if (stLoja) {
+        var classeLoja = stLoja.aberta ? "aberto" : (stLoja.dia ? "fechado" : "entrega");
+        statusLoja = '<div class="wgt-status ' + classeLoja + '"><i class="fa ' + stLoja.icone + '"></i>'
+            + '<span class="wgt-status-texto">' + stLoja.texto + '</span></div>';
     } else {
-        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-clock"></i><span class="wgt-status-texto">Loja fechou às ' + horaTexto(HORARIOS.loja.fecha, 0) + '</span></div>';
+        statusLoja = '<div class="wgt-status fechado"><i class="fa fa-door-closed"></i><span class="wgt-status-texto">Loja fechada</span></div>';
     }
 
     /* ---- status dos PEDIDOS ---- */
@@ -473,26 +470,23 @@ function pintarHorario() {
         statusPedido = '<div class="wgt-status fechado"><i class="fa fa-calendar-times"></i> Hoje não abrem pedidos</div>';
     }
 
-    /* ---- status da ENTREGA ---- */
+    /* ---- status do FRETEIRO: fonte unica (loja.js estadoEntrega) ---- */
+    var stEnt = (typeof estadoEntrega === "function") ? estadoEntrega(a2) : null;
     var statusEntrega;
-    if (soPedidos || rs.length === 0) {
-        statusEntrega = '<div class="wgt-status fechado"><i class="fa fa-truck"></i> Sem entrega hoje</div>';
-    } else if (entregaOk) {
-        statusEntrega = '<div class="wgt-status aberto"><i class="fa fa-truck"></i> Freteiro entregando agora</div>';
-    } else if (a2.hh < HORARIOS.entrega.abre) {
-        statusEntrega = '<div class="wgt-status pedido"><i class="fa fa-sun"></i> Entrega começa às ' + horaTexto(HORARIOS.entrega.abre, 0) + '</div>';
+    if (stEnt) {
+        var classeEnt = stEnt.ativa ? "aberto" : (stEnt.temDia ? "pedido" : "fechado");
+        statusEntrega = '<div class="wgt-status ' + classeEnt + '"><i class="fa ' + stEnt.icone + '"></i>'
+            + '<span class="wgt-status-texto">' + stEnt.texto + '</span></div>';
     } else {
-        statusEntrega = '<div class="wgt-status fechado"><i class="fa fa-moon"></i> Entrega encerrada às ' + horaTexto(HORARIOS.entrega.fecha, 0) + '</div>';
+        statusEntrega = '<div class="wgt-status fechado"><i class="fa fa-truck"></i> Sem entrega hoje</div>';
     }
-
-    var hoje = rs.length ? rs.map(function (r) { return r.nome; }).join(", ") : "Nenhuma";
-    var prox = (typeof proximoDiaAtendente === "function") ? proximoDiaAtendente() : 2;
 
     el.innerHTML = '<h3><i class="fa fa-clock"></i> Horários</h3>'
         + '<div class="hr-bloco">'
         + '  <div class="hr-titulo"><i class="fa fa-store"></i> Loja (empresa)</div>'
         + statusLoja
-        + '  <div class="wgt-linha"><span>Atende</span><b>' + textoHorario("loja") + '</b></div>'
+        + '  <div class="wgt-linha"><span>Atende</span><b>segunda a sexta, '
+        + (stLoja ? stLoja.janela : "08:50 as 15:00") + '</b></div>'
         + '</div>'
         + '<div class="hr-bloco">'
         + '  <div class="hr-titulo"><i class="fa fa-cart-plus"></i> Pedidos</div>'
@@ -663,11 +657,17 @@ function pintarCalendarioSemanal() {
     var el = document.getElementById("calendario");
     if (!el) return;
 
-    var hoje = (typeof agoraSP === "function") ? agoraSP().dia : new Date().getDay();
     var agora = (typeof agoraSP === "function") ? agoraSP() : null;
-    var fechaMinutos = HORARIOS.loja.fecha * 60;   /* 15:00 = 900 min */
-    var abre = [1, 2, 3, 4, 5];              /* seg a sex */
+    var hoje = agora ? agora.dia : new Date().getDay();
+    var stLoja = (typeof estadoLoja === "function") ? estadoLoja(agora) : null;
+    var stEnt = (typeof estadoEntrega === "function") ? estadoEntrega(agora) : null;
     var ordem = [1, 2, 3, 4, 5, 6, 0];       /* segunda primeiro */
+
+    /* janela curta "8h50-15h" para caber na celula da semana */
+    var abreC = (typeof horaDeMinutos === "function") ? horaDeMinutos(HORA_ABRE_PEDIDOS) : { h: 8, m: 50 };
+    var fechaC = (typeof horaDeMinutos === "function") ? horaDeMinutos(HORA_FECHA_PEDIDOS) : { h: 15, m: 0 };
+    var janelaCurta = abreC.h + "h" + (abreC.m ? String(abreC.m) : "")
+        + "–" + fechaC.h + "h" + (fechaC.m ? String(fechaC.m) : "");
 
     function lista(ids) {
         if (!ids.length) return '<span class="cal-vazio">-</span>';
@@ -678,20 +678,49 @@ function pintarCalendarioSemanal() {
     ordem.forEach(function (d) {
         var pedidos = regioesPedidoHoje(d);
         var entregas = regioesDoDia(d);
-        /* loja fecha depois do horario: se for hoje e ja passou da hora, fecha */
-        var lojaOk = abre.indexOf(d) >= 0 && !(hoje === d && agora && agora.minutos >= fechaMinutos);
+        /* dia da loja: a fonte e a loja.js (DIAS_LOJA), nao uma lista solta aqui */
+        var abreNoDia = (typeof lojaAbertaNoDia === "function") ? lojaAbertaNoDia(d) : d >= 1 && d <= 5;
+        var soEntrega = (typeof diaSomenteEntrega === "function") ? diaSomenteEntrega(d) : !abreNoDia;
         var ehHoje = d === hoje;
 
-        var estado = !lojaOk
-            ? (d === 6 ? "só entrega" : "fechado")
-            : (d === 1 ? "monta pedidos" : "aberta");
+        /* estado do dia: hoje mostra o agora; os outros, a janela da loja */
+        var estado, icone, classe;
+        if (ehHoje && stLoja) {
+            estado = stLoja.curto;
+            icone = stLoja.icone;
+            classe = stLoja.aberta ? "cal-ok" : "cal-off";
+        } else if (abreNoDia) {
+            estado = "aberta " + janelaCurta;
+            icone = "fa-store";
+            classe = "cal-ok";
+        } else if (soEntrega && entregas.length) {
+            estado = "só entrega";
+            icone = "fa-truck";
+            classe = "cal-entrega";
+        } else {
+            estado = "fechada";
+            icone = "fa-door-closed";
+            classe = "cal-off";
+        }
 
-        h += '<div class="cal-dia' + (ehHoje ? " hoje" : "") + (lojaOk ? "" : " fechada") + '">'
+        /* entrega do dia: hoje mostra o estado do freteiro */
+        var txtEntrega;
+        if (ehHoje && stEnt) {
+            txtEntrega = stEnt.curto;
+        } else if (entregas.length) {
+            txtEntrega = entregas.length + (entregas.length === 1 ? " região" : " regiões");
+        } else {
+            txtEntrega = "";
+        }
+
+        h += '<div class="cal-dia' + (ehHoje ? " hoje" : "") + (abreNoDia ? "" : " fechada") + '">'
            +   '<div class="cal-cab"><span class="cal-nome">' + (typeof NOMES_DIA_LONGOS !== "undefined" ? NOMES_DIA_LONGOS[d].replace("-feira", "") : d) + '</span>'
            +     (ehHoje ? '<span class="cal-badge">hoje</span>' : '') + '</div>'
-           +   '<div class="cal-loja"><i class="fa ' + (lojaOk ? "fa-store" : "fa-door-closed") + '"></i> ' + estado + '</div>'
+           +   '<div class="cal-loja ' + classe + '"><i class="fa ' + icone + '"></i> <span>' + estado + '</span></div>'
            +   '<div class="cal-linha"><i class="fa fa-cart-plus" title="aceita pedido"></i><span>' + lista(pedidos) + '</span></div>'
-           +   '<div class="cal-linha"><i class="fa fa-truck" title="entrega"></i><span>' + lista(entregas) + '</span></div>'
+           +   '<div class="cal-linha"><i class="fa fa-truck" title="entrega"></i><span>'
+           +     (txtEntrega ? '<b>' + txtEntrega + '</b>' : '<span class="cal-vazio">-</span>')
+           +     (entregas.length ? ' ' + lista(entregas) : '') + '</span></div>'
            + '</div>';
     });
 

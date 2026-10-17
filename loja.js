@@ -343,6 +343,76 @@ function entregaAberta(agora) {
     return a.minutos >= E.abre * 60 && a.minutos < E.fecha * 60;
 }
 
+/* ============================================================
+   ESTADO DA LOJA E DO FRETEIRO AGORA - FONTE UNICA
+   A tabela da semana, o quadro de horarios, o carrinho e o aviso
+   do topo leem daqui, entao nenhum lugar discorda do outro.
+   Antes um canto dizia "a loja abre 9h" (HORARIOS.loja) e outro
+   "os pedidos abrem 8h50" (HORA_ABRE_PEDIDOS). Agora a janela do
+   cliente e sempre a mesma: 08:50 as 15:00, segunda a sexta.
+   ============================================================ */
+
+/* 530 -> "08:50" */
+function hhmm(minutos) {
+    var h = Math.floor(minutos / 60), m = minutos % 60;
+    return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+}
+/* como a loja esta neste minuto */
+function estadoLoja(agora) {
+    var a = agora || (typeof agoraSP === "function" ? agoraSP()
+        : { dia: new Date().getDay(), minutos: new Date().getHours() * 60 + new Date().getMinutes() });
+    var E = HORARIOS.entrega;
+    var janela = hhmm(HORA_ABRE_PEDIDOS) + " as " + hhmm(HORA_FECHA_PEDIDOS);
+
+    if (typeof lojaAbertaNoDia === "function" && !lojaAbertaNoDia(a.dia)) {
+        return {
+            aberta: false, dia: false, icone: "fa-door-closed",
+            curto: a.dia === 6 ? "só entrega" : "fechada",
+            texto: a.dia === 6 ? "Fechada no sábado (só dia de entrega)" : "Fechada no domingo",
+            janela: janela
+        };
+    }
+    if (a.minutos < HORA_ABRE_PEDIDOS) {
+        return {
+            aberta: false, dia: true, icone: "fa-clock",
+            curto: "abre " + hhmm(HORA_ABRE_PEDIDOS),
+            texto: "Abre às " + hhmm(HORA_ABRE_PEDIDOS),
+            janela: janela
+        };
+    }
+    if (a.minutos >= HORA_FECHA_PEDIDOS) {
+        return {
+            aberta: false, dia: true, icone: "fa-clock",
+            curto: "fechou " + hhmm(HORA_FECHA_PEDIDOS),
+            texto: "Fechou às " + hhmm(HORA_FECHA_PEDIDOS) + " - o freteiro entrega até " + hhmm(E.fecha * 60),
+            janela: janela
+        };
+    }
+    return {
+        aberta: true, dia: true, icone: "fa-store",
+        curto: "aberta agora", texto: "Aberta agora", janela: janela
+    };
+}
+/* como esta o freteiro neste minuto */
+function estadoEntrega(agora) {
+    var a = agora || (typeof agoraSP === "function" ? agoraSP()
+        : { dia: new Date().getDay(), minutos: new Date().getHours() * 60 + new Date().getMinutes() });
+    var E = HORARIOS.entrega;
+    var regioes = (typeof regioesDoDia === "function") ? regioesDoDia(a.dia) : [];
+    var semEntrega = (typeof somentePedidos === "function" && somentePedidos(a.dia)) || regioes.length === 0;
+
+    if (semEntrega) {
+        return { ativa: false, temDia: false, icone: "fa-truck", curto: "sem entrega", texto: "Hoje não tem entrega" };
+    }
+    if (a.minutos < E.abre * 60) {
+        return { ativa: false, temDia: true, icone: "fa-sun", curto: "entrega " + hhmm(E.abre * 60), texto: "Entrega começa às " + hhmm(E.abre * 60) };
+    }
+    if (a.minutos >= E.fecha * 60) {
+        return { ativa: false, temDia: true, icone: "fa-moon", curto: "encerrada", texto: "Entrega encerrada às " + hhmm(E.fecha * 60) };
+    }
+    return { ativa: true, temDia: true, icone: "fa-truck", curto: "entregando", texto: "Freteiro entregando agora" };
+}
+
 /* ---------- texto "das 6h as 18h" ---------- */
 function textoHorario(qual) {
     var h = HORARIOS[qual];
