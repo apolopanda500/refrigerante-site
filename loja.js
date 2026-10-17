@@ -271,6 +271,156 @@ function bairroForaDaArea(bairro) {
     return !bairroAtendido(b);
 }
 
+/* ============================================
+   LIMITE DE PEDIDOS POR DIA - A VALVA DA LOJA
+   Duas travas, todas com fonte unica (aqui):
+     1) POR CLIENTE/DIA: o mesmo telefone nao faz mais que N
+        pedidos no mesmo dia (padrao 2). Trava o pedido
+        repetido, o duplo toque no botao e o spam.
+     2) POR LOJA/DIA: a loja inteira nao passa de N pedidos
+        no mesmo dia (padrao 80). Trava o dia em que a loja
+        nao da conta de montar e entregar tudo.
+   O dia e sempre o de SAO PAULO e vira a chave "AAAA-MM-DD":
+   virando a meia-noite o limite zera sozinho e ninguem
+   precisa limpar nada.
+   O total da loja vem do PAINEL (que ve os pedidos de todos
+   os aparelhos), publicado em /capacidade.json. Sem ele, so
+   vale o limite por cliente - melhor vender a mais do que
+   travar a venda por um numero velho.
+   ============================================ */
+var LIMITE_PEDIDOS_CLIENTE_DIA = 2;    /* por telefone */
+var LIMITE_PEDIDOS_LOJA_DIA = 80;      /* a loja toda, no dia */
+
+/* so os digitos: o telefone do perfil chega mascarado e o limite
+   e por telefone, entao a mascara nao pode contar como se fosse
+   outra pessoa. */
+function digitosTel(v) {
+    return String(v == null ? "" : v).replace(/\D/g, "");
+}
+
+/* "AAAA-MM-DD" de SAO PAULO: a chave do dia do limite.
+   Tudo que conta pedido do dia passa por aqui, para nunca
+   existir dois "dias" diferentes no mesmo lugar. */
+function diaLimite(ts) {
+    var d = new Date(ts || Date.now());
+    var sp = new Date(d.getTime() + d.getTimezoneOffset() * 60000 - 3 * 3600000);
+    var p = function (n) { return ("0" + n).slice(-2); };
+    return sp.getFullYear() + "-" + p(sp.getMonth() + 1) + "-" + p(sp.getDate());
+}
+
+/* a data de um pedido: criadoEm quando existe; se o pedido
+   antigo nao tem esse campo, usa o proprio numero (CV20261017) */
+function dataDoPedido(p) {
+    if (!p) return "";
+    if (p.criadoEm) return diaLimite(p.criadoEm);
+    var m = String(p.id || "").match(/CV(\d{4})(\d{2})(\d{2})/);
+    return m ? (m[1] + "-" + m[2] + "-" + m[3]) : "";
+}
+
+/* pedidos de HOJE (SP), ignorando os cancelados: um pedido
+   cancelado nao come a cota do cliente nem a cota da loja */
+function pedidosDoDia(lista, hoje) {
+    var dia = hoje || diaLimite();
+    var out = [];
+    (Array.isArray(lista) ? lista : []).forEach(function (p) {
+        if (!p || p.status === "cancelado") return;
+        if (dataDoPedido(p) === dia) out.push(p);
+    });
+    return out;
+}
+
+/* teto por cliente/dia. "0" significa SEM LIMITE. Valor quebrado
+   volta ao padrao: a trava de seguranca nunca pode ser a coisa que
+   derruba o pedido de um cliente de verdade. O dono muda em
+   LIMITE_PEDIDOS_CLIENTE_DIA (aqui em cima) - o cliente nao mexe:
+   sao dois lugares para o mesmo numero, e um deles sempre mente. */
+function limiteClienteDia() {
+    try {
+        var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
+        var v = parseInt(p.cfgLimitePedidosCliente, 10);
+        if (isNaN(v) || v < 0) return LIMITE_PEDIDOS_CLIENTE_DIA;
+        return v;
+    } catch (e) { return LIMITE_PEDIDOS_CLIENTE_DIA; }
+}
+
+/* o que o painel publicou hoje: {dia, pedidos, limite} ou null.
+   Se o painel ficou fechado e o registro e de outro dia, vale
+   null: e melhor a loja vender a mais do que travar a venda. */
+function capacidadeHoje() {
+    try {
+        var c = JSON.parse(localStorage.getItem("convencaoCapacidade") || "null");
+        if (!c || typeof c !== "object") return null;
+        if (String(c.dia || "") !== diaLimite()) return null;
+        var n = parseInt(c.pedidos, 10);
+        if (isNaN(n) || n < 0) return null;
+        return c;
+    } catch (e) { return null; }
+}
+
+/* teto da loja no dia (padrao 80; o dono muda no painel) */
+function limiteLojaDia() {
+    var c = capacidadeHoje();
+    if (!c) return LIMITE_PEDIDOS_LOJA_DIA;
+    var v = parseInt(c.limite, 10);
+    return (isNaN(v) || v < 0) ? LIMITE_PEDIDOS_LOJA_DIA : v;
+}
+
+/* ============================================================
+   A VALVA DO DIA - uma funcao que decide tudo
+   Devolve null (pode pedir) ou {tipo, feito, teto, texto, aviso}
+     - tipo "cliente": esse telefone ja fez N pedidos hoje
+     - tipo "loja":   a loja ja bateu o teto de hoje
+   Chame sempre com a lista de pedidos e o telefone: quem
+   decide e o carrinho (tela) e o criarPedido (gravacao).
+   ============================================================ */
+function checaLimitePedidos(tel, lista) {
+    var doDia = pedidosDoDia(lista);
+
+    var tetoCliente = limiteClienteDia();
+    if (tetoCliente > 0) {
+        var feito = 0, alvo = digitosTel(tel);
+        if (alvo) {
+            doDia.forEach(function (p) { if (digitosTel(p.tel) === alvo) feito++; });
+        }
+        if (feito >= tetoCliente) {
+            return {
+                tipo: "cliente", feito: feito, teto: tetoCliente,
+                texto: "Você já fez " + feito + (feito === 1 ? " pedido" : " pedidos") + " hoje. "
+                    + "O limite é de " + tetoCliente + " por cliente por dia.\n\n"
+                    + "Para não perder a venda, fale com o vendedor: ele libera o pedido na hora.",
+                aviso: "Você já usou seus <b>" + tetoCliente + "</b> pedidos de hoje. "
+                     + "O vendedor consegue liberar mais um."
+            };
+        }
+    }
+
+    var c = capacidadeHoje();
+    if (c) {
+        var tetoLoja = parseInt(c.limite, 10);
+        var feitos = parseInt(c.pedidos, 10) || 0;
+        if (!isNaN(tetoLoja) && tetoLoja > 0 && feitos >= tetoLoja) {
+            return {
+                tipo: "loja", feito: feitos, teto: tetoLoja,
+                texto: "A loja já fechou as " + feitos + " vagas de pedidos do dia de hoje.\n\n"
+                    + "Fale com o vendedor: ele abre uma vaga para você.",
+                aviso: "A loja atingiu o limite de <b>" + tetoLoja + "</b> pedidos hoje."
+                     + " O vendedor abre uma vaga para você."
+            };
+        }
+    }
+    return null;
+}
+
+/* texto unico da regra (IA, painel e dono leem daqui) */
+function limitePedidosTexto() {
+    var c = limiteClienteDia();
+    var l = limiteLojaDia();
+    var t = c > 0
+        ? "Cada cliente pode fazer até " + c + " pedidos por dia."
+        : "Não há limite de pedidos por cliente.";
+    return t + " A loja atende até " + l + " pedidos por dia.";
+}
+
 /* qual regiao atende um bairro? (id da regiao ou "")
    compara normalizado: nome exato, contido no bairro ou bairro na regiao */
 function regiaoDoBairro(bairro) {

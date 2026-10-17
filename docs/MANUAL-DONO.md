@@ -148,7 +148,42 @@ para não ter duas versões do valor.
 
 ---
 
-## 7. Aplicativo no celular
+## 7. Limite de pedidos por dia (a válvula)
+
+O site tem duas travas para **nunca travar** e para você não perder venda:
+
+| Trava | Padrão | O que acontece quando bate |
+|---|---|---|
+| **Por cliente** (telefone) | **2 pedidos por dia** | O mesmo cliente não consegue fazer o 3º pedido naquele dia. |
+| **Da loja toda** | **80 pedidos por dia** | Ninguém consegue pedir: a loja fechou as vagas do dia. |
+
+- **O dia vira às 00:00** e a trava zera sozinha. Você não precisa liberar nada.
+- **Pedido cancelado não conta** — só gasta vaga o pedido que realmente vai sair.
+- Quando o cliente bate no limite, o botão **Finalizar** desliga e ele recebe um
+  botão **Falar com o vendedor** (abre o WhatsApp com a mensagem pronta).
+  **Nenhum item do carrinho é perdido.**
+- Você é avisado: no painel, em *Configurações do painel*, fica escrito
+  **“Vagas de hoje: X de 80”**. A tela fica em atenção quando chega perto de fechar.
+
+### Mudar o limite da loja
+
+1. **Painel → Configurações do painel → Sincronização com a nuvem**.
+2. Em **Limite de pedidos por dia**, toque em **40**, **60**, **80** ou **120**.
+3. O número é salvo na hora e publicado para o site (não precisa reiniciar nada).
+
+O limite por cliente (2) está no código da loja (`loja.js`,
+`LIMITE_PEDIDOS_CLIENTE_DIA`) e não muda pela tela — é proposital: dois lugares
+para o mesmo número é a forma garantida de dois números diferentes.
+
+### Se um cliente de verdade bater no limite
+
+Chame no WhatsApp e feche o pedido na mão: ou ele espera o dia virar, ou você
+libera pelo painel. A trava existe contra repetição, spam e dia de volume — não
+é para atrapalhar cliente fiel.
+
+---
+
+## 8. Aplicativo no celular
 
 - **Configurações → Aplicativo do celular → Baixar aplicativo (APK)**.
 - Os arquivos atualizados ficam em `Downloads\APK Convencao\` e no repositório,
@@ -179,7 +214,7 @@ o script lê `versao.txt` (é a mesma do site).
 
 ---
 
-## 8. Cliente com dúvida
+## 9. Cliente com dúvida
 
 Na página inicial existe o quadro **"Ajuda rápida"**:
 o cliente escreve a dúvida e a resposta sai na hora.
@@ -193,7 +228,7 @@ recolhida e o cliente abre quando quiser.
 
 ---
 
-## 9. Regras que o site segue
+## 10. Regras que o site segue
 
 - Pedidos abertos das **08:50 às 15:00**.
 - Entrega em **Japeri, Engenho Pedreira, Paracambi e Seropédica** —
@@ -206,3 +241,5 @@ recolhida e o cliente abre quando quiser.
   - Sábado e domingo não abrem pedidos.
   - No mesmo dia pode ser dia de pedido e dia de entrega ao mesmo tempo.
 - Pagamento em **Pix ou Dinheiro** na entrega.
+- **2 pedidos por cliente por dia** e **80 por dia no total da loja** (a válvula;
+  você muda o total em *Configurações do painel*).

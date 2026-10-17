@@ -59,6 +59,8 @@ tudo roda no navegador do cliente e os dados ficam em `localStorage`
 | `localStorage: productPriceOverrides` | `k:<código do produto>` | preço editado pelo vendedor |
 | Firebase `/precos.json` | `k:<código>` | mesma tabela, para todos os aparelhos |
 | Firebase `/pedidos.json` | `CV20261015-001` | pedidos de todos os aparelhos (o painel baixa e junta) |
+| Firebase `/capacidade.json` | `dia`/`pedidos`/`limite` | vagas de pedidos do dia (a válvula global; só números, leitura pública) |
+| `localStorage: convencaoCapacidade` | — | cópia do total do dia que o cliente leu da nuvem |
 | `catalogo.json` (no repositório) | — | catálogo do dia, gerado pelo robô |
 
 **Regra de ouro do preço:** a chave é `k:` + o código do produto no site oficial.
@@ -90,7 +92,7 @@ o total do carrinho aparecia como `R$ 4260,00`.
 | Arquivo | Responsabilidade |
 |---|---|
 | `app.js` | catálogo (PD/CT), render da vitrine, temas, preços em tempo real, horários |
-| `loja.js` | regiões, dias de entrega, **cálculo de frete**, regra de atendimento |
+| `loja.js` | regiões, dias de entrega, **cálculo de frete**, regra de atendimento, **válvula do dia (limite de pedidos por dia)** |
 | `script.js` | carrinho, criação de pedido, histórico de status, aviso do Telegram, pedidos na nuvem (`enviarPedidoNuvem`/`sincronizarPedidosNuvem`) |
 | `conta.js` | perfil do cliente (fonte única de dados) |
 | `theme.js` | aplica tema/fonte/contraste/leitura antes da página pintar; no painel usa `vendedorPrefs` |
@@ -139,6 +141,30 @@ o total do carrinho aparecia como `R$ 4260,00`.
 - **Preço:** o dono manda. O robô **nunca** altera preço; só usa o do site oficial
   para produto **novo** que ainda não tem preço na base.
 - **Catálogo:** o robô lê o site oficial às 10:00 e atualiza produtos e fotos.
+- **Limite de pedidos por dia (a válvula):** fonte única em `loja.js`.
+  | Trava | Padrão | Quem conta | Onde é consultada |
+  |---|---|---|---|
+  | Por **cliente/dia** (telefone) | **2** | o próprio aparelho (`convencao_pedidos`) | `bloqueioFinalizar()` (carrinho) + `criarPedido()` (gravação) |
+  | Por **loja/dia** (a loja toda) | **80** | o **painel**, publicado em `/capacidade.json` | idem (o cliente lê `/capacidade.json`) |
+
+  - `checaLimitePedidos(tel, lista)` devolve `null` (pode pedir) ou
+    `{tipo, feito, teto, texto, aviso}` — `tipo` = `cliente` ou `loja`.
+  - O dia é o de **São Paulo** e vira a chave `AAAA-MM-DD`: **vira a meia-noite
+    e o limite zera sozinho**, ninguém precisa limpar nada.
+  - Pedido **cancelado não come cota** (nem do cliente nem da loja).
+  - O limite por cliente é por **telefone, só os dígitos**: `(21) 9-9123-4567`
+    e o mesmo cliente que `55219912345678`.
+  - **Duas camadas de defesa:** o carrinho desliga o botão *Finalizar* e mostra
+    o caminho (WhatsApp do dono, de `contatoLoja()`); e `criarPedido()` confere
+    de novo na hora de gravar e devolve `null` — quem chamar `criarPedido()` pelo
+    console do navegador **não burla a válvula**.
+  - **Falha para o lado seguro:** registro de `/capacidade.json` de outro dia
+    (painel fechado) **não bloqueia** — melhor vender a mais do que travar a venda.
+  - O dono muda o teto da loja no painel (*Configurações do painel → Limite de
+    pedidos por dia*); o painel mostra *“Vagas de hoje: X de Y”* antes de fechar.
+  - **Limitação conhecida:** o limite por cliente é contado no **aparelho**. Para
+    valer entre aparelhos diferentes, a contagem tem de ir para o gateway
+    (`docs/FECHAR-BANCO.md`, passo 2). O global já vale para todos.
 
 ---
 
@@ -260,7 +286,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 ```bash
 node tests/manter-tudo.js            # versoes, datas, links, docs, robo
 node --check *.js                    # sintaxe
-node tests/rodar-todos.js            # 38 baterias (tem que dar TUDO 10/10)
+node tests/rodar-todos.js            # 39 baterias (tem que dar TUDO 10/10)
 node tests/13-validar-css.js         # CSS inteiro: sintaxe, classe sem uso, cobertura
 node tests/limpar-css-morto.js       # CSS morto: so o relatorio (--aplicar limpa)
 git add -A
@@ -430,12 +456,13 @@ sumia. A bateria `14-cores` confere o contraste das duas versões.
   só entrega; domingo não tem loja nem freteiro.
 
 ### Qualidade automatica (rodar certo sempre vai rodar certo)
-- Testes: node tests/rodar-todos.js - 38 baterias, TUDO 10/10. A 13a e o lint
+- Testes: node tests/rodar-todos.js - 39 baterias, TUDO 10/10. A 13a e o lint
   do CSS; da 14a a 24a vem cor, imagem, letra/numero, tamanho, codigo, erro,
   documento, repositorio e entrega (esta ultima com --online confere o site no ar);
   a 25a confere a opcao "Aparência" (Animações reduzidas), a 26a o bot do
-  Telegram 24/7 (workflow + robo + teclado do pedido) e a 27a o valor minimo
-  para entrega (padrao R$ 100,00).
+  Telegram 24/7 (workflow + robo + teclado do pedido), a 27a o valor minimo
+  para entrega (padrao R$ 100,00), a 38a o banco fechado e a 39a a valvula do
+  dia (limite de pedidos por dia).
 - Portao automatico: .github/workflows/check.yml roda sintaxe de todo
   JS (site, testes, robos) + a suite completa em TODO push e todo dia as 6h.
 - Versao: node tests/bump-versao.js <versao> antes de publicar.

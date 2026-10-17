@@ -29,8 +29,11 @@ if (!fs.existsSync(path.join(dir, ARQ_GW))) { console.log("  ERRO faltou " + ARQ
 console.log("=== 1. AS REGRAS DO FIREBASE NAO ABREM NADA ===");
 if (!fs.existsSync(path.join(dir, ARQ_REGRAS))) falha("faltou " + ARQ_REGRAS + " (regras do banco)");
 const regras = JSON.parse(ler(ARQ_REGRAS));
-/* o preco e a UNICA coisa publica (todo mundo ve o preco da bebida) */
-const PODE_ABRIR = ["/precos/.read"];
+/* o preco e a UNICA coisa publica de DADOS (todo mundo ve o preco da bebida).
+   A segunda excecao e /capacidade: quantas vagas de pedidos do dia ainda tem
+   (a valvula anti-travamento). Sao SO numeros do dia (dia/pedidos/limite) -
+   nome, CPF, telefone e endereco nao ficam ali, e a bateria 39 fiscaliza. */
+const PODE_ABRIR = ["/precos/.read", "/capacidade/.read"];
 const varrer = (obj, caminho) => {
     const problemas = [];
     Object.keys(obj || {}).forEach(function (chave) {
@@ -57,6 +60,26 @@ else ok("so o preco fica publico para leitura (e a escrita e do gateway)");
     if (regras.rules[p][".read"] !== false || regras.rules[p][".write"] !== false) falha("/" + p + " nao esta fechado");
 });
 ok("/pedidos, /avaliacoes e /bot: leitura e escrita fechadas para o mundo");
+
+/* /capacidade e a unica outra leitura publica: tem que continuar
+   SO com numeros do dia, nunca dado de cliente */
+console.log("\n=== 1b. /capacidade ABRE LEITURA, MAS SO COM NUMERO ===");
+if (!regras.rules.capacidade || regras.rules.capacidade[".read"] !== true) falha("/capacidade precisa de leitura publica (a valvula do dia)");
+else ok("/capacidade com leitura publica (o cliente precisa das vagas do dia)");
+if (!regras.rules.capacidade || regras.rules.capacidade[".write"] !== false) falha("/capacidade nao pode ter escrita publica: quem publica e o painel/gateway");
+else ok("/capacidade com escrita fechada (so o painel publica)");
+/* o que o painel grava ali tem que ser so contagem, nunca cliente */
+const admin = ler("admin.html");
+const iCap = admin.indexOf("function publicarCapacidadeLoja");
+const blocoCap = admin.slice(iCap, admin.indexOf("function avisoCapacidadePainel", iCap));
+if (iCap < 0 || blocoCap.length < 50) falha("admin.html perdeu publicarCapacidadeLoja()");
+else {
+    const vazou = ["nome", "tel", "cpf", "end", "bairro", "itens", "identidade"].filter(function (c) {
+        return new RegExp("\\b" + c + "\\s*:").test(blocoCap);
+    });
+    if (vazou.length) falha("/capacidade pode vazar dado de cliente: " + vazou.join(", "));
+    else ok("/capacidade so carrega dia, pedidos e limite - nenhum nome, telefone, CPF ou endereco");
+}
 
 console.log("\n=== 2. O GATEWAY CARREGA E TEM AS ROTAS CERTAS ===");
 (async function () {

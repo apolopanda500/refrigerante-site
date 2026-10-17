@@ -50,7 +50,7 @@ function pergunta(txt) {
     catch (e) { return { texto: "ERRO: " + e.message, intencao: "erro", confianca: 0, rapido: false }; }
 }
 
-console.log("=== 1. A IA RESPONDE (sem erro) A 40 PERGUNTAS REAIS ===");
+console.log("=== 1. A IA RESPONDE (sem erro) A 41 PERGUNTAS REAIS ===");
 const PERGUNTAS = [
     "quanto custa a guaraná 350ml?", "qual o preço da coca cola?", "que horas vocês atendem?",
     "você abre sábado?", "domingo tem entrega?", "qual o frete para Japeri?",
@@ -66,7 +66,7 @@ const PERGUNTAS = [
     "quero adicionar ao carrinho", "o pedido mínimo é quanto?", "a loja abre que horas?",
     "no sábado sai entrega?", "qual região vocês atendem?", "precisa cadastrar?",
     "como faço para instalar o app?", "qual o prazo de entrega?", "tem chave pix?",
-    "quero apagar meus pedidos"
+    "quero apagar meus pedidos", "quantos pedidos posso fazer hoje?"
 ];
 let semResposta = [];
 PERGUNTAS.forEach(function (p) {
@@ -94,7 +94,8 @@ const CASOS = [
     ["quero falar com o motorista", "humano"],
     ["tem aplicativo", "app"],
     ["posso pagar com cartao", "pagamento"],
-    ["tem frete gratis", "freteGratis"]
+    ["tem frete gratis", "freteGratis"],
+    ["quantos pedidos posso fazer por dia", "limiteDia"]
 ];
 CASOS.forEach(function (c) {
     const r = pergunta(c[0]);

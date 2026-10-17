@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261017u">
+<link rel="manifest" href="manifest.json?v=20261017v">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017u">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017v">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017u">
-<script src="theme.js?v=20261017u"></script>
+<link rel="stylesheet" href="style.css?v=20261017v">
+<script src="theme.js?v=20261017v"></script>
 
 <style>
 .page{ padding: 26px 0 60px; background: transparent; min-height: 100vh; }.page-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }.page-head h1{ color: var(--primary-color); font-size:1.8rem; display:flex; align-items:center; gap:10px; }.cart-box{ background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px; }.cart-item{ display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid #eee; flex-wrap:wrap; }.cart-item:last-child{ border-bottom:none; }.cart-item img{ width:64px; height:64px; object-fit:contain; border-radius:10px; background:var(--bg-alt,#232742); display:block; }.ci-info{ flex:1; min-width:160px; }.ci-name{ font-weight:700; color:var(--text-color); display:block; }.ci-price{ color:#5f6570; font-size:0.9rem; }.ci-qtd{ display:inline-flex; align-items:center; gap:8px; border:1px solid #ddd; border-radius:22px; padding:5px 8px; background:var(--bg-alt,#232742); }.ci-qtd button{ width:38px; height:38px; border:none; border-radius:50%; background:var(--primary-color); color:#fff; font-size:1.25rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; }.ci-qtd button:active{ transform:scale(.94); }.ci-qtd button:focus-visible{ outline:3px solid var(--accent-color,#ffb822); outline-offset:2px; }.ci-qtd span{ min-width:30px; text-align:center; font-weight:bold; font-size:1.05rem; }.ci-subtotal{ font-weight:bold; color:var(--primary-color); min-width:90px; text-align:right; }.ci-remove{ background:none; border:none; color:var(--texto-erro); font-size:1.1rem; cursor:pointer; padding:6px; }.cart-vazio{ text-align:center; padding:50px 20px; color:#6b7280; }.cart-vazio i{ font-size:3rem; color:#ddd; margin-bottom:14px; }.resumo{ background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px; margin-top:20px; }.resumo-row{ display:flex; justify-content:space-between; padding:8px 0; font-size:1rem; }.resumo-row.total{ border-top:2px solid #eee; margin-top:8px; padding-top:14px; font-size:1.3rem; font-weight:bold; color:var(--primary-color); }.acoes{ display:flex; gap:12px; margin-top:20px; flex-wrap:wrap; }.btn{ flex:1; min-width:180px; text-align:center; padding:14px 20px; border:none; border-radius:26px; font-weight:bold; font-size:1rem; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; }.btn-primario{ background:var(--primary-color); color:#fff; }.btn-primario:hover{ background:#c62828; }.btn-secundario{ background:#fff; color:var(--primary-color); border:2px solid var(--primary-color); }.btn-secundario:hover{ background:#fff3f3; }/* ===== FINALIZAR O PEDIDO NA MESMA PAGINA (carrinho) =====
@@ -173,13 +173,13 @@ body[data-leitura="vertical"] .pg{grid-template-columns:repeat(3,1fr)!important;
 </div>
 </div></section>
 
-<script src="conta.js?v=20261017u"></script>
-<script src="firebase-appcheck.js?v=20261017u"></script>
-<script src="app-update.js?v=20261017u"></script>
-<script src="ia.js?v=20261017u"></script>
-<script src="central.js?v=20261017u"></script>
-<script src="loja.js?v=20261017u"></script>
-<script src="script.js?v=20261017u"></script>
+<script src="conta.js?v=20261017v"></script>
+<script src="firebase-appcheck.js?v=20261017v"></script>
+<script src="app-update.js?v=20261017v"></script>
+<script src="ia.js?v=20261017v"></script>
+<script src="central.js?v=20261017v"></script>
+<script src="loja.js?v=20261017v"></script>
+<script src="script.js?v=20261017v"></script>
 <script>
 cart = getCart();
 
@@ -542,7 +542,50 @@ function bloqueioFinalizar() {
              + ".\nFaltam " + formatBRL(arredonda(min - sub)) + ".",
         aviso: "Pedido mínimo para entrega: <b>" + formatBRL(min) + "</b>. Faltam <b>"
               + formatBRL(arredonda(min - sub)) + "</b>." };
+    /* ---------- A VALVA DO DIA ----------
+       Duas travas da loja (fonte unica: checaLimitePedidos em loja.js):
+       o mesmo telefone nao passa de N pedidos hoje e a loja no
+       todo nao passa do teto do dia. Nao e punicao: e para o
+       cliente conseguir falar com o dono e nao perder a venda. */
+    var limite = (typeof checaLimitePedidos === "function")
+        ? checaLimitePedidos(telefoneCarrinho(), pedidosParaValvula())
+        : null;
+    if (limite) return {
+        texto: limite.texto,
+        aviso: limite.aviso + " " + botaoFalarComDono()
+    };
     return null;
+}
+/* os pedidos deste aparelho para a valva.
+   getPedidos() nao protege o JSON corrompido (e nao e para mexer
+   la: o script.js e a fonte dos pedidos). Aqui a leitura vai
+   sozinha: historico quebrado NUNCA pode virar tela branca
+   nem impedir o cliente de comprar. */
+function pedidosParaValvula() {
+    try {
+        var p = (typeof getPedidos === "function") ? getPedidos() : [];
+        return Array.isArray(p) ? p : [];
+    } catch (e) { return []; }
+}
+/* o telefone vem do perfil: e por ele que a loja sabe quem e o cliente */
+function telefoneCarrinho() {
+    try {
+        if (typeof Conta !== "undefined" && Conta.dados) return String(Conta.dados().tel || "");
+    } catch (e) { /* perfil bloqueado nunca pode travar o carrinho */ }
+    try { return String((JSON.parse(localStorage.getItem("refrigerantePerfil") || "{}")).tel || ""); }
+    catch (e) { return ""; }
+}
+/* quando a trava do dia bloqueia, o cliente ganha o caminho para
+   resolver com o vendedor (WhatsApp vem da fonte unica contatoLoja) */
+function botaoFalarComDono() {
+    var zap = (typeof contatoLoja === "function" && contatoLoja().whatsapp) ? contatoLoja().whatsapp : "";
+    if (!zap) return "";
+    var msg = "Oi! Bati no limite de pedidos do dia no site. Pode liberar meu pedido?";
+    return '<a class="btn-mini" style="display:inline-flex;align-items:center;gap:8px;margin-top:11px;'
+        + 'padding:11px 16px;border-radius:24px;text-decoration:none;font-weight:800;'
+        + 'background:#25D366;color:#fff" target="_blank" rel="noopener" '
+        + 'href="https://wa.me/' + zap + '?text=' + encodeURIComponent(msg) + '">'
+        + '<i class="fa fa-whatsapp"></i> Falar com o vendedor</a>';
 }
 /* pinta o aviso e liga/desliga o botao conforme as regras */
 function atualizarAvisoFinalizar() {
@@ -598,6 +641,17 @@ function finalizarPedidoCarrinho() {
         subtotal: calc.subtotal,
         total: calc.total
     });
+    /* A VALVA DO DIA falhou de verdade: o pedido nao foi gravado
+       (criarPedido devolveu null). O carrinho continua intacto e
+       o cliente recebe o caminho para falar com o dono. */
+    if (!pedido) {
+        var trava = (typeof checaLimitePedidos === "function")
+            ? checaLimitePedidos(String(d.tel || ""), pedidosParaValvula())
+            : null;
+        alert((trava ? trava.texto : "Não foi possível registrar o pedido agora.") + "\n\nSeu carrinho continua aqui: nenhum item foi perdido.");
+        atualizarAvisoFinalizar();
+        return;
+    }
     /* guarda o que o cliente digitou no perfil (fonte unica dos dados) */
     try {
         Conta.salvar({
@@ -651,7 +705,7 @@ function pintarRegiaoCarrinho(){
     el.innerHTML = '<div class="reg-lista">' + linhas + '</div>';
 }
 
-/* ===== regra de atendimento: horario + bairro ===== */
+/* ===== regra de atendimento: horario + bairro + limite do dia ===== */
 function atualizarAvisoCarrinho(){
     if (typeof pedidosLiberados !== "function") return;
     var box = document.getElementById("avisoAtendimento");
@@ -667,6 +721,18 @@ function atualizarAvisoCarrinho(){
         box.style.display = "flex";
         box.innerHTML = '<i class="fa fa-pause-circle"></i> <span><b>Pedidos pausados.</b> ' + regra.texto
             + ' Atendemos das <b>' + janelaPedidosTexto().replace(" as ", " às ") + '</b>.</span>';
+        return;
+    }
+    /* a valva do dia: o cliente ve antes de encher o carrinho */
+    var limite = (typeof checaLimitePedidos === "function")
+        ? checaLimitePedidos(telefoneCarrinho(), pedidosParaValvula())
+        : null;
+    if (limite) {
+        box.className = "regra-atendimento fechado";
+        box.style.display = "flex";
+        box.innerHTML = '<i class="fa fa-hourglass-half"></i> <span><b>' + limite.aviso + '</b> '
+            + 'O limite existe para o site não travar e todo mundo ser atendido.'
+            + botaoFalarComDono() + '</span>';
         return;
     }
     /* bairro fora da area: avisa aqui; o checkout bloqueia o envio */

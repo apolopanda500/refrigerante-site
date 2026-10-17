@@ -20,6 +20,16 @@ aberto.
 O que muda é que **cada pedido ganha uma chave**: só quem criou (com a
 chave que o gateway devolve) consegue ver aquele pedido.
 
+São **duas** coisas que continuam com leitura pública, e só duas:
+
+| Chave | Por que continua pública | O que tem dentro |
+|---|---|---|
+| `/precos` | todo mundo precisa ver o preço da bebida | código do produto e preço |
+| `/capacidade` | o cliente precisa saber quantas vagas de pedidos do dia ainda têm (a válvula anti-travamento) | `dia`, `pedidos`, `limite` — **só números** |
+
+`/capacidade` não tem nome, CPF, telefone nem endereço: é a contagem do dia,
+e só o painel (ou o gateway) escreve nela.
+
 ---
 
 ## Passo 1 — Criar a conta de serviço do Firebase (5 min)

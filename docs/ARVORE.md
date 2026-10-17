@@ -1,7 +1,8 @@
 # Árvore do projeto — mapa completo
-  │  ├─ tests/36-robo-telegram.js ........ roda o bot do Telegram de verdade (sandbox)
-  │  ├─ tests/37-vida-do-site.js ......... vida completa do site + entrada hostil
-  │  └─ tests/38-banco-fechado.js ......... gateway, regras e chave do cliente
+   │  ├─ tests/36-robo-telegram.js ........ roda o bot do Telegram de verdade (sandbox)
+   │  ├─ tests/37-vida-do-site.js ......... vida completa do site + entrada hostil
+   │  ├─ tests/38-banco-fechado.js ......... gateway, regras e chave do cliente
+   │  └─ tests/39-limite-pedidos.js ....... a válvula: limite de pedidos por dia
 
 > Mapa para o dia a dia: **onde mexer** em cada assunto.
 > Se algo não estiver aqui, provavelmente não existe mais.
@@ -37,10 +38,11 @@ refrigerante-site/
 │  ├─ app.js ........................ catálogo, preços em tempo real, horários,
 │  │                                horários de entrega, tabela geral, ofertas
 │  ├─ loja.js ........................ regiões, dias de pedido/entrega, frete,
-│  │                                horário da loja (08:50–15:00), caminhos
+│  │                                horário da loja (08:50–15:00), caminhos,
+│  │                                VALVA do dia (limite de pedidos por dia)
 │  ├─ script.js ..................... carrinho, criação de pedido, status,
 │  │                                histórico com data/hora, Telegram (aviso),
-│  │                                nuvem (pedidos/avaliações), datas
+│  │                                nuvem (pedidos/avaliações/capacidade), datas
 │  ├─ conta.js ...................... perfil do cliente (fonte única)
 │  ├─ theme.js ...................... tema/letra/contraste/leitura antes de
 │  │                                pintar; painel usa vendedorPrefs
@@ -95,7 +97,7 @@ refrigerante-site/
 │     └─ check.yml .................. sintaxe + TODOS os testes a cada push
 │
 ├─ TESTES E MANUTENÇÃO
-│  ├─ tests/rodar-todos.js .......... roda as 38 baterias (TUDO 10/10)
+│  ├─ tests/rodar-todos.js .......... roda as 39 baterias (TUDO 10/10)
 │  ├─ tests/manter-tudo.js .......... alinha versões, datas, links, docs, robô
 │  ├─ tests/bump-versao.js .......... sobe a versão em todos os arquivos
 │  ├─ tests/13-validar-css.js ....... confere o CSS todo (sintaxe, classe sem uso, cobertura, duplicata)
@@ -109,7 +111,7 @@ refrigerante-site/
 │  ├─ tests/21-repositorio.js ..... gitignore, build fora do git, arquivo grande
 │  ├─ tests/22-entrega.js ......... commit, push e deploy na mesma versao
 │  ├─ tests/limpar-css-morto.js ..... apaga CSS morto (relatório; --aplicar limpa)
-│  ├─ tests/01..38-*.js ............. as 38 baterias
+│  ├─ tests/01..39-*.js ............. as 39 baterias
 │  └─ tests/LEIA-ME.md .............. como rodar e o que cada bateria confere
 │
 ├─ DOCUMENTAÇÃO
@@ -160,7 +162,7 @@ Tudo que mostra data passa por `dataHoraSegundos()` / `dataCurta()` em
 
 ```powershell
 node tests/manter-tudo.js      # versões, datas, links, docs, robô
-node tests/rodar-todos.js      # 38 baterias — tem que dar TUDO 10/10
+node tests/rodar-todos.js      # 39 baterias — tem que dar TUDO 10/10
 node tests/limpar-css-morto.js # CSS morto: relatório (--aplicar limpa)
 node tests/22-entrega.js --online  # commit, push e deploy na mesma versão
 node tests/bump-versao.js 20261016c

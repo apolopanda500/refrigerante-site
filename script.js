@@ -340,6 +340,52 @@ function nuvemEnderecos() {
     NUVEM_ENDERECOS.forEach(function (u) { if (out.indexOf(u) < 0) out.push(u); });
     return out;
 }
+
+/* ============================================
+   CAPACIDADE DO DIA - a valva global da loja
+   So o PAINEL publica: ele e o unico lugar que ve os
+   pedidos de todos os aparelhos, entao e o unico que sabe
+   quantas vagas de hoje ja foram usadas. O cliente le esse
+   numero (chave publica, so numeros - nenhum dado de cliente)
+   e trava quando a loja bateu o teto.
+   Falha na leitura NAO bloqueia ninguem: o limite por cliente
+   continua valendo e o site segue normal. Melhor vender a
+   mais do que derrubar a venda por um numero velho. */
+var CHAVE_CAPACIDADE = "convencaoCapacidade";
+
+function caminhoCapacidade(url) {
+    return /\.json(\?|$)/i.test(String(url || "")) ? url : url + "/capacidade.json";
+}
+function guardarCapacidade(dados) {
+    if (!dados || typeof dados !== "object") return false;
+    var pedidos = parseInt(dados.pedidos, 10);
+    if (isNaN(pedidos) || pedidos < 0) return false;
+    try {
+        localStorage.setItem(CHAVE_CAPACIDADE, JSON.stringify({
+            dia: String(dados.dia || ""),
+            pedidos: pedidos,
+            limite: parseInt(dados.limite, 10) || 0,
+            quando: Date.now()
+        }));
+        return true;
+    } catch (e) { return false; }
+}
+function puxarCapacidadeNuvem(cb) {
+    if (typeof fetch !== "function") { if (cb) cb(false); return; }
+    var lista = nuvemEnderecos(), i = 0;
+    (function tentar() {
+        if (i >= lista.length) { if (cb) cb(false); return; }
+        var url = lista[i++];
+        fetch(caminhoCapacidade(url), { cache: "no-store" })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (dados) {
+                if (!dados || typeof dados !== "object") { tentar(); return; }
+                guardarCapacidade(dados);
+                if (cb) cb(true);
+            })
+            .catch(function () { tentar(); });
+    })();
+}
 function enviarPedidoNuvem(pedido) {
     if (!pedido || !pedido.id) return;
     var corpo = JSON.stringify(pedido);
@@ -419,8 +465,13 @@ function reenviarPedidosPresos() {
     if (typeof document === "undefined" || !document.addEventListener) return;
 /* os dois try/catch nao engoliram nada: so protegem a tela de uma
        falha de ambiente (setInterval bloqueado, aba anonima) */
-    try { setTimeout(function () { reenviarPedidosPresos(); }, 1500); } catch (e) { /* ambiente sem timer */ }
+try { setTimeout(function () { reenviarPedidosPresos(); }, 1500); } catch (e) { /* ambiente sem timer */ }
     try { setInterval(function () { reenviarPedidosPresos(); }, 120000); } catch (e) { /* ambiente sem timer */ }
+    /* a valva do dia precisa do total da loja antes do cliente
+       escolher o que quer: busca assim que a tela abre e de novo
+       a cada 5 min (o painel publica a cada sincronizacao) */
+    try { setTimeout(function () { puxarCapacidadeNuvem(); }, 400); } catch (e) { /* ambiente sem timer */ }
+    try { setInterval(function () { puxarCapacidadeNuvem(); }, 300000); } catch (e) { /* ambiente sem timer */ }
 })();
 
 /* junta aparelho + nuvem; para o mesmo id vence o que tem
@@ -611,6 +662,20 @@ function gerarId() {
 }
 function criarPedido(dados) {
     const pedidos = getPedidos();
+    /* ---------- A VALVA DO DIA (loja.js: checaLimitePedidos) ----------
+       Guarda dura: o carrinho ja avisa e desliga o botao, mas
+       aqui o limite e conferido de novo na hora de GRAVAR.
+       Se alguem chamar criarPedido pelo console do navegador,
+       o pedido nao nasce - e a ultima linha de defesa da loja. */
+    if (typeof checaLimitePedidos === "function") {
+        var trava = checaLimitePedidos(dados.tel, pedidos);
+        if (trava) {
+            try { localStorage.setItem("convencaoLimiteRecusado", JSON.stringify({
+                quando: Date.now(), tipo: trava.tipo, motivo: trava.texto
+            })); } catch (e) { /* proposital: guardar preferencia nunca pode travar o pedido */ }
+            return null;
+        }
+    }
     const pedido = {
         id: gerarId(),
         nome: dados.nome, tel: dados.tel, cpf: dados.cpf || "",

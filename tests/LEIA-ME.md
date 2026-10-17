@@ -8,7 +8,7 @@ Toda alteração passa por aqui antes de ir para o ar.
 node tests/rodar-todos.js
 ```
 
-O comando roda **todas** as 38 baterias e só termina com `TUDO 10/10`
+O comando roda **todas** as 39 baterias e só termina com `TUDO 10/10`
 se nenhuma falhar. Acompanhe cada arquivo:
 
 | Arquivo | O que confere |
@@ -41,7 +41,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `26-bot.js` | **Bot do Telegram 24/7**: o workflow `.github/workflows/bot.yml` roda a cada 5 min, o robô lê o Telegram (getUpdates), aplica o status nos pedidos do Firebase e responde no chat; o teclado do pedido tem os botões de status e o botão "Abrir painel" |
 | `27-entrega-minima.js` | **Valor mínimo para entrega**: a regra sai de `loja.js` (`entregaMinima()`, padrão R$ 100,00), a finalização dentro do carrinho bloqueia abaixo disso (botão desliga) e o cliente vê quanto falta |
 | `28-consistencia.js` | **Consistência**: horário com fonte única (loja.js) e nada escrito à mão, sábado e domingo fechados, contato em um só número, título diferente em cada página, as 4 regiões, datas por `dataHoraSegundos` e nenhuma regra de CSS repetida |
-| `29-ia-respostas.js` | **IA ajudando em tudo**: 41 perguntas de verdade no sandbox e a resposta tem que cair na intenção certa (horário, mínimo, prazo, sábado, cancelar, perfil, pix, aviso, histórico, recomendação, contato, humano, app), sem inventar telefone e com o horário da fonte |
+| `29-ia-respostas.js` | **IA ajudando em tudo**: 42 perguntas de verdade no sandbox e a resposta tem que cair na intenção certa (horário, mínimo, limite de pedidos por dia, prazo, sábado, cancelar, perfil, pix, aviso, histórico, recomendação, contato, humano, app), sem inventar telefone e com o horário da fonte |
 | `30-fluxo-cliente.js` | **Fluxo do cliente**: monta carrinho, cria pedido (CVAAAAMMDD-000), vendedor muda status, cliente acha pelo telefone, merge de pedidos de vários aparelhos e dia de pedido sempre na véspera da entrega |
 | `31-painel-vendedor.js` | **Painel do vendedor**: login sem diferenciar caixa, senha errada e campo vazio recusados, status com rótulo, CSV com 13 colunas, `lerPreco()` convertendo `29,50`/`29.50`/`2950`, preferências em `vendedorPrefs` |
 | `32-nuvem.js` | **Nuvem**: pedido vai para `/pedidos/<id>.json` com PUT, sem rede o pedido fica no aparelho, base reserva é tentada, merge sem duplicar e o App Check carregado |
@@ -51,6 +51,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `36-robo-telegram.js` | **Robô do Telegram de verdade**: roda o bot com Telegram e banco falsos — botão Confirmar grava status, 6 comandos respondem, intruso é recusado, dado quebrado não derruba e 8 horários (08:45, 09:00, 14:59, 15:00, 17:00, sábado, domingo) batem entre loja, pedido e entrega |
 | `37-vida-do-site.js` | **Vida completa do site**: carrinho → mínimo → pedido → confirmação → avaliação, mais entrada hostil (pedido sem nome, carrinho corrompido, nome com HTML, 200 letras) sem quebrar nada |
 | `38-banco-fechado.js` | **Banco fechado**: as regras nao abrem nada, o gateway so fala com o banco pela conta de servico, preco continua publico, so o dono lista e muda status, o cliente ve so o pedido dele com a chave dele, pedido malformado e recusado e o robo so entra com o segredo |
+| `39-limite-pedidos.js` | **Limite de pedidos por dia** (a válvula): 2 por cliente/dia e 80 por loja/dia, fonte única em `loja.js`, o dia zera sozinho na virada (chave `AAAA-MM-DD` de SP), cancelado não come cota, `criarPedido` recusa acima do limite mesmo se o console burlar a tela, o carrinho desliga o botão e oferece falar com o vendedor, o painel publica `/capacidade.json` e entrada hostil não trava ninguém |
 | `36-37` | Fluxo completo com o robô, o cliente e o dono, incluindo entradas que quebram sistemas de verdade |
 
 ## CSS: como confere e como limpa

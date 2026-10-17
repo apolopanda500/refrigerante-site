@@ -132,7 +132,20 @@ function iaRespostaEspecifica(q, bruto, res) {
         return res("WhatsApp da loja: " + iaZapFmt() + "\nhttps://wa.me/" + iaZapNum() + "\nE-mail: " + iaEmail(), "contato", 0.98, true);
     }
 
-    /* 11) valor MINIMO do pedido (regra do carrinho) */
+    /* 11) LIMITE DE PEDIDOS POR DIA (a valva da loja)
+       FICA ANTES do "valor minimo": "quantos pedidos eu posso
+       fazer" e sobre quantos, nao sobre quanto custa. */
+    if (/limite de pedidos|limite.*pedido|pedido.*limite|varios pedidos|mais pedidos|quantos pedidos|quantas vezes|pedidos? por dia|repetir o pedido|fazer outro pedido|outro pedido hoje/.test(q)) {
+        var txtL = (typeof limitePedidosTexto === "function") ? limitePedidosTexto() : "";
+        var travaL = (typeof checaLimitePedidos === "function" && typeof getPedidos === "function")
+            ? checaLimitePedidos(telefoneDoClienteIA(), getPedidos()) : null;
+        return res(
+            (txtL || "A loja tem um limite de pedidos por dia.")
+            + (travaL ? "\n\n" + travaL.texto : "\n\nSe precisar de mais, fale com o vendedor no WhatsApp " + iaZapFmt() + "."),
+            "limiteDia", 0.95, true);
+    }
+
+    /* 12) valor MINIMO do pedido (regra do carrinho) */
     if (/minimo|minima|quanto.*(pedido|compra)|pedido minimo|valor minimo/.test(q)) {
         var minE = (typeof entregaMinima === "function") ? entregaMinima() : 100;
         return res("O pedido minimo para entrega e " +
@@ -140,7 +153,7 @@ function iaRespostaEspecifica(q, bruto, res) {
             ". Abaixo disso o site nao deixa fechar o pedido e mostra quanto falta.", "minimo", 0.97, true);
     }
 
-    /* 12) entrega hoje / chega hoje / prazo */
+    /* 13) entrega hoje / chega hoje / prazo */
     if (/chega hoje|entrega hoje|hoje entrega|demora|prazo|quando chega|recebo hoje|entregam hoje/.test(q)) {
         var stE = (typeof estadoEntrega === "function") ? estadoEntrega() : null;
         var stL = (typeof estadoLoja === "function") ? estadoLoja() : null;
@@ -154,7 +167,7 @@ function iaRespostaEspecifica(q, bruto, res) {
             "prazo", 0.95, true);
     }
 
-    /* 13) saturday / sunday / fim de semana */
+    /* 14) saturday / sunday / fim de semana */
     if (/sabado|domingo|fim de semana|final de semana/.test(q)) {
         var stS = (typeof estadoLoja === "function") ? estadoLoja({ dia: 6, minutos: 10 * 60 }) : null;
         return res("No sabado a loja fica fechada e sai so a entrega (" + (stS ? stS.texto.toLowerCase() : "so entrega") + ").\n"
@@ -162,7 +175,7 @@ function iaRespostaEspecifica(q, bruto, res) {
             "fimDeSemana", 0.98, true);
     }
 
-    /* 14) cancelar / mudar um pedido ja feito */
+    /* 15) cancelar / mudar um pedido ja feito */
     if (/cancel[a-z]*|desistir|nao quero mais|nao quero o pedido|alterar meu pedido|mudar o pedido|refazer o pedido/.test(q)) {
         var meusC = (typeof getPedidos === "function") ? getPedidos().slice(0, 2) : [];
         var ultimo = meusC[0];
@@ -177,34 +190,34 @@ function iaRespostaEspecifica(q, bruto, res) {
             iaZapFmt() + " com o numero do pedido que o vendedor cancela ou corrige.", "cancelar", 0.9, true);
     }
 
-    /* 15) dados / perfil / endereco (antes de cancelar: "corrigir o endereco" e perfil) */
+    /* 16) dados / perfil / endereco (antes de cancelar: "corrigir o endereco" e perfil) */
     if (/meus dados|meu perfil|cadastro|atualizar telefone|meu telefone|meu endereco|endereco|corrigir o endereco|alterar endereco|meu cep|\bcep\b/.test(q)) {
         return res("Nome, WhatsApp, CPF, endereco e bairro ficam na pagina Perfil (menu superior).\n"
             + "O endereco tambem aparece no carrinho, na parte \"Entrega e pagamento\", e o que voce digitar la e salvo no perfil.",
             "perfil", 0.95, true);
     }
 
-    /* 16) chave pix / como pagar */
+    /* 17) chave pix / como pagar */
     if (/chave pix|como pagar|pagar por pix|qr.?code|gerar pix|transferir/.test(q)) {
         return res("O Pix e confirmado na hora, na entrega.\nO que a loja precisa e so o nome e o WhatsApp no Perfil.\n"
             + "Se preferir, leve dinheiro: o pedido tambem aceita Dinheiro (com troco).", "pix", 0.95, true);
     }
 
-    /* 17) vou receber aviso? notificacao */
+    /* 18) vou receber aviso? notificacao */
     if (/vou ser avisado|recebo aviso|notificacao|avisam quando|me avisaram/.test(q)) {
         return res("Sim. Ligue o aviso em Configuracoes > Notificacoes: o celular avisa cada mudanca de status "
             + "(aguardando, confirmado, em separacao, saiu para entrega, entregue). Tem um botao \"Testar agora\" para conferir.",
             "aviso", 0.95, true);
     }
 
-    /* 18) limpar historico / apagar pedidos */
+    /* 19) limpar historico / apagar pedidos */
     if (/limpar historico|apagar (meu |os |todos os )?(historico|pedido|pedidos)|remover (meu )?pedido|zerar historico/.test(q)) {
         return res("O historico fica na pagina Historico (menu superior). Para nao ficar acumulando pedido antigo, "
             + "o proprio site oferece o botao de limpar na pagina. Se precisar apagar tudo, chame a loja no WhatsApp " +
             iaZapFmt() + ".", "limparHistorico", 0.92, true);
     }
 
-    /* 19) recomendacao: o que beber / combina com */
+    /* 20) recomendacao: o que beber / combina com */
     if (/recomenda|o que beber|o que combina|qual escolho|sugestao|indicacao/.test(q)) {
         if (typeof iaOfertaDoDia === "function") {
             var odR = iaOfertaDoDia();
@@ -598,6 +611,14 @@ function iaOfertaDoDia(cat) {
 function iaZapNum() { return (typeof contatoLoja === "function") ? contatoLoja().whatsapp : ""; }
 function iaZapFmt() { return (typeof contatoLoja === "function") ? contatoLoja().telefone : ""; }
 function iaEmail() { return (typeof contatoLoja === "function") ? contatoLoja().email : ""; }
+/* o telefone de QUEM pergunta: a valva do dia e por telefone,
+   entao o assistente precisa saber de quem e a pergunta */
+function telefoneDoClienteIA() {
+    try { if (typeof Conta !== "undefined" && Conta.dados && Conta.dados().tel) return String(Conta.dados().tel); }
+    catch (e) { /* proposital: o assistente e um extra, a tela nao pode travar por causa dele */ }
+    try { return String((JSON.parse(localStorage.getItem("refrigerantePerfil") || "{}")).tel || ""); }
+    catch (e) { return ""; }
+}
 
 function iaZapLink(numero, texto) {
     return "https://wa.me/" + numero + (texto ? "?text=" + encodeURIComponent(texto) : "");
