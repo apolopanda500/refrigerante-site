@@ -31,6 +31,33 @@ fontes.forEach(function (s) {
 });
 if (!ruins) ok(fontes.filter(s => /\.js$/.test(s.f)).length + " scripts com sintaxe valida");
 
+console.log("\n=== 1b. SINTAXE DO CODIGO INLINE DAS PAGINAS ===");
+/* codigo escrito dentro de <script> sem src tambem roda no navegador.
+   um erro de aspas aqui derruba o script INTEIRO: a pagina fica com o
+   HTML cru e nada avisa (foi o historico que parou de carregar). */
+const vm = require("vm");
+const paginasInline = fs.readdirSync(dir).filter(f => f.endsWith(".html") && f !== "produtos_ref.html");
+let blocos = 0;
+paginasInline.forEach(function (f) {
+    const t = fs.readFileSync(path.join(dir, f), "utf8");
+    const re = /<script(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi;
+    let m, i = 0;
+    while ((m = re.exec(t)) !== null) {
+        i++;
+        const codigo = m[1];
+        if (!codigo || !codigo.trim()) continue;
+        blocos++;
+        try {
+            new vm.Script(codigo, { filename: f + " script inline " + i });
+        } catch (e) {
+            const linha = (codigo.slice(0, e.stack ? (e.stack.match(/<anonymous>:(\d+)/) || [0, 0])[1] - 1 : 0)
+                .match(/\n/g) || []).length + 1;
+            falha("codigo inline quebrado em " + f + " (bloco " + i + ", linha " + linha + "): " + e.message);
+        }
+    }
+});
+if (!erros) ok(blocos + " blocos de codigo inline com sintaxe valida");
+
 console.log("\n=== 2. NADA DE RASCUNHO NO CODIGO QUE VAI PARA O AR ===");
 const proibidos = [
     ["console.log", "print de teste no console"],

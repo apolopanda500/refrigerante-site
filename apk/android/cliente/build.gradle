@@ -14,8 +14,8 @@ android {
         applicationId "br.com.convencao.cliente"
         minSdk 24
         targetSdk 34
-        versionCode 20261016
-        versionName "20261016l"
+        versionCode 20261017
+        versionName "20261017m"
     }
 
     signingConfigs {
