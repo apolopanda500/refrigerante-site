@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261017o">
+<link rel="manifest" href="manifest.json?v=20261017p">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017o">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017p">
 <title>Histórico - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017o">
-<script src="theme.js?v=20261017o"></script>
+<link rel="stylesheet" href="style.css?v=20261017p">
+<script src="theme.js?v=20261017p"></script>
 
 <style>
 .page { padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -56,9 +56,13 @@
 .timeline-linha{display:flex;flex-direction:column;gap:8px;margin:10px 0;padding-left:26px;position:relative}
 .timeline-linha::before{content:"";position:absolute;left:13px;top:0;bottom:0;width:2px;background:#ddd}
 .timeline-passo{display:flex;align-items:flex-start;gap:10px;position:relative}
-.timeline-marcador{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;position:relative;z-index:2}
-.timeline-marcador i{font-size:0.8rem}
-.timeline-conteudo{min-width:0}
+/* o icone do passo aparece sempre (antes era um pontinho cinza sem icone):
+   feito = cor do status, ativo = fundo na cor do status, pendente = apagado */
+.timeline-marcador{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;position:relative;z-index:2;background:var(--bg,#eceef5);color:var(--txt,#9aa0ae);box-shadow:0 0 0 3px var(--anel,#fff)}
+.timeline-marcador i{font-size:0.72rem;line-height:1}
+.timeline-passo:not(.feito) .timeline-marcador i{opacity:.75}
+[data-theme="dark"] .timeline-marcador{--bg:#2a2e44;--txt:#8b93ad;--anel:#232742}
+.timeline-conteudo{min-width:0;padding-top:2px}
 .timeline-titulo{font-weight:800;font-size:0.95rem}
 .timeline-texto{font-size:0.8rem;opacity:0.9;margin-top:2px}
 .timeline-conector{height:20px;width:2px;align-self:flex-start;margin-left:10px}
@@ -67,12 +71,16 @@
 [data-theme="dark"] .timeline-linha::before{background:#353a5c}
 [data-theme="dark"] .timeline-texto{color:#a1a8c3}
 [data-theme="dark"] .timeline-titulo{color:#e6e8f2}
-/* historico real com data/hora */
-.timeline-historico{margin-top:10px}
-.timeline-item-real{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-left:3px solid #eee;margin-left:22px;position:relative}
-.timeline-marcador-real{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;background:#fff;box-shadow:0 0 0 3px var(--light-bg,#f2f2f2)}
-[data-theme="dark"] .timeline-marcador-real{background:#12121c;box-shadow:0 0 0 3px #12121c}
-.timeline-conteudo-real{min-width:0}
+/* historico real com data/hora - alinhado no mesmo eixo da linha do tempo */
+.timeline-historico{margin-top:14px;padding-left:26px;position:relative}
+.timeline-historico::before{content:"";position:absolute;left:13px;top:0;bottom:0;width:2px;background:#ddd}
+.timeline-item-real{display:flex;align-items:flex-start;gap:10px;padding:8px 0;position:relative}
+.timeline-item-real::before{content:"";position:absolute;left:-13px;top:0;bottom:0;width:2px;background:var(--cor-real,#ddd)}
+.timeline-marcador-real{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;background:var(--anel,#fff);color:var(--cor-real,#777);box-shadow:0 0 0 3px var(--anel,#fff);position:absolute;left:-24px;top:7px}
+.timeline-marcador-real i{font-size:0.72rem;line-height:1}
+[data-theme="dark"] .timeline-marcador-real{--anel:#232742}
+[data-theme="dark"] .timeline-historico::before{background:#353a5c}
+.timeline-conteudo-real{min-width:0;padding-top:2px}
 .timeline-titulo-real{font-weight:700;font-size:0.9rem}
 .timeline-data-real{font-size:0.8rem;opacity:0.85;margin-top:2px;display:flex;align-items:center;gap:6px}
 .timeline-data-real i{font-size:0.7rem}
@@ -80,6 +88,9 @@
 [data-theme="dark"] .timeline-data-real{color:#a1a8c3}
 .timeline-vazio{text-align:center;padding:20px;color:#a1a8c3;font-size:0.85rem}
 .timeline-vazio i{color:#666;margin-right:6px}
+/* pedido cancelado: nao faz sentido mostrar os 5 passos como "pendentes" */
+.timeline-cancelado{display:flex;align-items:center;gap:9px;margin:12px 0;padding:12px 14px;border-radius:10px;background:var(--bg-alt,#f7f7f7);border:1px solid var(--borda,#eee);color:var(--texto-erro);font-weight:700}
+[data-theme="dark"] .timeline-cancelado{background:#2a2e44;border-color:#353a5c;color:#ff9a9a}
 /* botao minimizar / detalhe destacado */
 .btn-detalhe{background:none;border:none;color:var(--secondary-color);cursor:pointer;font-size:0.9rem;font-weight:700;padding:8px 14px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
 .btn-detalhe:hover{background:rgba(61,68,101,.08);color:var(--primary-color)}
@@ -482,13 +493,13 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
 <div id="listaPedidos"></div>
 </div></section>
 
-<script src="conta.js?v=20261017o"></script>
-<script src="firebase-appcheck.js?v=20261017o"></script>
-<script src="app-update.js?v=20261017o"></script>
-<script src="ia.js?v=20261017o"></script>
-<script src="central.js?v=20261017o"></script>
-<script src="loja.js?v=20261017o"></script>
-<script src="script.js?v=20261017o"></script>
+<script src="conta.js?v=20261017p"></script>
+<script src="firebase-appcheck.js?v=20261017p"></script>
+<script src="app-update.js?v=20261017p"></script>
+<script src="ia.js?v=20261017p"></script>
+<script src="central.js?v=20261017p"></script>
+<script src="loja.js?v=20261017p"></script>
+<script src="script.js?v=20261017p"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -697,15 +708,23 @@ function render(){
         {s:"enviado", lbl:"Saiu para entrega", ic:"fa-truck", txt:"O pedido está a caminho."},
         {s:"entregue", lbl:"Entregue", ic:"fa-check-double", txt:"Pedido entregue com sucesso."}
     ];
-    h += '<div class="timeline-linha">';
+    if (p.status === "cancelado") {
+        /* cancelado nao percorre os 5 passos: mostrar "Entregue" como pendente
+           confundia o cliente. Fica o aviso + o historico real logo abaixo */
+        h += '<div class="timeline-cancelado"><i class="fa fa-ban"></i> Este pedido foi cancelado'
+           + (ultimo ? " em " + (typeof dataHoraSegundos === "function" ? dataHoraSegundos(ultimo.quando) : "") : "")
+           + '.</div>';
+    } else {
+        h += '<div class="timeline-linha">';
     passos.forEach(function(st, i){
-        var feito = i <= ultIdx;
         var ativo = (i === ultIdx);
-        var iconeClasse = ativo ? (STATUS_ICON[st.s] || "fa-circle") : "fa-circle";
-        var cor = ativo ? STATUS_COR[st.s] : "#ccc";
-        var bg = ativo ? STATUS_COR[st.s] : "#eee";
-        var txtCor = ativo ? "#fff" : "#999";
-        h += '<div class="timeline-passo" style="--cor:' + cor + ';--bg:' + bg + ';--txt:' + txtCor + '">'
+        var feito = i < ultIdx;
+        /* o icone do proprio passo sempre visivel; cor conforme o estado */
+        var iconeClasse = st.ic;
+        var estilo = ativo
+            ? 'background:' + (STATUS_COR[st.s] || "#0e6b4f") + ';color:#fff;'
+            : (feito ? 'background:var(--bg-alt,#f2f3f8);color:' + (STATUS_COR[st.s] || "#0e6b4f") + ';' : '');
+        h += '<div class="timeline-passo' + (feito || ativo ? " feito" : "") + '"' + (estilo ? ' style="' + estilo + '"' : "") + '>'
            + '<div class="timeline-marcador"><i class="fa ' + iconeClasse + '"></i></div>'
            + '<div class="timeline-conteudo">'
            + '<div class="timeline-titulo">' + st.lbl + '</div>'
@@ -713,16 +732,17 @@ function render(){
            + '</div>'
            + '</div>';
         if (i < passos.length - 1) {
-            h += '<div class="timeline-conector" style="background:' + (feito ? STATUS_COR[st.s] : "#ddd") + '"></div>';
+            h += '<div class="timeline-conector" style="background:' + (feito ? (STATUS_COR[st.s] || "#0e6b4f") : "#ddd") + '"></div>';
         }
     });
     h += '</div>';
+    }
     if (hist.length) {
         h += '<div class="timeline-historico">';
         hist.forEach(function(ev){
             var ic = STATUS_ICON[ev.status] || "fa-circle";
             var cor = STATUS_COR[ev.status] || "#777";
-            h += '<div class="timeline-item-real" style="border-left-color:' + cor + '">'
+            h += '<div class="timeline-item-real" style="--cor-real:' + cor + '">'
                + '<div class="timeline-marcador-real"><i class="fa ' + ic + '"></i></div>'
                + '<div class="timeline-conteudo-real">'
                + '<div class="timeline-titulo-real">' + (STATUS_LABEL[ev.status] || ev.status) + '</div>'

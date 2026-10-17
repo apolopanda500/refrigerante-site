@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261017o">
+<link rel="manifest" href="manifest.json?v=20261017p">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017o">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261017p">
 <title>Meu Carrinho - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261017o">
-<script src="theme.js?v=20261017o"></script>
+<link rel="stylesheet" href="style.css?v=20261017p">
+<script src="theme.js?v=20261017p"></script>
 
 <style>
 .page { padding: 26px 0 60px; background: transparent; min-height: 100vh; }
@@ -80,7 +80,7 @@
 [data-theme="vermelho"] .pag-opcao.ativa{border-color:#a11b0f!important}
 
 /* ===== ALVO DE TOQUE MINIMO 44px (celular) ===== */
-.qb,.qa,.btn-mini,.op-btn,.filtro,.btn,.btn-primario,.btn-secundario,.btn-enviar,.btn-salvar,.btn-detalhe,.btn-sair{
+.qb,.qa,.btn-mini,.op-btn,.filtro,.btn,.btn-primario,.btn-secundario,.btn-salvar,.btn-detalhe,.btn-sair{
     min-height:44px;
     touch-action:manipulation;
     -webkit-tap-highlight-color:transparent;
@@ -143,33 +143,11 @@
 
 /* ===== aviso de frete: usa o estilo global em style.css ===== */
 
-/* ===== regioes e dias no carrinho ===== */
-.vend-dia{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
-    padding:9px 0;border-bottom:1px dashed var(--borda);
-}
-.vend-dia:last-child{border-bottom:0}
-.vend-dia .dia-nome{font-size:.92rem;font-weight:700;color:var(--primary-color)}
-.vend-dia .reg-dias{font-size:.82rem;color:var(--text-muted);text-align:right}
-.vend-dia .reg-dias b{color:var(--texto-ok)}
-[data-theme="dark"] .vend-dia{border-bottom-color:#353a5c}
-[data-theme="dark"] .vend-dia .dia-nome{color:#ffb822}
-[data-theme="dark"] .vend-dia .reg-dias{color:#a1a8c3}
-[data-theme="dark"] .vend-dia .reg-dias b{color:#8fe0a8}
-
-/* ===== regioes no carrinho: uma linha por bairro, sem estourar a caixa ===== */
+/* ===== regioes no carrinho: uma linha por bairro, sem estourar a caixa =====
+   (as regras antigas .vend-dia sairam: a lista agora usa .reg-lista-item) */
 .reg-lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px}
-.reg-lista .vend-dia{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
-    padding:10px 12px;border:1px solid var(--borda,#eeeef4);border-radius:12px;background:var(--bg-alt,#f7f7f7);
-}
-.reg-lista .vend-dia .dia-nome{font-weight:800;color:var(--text-color);display:inline-flex;align-items:center;gap:7px}
-.reg-lista .vend-dia .reg-dias{font-size:.86rem;color:var(--text-muted);text-align:right;flex:1 1 auto;min-width:0}
-.reg-lista .vend-dia.hoje{border-color:var(--primary-color,#3d4465)}
 .tag-hoje{background:var(--accent-color,#ffb822);color:#3d4465;border-radius:9px;
  padding:2px 8px;font-size:.68rem;font-weight:800;letter-spacing:.04em;white-space:nowrap}
-[data-theme="dark"] .reg-lista .vend-dia{background:#232742;border-color:#353a5c}
-[data-theme="dark"] .reg-lista .vend-dia .reg-dias{color:#a1a8c3}
 [data-theme="dark"] .tag-hoje{background:#ffb822;color:#232742}
 /* foto do produto: sempre visivel, mesmo sem imagem no catalogo */
 .cart-item img{background:var(--bg-alt,#f7f7f7);object-fit:contain;padding:2px}
@@ -541,13 +519,13 @@ body[data-leitura="vertical"] .pp{font-size:1.3rem!important}
 </div>
 </div></section>
 
-<script src="conta.js?v=20261017o"></script>
-<script src="firebase-appcheck.js?v=20261017o"></script>
-<script src="app-update.js?v=20261017o"></script>
-<script src="ia.js?v=20261017o"></script>
-<script src="central.js?v=20261017o"></script>
-<script src="loja.js?v=20261017o"></script>
-<script src="script.js?v=20261017o"></script>
+<script src="conta.js?v=20261017p"></script>
+<script src="firebase-appcheck.js?v=20261017p"></script>
+<script src="app-update.js?v=20261017p"></script>
+<script src="ia.js?v=20261017p"></script>
+<script src="central.js?v=20261017p"></script>
+<script src="loja.js?v=20261017p"></script>
+<script src="script.js?v=20261017p"></script>
 <script>
 cart = getCart();
 
