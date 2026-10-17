@@ -283,7 +283,5 @@ export default {
     }
 };
 
-/* ---------- como Node (para rodar na maquina, sem Cloudflare) ---------- */
-if (typeof module !== "undefined" && module.exports) {
-    module.exports = { rotear, pedidoValido, chaveDoPedido, tokenValido, assinar, banco, CFG };
-}
+/* ---------- helpers expostos (para os testes e para rodar em Node) ---------- */
+export { rotear, pedidoValido, chaveDoPedido, tokenValido, assinar, banco, json };
