@@ -1,46 +1,60 @@
-# TROCAR O TOKEN DO BOT DO TELEGRAM
+# OS DOIS ROBÔS DO TELEGRAM
 
-**Urgente.** O token antigo ficou exposto num repositório público. Ele ainda
-vale para quem já leu. Troque-o e o problema acaba.
+A loja tem **dois robôs**, e cada um tem seu token:
 
-## Por que
+| Robô | Onde roda | Segredo no GitHub | Onde fica o token |
+|---|---|---|---|
+| **Vendedor** (avisos e botões do painel) | `.github/scripts/bot-telegram.js` | `TG_TOKEN` | só aqui |
+| **Clientes** (`/meuspedidos`, `/status`, `/telefone`) | `.github/scripts/bot-clientes.js` | `TG_TOKEN_CLIENTES` e `TG_CHAT_CLIENTES` | só aqui |
 
-O repositório `apolopanda500/refrigerante-site` é **público**. Isso significa que
-qualquer pessoa da internet pode ler qualquer arquivo dele, inclusive o token do
-seu bot. Com esse token em mãos, a pessoa:
+**Nenhum dos dois tem token escrito no código.** Isso mudou: o repositório é
+**público**, e o token do robô do vendedor estava escrito no arquivo — qualquer
+pessoa da internet podia ler, ver os pedidos que chegam no seu robô e mandar
+mensagem como se fosse ele. O token do robô de clientes nunca esteve exposto.
 
-- lê as mensagens que chegam no seu bot (que são **pedidos com nome, telefone e endereço**);
-- manda mensagem como se fosse o seu robô;
-- usa a sua conta do Telegram no lugar do robô.
+## O que fazer agora
 
-O código já foi corrigido: o token não está mais escrito em lugar nenhum do
-projeto. Mas **o token antigo continua valendo** até você trocá-lo.
+### 1. Robô do vendedor — o token precisa entrar no segredo do GitHub
 
-## Como trocar (5 minutos, no seu celular)
+O token antigo que estava no código **já não responde mais** (o Telegram devolveu
+erro 401): ele foi trocado ou revogado. Então o robô está parado até você colocar
+o token **atual**:
 
-1. Abra o Telegram e procure o **BotFather** (o robo oficial do Telegram).
-2. Mande `/revoke` e escolha o seu bot.
-   — Se preferir um bot novo: `/newbot` e siga os passos; nesse caso, atualize
-   também o endereço do webhook conforme a nota abaixo.
-3. O BotFather devolve um **token novo**. É um código parecido com
-   `1234567890:AA...` — **não mande esse token para ninguém, nem para mim.**
-4. No seu site, abra **Configurações** e cole o token novo no campo do Telegram.
+1. No Telegram, abra o **BotFather** e mande `/mybots` → escolha o robô do
+   vendedor → **API Token**. Ele mostra o token atual.
+2. No GitHub, entre em:
+   https://github.com/apolopanda500/refrigerante-site/settings/secrets/actions
+3. Clique em **New repository secret**:
+   - Name: `TG_TOKEN`
+   - Secret: cole o token que o BotFather mostrou
+4. Se ainda não existir, crie também `TG_CHAT_ID` com o id do seu chat com o
+   robô (o BotFather mostra o id na URL, ou use o bot `@userinfobot`).
 
-## Para o robô de fundo (que roda sozinho)
+Depois vá em **Actions → Bot do Telegram 24/7 → Run workflow** para ele rodar
+na hora.
 
-O robô que roda sozinho usa o segredo do GitHub:
+### 2. Robô de clientes — confete se os segredos existem
 
-- Entre no repositório: https://github.com/apolopanda500/refrigerante-site/settings/secrets/actions
-- Clique em **New repository secret**
-- Nome: `TG_TOKEN`
-- Valor: cole o token novo
-- Repita para `TG_CHAT_ID` se ainda não existir (o id do seu chat com o robô)
+Esse nunca teve token exposto, mas ele só funciona se os dois segredos existirem:
 
-Depois é só ir em **Actions → Bot do Telegram 24/7 → Run workflow** para ele
-rodar na hora com o token novo.
+- `TG_TOKEN_CLIENTES` — token do robô de clientes (BotFather → API Token)
+- `TG_CHAT_CLIENTES` — id do chat onde ele atende
 
-## Como saber que ficou certo
+Se não existirem, **esse robô nunca funcionou** — vale conferir, porque foi
+mexido nele várias vezes.
 
-Rode `node tests/manter-tudo.js` e confira que não aparece nenhum token no
-projeto. A bateria 46 e a 38 já verificam que nenhum segredo está escrito no
-código.
+Depois vá em **Actions → Bot de Clientes → Run workflow**.
+
+### 3. No painel do site
+
+O painel usa o token que **você cola em Configurações** (fica no aparelho do
+vendedor, não no código). Depois da troca, cole o token novo lá também — senão o
+painel continua tentando chamar o Telegram com o token velho.
+
+## Como conferir que está certo
+
+- **Actions**: rode o workflow na mão e veja se o log mostra o robô atendendo.
+- **No Telegram**: mande `/start` para cada robô e veja se ele responde.
+- **No projeto**: `node tests/manter-tudo.js` — não deve aparecer nenhum token.
+
+⚠️ Nunca mande o token para ninguém, nem para quem estiver ajudando você.
