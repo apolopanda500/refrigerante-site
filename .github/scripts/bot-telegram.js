@@ -24,7 +24,18 @@ const BASE  = process.env.FB_URL   || "https://planning-with-ai-9b2c9-default-rt
    (Settings > Secrets > TG_TOKEN) e para ai. */
 const TOKEN = (process.env.TG_TOKEN || "").trim();
 if (!TOKEN) {
-    console.error("TG_TOKEN nao configurado: o bot nao roda sem o segredo.");
+    /* Sai sem falhar de proposito: o rob roda a cada 5 minutos e um erro a
+       cada 5 minutos cansa. Mas o aviso precisa ser IMPOSSIVEL de ignorar,
+       porque sem token o dono simplesmente nao recebe aviso de venda. */
+    console.error("");
+    console.error("==================================================================");
+    console.error("  O ROBO DO TELEGRAM ESTA PARADO: falta o segredo TG_TOKEN");
+    console.error("  Ele nao le, nao responde e nao avisa venda nenhuma.");
+    console.error("  Arrume em: Settings > Secrets > Actions > New repository secret");
+    console.error("      Name:   TG_TOKEN");
+    console.error("      Secret: o token que o BotFather mostra em /mybots");
+    console.error("==================================================================");
+    console.error("");
     process.exit(0);
 }
 const CHAT  = String(process.env.TG_CHAT || "1810807613");
