@@ -123,6 +123,12 @@ async function jwtComEscopo(escopo, caminhoAntigo) {
         iss: CFG.email,
         scope: escopo || "https://www.googleapis.com/auth/firebase.database",
         aud: caminhoAntigo ? "https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit" : "https://oauth2.googleapis.com/token",
+        /* no token de identidade customizado faltavam estas DUAS coisas: sem
+           "sub" e sem "uid" o proprio Firebase nao consegue trocar o token por
+           uma sessao, e ele tratava o gateway como visitante comum - por isso
+           o painel perdia o acesso no instante em que as regras fecharam. */
+        sub: CFG.email,
+        uid: "gateway-convencao",
         iat: agora, exp: agora + 3600
     })));
     const chave = await crypto.subtle.importKey("pkcs8", pemParaArray(CFG.chave), { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
@@ -171,7 +177,9 @@ async function banco(caminho, metodo, corpo) {
     }
     async function tentarComAuthAntigo() {
         const jwt = await jwtComEscopo("https://www.googleapis.com/auth/firebase.database", true);
-        const r = await fetch(CFG.db + caminho + (CFG.db.indexOf("?") >= 0 ? "&" : "?") + "auth=" + jwt, {
+        /* se o caminho ja traz query (?shallow=true...), o & entra depois dela */
+        const sep = caminho.indexOf("?") >= 0 ? "&" : "?";
+        const r = await fetch(CFG.db + caminho + sep + "auth=" + jwt, {
             method: metodo || "GET",
             headers: { "Content-Type": "application/json" },
             body: corpo === undefined ? undefined : JSON.stringify(corpo)
@@ -229,16 +237,18 @@ async function rotear(req, env) {
     const metodo = req.method.toUpperCase();
     if (metodo === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
 
-    /* 1) saude: o dono (e o painel) ve se o gateway esta de pe */
     /* 1) saude: o dono (e o painel) ve se o gateway esta de pe.
        Isto FAZ a consulta no banco de verdade: mentir aqui esconderia do
        dono que o painel esta vazio por falha, e nao por falta de venda. */
     if (rota === "/api/saude") {
         const s = { ok: true, banco: false, servo: !!CFG.email };
         try {
-            const p = await banco("/capacidade.json", "GET");
+            /* consulta /pedidos (e NAO /capacidade): /capacidade e publica, da
+               para ler mesmo sem permissao - foi por isso que este aviso mentiu
+               e o painel jurou que estava tudo certo enquanto nao via nada. */
+            const p = await banco("/pedidos.json?shallow=true&limitToFirst=1", "GET");
             s.banco = true;
-            s.capacidade = (p && p.dia) || "";
+            s.vista = (p && typeof p === "object") ? "ok" : "vazio";
             s.caminho = bancoVia;
         } catch (e) {
             s.banco = false;
