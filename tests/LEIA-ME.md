@@ -174,3 +174,4 @@ A bateria `19-erros` (bloco 10) fiscaliza as duas últimas regras.
    (o GitHub Pages publica em 1–2 minutos)
 7. `node tests/22-entrega.js --online` → tem que dizer **ENTREGA 10/10**
    (confere se o site no ar já está na versão do repositório)
+| `43-dados-cifrados.js` | **Cifra**: o nome, telefone, CPF, endereço e observação do cliente são gravados **cifrados** (quem abrir o banco na internet vê só letras sem sentido) e o painel continua vendo tudo, porque quem decifra é o gateway |

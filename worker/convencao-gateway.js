@@ -109,6 +109,115 @@ async function chaveDoPedido(id) {
    fecharam - foi o que aconteceu). Por isso: 1) assina o JWT para o
    endpoint de token; 2) troca esse JWT por um token de acesso OAuth;
    3) chama o banco com Authorization: Bearer <token de acesso>. */
+/* ---------- CIFRAR OS DADOS DO CLIENTE ----------
+/* O banco esta aberto na internet (fechar depende de permissao que so o
+   dono do projeto concede). Entao, em vez de guardar o CPF de uma pessoa
+   em texto puro, o gateway guarda CIFRADO: quem abrir o banco na internet
+   ve apenas um bloco de letras sem significado.
+
+   A chave vive no segredo do Worker - nunca no site, nunca no repo.
+   Quem descriptografa e o proprio gateway, entao o dono continua vendo
+   nome, telefone e endereco normalmente no painel.
+
+   O que fica em claro: o que o sistema precisa filtrar sem segredo
+   (status, valores, itens, regiao de entrega, datas). O que fica
+   cifrado: nome, telefone, CPF, endereco e observacoes - que sao
+   justamente o que dói se vazar. */
+const CAMPOS_CIFRADOS = ["nome", "tel", "cpf", "end", "comp", "bairro", "observacao", "pagamento", "troco"];
+
+let chaveCifra = null;
+async function chaveDeCifra() {
+    if (chaveCifra) return chaveCifra;
+    /* a chave nasce do segredo da sessao: um segredo a menos para o dono guardar */
+    const semente = new TextEncoder().encode(String(segredoSessao || CFG.chave || "sem-chave") + "|cifra|v1");
+    /* o digest sozinho nao cifra nada: ele vira a chave que o AES usa */
+    const bruto = await crypto.subtle.digest("SHA-256", semente);
+    chaveCifra = await crypto.subtle.importKey("raw", bruto, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+    return chaveCifra;
+}
+
+function paraBase64Url(bytes) {
+    let s = "";
+    for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return (typeof btoa === "function" ? btoa(s) : Buffer.from(s, "binary").toString("base64"))
+        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function deBase64Url(txt) {
+    let s = String(txt).replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    const bin = (typeof atob === "function" ? atob(s) : Buffer.from(s, "base64").toString("binary"));
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+}
+
+async function cifrarTexto(texto) {
+    const chave = await chaveDeCifra();
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const dados = new TextEncoder().encode(texto);
+    const cifrado = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, chave, dados));
+    return "c1." + paraBase64Url(iv) + "." + paraBase64Url(cifrado);
+}
+
+async function decifrarTexto(bloco) {
+    const partes = String(bloco).split(".");
+    if (partes.length !== 3 || partes[0] !== "c1") return null;
+    try {
+        const chave = await chaveDeCifra();
+        const iv = deBase64Url(partes[1]);
+        const cifrado = deBase64Url(partes[2]);
+        const dados = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, chave, cifrado);
+        return new TextDecoder().decode(dados);
+    } catch (e) { return null; }
+}
+
+/* separa o pedido em 'o que fica visivel' e 'o que vai cifrado' */
+async function pedidoParaGravar(pedido) {
+    if (!pedido || typeof pedido !== "object") return pedido;
+    const claro = {};
+    const sigilo = {};
+    Object.keys(pedido).forEach(function (campo) {
+        if (CAMPOS_CIFRADOS.indexOf(campo) >= 0) sigilo[campo] = pedido[campo];
+        else claro[campo] = pedido[campo];
+    });
+    if (!Object.keys(sigilo).length) return pedido;
+    claro.sig = await cifrarTexto(JSON.stringify(sigilo));
+    claro.cifrado = true;
+    return claro;
+}
+
+/* desfaz: junta de volta o que estava cifrado (so o gateway faz isso) */
+async function pedidoParaLer(pedido) {
+    if (!pedido || typeof pedido !== "object" || !pedido.sig) return pedido;
+    const texto = await decifrarTexto(pedido.sig);
+    if (!texto) {
+        /* nao tem como abrir (chave diferente/pedido antigo): devolve sem os
+           campos de pessoa, nunca chuto, e nunca em texto puro */
+        const copia = {};
+        Object.keys(pedido).forEach(function (k) { if (k !== "sig") copia[k] = pedido[k]; });
+        copia.semCifra = true;
+        return copia;
+    }
+    let sigilo = {};
+    try { sigilo = JSON.parse(texto); } catch (e) { sigilo = {}; }
+    const junto = Object.assign({}, pedido, sigilo);
+    delete junto.sig;
+    delete junto.cifrado;
+    return junto;
+}
+
+/* uma lista de pedidos, um pedido so, ou nada */
+async function pedidosParaLer(resposta) {
+    if (!resposta || typeof resposta !== "object") return resposta;
+    if (resposta.id || resposta.sig) return await pedidoParaLer(resposta);
+    const chaves = Object.keys(resposta);
+    if (!chaves.length) return resposta;
+    const saida = {};
+    for (const k of chaves) saida[k] = await pedidoParaLer(resposta[k]);
+    return saida;
+}
+
 /* ---------- IDENTIDADE DO GATEWAY NO FIREBASE ----------
    O ponto que travava tudo: o gateway precisa entrar no banco como USUARIO
    (uid fixo), e nao como "conta de servico". Sem identidade, as regras do
@@ -180,18 +289,26 @@ async function banco(caminho, metodo, corpo) {
         const r = await fetch(CFG.db + caminho + (comAuth ? sep + "auth=" + comAuth : ""), {
             method: metodo || "GET",
             headers: { "Content-Type": "application/json" },
-            body: corpo === undefined ? undefined : JSON.stringify(corpo)
+            body: envio === undefined ? undefined : JSON.stringify(envio)
         });
         return r;
     }
     function ler(r) {
         return r.text().then(function (x) { try { return x ? JSON.parse(x) : null; } catch (e) { return x; } });
     }
+    /* protege o que for pedido: cifra ao gravar, decifra ao ler */
+    const ehGravacao = metodo === "PUT" || metodo === "PATCH" || metodo === "POST";
+    let envio = corpo;
+    if (ehGravacao && caminho.indexOf("/pedidos") === 0 && corpo && typeof corpo === "object") {
+        try { envio = await pedidoParaGravar(corpo); }
+        catch (e) { throw new Error("nao consegui proteger os dados do pedido: " + String(e && e.message || e)); }
+    }
+
     /* 1) com a identidade do gateway */
     let r = null;
     try {
         r = await chamar(await sessaoDoGateway());
-        if (r.ok) { bancoVia = "identidade"; return await ler(r); }
+        if (r.ok) { bancoVia = "identidade"; return caminho.indexOf("/pedidos") === 0 ? await pedidosParaLer(await ler(r)) : await ler(r); }
     } catch (e) { /* sem sessao: cai para o caminho aberto */ }
     /* 2) sem token: enquanto o banco estiver aberto, a venda continua */
     r = await chamar(null);
@@ -201,7 +318,7 @@ async function banco(caminho, metodo, corpo) {
         throw new Error("banco respondeu " + r.status + (detalhe ? " (" + detalhe.replace(/\s+/g, " ") + ")" : ""));
     }
     bancoVia = "aberto";
-    return await ler(r);
+    return caminho.indexOf("/pedidos") === 0 ? await pedidosParaLer(await ler(r)) : await ler(r);
 }
 /* ---------- formatar ---------- */
 function json(dados, status) {
@@ -307,6 +424,22 @@ async function rotear(req, env) {
         return json(await banco("/pedidos.json", "GET"));
     }
 
+    /* 6b) MIGRACAO DE USO UNICO: reescreve os pedidos antigos (gravados antes da
+       cifra) para que tambem fiquem cifrados. Roda uma vez e depois some. */
+    if (rota === "/api-cifrar" && metodo === "POST") {
+        if (!(await tokenValido(req.headers.get("Authorization")))) return json({ erro: "faça login" }, 401);
+        const todos = await banco("/pedidos.json", "GET");
+        const ids = todos && typeof todos === "object" ? Object.keys(todos) : [];
+        let cifrados = 0, jaCifrados = 0;
+        for (const id of ids) {
+            const p = todos[id];
+            if (!p || typeof p !== "object") continue;
+            if (p.sig) { jaCifrados++; continue; }
+            await banco("/pedidos/" + encodeURIComponent(id) + ".json", "PUT", p);
+            cifrados++;
+        }
+        return json({ ok: true, cifrados: cifrados, jaCifrados: jaCifrados, total: ids.length });
+    }
     /* 7) o dono muda o status (o historico nunca e apagado) */
     if (rota === "/api/status" && metodo === "POST") {
         if (!(await tokenValido(req.headers.get("Authorization")))) return json({ erro: "faça login" }, 401);

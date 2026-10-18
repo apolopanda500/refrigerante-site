@@ -100,14 +100,13 @@ console.log("\n=== 2. O GATEWAY CARREGA E TEM AS ROTAS CERTAS ===");
     const bancoFalso = { pedidos: {}, precos: { "k:1": "R$ 19,00" }, avaliacoes: {}, bot: {} };
     const acessos = [];
     globalThis.fetch = function (url, op) {
-        /* o gateway troca o JWT da conta de servico por um TOKEN DE ACESSO antes de
-           falar com o banco: e esse token, no cabecalho Authorization, que bypassa as
-           regras. ?auth= autenticaria como usuario e nao passaria das regras. */
-        if (/oauth2\.googleapis\.com\/token/.test(String(url))) {
-            return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ access_token: "fake-token-admin", expires_in: 3600 }) });
+        /* o gateway se apresenta ao Firebase como USUARIO (uid gateway-convencao)
+           antes de falar com o banco: e essa identidade que as regras reconhecem.
+           Sem ela, um banco fechado tranca o proprio gateway junto. */
+        if (/identitytoolkit\.googleapis\.com/.test(String(url))) {
+            return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ idToken: "fake-sessao-gateway" }) });
         }
-        const cab = (op && op.headers) || {};
-        const autenticado = /Bearer /.test(String(cab.Authorization || ""));
+        const autenticado = /[?&]auth=/.test(String(url));
         const cam = decodeURIComponent(String(url).split("?")[0].replace(/^https:\/\/fake-db\.firebaseio\.com/, ""));
         acessos.push({ url: String(url), metodo: (op && op.method) || "GET", caminho: cam, autenticado: autenticado });
         if (!autenticado) return Promise.resolve({ ok: false, status: 401, text: () => Promise.resolve("Permission denied") });
@@ -128,7 +127,8 @@ console.log("\n=== 2. O GATEWAY CARREGA E TEM AS ROTAS CERTAS ===");
 
     const env = {
         FB_DB_URL: "https://fake-db.firebaseio.com", FB_SA_EMAIL: "teste@projeto.iam.gserviceaccount.com",
-        FB_SA_KEY: pem, LOJA_SENHA: "senha-do-dono-123", BOT_SEGREDO: "segredo-do-robo-456", SESSAO_SEGREDO: "sessao-segreda-789"
+        FB_SA_KEY: pem, LOJA_SENHA: "senha-do-dono-123", BOT_SEGREDO: "segredo-do-robo-456", SESSAO_SEGREDO: "sessao-segreda-789",
+        FB_API_KEY: "api-key-de-teste"
     };
     const chamar = (caminho, op) => {
         const req = new Request("https://gateway.exemplo.com" + caminho, op);
@@ -165,14 +165,14 @@ console.log("\n=== 2. O GATEWAY CARREGA E TEM AS ROTAS CERTAS ===");
     console.log("\n=== 5. TODO ACESSO AO BANCO PELA CONTA DE SERVICO ===");
     const semAuth = acessos.filter(a => !a.autenticado);
     if (semAuth.length) falha("o gateway tentou falar com o banco sem token: " + semAuth.length + "x");
-    else ok("todas as " + acessos.length + " chamadas ao banco foram autenticadas com token de acesso (conta de servico)");
+    else ok("todas as " + acessos.length + " chamadas ao banco foram autenticadas (identidade do gateway)");
 
     /* o caminho que FAZ o bypass das regras e o cabecalho; ?auth= nao passa das regras */
-    const comQuery = acessos.filter(function (a) { return /[?&]auth=/.test(a.url); });
-    if (comQuery.length) falha("o gateway voltou a usar ?auth= no banco: isso autentrica como USUARIO e as regras fecharam em cima (" + comQuery.length + "x)");
-    else if (acessos.length) ok("o gateway bypassa as regras pelo token de acesso, e nao por ?auth= (que parou de valer)");
-    if (!/Authorization: "Bearer " \+ token/.test(fonteGateway)) falha("o gateway nao esta mandando Authorization: Bearer no banco");
-    else ok("o codigo manda Authorization: Bearer <token> no banco");
+    if (acessos.length) ok("todas as chamadas ao banco foram autenticadas com a identidade do gateway");
+    if (!/const UID_GATEWAY = "gateway-convencao"/.test(fonteGateway)) falha("o gateway nao tem o uid fixo que as regras liberam");
+    else ok("o gateway entra com o uid fixo gateway-convencao (e o que as regras do banco autorizam)");
+    if (!/signInWithCustomToken/.test(fonteGateway)) falha("o gateway nao troca o token assinado por uma sessao do Firebase");
+    else ok("o gateway troca o token assinado por uma sessao do Firebase (assim ele existe para as regras)");
 
     console.log("\n=== 6. O CLIENTE CRIA O PEDIDO E SO VE O DELE ===");
     const bom = {

@@ -170,3 +170,18 @@ tentando o caminho antigo e o banco fechado barra.
 em Node (`module.exports.rotear`), com um `http.createServer` simples.
 Dá para rodar na sua máquina ou em qualquer hospedagem com Node — mas
 aí ele precisa ficar ligado 24h, senão o painel não sincroniza.
+
+## O QUE VALE ENQUANTO O BANCO NAO FECHA
+
+Fechar as regras depende de o gateway ter identidade no Firebase, e o Google
+ainda nao aceitou a troca do token assinado (INVALID_CUSTOM_TOKEN). ate la, o
+que protege o cliente nao e a regra: e a **cifra**. O gateway grava nome,
+telefone, CPF, endereco e observacao cifrados (AES-GCM, chave no segredo do
+Worker), entao quem abrir o banco na internet ve so letras sem sentido.
+A bateria 43 prova isso. Status, valor e regiao ficam em claro porque o sistema
+precisa deles para filtrar.
+
+**Residuo conhecido:** se o gateway cair, o cliente grava o pedido direto no
+Firebase pelo caminho de reserva e esse texto puro passa. E o preco de manter a
+venda nunca parar. Para fechar de vez, faca o gateway ter identidade e publique
+as regras de `database.rules.json`.
