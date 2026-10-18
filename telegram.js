@@ -59,7 +59,9 @@ var TelegramBot = (function () {
     function cfg() {
         var p = prefs();
         return {
-            token: String(p.cfgTelegramToken || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU").trim(),
+            /* o token vem do perfil do dono. O padrao escrito no arquivo sumiu: o
+       repositorio e publico, entao ele estava legivel por qualquer pessoa. */
+    token: String(p.cfgTelegramToken || "").trim(),
             chat: String(p.cfgTelegramChatId || "1810807613").trim(),
             ligado: p.cfgBotComandos !== false
         };

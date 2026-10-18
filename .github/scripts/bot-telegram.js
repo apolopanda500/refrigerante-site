@@ -17,7 +17,16 @@
 "use strict";
 
 const BASE  = process.env.FB_URL   || "https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com";
-const TOKEN = process.env.TG_TOKEN || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
+/* O TOKEN NAO VAI AQUI. O repositorio e PUBLICO: com o token escrito no
+   arquivo, qualquer pessoa da internet le o bot do dono, ve os pedidos
+   que chegam nele (nome, telefone, endereco) e ainda consegue mandar
+   mensagem como se fosse o robo. O token vive no segredo do GitHub
+   (Settings > Secrets > TG_TOKEN) e para ai. */
+const TOKEN = (process.env.TG_TOKEN || "").trim();
+if (!TOKEN) {
+    console.error("TG_TOKEN nao configurado: o bot nao roda sem o segredo.");
+    process.exit(0);
+}
 const CHAT  = String(process.env.TG_CHAT || "1810807613");
 const OFFSET_PATH = "/bot/offset.json";
 const PAINEL_URL  = "https://apolopanda500.github.io/refrigerante-site/admin.html";

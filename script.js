@@ -1147,7 +1147,10 @@ function notificarTelegramPedido(p) {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
     if (prefs.cfgAvisoPedido === false) return;          // desligado (opcao oculta)
-    var token = prefs.cfgTelegramToken || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
+    /* sem token configurado o painel nao chama o Telegram: o token padrao
+       vivia neste arquivo, e o repositorio e publico - qualquer um lia. */
+    var token = String(prefs.cfgTelegramToken || "").trim();
+    if (!token) { if (cb) cb(false, "sem token do Telegram"); return; }
     var chat  = prefs.cfgTelegramChatId || "1810807613";  // chat do vendedor (@Rickcao22)
     if (!token || !chat) return;
 
@@ -1166,7 +1169,10 @@ function notificarTelegramPedido(p) {
 function notificarTelegram(texto) {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e){/* proposital: guardar preferencia nunca pode travar o pedido */}
-    var token = prefs.cfgTelegramToken || "8673434736:AAEit4J3TMwdWsPfP0qZ_hvUbQrmhLKKiAU";
+    /* sem token configurado o painel nao chama o Telegram: o token padrao
+       vivia neste arquivo, e o repositorio e publico - qualquer um lia. */
+    var token = String(prefs.cfgTelegramToken || "").trim();
+    if (!token) { if (cb) cb(false, "sem token do Telegram"); return; }
     var chat  = prefs.cfgTelegramChatId  || "1810807613";   // chat do vendedor (@Rickcao22)
     if (!token || !chat || !texto) return;
     var url = "https://api.telegram.org/bot" + token + "/sendMessage"
