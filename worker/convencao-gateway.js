@@ -332,13 +332,119 @@ async function lerCorpo(req) {
 }
 
 /* ---------- regra de negocio: o que e um pedido valido ---------- */
-function pedidoValido(p) {
+const PEDIDO_MINIMO_PADRAO = 100;
+
+/* ---------- QUEM E O CLIENTE (CPF e celular conferidos de verdade) ----------
+   O limite de 2 pedidos por cliente so vale se a identidade for real. Antes
+   ele contava pelo telefone, guardado no aparelho: dava para burlar trocando
+   o numero, limpando os dados ou usando outro celular. Agora a identidade e o
+   CPF conferido pelos digitos verificadores - e a contagem e feita AQUI, no
+   servidor. Trocar de aparelho, de navegador ou de telefone nao foge. */
+/* 1 pedido por DIA do calendario (dia de Sao Paulo). Vira a meia-noite e
+   o cliente volta a poder pedir - nao e "24 horas corridas": quem pediu as
+   23h50 pode pedir de novo few minutos depois, as 00h00.
+   Vale enquanto a loja estiver aberta e o pedido passar nas regras de regiao,
+   valor minimo e horario. */
+const LIMITE_PEDIDOS_CLIENTE_DIA = 1;
+
+/* CPF: 11 digitos e os dois digitos verificadores conferem. Sequencias
+   repetidas (000..., 111...) sao recusadas: nao existe gente assim. */
+function cpfValido(cpf) {
+    const s = String(cpf == null ? "" : cpf).replace(/\D/g, "");
+    if (s.length !== 11) return false;
+    if (/^(\d)\1{10}$/.test(s)) return false;
+    for (let t = 9; t < 11; t++) {
+        let soma = 0;
+        for (let d = 0; d < t; d++) soma += Number(s[d]) * (t + 1 - d);
+        let resto = (soma * 10) % 11;
+        if (resto === 10) resto = 0;
+        if (resto !== Number(s[t])) return false;
+    }
+    return true;
+}
+
+/* celular brasileiro: DDD + 9 + 8 digitos = 11. Telefone fixo (10 digitos) e
+   recusado de proposito: o cliente precisa de um CELULAR, porque e por ele que
+   a entrega avisa. Aceitar fixo aqui era porta de entrada para numero de
+   gmail/livro de contatos que nunca recebe recado. */
+function celularValido(tel) {
+    const s = String(tel == null ? "" : tel).replace(/\D/g, "");
+    if (s.length !== 11) return false;
+    const ddd = Number(s.slice(0, 2));
+    if (ddd < 11 || ddd > 99) return false;
+    if (s[2] !== "9") return false;
+    return true;
+}
+
+/* impressao do CPF: o controle do dia guarda o CPF TRANSLADADO, nunca o CPF.
+   Sem o numero em texto puro, ninguem descobre quantas vezes cada pessoa
+   comprou so abrindo o banco. */
+async function impressaoCpf(cpf) {
+    const bruto = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("convencao|cpf|" + String(cpf)));
+    return paraBase64Url(new Uint8Array(bruto)).slice(0, 24);
+}
+
+function diaDeSaoPaulo() {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date());
+}
+
+/* quantos pedidos este CPF ja fez hoje - contado no servidor */
+async function usoDoClienteHoje(cpf) {
+    const marca = await impressaoCpf(cpf);
+    const reg = await banco("/controle/" + diaDeSaoPaulo() + "/" + marca + ".json", "GET");
+    const n = reg && String(reg.dia) === diaDeSaoPaulo() ? Number(reg.n) : 0;
+    return { marca: marca, quantos: isNaN(n) ? 0 : n };
+}
+
+async function somarUsoDoCliente(cpf, marca) {
+    const antes = await banco("/controle/" + diaDeSaoPaulo() + "/" + marca + ".json", "GET");
+    const n = antes && String(antes.dia) === diaDeSaoPaulo() ? Number(antes.n) : 0;
+    await banco("/controle/" + diaDeSaoPaulo() + "/" + marca + ".json", "PUT",
+        { dia: diaDeSaoPaulo(), n: (isNaN(n) ? 0 : n) + 1, quando: Date.now() });
+}
+
+/* o menor valor de pedido aceito. O dono pode mudar gravando
+   /config/pedidoMinimo no banco (ex.: 120); sem isso vale 100,00.
+   O carrinho do site recebe este mesmo numero em /api/capacidade, para
+   nunca prometer um valor que o servidor vai recusar. */
+let minimoPedidoCache = null;
+async function valorMinimoPedido() {
+    if (minimoPedidoCache !== null) return minimoPedidoCache;
+    let v = PEDIDO_MINIMO_PADRAO;
+    try {
+        const cfg = await banco("/config/pedidoMinimo.json", "GET");
+        /* CUIDADO: Number(null) e 0 - sem esta checagem, um banco sem
+           configuracao gravada deixava o minimo em R$ 0,00 e a regra de
+           bloqueio sumia sem ninguem perceber. */
+        if (cfg !== null && cfg !== undefined && cfg !== "") {
+            const n = Number(cfg);
+            if (!isNaN(n) && n > 0) v = n;
+        }
+    } catch (e) { /* sem configuracao: vale o padrao */ }
+    minimoPedidoCache = v;
+    return v;
+}
+
+async function pedidoValido(p) {
     if (!p || typeof p !== "object") return "pedido vazio";
     if (!p.id || !/^CV\d{8}-\d{3}-\d{5}$/.test(String(p.id))) return "numero de pedido invalido";
     if (!p.nome || String(p.nome).trim().length < 2) return "sem nome";
-    if (!p.tel || String(p.tel).replace(/\D/g, "").length < 8) return "sem telefone";
+    /* documento e celular conferidos de verdade: e o que da identidade do
+       cliente, e portanto o que segura o limite de 2 pedidos por dia */
+    if (!p.cpf) return "CPF obrigatorio";
+    if (!cpfValido(p.cpf)) return "CPF invalido (confira os 11 digitos)";
+    if (!p.tel) return "celular obrigatorio";
+    if (!celularValido(p.tel)) return "celular invalido (DDD + numero, com o 9)";
     if (!Array.isArray(p.itens) || !p.itens.length) return "sem itens";
     if (!(Number(p.total) >= 0)) return "total invalido";
+    /* VALOR MINIMO DO PEDIDO - travado aqui, no servidor.
+       O carrinho do cliente ja avisa e trava, mas isso e do lado dele: quem
+       escreve direto na API (ou abre o app no celular e contorna o aviso)
+       passava por cima, e pedido de R$ 6,00 entrava. Este e o unico lugar que
+       nao da para burlar, entao a regra mora aqui. */
+    const minimo = await valorMinimoPedido();
+    const subtotal = Number(p.subtotal !== undefined ? p.subtotal : p.total) || 0;
+    if (subtotal < minimo) return "pedido minimo para entrega: R$ " + minimo.toFixed(2).replace(".", ",") + " (faltam R$ " + (minimo - subtotal).toFixed(2).replace(".", ",") + ")";
     if (["aguardando", "confirmado", "separacao", "enviado", "entregue", "cancelado"].indexOf(p.status) < 0) return "status invalido";
     return null;
 }
@@ -404,8 +510,20 @@ async function rotear(req, env) {
           dele mesmo; o gateway devolve a chave para ele acompanhar) */
     if (rota === "/api/pedido" && metodo === "POST") {
         const corpo = await lerCorpo(req);
-        const problema = pedidoValido(corpo.pedido);
+        const problema = await pedidoValido(corpo.pedido);
         if (problema) return json({ erro: problema }, 400);
+
+        /* limite de 2 pedidos por cliente por dia, contado AQUI.
+           O aparelho tambem trava, mas o aparelho e do cliente: esta e a
+           trava que ele nao controla. */
+        const uso = await usoDoClienteHoje(corpo.pedido.cpf);
+        if (uso.quantos >= LIMITE_PEDIDOS_CLIENTE_DIA) {
+            return json({
+                erro: "Voce ja fez seu pedido de hoje. O limite e de 1 pedido por cliente por dia: amanha, depois da meia-noite, voce consegue pedir de novo.",
+                limite: LIMITE_PEDIDOS_CLIENTE_DIA, hoje: uso.quantos
+            }, 429);
+        }
+        await somarUsoDoCliente(corpo.pedido.cpf, uso.marca);
         await banco("/pedidos/" + encodeURIComponent(corpo.pedido.id) + ".json", "PUT", corpo.pedido);
         return json({ ok: true, chave: await chaveDoPedido(corpo.pedido.id) });
     }
@@ -503,7 +621,11 @@ async function rotear(req, env) {
        Leitura publica (sao SO numeros: dia/pedidos/limite, nenhum dado
        de cliente); escrita so o dono, com o token da sessao. */
     if (rota === "/api/capacidade") {
-        if (metodo === "GET") return json(await banco("/capacidade.json", "GET"));
+        if (metodo === "GET") {
+            const c = await banco("/capacidade.json", "GET");
+            /* o site precisa do mesmo minimo que o servidor exige */
+            return json(Object.assign({}, c || {}, { pedidoMinimo: await valorMinimoPedido() }));
+        }
         if (metodo === "PUT") {
             if (!(await tokenValido(req.headers.get("Authorization")))) return json({ erro: "faça login" }, 401);
             const c = await lerCorpo(req);

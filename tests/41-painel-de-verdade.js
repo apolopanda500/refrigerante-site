@@ -152,7 +152,7 @@ function conectar(url) {
     const SEMENTE = `(function () {
         var p = {
             id: "CV20260101-001-12345",
-            nome: "TESTE BATERIA 41", tel: "21988887777", cpf: "00000000000",
+            nome: "TESTE BATERIA 41", tel: "21988887777", cpf: "52998224725",
             end: "Rua do Teste, 99", bairro: "Japeri", regiao: "japeri", frete: 12,
             pagamento: "Pix", troco: "",
             itens: [{ name: "Guarana 350ml", qty: 2, price: 19, priceNum: 19, subtotal: 38 }],

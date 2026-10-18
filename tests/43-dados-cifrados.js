@@ -69,8 +69,8 @@ const dir = process.env.WDIR || path.resolve(__dirname, "..");
         id: "CV20260101-001-00001", nome: "Maria da Silva", tel: "21988887777", cpf: "12345678909",
         end: "Rua das Flores, 123 - apto 41", bairro: "Japeri", regiao: "japeri",
         pagamento: "Pix", troco: "", observacao: " interfone quebrado",
-        itens: [{ name: "Guarana 350ml", qty: 2, priceNum: 19, subtotal: 38 }],
-        subtotal: 38, frete: 12, total: 50, status: "aguardando",
+        itens: [{ name: "Guarana 350ml", qty: 2, priceNum: 19, subtotal: 38 }, { name: "Coca 2L", qty: 2, priceNum: 35, subtotal: 70 }],
+        subtotal: 108, frete: 12, total: 120, status: "aguardando",
         criadoEm: 1, atualizadoEm: 1, historico: [{ status: "aguardando", quando: 1 }]
     };
 
@@ -98,7 +98,7 @@ const dir = process.env.WDIR || path.resolve(__dirname, "..");
     else falha("o bloco cifrado nao foi criado");
 
     /* o que o dono precisa continua em claro, para o sistema filtrar */
-    if (noBanco.status === "aguardando" && noBanco.total === 50 && noBanco.regiao === "japeri") ok("status, valor e regiao continuam visiveis (o sistema precisa disso para filtrar)");
+    if (noBanco.status === "aguardando" && noBanco.total === 120 && noBanco.regiao === "japeri") ok("status, valor e regiao continuam visiveis (o sistema precisa disso para filtrar)");
     else falha("o que o sistema precisa sumiu: " + JSON.stringify(noBanco).slice(0, 120));
 
     /* e o painel recebe tudo de volta, legivel */

@@ -263,6 +263,31 @@ function cpfValido(cpf) {
     return true;
 }
 
+
+/* ---------- validacao de CELULAR (mesma regra do servidor) ----------
+   O gateway exige 11 digitos com o 9 na terceira posicao. Aqui o cliente
+   confere antes de enviar, para o erro aparecer na hora - e nao so depois
+   de o servidor recusar o pedido. */
+function celularValido(tel) {
+    var s = String(tel || "").replace(/\D/g, "");
+    if (s.length !== 11) return false;
+    var ddd = parseInt(s.slice(0, 2), 10);
+    if (isNaN(ddd) || ddd < 11 || ddd > 99) return false;
+    if (s.charAt(2) !== "9") return false;
+    return true;
+}
+
+/* ---------- o cliente esta com documento e celular em dia? ----------
+   Devolve "" quando esta tudo certo, ou o texto do que falta. */
+function problemaDoCliente() {
+    var p = {};
+    try { p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch (e) { p = {}; }
+    var cpf = String(p.cpf || "").replace(/\D/g, "");
+    if (!cpf) return "Coloque o seu CPF no Perfil para pedir. E ele que identifica a sua conta.";
+    if (!cpfValido(cpf)) return "O CPF do Perfil nao confere. Confira os 11 digitos.";
+    if (!celularValido(p.tel)) return "O celular do Perfil precisa ter DDD + 9 + 8 digitos (11 ao todo).";
+    return "";
+}
 /* ---------- validacao de nome (nome completo, so letras) ---------- */
 function nomeValido(nome) {
     var n = String(nome || "").trim().replace(/\s+/g, " ");
@@ -599,12 +624,18 @@ function guardarCapacidade(dados) {
     var pedidos = parseInt(dados.pedidos, 10);
     if (isNaN(pedidos) || pedidos < 0) return false;
     try {
-        localStorage.setItem(CHAVE_CAPACIDADE, JSON.stringify({
+        /* o minimo do pedido vem do SERVIDOR: e la que a regra e cobrada de
+           verdade, entao o site tem que avisar o mesmo numero. Se o dono
+           mudar la, o site acompanha sozinho. */
+        var salvo = {
             dia: String(dados.dia || ""),
             pedidos: pedidos,
             limite: parseInt(dados.limite, 10) || 0,
             quando: Date.now()
-        }));
+        };
+        var minimo = Number(dados.pedidoMinimo);
+        if (!isNaN(minimo) && minimo > 0) salvo.pedidoMinimo = minimo;
+        localStorage.setItem(CHAVE_CAPACIDADE, JSON.stringify(salvo));
         return true;
     } catch (e) { return false; }
 }
@@ -948,6 +979,18 @@ function criarPedido(dados) {
        aqui o limite e conferido de novo na hora de GRAVAR.
        Se alguem chamar criarPedido pelo console do navegador,
        o pedido nao nasce - e a ultima linha de defesa da loja. */
+    /* antes de tudo: o cliente tem documento e celular em dia?
+       O servidor exige, entao avisar aqui evita o cliente preencher tudo e
+       so entao ouvir "CPF invalido". */
+    if (typeof problemaDoCliente === "function") {
+        var falta = problemaDoCliente();
+        if (falta) {
+            try { localStorage.setItem("convencaoLimiteRecusado", JSON.stringify({
+                quando: Date.now(), tipo: "cadastro", motivo: falta
+            })); } catch (e) { /* guardar preferencia nunca pode travar o pedido */ }
+            return null;
+        }
+    }
     if (typeof checaLimitePedidos === "function") {
         var trava = checaLimitePedidos(dados.tel, pedidos);
         if (trava) {

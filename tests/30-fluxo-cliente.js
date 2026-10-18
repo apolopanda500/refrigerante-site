@@ -97,12 +97,14 @@ else ok("a finalizacao tem o bloquei de regras (bloqueioFinalizar) antes de fech
 ok("a finalizacao usa criarPedido, as regras da loja, o aviso do Telegram e limpa o carrinho");
 
 console.log("\n=== 4. O PEDIDO NASCE COMO TEM DE SER ===");
+ctx.localStorage.setItem("refrigerantePrefs", JSON.stringify({ nome: "Cliente Bateria", nomeAntigo: "Cliente Bateria", cpf: "52998224725", tel: "21987654321", endereco: "Rua do Teste, 10", bairro: "Japeri" }));
 const pedido = api.criarPedido({
-    nome: "Cliente Teste", tel: "(21) 98888-7777", cpf: "123.456.789-00",
+    cpf: "52998224725",
+    itens: [{ name: "Coca 2L", qty: 2, price: 27.5, priceNum: 27.5, subtotal: 55 }, { name: "Guarana 350ml", qty: 9, price: 6, priceNum: 6, subtotal: 54 }],
+    nome: "Cliente Bateria", nomeAntigo: "Cliente Teste", tel: "(21) 98888-7777", cpf: "123.456.789-00",
     end: "Rua A, 10", comp: "apto 2", bairro: "Seropedica",
     regiao: regioes[0].id, frete: calc.frete, pagamento: "Pix", troco: "",
-    itens: [{ name: "Guarana 350ml", qty: 3, price: 19, priceNum: 19, subtotal: 57 }],
-    subtotal: api.calcSubtotal(), total: calc.total
+    subtotal: 109, total: 109
 });
 if (!/^CV\d{8}-\d{3}-\d{5}$/.test(pedido.id)) falha("numero de pedido fora do padrao CV: " + pedido.id);
 else ok("numero do pedido: " + pedido.id + " (padrao CVAAAAMMDD-000-00000)");

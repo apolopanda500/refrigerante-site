@@ -21,11 +21,22 @@ function freteGratisMinimo() {
 /* VALOR MINIMO PARA ENTREGA: abaixo disso o pedido de entrega nao fecha
    (o vendedor pode mudar em Configuracoes: cfgPedidoMinimoEntrega) */
 function entregaMinima() {
+    /* a regra que vale e a do SERVIDOR (e o gateway que recusa o pedido).
+       O numero do dono (Configuracoes) so pode ser MAIS alto que o do
+       servidor: se fosse mais baixo, o site deixaria o cliente fechar uma
+       compra que o servidor ia recusar na ultima hora. */
+    var doServidor = 100;
+    try {
+        var cap = JSON.parse(localStorage.getItem("convencaoCapacidade") || "{}");
+        var n = Number(cap.pedidoMinimo);
+        if (!isNaN(n) && n > 0) doServidor = n;
+    } catch (e) { /* sem dado do servidor: vale o padrao */ }
     try {
         var p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}");
         var v = parseFloat(p.cfgPedidoMinimoEntrega);
-        return (isNaN(v) || v <= 0) ? 100 : v;
-    } catch (e) { return 100; }
+        if (!isNaN(v) && v > doServidor) return v;
+    } catch (e) { /* sem preferencia do dono */ }
+    return doServidor;
 }
 
 /* menor frete charged entre as regioes (usado nos avisos) */
@@ -288,7 +299,10 @@ function bairroForaDaArea(bairro) {
    vale o limite por cliente - melhor vender a mais do que
    travar a venda por um numero velho.
    ============================================ */
-var LIMITE_PEDIDOS_CLIENTE_DIA = 2;    /* por telefone */
+/* 1 pedido por DIA do calendario (dia de Sao Paulo). Vira a meia-noite e o
+   cliente pode pedir de novo - nao sao 24 horas corridas. A identidade e o
+   CPF, que e o mesmo criterio que o servidor usa. */
+var LIMITE_PEDIDOS_CLIENTE_DIA = 1;    /* por CPF */
 var LIMITE_PEDIDOS_LOJA_DIA = 80;      /* a loja toda, no dia */
 
 /* so os digitos: o telefone do perfil chega mascarado e o limite
@@ -373,14 +387,28 @@ function limiteLojaDia() {
    Chame sempre com a lista de pedidos e o telefone: quem
    decide e o carrinho (tela) e o criarPedido (gravacao).
    ============================================================ */
+function digitosCpf(v) {
+    return String(v == null ? "" : v).replace(/\D/g, "");
+}
 function checaLimitePedidos(tel, lista) {
     var doDia = pedidosDoDia(lista);
 
     var tetoCliente = limiteClienteDia();
     if (tetoCliente > 0) {
-        var feito = 0, alvo = digitosTel(tel);
+        /* A identidade do cliente e o CPF, nao o telefone: e o CPF que o
+           servidor usa para contar. Contar pelo telefone aqui so fazia o
+           aparelho e o servidor discordarem do mesmo cliente. */
+        var prefs = {};
+        try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch (e) { prefs = {}; }
+        var alvo = digitosCpf(prefs.cpf);
+        var feito = 0;
         if (alvo) {
-            doDia.forEach(function (p) { if (digitosTel(p.tel) === alvo) feito++; });
+            doDia.forEach(function (p) { if (digitosCpf(p.cpf) === alvo) feito++; });
+        } else {
+            /* sem CPF no perfil nao da para saber QUEM e: usa o telefone so
+               para dar um aviso. Quem decide de verdade e o servidor. */
+            alvo = digitosTel(tel);
+            if (alvo) doDia.forEach(function (p) { if (digitosTel(p.tel) === alvo) feito++; });
         }
         if (feito >= tetoCliente) {
             return {

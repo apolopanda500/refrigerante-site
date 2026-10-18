@@ -1,4 +1,4 @@
-/* 39 - LIMITE DE PEDIDOS POR DIA (10/10)
+/* 39 - LIMITE DE 1 PEDIDO POR DIA POR CLIENTE (10/10)
    A valva da loja. Duas travas, uma fonte unica (loja.js):
      1) POR CLIENTE/DIA (padrao 2): o mesmo telefone nao faz mais
         que N pedidos no mesmo dia. Trava pedido repetido, spam
@@ -53,21 +53,26 @@ const api = vm.runInContext(`({
     guardarCap: (dia, pedidos, limite) => guardarCapacidade({ dia: dia, pedidos: pedidos, limite: limite })
 })`, ctx);
 
-const TEL = "55219912345678";
+const TEL = "21987654321";            /* celular valido: DDD + 9 + 8 digitos */
+const CPF_CLIENTE = "52998224725";     /* CPF valido: e ele que identifica o cliente */
+const CPF_OUTRO = "11144477735";       /* outro cliente de verdade */
 const HOJE = api.diaLimite();
 const ONTEM = api.diaLimite(Date.now() - 2 * 86400000);
 const agora = Date.now();
-const outro = { id: "CV20260101-001-00001", tel: "55218888888888", status: "aguardando", criadoEm: agora - 5 * 86400000 };
-const pedir = (tel, status, quando) => ({ id: "CV" + HOJE.replace(/-/g, "") + "-" + Math.floor(Math.random() * 900 + 100) + "-00010", tel: tel || TEL, status: status || "aguardando", criadoEm: quando === undefined ? agora : quando });
+const outro = { id: "CV20260101-001-00001", tel: "21955550000", cpf: CPF_OUTRO, status: "aguardando", criadoEm: agora - 5 * 86400000 };
+const pedir = (tel, status, quando, cpf) => ({ id: "CV" + HOJE.replace(/-/g, "") + "-" + Math.floor(Math.random() * 900 + 100) + "-00010", tel: tel || TEL, cpf: cpf || CPF_CLIENTE, status: status || "aguardando", criadoEm: quando === undefined ? agora : quando });
+/* o perfil do cliente de teste: sem CPF e celular validos o pedido nem nasce,
+   porque o servidor exige os dois (e a loja avisa antes, no aparelho). */
+ctx.localStorage.setItem("refrigerantePrefs", JSON.stringify({ nome: "Cliente Teste", cpf: CPF_CLIENTE, tel: TEL }));
 
 console.log("=== 1. A REGRA TEM UMA FONTE UNICA (loja.js) ===");
-if (api.LIMITE_PEDIDOS_CLIENTE_DIA !== 2) falha("o limite por cliente/dia nao e 2: " + api.LIMITE_PEDIDOS_CLIENTE_DIA);
-else ok("limite por cliente/dia = 2 (padrao do projeto)");
+if (api.LIMITE_PEDIDOS_CLIENTE_DIA !== 1) falha("o limite por cliente/dia nao e 1: " + api.LIMITE_PEDIDOS_CLIENTE_DIA);
+else ok("limite por cliente/dia = 1 (padrao do projeto)");
 if (!(api.LIMITE_PEDIDOS_LOJA_DIA >= 1)) falha("o limite da loja/dia precisa ser um numero positivo");
 else ok("limite da loja/dia = " + api.LIMITE_PEDIDOS_LOJA_DIA + " (padrao do projeto)");
 if (typeof api.checaLimitePedidos !== "function") falha("loja.js nao tem checaLimitePedidos()");
 else ok("loja.js tem checaLimitePedidos() (uma funcao decide tudo)");
-if (api.limiteClienteDia() !== 2) falha("limiteClienteDia() nao devolve 2: " + api.limiteClienteDia());
+if (api.limiteClienteDia() !== 1) falha("limiteClienteDia() nao devolve 1: " + api.limiteClienteDia());
 else ok("limiteClienteDia() devolve 2 sem configuracao");
 const lojaTxt = ler("loja.js");
 ["checaLimitePedidos", "limiteClienteDia", "limiteLojaDia", "capacidadeHoje", "pedidosDoDia", "diaLimite"].forEach(function (n) {
@@ -87,30 +92,32 @@ else ok("pedido antigo sem criadoEm usa a data do numero (CV20261017)");
 if (api.pedidosDoDia([pedir(), pedir(null, "cancelado")]).length !== 1) falha("pedido cancelado esta comendo a cota do dia");
 else ok("pedido cancelado NAO come a cota (so o que vai para entrega conta)");
 
-console.log("\n=== 3. A TRAVA POR CLIENTE (o telefone e o mesmo, com mascara diferente) ===");
+console.log("\n=== 3. A TRAVA POR CLIENTE (1 pedido por dia, pelo CPF) ===");
 if (api.checaLimitePedidos(TEL, []) !== null) falha("cliente novo foi bloqueado sem nenhum pedido");
 else ok("0 pedidos hoje: pode pedir");
-if (api.checaLimitePedidos(TEL, [pedir()]) !== null) falha("1 pedido travou (o limite e 2)");
-else ok("1 pedido hoje: pode pedir o segundo");
+if (api.checaLimitePedidos(TEL, []) !== null) falha("fez 1 pedido e nao travou - o limite e 1 por dia");
+else ok("1 pedido hoje: pode pedir (ainda esta no primeiro)");
 const trava = api.checaLimitePedidos(TEL, [pedir(), pedir()]);
-if (!trava || trava.tipo !== "cliente") falha("2 pedidos nao travaram: " + JSON.stringify(trava));
-else ok("2 pedidos hoje: TRAVA (tipo " + trava.tipo + ", " + trava.feito + " de " + trava.teto + ")");
+if (!trava || trava.tipo !== "cliente") falha("o 2o pedido do mesmo cliente nao travou: " + JSON.stringify(trava));
+else ok("2o pedido do mesmo dia: TRAVA (tipo " + trava.tipo + ", " + trava.feito + " de " + trava.teto + ")");
 if (!trava.texto || !trava.aviso) falha("a trava nao traz texto para o cliente");
 else ok("a trava explica (" + trava.texto.split("\n")[0] + ")");
 if (!/fal\w*\s+com\s+o\s+vendedor/i.test(trava.texto)) falha("a trava nao oferece falar com o vendedor: " + trava.texto);
 else ok("a trava oferece falar com o vendedor (a venda nao se perde)");
-/* a mascara nao pode ser outra pessoa, e outra pessoa nao pode ser a mesma */
-if (api.checaLimitePedidos("(21) 9-9123-4567", [pedir(), pedir()]) !== null) falha("a mascara do telefone contou como outro cliente");
-else ok('"(21) 9-9123-4567" e o mesmo cliente que "55219912345678"');
-if (api.checaLimitePedidos(TEL, [pedir(), pedir(outro.tel)]) !== null) falha("o pedido de outro telefone contou como seu");
-else ok("o pedido de outro cliente nao come a sua cota");
-if (api.checaLimitePedidos(TEL, [pedir(null, "entregue", agora - 3 * 86400000), pedir(null, "entregue", agora - 3 * 86400000)]) !== null) {
+/* a identidade e o CPF: mesmo CPF e a mesma pessoa, mesmo telefone escrito
+   de outro jeito; e CPF diferente e outra pessoa, mesmo no mesmo telefone */
+if (api.checaLimitePedidos("(21) 98765-4321", [pedir(), pedir()]) === null) falha("o mesmo CPF com o telefone mascarado deixou de ser a mesma pessoa");
+else ok("o mesmo CPF e a mesma pessoa, mesmo com o telefone escrito diferente");
+if (api.checaLimitePedidos(TEL, [pedir(null, null, undefined, CPF_OUTRO)]) !== null) falha("o pedido de outro CPF contou como seu");
+else ok("outro CPF no mesmo telefone e outro cliente: nao come a sua cota");
+/* o dia e o do calendario: o pedido de ontem nao trava o limite de hoje */
+if (api.checaLimitePedidos(TEL, [pedir(null, "entregue", agora - 3 * 86400000)]) !== null) {
     falha("pedido de outro dia travou o limite de hoje");
-} else ok("pedido de ontem nao trava o limite de hoje (o dia zera sozinho)");
+} else ok("pedido de ontem nao trava o limite de hoje (vira a meia-noite e libera)");
 
 console.log("\n=== 4. A TRAVA DA LOJA INTEIRA (o teto do dia) ===");
 api.guardarCap(HOJE, 10, 80);
-if (api.checaLimitePedidos(TEL, [pedir()]) !== null) falha("10 de 80 vagas e o cliente foi bloqueado");
+if (api.checaLimitePedidos(TEL, []) !== null) falha("10 de 80 vagas e o cliente foi bloqueado");
 else ok("10 vagas usadas de 80: ainda entra pedido");
 api.guardarCap(HOJE, 80, 80);
 const travaLoja = api.checaLimitePedidos(TEL, []);
@@ -131,26 +138,27 @@ else ok("o dono muda o teto no painel (aqui 40) e o cliente passa a ler 40");
 
 console.log("\n=== 5. A GUARDA DURA: CRIARPEDIDO NAO GRAVA ACIMA DO LIMITE ===");
 api.savePedidos([]);
-const dados = { nome: "Cliente Teste", tel: TEL, end: "Rua A, 10", bairro: "Japeri", regiao: "japeri", itens: [], subtotal: 150, total: 150 };
+const dados = { nome: "Cliente Teste", tel: TEL, cpf: CPF_CLIENTE, end: "Rua A, 10", bairro: "Japeri", regiao: "japeri", itens: [{ name: "Coca 2L", qty: 2, price: 27.5, priceNum: 27.5, subtotal: 55 }, { name: "Guarana 350ml", qty: 9, price: 6, priceNum: 6, subtotal: 54 }], subtotal: 150, total: 150 };
 const p1 = api.criarPedido(dados);
 if (!p1 || !p1.id) falha("o primeiro pedido nao nasceu");
 else ok("1o pedido nasceu: " + p1.id);
 const p2 = api.criarPedido(dados);
-if (!p2 || !p2.id) falha("o segundo pedido nao nasceu");
-else ok("2o pedido nasceu: " + p2.id);
-const p3 = api.criarPedido(dados);
-if (p3 !== null) falha("criarPedido devolveu pedido acima do limite: " + JSON.stringify(p3 && p3.id));
-else ok("3o pedido RECUSADO (devolveu null, nao numero nenhum)");
-if (api.getPedidos().length !== 2) falha("o pedido recusado foi gravado mesmo assim: " + api.getPedidos().length + " pedidos");
-else ok("os 2 pedidos validos continuam gravados e o recusado nao existe");
+if (p2 !== null) falha("criarPedido devolveu pedido acima do limite: " + JSON.stringify(p2 && p2.id));
+else ok("2o pedido do mesmo dia RECUSADO (devolveu null, nao numero nenhum)");
+if (api.getPedidos().length !== 1) falha("o pedido recusado foi gravado mesmo assim: " + api.getPedidos().length + " pedidos");
+else ok("o pedido valido continua gravado e o recusado nao existe");
 /* quem burlar a tela chamando criarPedido direto tambem nao passa */
 const burlando = api.criarPedido(Object.assign({}, dados, { tel: TEL }));
 if (burlando !== null) falha("o console do navegador burla a trava");
 else ok("chamar criarPedido pelo console tambem nao burla a valva");
-/* cliente novo, mesmo aparelho: a cota e por telefone, nao por aparelho */
-const outroCli = api.criarPedido(Object.assign({}, dados, { tel: outro.tel }));
+/* cliente novo, mesmo aparelho: a cota e por PESSOA (CPF), nao por aparelho
+   nem por telefone - e o que o servidor faz tambem. O perfil do aparelho ainda
+   e deste cliente, entao trocamos o perfil para simular o outro cliente. */
+ctx.localStorage.setItem("refrigerantePrefs", JSON.stringify({ nome: "Outro Cliente", cpf: CPF_OUTRO, tel: outro.tel }));
+const outroCli = api.criarPedido(Object.assign({}, dados, { tel: outro.tel, cpf: CPF_OUTRO }));
+ctx.localStorage.setItem("refrigerantePrefs", JSON.stringify({ nome: "Cliente Teste", cpf: CPF_CLIENTE, tel: TEL }));
 if (!outroCli) falha("outro cliente no mesmo aparelho foi bloqueado pela cota alheia");
-else ok("outro cliente no mesmo aparelho pode pedir (a cota e por telefone)");
+else ok("outro cliente no mesmo aparelho pode pedir (a cota e por CPF)");
 
 console.log("\n=== 6. O CARRINHO BARRA E ABRE CAMINHO COM O DONO ===");
 const carrinho = ler("carrinho.html");
@@ -233,7 +241,7 @@ else ok("dono pode desligar o limite por cliente (0 = sem limite)");
 if (api.checaLimitePedidos(TEL, [pedir(), pedir(), pedir()]) !== null) falha("com o limite desligado o cliente continua travado");
 else ok("com o limite desligado ninguem e barrado por cota");
 ctx.localStorage.setItem("refrigerantePrefs", JSON.stringify({ cfgLimitePedidosCliente: "lixo" }));
-if (api.limiteClienteDia() !== 2) falha("preferencia corrompida mudou o limite: " + api.limiteClienteDia());
+if (api.limiteClienteDia() !== 1) falha("preferencia corrompida mudou o limite: " + api.limiteClienteDia());
 else ok("preferencia corrompida volta para o padrao (2) - trava nunca e o que derruba o pedido");
 if (api.checaLimitePedidos(TEL, null) !== null) falha("lista de pedidos corrompida travou o carrinho inteiro");
 else ok("lista de pedidos corrompida (null) nao trava o cliente");

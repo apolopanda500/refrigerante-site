@@ -214,6 +214,19 @@ de propósito para não apagar o catálogo.
   **Válvula de escape:** `cfgGatewayOff: true` em `vendedorPrefs` (painel) ou
   `refrigerantePrefs` (cliente) **desliga o gateway** mesmo com a URL
   preenchida. Sem isso, se o Worker caísse não haveria como reverter.
+
+/* ---------- REGRAS QUE VALEM NO SERVIDOR (nao da para contornar) ----------
+   - **Pedido minimo**: R$ 100,00 de produtos (o frete nao conta). Quem nao
+     alcancar ve quanto falta, antes de enviar e de novo no servidor.
+     O dono muda gravando `/config/pedidoMinimo` no banco.
+   - **1 pedido por dia por cliente**: o dia e o de Sao Paulo; virando a
+     meia-noite o cliente volta a poder pedir (nao sao 24 horas corridas).
+   - **Identidade pelo CPF**: conferido pelos dois digitos verificadores,
+     e o celular tem que ser de 11 digitos (DDD + 9 + 8). Sem os dois, o
+     pedido nao nasce - e o contador fica no servidor, guardado pela
+     impressao do CPF, nunca pelo CPF em texto puro.
+   Tudo isso e conferido no gateway. O aparelho tambem avisa antes, para o
+   cliente nao descobrir so no final; mas quem manda mesmo e o servidor.
 - O site tenta achar o banco sozinho (`PRECOS_ENDERECOS` em `app.js`).
 - Para publicar: painel do vendedor → editar preço → **Salvar e aplicar**.
 - Para conferir: painel → "Banco ligado! N preço(s) publicado(s)".

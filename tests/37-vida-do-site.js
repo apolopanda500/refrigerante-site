@@ -58,7 +58,7 @@ function lojaCom(bancoInicial, opts) {
 }
 
 console.log("=== 1. O CLIENTE CHEGA, ESCOLHE E MEXE NO CARRINHO ===");
-let L = lojaCom();
+let L = lojaCom({ refrigerantePrefs: JSON.stringify({ nome: "Cliente Vida", cpf: "11144477735", tel: "21987654321", bairro: "Japeri" }) });
 L.porCarrinho([
     { name: "Guarana 350ml", price: "R$ 19,00", priceNum: 19, qty: 2 },
     { name: "Chinotto 269ml", price: "R$ 8,50", priceNum: 8.5, qty: 3 }
@@ -80,8 +80,10 @@ else ok("6 unidades (R$ 114,00) passam do minimo: o pedido pode sair");
 
 console.log("\n=== 3. O PEDIDO SAI E O DONO CONFIRMA ===");
 const regiao = L.regioesDoDia(4)[0];
+
 const pedido = L.criarPedido({
-    nome: "Ana Ribeiro", tel: "(21) 98811-2233", cpf: "123.456.789-00",
+    cpf: "11144477735",
+    nome: "Ana Ribeiro", tel: "(21) 98811-2233",
     end: "Rua A, 100", comp: "casa 2", bairro: "Seropedica", regiao: regiao.id,
     frete: 0, pagamento: "Dinheiro", troco: "50,00",
     itens: [{ name: "Guarana 350ml", qty: 6, price: 19, priceNum: 19, subtotal: 114 }],
@@ -164,8 +166,8 @@ const idHostil = "CV20261017-001-99999";
 let painelOk = 0;
 sujos.forEach(function (nome, i) {
     try {
-        const P = lojaCom();
-        P.criarPedido({ nome: nome, tel: "2190000" + i, end: "Rua <b>x</b>", comp: "", bairro: "Seropedica", regiao: "seropedica", frete: 0, pagamento: "Pix", itens: [], subtotal: 0, total: 0 });
+        const P = lojaCom({ refrigerantePrefs: JSON.stringify({ nome: nome, cpf: "51000000079", tel: "21987654321", bairro: "Seropedica" }) });
+        P.criarPedido({ nome: nome, tel: "21987654321", cpf: "51000000150", end: "Rua <b>x</b>", comp: "", bairro: "Seropedica", regiao: "seropedica", frete: 0, pagamento: "Pix", itens: [{ name: "Coca 2L", qty: 4, subtotal: 110 }], subtotal: 110, total: 110 });
         P.atualizarStatus(P.getPedidos()[0].id, "confirmado");
         const p = P.getPedidos()[0];
         if (!p.nome && p.nome !== "") falha("perdeu o nome");

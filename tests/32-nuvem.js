@@ -48,7 +48,7 @@ function cenario(nome, plano, semGateway) {
     };
     function localStorage_mock(flag) {
         ctx.localStorage._d.vendedorPrefs = JSON.stringify(flag);
-        ctx.localStorage._d.refrigerantePrefs = JSON.stringify(flag);
+        ctx.localStorage._d.refrigerantePrefs = JSON.stringify(Object.assign({ nome: "Cliente Nuvem", cpf: "39053344705", tel: "21987654321" }, flag));
     }
     ctx.window = ctx;
     ctx.addEventListener = () => {};
@@ -93,9 +93,10 @@ else {
 console.log("\n=== 3. REDE CAI: O PEDIDO NAO SE PERDE ===");
 chamadas = [];
 ctx = cenario("sem rede", function () { return Promise.reject(new Error("offline")); });
+ctx.localStorage._d.refrigerantePrefs = JSON.stringify({ nome: "Teste", cpf: "39053344705", tel: "21988887777", bairro: "Seropedica" });
 vm.runInContext("criarPedido", ctx)({
-    nome: "Teste", tel: "21988887777", end: "Rua A", bairro: "Seropedica", regiao: "seropedica",
-    frete: 0, pagamento: "Pix", itens: [{ name: "X", qty: 1, subtotal: 10 }], subtotal: 10, total: 10
+    nome: "Teste", tel: "21988887777", cpf: "39053344705", end: "Rua A", bairro: "Seropedica", regiao: "seropedica",
+    frete: 0, pagamento: "Pix", itens: [{ name: "X", qty: 12, subtotal: 120 }], subtotal: 120, total: 120
 });
 const guardados = vm.runInContext("getPedidos()", ctx);
 if (!guardados.length) falha("sem rede o pedido sumiu do aparelho");
@@ -167,7 +168,8 @@ espera.then(function () {
             if (metodo === "PUT" || metodo === "POST") { enviados.push(metodo + " " + url); return Promise.resolve({ ok: true, json: () => Promise.resolve({ chave: "k" }) }); }
             return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
         });
-        vm.runInContext("criarPedido", ctxR)({ nome: "T", tel: "21900000000", end: "R", bairro: "Seropedica", regiao: "seropedica", frete: 0, pagamento: "Pix", itens: [], subtotal: 10, total: 10 });
+        ctxR.localStorage._d.refrigerantePrefs = JSON.stringify({ nome: "T", cpf: "39053344705", tel: "21987654321", bairro: "Seropedica" });
+vm.runInContext("criarPedido", ctxR)({ nome: "T", tel: "21987654321", cpf: "39053344705", end: "R", bairro: "Seropedica", regiao: "seropedica", frete: 0, pagamento: "Pix", itens: [{ name: "X", qty: 12, subtotal: 120 }], subtotal: 120, total: 120 });
         vm.runInContext("marcarFalhaNuvem", ctxR)(vm.runInContext("getPedidos()[0]", ctxR));
         const marcados = JSON.parse(vm.runInContext("localStorage.getItem('convencaoNuvemFalhou')", ctxR));
         if (!Object.keys(marcados).length) falha("a falha nao foi registrada");

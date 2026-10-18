@@ -176,8 +176,8 @@ console.log("\n=== 2. O GATEWAY CARREGA E TEM AS ROTAS CERTAS ===");
 
     console.log("\n=== 6. O CLIENTE CRIA O PEDIDO E SO VE O DELE ===");
     const bom = {
-        id: "CV20261017-001-40392", nome: "Ana Ribeiro", tel: "21988112233", end: "Rua A, 100", bairro: "Seropedica",
-        regiao: "seropedica", itens: [{ name: "Guarana 350ml", qty: 6, subtotal: 114 }], subtotal: 114, frete: 0,
+        id: "CV20261017-001-40392", nome: "Ana Ribeiro", tel: "21987654321", end: "Rua A, 100", bairro: "Seropedica",
+        regiao: "seropedica", cpf: "51000000230", itens: [{ name: "Guarana 350ml", qty: 6, subtotal: 114 }], subtotal: 114, frete: 0,
         total: 114, status: "aguardando", criadoEm: Date.now()
     };
     const criado = await chamar("/api/pedido", { method: "POST", body: JSON.stringify({ pedido: bom }) });

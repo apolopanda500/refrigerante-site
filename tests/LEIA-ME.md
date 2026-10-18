@@ -175,3 +175,5 @@ A bateria `19-erros` (bloco 10) fiscaliza as duas últimas regras.
 7. `node tests/22-entrega.js --online` → tem que dizer **ENTREGA 10/10**
    (confere se o site no ar já está na versão do repositório)
 | `43-dados-cifrados.js` | **Cifra**: o nome, telefone, CPF, endereço e observação do cliente são gravados **cifrados** (quem abrir o banco na internet vê só letras sem sentido) e o painel continua vendo tudo, porque quem decifra é o gateway |
+| `44-pedido-minimo.js` | **Mínimo**: pedido abaixo de R$ 100,00 é recusado **no servidor** (diz quanto falta), o frete não conta, e não dá para furar inflando o total |
+| `45-cliente-validado.js` | **Cliente validado**: CPF conferido pelos dígitos verificadores e celular de 11 dígitos são obrigatórios; **1 pedido por dia por CPF**, contado no servidor (trocar de celular não foge) |

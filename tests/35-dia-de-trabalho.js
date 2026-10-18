@@ -41,7 +41,9 @@ function novoCliente(nome, tel, bairro, regiao, itens, pagamento, troco) {
     vm.runInContext(ler("loja.js"), ctx);
     vm.runInContext(ler("conta.js"), ctx);
     vm.runInContext(ler("script.js"), ctx);
-    const pedido = vm.runInContext("criarPedido", ctx)({
+    ctx.localStorage.setItem("refrigerantePrefs", JSON.stringify({ nome: "Cliente Dia", cpf: "15350946056", tel: "21987654321", bairro: "Japeri" }));
+const pedido = vm.runInContext("criarPedido", ctx)({
+        cpf: "15350946056",
         nome: nome, tel: tel, cpf: "", end: "Rua " + bairro + ", 100", comp: "casa " + (1 + (nome.length % 40)),
         bairro: bairro, regiao: regiao, frete: 12, pagamento: pagamento, troco: troco || "",
         itens: itens.map(function (i) { return { name: i[0], qty: i[1], price: i[2], priceNum: i[2], subtotal: i[2] * i[1] }; }),

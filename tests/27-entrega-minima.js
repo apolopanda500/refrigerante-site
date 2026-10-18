@@ -21,7 +21,7 @@ if (!/function entregaMinima\s*\(/.test(loja)) falha("loja.js nao tem a funcao e
 else ok("loja.js tem entregaMinima()");
 if (!/cfgPedidoMinimoEntrega/.test(loja)) falha("entregaMinima() nao le a configuracao (cfgPedidoMinimoEntrega)");
 else ok("le a configuracao cfgPedidoMinimoEntrega");
-if (!/\?\s*100\s*:/.test(loja) && !/return 100/.test(loja)) falha("o valor padrao nao e R$ 100,00");
+if (!/var doServidor = 100/.test(loja)) falha("o valor padrao nao e R$ 100,00");
 else ok("valor padrao = R$ 100,00");
 
 console.log("\n=== 2. A FINALIZACAO BARRAS ABAIXO DO MINIMO ===");
@@ -51,7 +51,7 @@ else ok("o aviso da finalizacao e repintado");
 
 console.log("\n=== 5. A REGRA VALE PARA O PADRAO DO PROJETO ===");
 /* o padrao de R$ 100,00 tem que aparecer em loja.js e nos fallbacks usados na tela */
-if (!/entregaMinima[^\n]*100|100[^\n]*entregaMinima|return 100/.test(loja)) falha("a loja nao tem o padrao 100");
+if (!/entregaMinima[\s\S]{0,700}doServidor = 100/.test(loja)) falha("a loja nao tem o padrao 100");
 else ok("padrao 100 confirmado em loja.js");
 
 console.log("\n" + (erros === 0 ? "*** ENTREGA MINIMA 10/10 ***" : "*** " + erros + " ERRO(S) ***"));
