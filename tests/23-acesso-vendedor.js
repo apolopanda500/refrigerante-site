@@ -64,8 +64,16 @@ if (/sincronizarPedidosNuvem/.test(painel)) ok("o painel chama sincronizarPedido
 else falha("o painel nao sincroniza com a nuvem: so veria os pedidos deste aparelho");
 if (/function sincronizarPedidosNuvem/.test(txt) && /\/pedidos\.json/.test(txt)) ok("a sincronizacao le /pedidos.json da nuvem");
 else falha("sincronizarPedidosNuvem nao le a nuvem");
-if (/\/pedidos\//.test(txt) && /"PUT"/.test(txt)) ok("o pedido do cliente e gravado na nuvem (PUT)");
-else falha("o cliente nao grava o pedido na nuvem: o dono so veria apos trocar de aparelho");
+/* O pedido vai para a nuvem pelo GATEWAY, que e quem cifra os dados do
+   cliente antes de gravar. O aparelho nao grava mais direto no Firebase:
+   o banco esta aberto na internet, e um PUT la deixaria nome, telefone, CPF e
+   endereco em texto puro para qualquer um que abrisse o endereco. */
+if (/\/api\/pedido/.test(txt)) ok("o pedido do cliente sobe pelo gateway (/api/pedido), que e quem grava cifrado");
+else falha("o cliente nao tem caminho de gateway para o pedido");
+if (/\/pedidos\//.test(txt) && /"PUT"/.test(txt)) falha("o aparelho ainda grava o pedido direto no banco aberto (vaza dado do cliente)");
+else ok("o aparelho nao grava mais direto no banco aberto - a venda continua, os dados nao vazam");
+if (/marcarFalhaNuvem|reenviarPedidosPresos/.test(txt)) ok("se o gateway falhar, o pedido fica na fila do aparelho e e reenviado depois");
+else falha("o pedido ficaria preso se o gateway caesse");
 
 console.log("\n" + (erros === 0 ? "*** ACESSO DO VENDEDOR 10/10 ***" : "*** " + erros + " FALHA(S) ***"));
 process.exit(erros ? 1 : 0);

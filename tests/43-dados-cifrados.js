@@ -13,9 +13,14 @@
      - nenhum dado pessoal fica em texto puro no que foi gravado
      - status, valor e regiao continuam visiveis (o sistema precisa filtrar)
      - o dono volta a ver tudo no painel, e o cliente ve o proprio pedido
-     - mudar o status nao quebra nem destrava a cifra
-   O codigo do gateway nunca chega auffle o texto puro no caminho do banco.
-*/const fs = require("fs");
+- mudar o status nao quebra nem destrava a cifra
+     - o pedido nao e gravado direto no Firebase quando o gateway falha: o
+       aparelho guarda na fila e reenvia pelo gateway quando ele volta. Sem
+       isso, um pedido de emergencia escreveria CPF em texto puro no banco
+       aberto e furaria a cifra.
+   O codigo do gateway nunca chega ao texto puro no caminho do banco.
+*/
+const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const dir = process.env.WDIR || path.resolve(__dirname, "..");
@@ -133,6 +138,14 @@ const dir = process.env.WDIR || path.resolve(__dirname, "..");
     const depois = JSON.stringify(guardado.pedidos[pedido.id]);
     if (depois.indexOf("12345678909") < 0) ok("e continua cifrado depois da mudanca (nao regravou em texto puro)");
     else falha("a mudanca de status regravou o CPF em texto puro");
+
+    /* a reserva tambem precisa ficar sem dado pessoal na internet */
+    const fonte = fs.readFileSync(path.join(dir, "script.js"), "utf8");
+    const temPutDireto = /enviarPedidoNuvemDireto[\s\S]{0,900}?fetch\([^)]*\/pedidos/.test(fonte);
+    if (temPutDireto) falha("a reserva ainda grava o pedido direto no banco (CPF em texto puro)");
+    else ok("a reserva nao grava mais direto no banco: o pedido espera o gateway");
+    if (!/function temPedidoPreso/.test(fonte)) falha("a fila nao sabe dizer se ainda ha pedido preso");
+    else ok("a fila sabe o que esta preso e so fica acordando enquanto houver algo");
 
     console.log("\n" + (erros === 0 ? "*** OS DADOS DO CLIENTE VIA CIFRADOS 10/10 ***" : "*** " + erros + " FALHA(S) ***"));
     process.exit(erros ? 1 : 0);

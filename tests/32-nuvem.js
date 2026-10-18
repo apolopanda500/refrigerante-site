@@ -85,7 +85,10 @@ else {
         if (c.corpo && c.corpo.pedido && c.corpo.pedido.id === pedido.id) ok("o pedido inteiro vai no corpo (id conferido)");
         else falha("o corpo do /api/pedido nao traz o pedido do cliente");
     } else if (peloAntigo) {
-        ok("sem o gateway o pedido vai no PUT de sempre");
+        /* a reserva NAO grava mais direto no banco: la o CPF, o telefone e o
+           endereco ficariam em texto puro para qualquer um abrir o endereco.
+           O pedido fica na fila do aparelho e vai pelo gateway quando ele volta. */
+        falha("o pedido foi gravado direto no banco aberto (vaza dado de cliente)");
     } else {
         falha("o pedido nao saiu por caminho nenhum: " + c.metodo + " " + c.url);
     }

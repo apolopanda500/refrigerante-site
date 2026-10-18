@@ -674,31 +674,46 @@ function enviarPedidoNuvem(pedido) {
     }
     enviarPedidoNuvemDireto(pedido);
 }
+/* RESERVA SEM GRAVAR DADOS PESSOAIS NA INTERNET
+   Antes, quando o gateway nao respondia, o aparelho gravava o pedido
+   direto no Firebase. O banco esta aberto na internet: la, nome, telefone,
+   CPF e endereco ficariam em texto plano para qualquer pessoa que abrisse o
+   endereco - e o gateway existe justamente para cifrar isso.
+
+   Entao a reserva mudou de regra: o pedido NAO vai direto para o banco.
+   Ele fica salvo neste aparelho (como ja estava) e vai pelo gateway assim
+   que o gateway voltar. O cliente ja viu a confirmacao, nada se perde, e
+   nao ha mais porta aberta para os dados de uma pessoa vazarem. */
 function enviarPedidoNuvemDireto(pedido) {
     if (!pedido || !pedido.id) return;
-    var corpo = JSON.stringify(pedido);
-    /* a reserva NAO tenta o gateway: la o caminho e /api/pedido, e
-       um PUT em /pedidos/<id>.json daria 404 a toa */
-    var bases = nuvemEnderecos().filter(function (b) {
-        return !/\/api|workers\.dev|convencao-gateway/i.test(String(b || ""));
-    });
-    var caminho = "/pedidos/" + encodeURIComponent(pedido.id) + ".json";
-    var i = 0;
-    /* tenta um banco atras do outro. se todos falharem, tenta de novo:
-       o pedido ja esta salvo no aparelho, entao nunca se perde --
-       mas o dono precisa saber que o painel ainda nao recebeu */
-    function tentar(vez) {
-        if (i >= bases.length) {
-            if (vez < 2) { setTimeout(function () { i = 0; tentar(vez + 1); }, 4000); return; }
-            marcarFalhaNuvem(pedido);
-            return;
-        }
-        var base = bases[i++];
-        fetch(base + caminho, { method: "PUT", body: corpo, mode: "cors" })
-            .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); })
-            .catch(function () { tentar(vez); });
-    }
-    try { tentar(1); } catch (e) { marcarFalhaNuvem(pedido); }
+    marcarFalhaNuvem(pedido);
+    agendarReenvio();
+}
+
+/* Reenvio com folga crescente: o gateway pode estar fora por um instante ou
+   por horas, e nao adianta ficar martelando. Quando nao ha mais nada preso,
+   o agendamento PARA - nao fica acordando o aparelho a toa. */
+var AGENDA_REENVIO = 5000;
+function temPedidoPreso() {
+    try {
+        var mapa = JSON.parse(localStorage.getItem("convencaoNuvemFalhou") || "{}");
+        return Object.keys(mapa || {}).length > 0;
+    } catch (e) { return false; }
+}
+function agendarReenvio() {
+    try {
+        if (typeof setTimeout !== "function") return;
+        setTimeout(function () {
+            var enviados = 0;
+            try { enviados = reenviarPedidosPresos(); } catch (e) { enviados = 0; }
+            if (enviados > 0 || temPedidoPreso()) {
+                AGENDA_REENVIO = enviados > 0 ? 8000 : Math.min(AGENDA_REENVIO * 2, 5 * 60 * 1000);
+                agendarReenvio();
+            } else {
+                AGENDA_REENVIO = 5000;
+            }
+        }, AGENDA_REENVIO);
+    } catch (e) { /* agenda e um luxo: sem ele, o reenvio manual ainda existe */ }
 }
 
 /* a nuvem nao aceitou: o pedido segue salvo neste aparelho, mas o painel
