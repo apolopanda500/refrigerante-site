@@ -1,7 +1,3 @@
-/* 14 - CORES (10/10)
-   Toda cor do projeto passa por aqui: contraste do texto com o fundo
-   (regra do WCAG), texto que nao depende so da cor, cores do painel,
-   versao escura e as variaveis do tema. */
 const fs = require("fs");
 const path = require("path");
 const dir = process.env.WDIR || path.resolve(__dirname, "..");
@@ -159,10 +155,13 @@ else {
     const roxo = C.paraRgb("#3d4465");
     if (C.contraste(C.paraRgb("#ffffff"), roxo) >= minimo) ok("texto branco no cabecalho do painel = " + C.contraste(C.paraRgb("#ffffff"), roxo).toFixed(1) + ":1");
     else falha("texto branco no cabecalho do painel com contraste baixo");
-    /* toda cor do painel tem versao escura */
-    const escurece = (tPainel.match(/\[data-theme="dark"\]/g) || []).length;
-    if (escurece >= 8) ok("painel com " + escurece + " regras de tema escuro");
-    else falha("painel com pouca versao escura (" + escurece + ")");
+    /* O tema escuro e o padrao do painel. O dono recurrou nele, entao a
+       bateria garante que ele existe e cobre o que importa. */
+    const regrasEscuro = (tPainel.match(/\[data-theme="dark"\]/g) || []).length;
+    if (regrasEscuro >= 20) ok("painel com " + regrasEscuro + " regras de tema escuro");
+    else falha("o tema escuro do painel esta com pouca regra (" + regrasEscuro + ") - some botao sem cor");
+    if (/data-tema="dark"/.test(tPainel)) ok("o painel oferece o tema escuro");
+    else falha("o painel nao oferece mais o tema escuro");
     /* cores do painel nao sao as mesmas do cliente */
     if (!/--primary-color\s*:\s*#3d4465/.test(tPainel)) ok("o painel tem a propria paleta (nao muda a do cliente)");
     else falha("o painel esta redefinindo a paleta global do cliente");

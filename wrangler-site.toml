@@ -15,6 +15,9 @@ workers_dev = true
 # Os arquivos do site vivem aqui. O Worker so os entrega.
 [assets]
 directory = "site"
+# o botao "Baixar aplicativo" aponta para /apk/*.apk: os arquivos precisam ir
+# junto, senao o link da loja volta a dar 404 (aconteceu na troca de hospedagem)
+# e o cliente nao consegue instalar o APP.
 binding = "ASSETS"
 not_found_handling = "none"
 # Sem isto, o Cloudflare responde 307 e joga /carrinho.html para /carrinho:

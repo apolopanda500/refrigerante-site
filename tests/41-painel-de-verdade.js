@@ -304,7 +304,10 @@ function conectar(url) {
         var botoes = document.querySelectorAll("#painelTela .tema-btn, #painelTela [id^=opcoesTema] .op-btn");
         if (!botoes.length) return "sem botao|" + antes;
         for (var i = 0; i < botoes.length; i++) {
-            if ((botoes[i].getAttribute("data-v") || "") !== antes) { botoes[i].click(); break; }
+            /* "claro" e o padrao e nao deixa atributo nenhum: comparar com o
+           atributo vazio fazia clicar no tema que ja estava ativo. */
+            var atual = (document.documentElement.getAttribute("data-theme") || "claro");
+            if ((botoes[i].getAttribute("data-tema") || "") !== atual) { botoes[i].click(); break; }
         }
         return "clicou|" + (document.documentElement.getAttribute("data-theme") || "") + "|" + antes;
     })()`);

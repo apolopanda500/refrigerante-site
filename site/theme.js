@@ -23,7 +23,8 @@
             if (localStorage.getItem("vendedorPrefs")) return;
             var cliente = {};
             try { cliente = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch (e) {}
-            var painel = { cfgTema: "dark", cfgFonteTamanho: "normal", cfgLeitura: "horizontal" };
+            /* o painel abre no escuro: e a tela de trabalho do dono. */
+var painel = { cfgTema: "dark", cfgFonteTamanho: "normal", cfgLeitura: "horizontal" };
             ["cfgTelegramToken", "cfgTelegramChatId", "cfgBotComandos", "cfgPrecosURL"].forEach(function (k) {
                 if (cliente[k] !== undefined) painel[k] = cliente[k];
             });
@@ -47,9 +48,10 @@
         // (html[data-...]) leem o <html>. Grava nos DOIS para o modo
         // escolhido valer em todas as paginas e em todas as tabelas.
 
-        // Tema: claro | guara | rosa | vermelho | dark  (ou o interruptor antigo)
+// Tema: claro | guara | rosa | vermelho | dark
         var tema = p.cfgTema;
-        if (!tema) tema = p.cfgModoEscuro ? "dark" : "claro";
+        var temasBoa = ["claro", "guara", "rosa", "vermelho", "dark"];
+        if (temasBoa.indexOf(tema) < 0) tema = "claro";
         if (tema === "chopp") tema = "rosa";   // tema azul saiu do ar -> rosa
         if (tema === "claro") { h.removeAttribute("data-theme"); if (b) b.removeAttribute("data-theme"); }
         else { h.setAttribute("data-theme", tema); if (b) b.setAttribute("data-theme", tema); }

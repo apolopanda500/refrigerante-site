@@ -16,8 +16,8 @@ const tema = ler("theme.js");
 const css = ler("style.css");
 
 console.log("=== 1. O CARTAO \"Aparência\" NA TELA ===");
-if (!/Apar\u00EAncia/.test(cfgH)) falha("configuracoes.html nao tem o cartao Aparência");
-else ok("cartao Aparência presente");
+if (/Apar\u00EAncia/.test(cfgH)) falha("o cartao Aparência voltou para a tela sem nenhuma opcao dentro");
+else ok("o cartao Aparência saiu (tinha ficado vazio depois das opcoesirem)");
 /* as opcoes de aparencia sairam da tela de proposito (o dono pediu menos
    botoes). A bateria confere que elas NAO voltaram e que nada ficou
    quebrado por causa disso. */
