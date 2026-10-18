@@ -109,96 +109,100 @@ async function chaveDoPedido(id) {
    fecharam - foi o que aconteceu). Por isso: 1) assina o JWT para o
    endpoint de token; 2) troca esse JWT por um token de acesso OAuth;
    3) chama o banco com Authorization: Bearer <token de acesso>. */
-let tokenAdmin = null;
-let tokenAdminExpira = 0;
+/* ---------- IDENTIDADE DO GATEWAY NO FIREBASE ----------
+   O ponto que travava tudo: o gateway precisa entrar no banco como USUARIO
+   (uid fixo), e nao como "conta de servico". Sem identidade, as regras do
+   Firebase nao tem como liberar so para ele - e a loja inteira ficava do lado
+   de fora de um banco trancado.
+
+   Como funciona (o caminho oficial do proprio Firebase):
+     1. a chave da conta de servico assina um TOKEN DE USUARIO (uid gateway-convencao);
+     2. o Firebase troca esse token por um token de sessao (idToken);
+     3. o banco e chamado com ?auth=<idToken>.
+   As regras entonces liberam: auth.uid === "gateway-convencao".
+   So quem tem a chave da conta de servico consegue criar esse token. */
+const UID_GATEWAY = "gateway-convencao";
+let sessaoGateway = null;
+let sessaoExpira = 0;
+
 function pemParaArray(pem) {
     const limpo = String(pem).replace(/-----BEGIN PRIVATE KEY-----/g, "").replace(/-----END PRIVATE KEY-----/g, "").replace(/\s+/g, "");
     return Uint8Array.from(b64.dec(limpo));
 }
-async function jwtComEscopo(escopo, caminhoAntigo) {
+
+/* token de usuario customizado: a unica assinatura que importa e a da conta
+   de servico - e ela nunca sai do Worker (fica em segredo). */
+async function tokenUsuario() {
     if (!CFG.email || !CFG.chave) throw new Error("gateway sem conta de servico configurada");
+    if (!CFG.apiKey) throw new Error("gateway sem a API Key do projeto");
     const agora = Math.floor(Date.now() / 1000);
     const cab = b64.enc(new TextEncoder().encode(JSON.stringify({ alg: "RS256", typ: "JWT" })));
     const corpo = b64.enc(new TextEncoder().encode(JSON.stringify({
         iss: CFG.email,
-        scope: escopo || "https://www.googleapis.com/auth/firebase.database",
-        aud: caminhoAntigo ? "https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit" : "https://oauth2.googleapis.com/token",
-        /* no token de identidade customizado faltavam estas DUAS coisas: sem
-           "sub" e sem "uid" o proprio Firebase nao consegue trocar o token por
-           uma sessao, e ele tratava o gateway como visitante comum - por isso
-           o painel perdia o acesso no instante em que as regras fecharam. */
-        sub: CFG.email,
-        uid: "gateway-convencao",
-        iat: agora, exp: agora + 3600
+        aud: "https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit",
+        iat: agora,
+        exp: agora + 3600,
+        uid: UID_GATEWAY,
+        claims: {}
     })));
     const chave = await crypto.subtle.importKey("pkcs8", pemParaArray(CFG.chave), { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
     const sig = b64.enc(new Uint8Array(await crypto.subtle.sign("RSASSA-PKCS1-v1_5", chave, new TextEncoder().encode(cab + "." + corpo))));
     return cab + "." + corpo + "." + sig;
 }
-/* troca o JWT por um TOKEN DE ACESSO (esse sim bypassa as regras) */
-async function tokenDeAcesso() {
-    if (tokenAdmin && tokenAdminExpira > Date.now()) return tokenAdmin;
-    const jwt = await jwtComEscopo("https://www.googleapis.com/auth/firebase.database");
-    const r = await fetch("https://oauth2.googleapis.com/token", {
+
+/* troca o token de usuario pelo token de sessao do proprio Firebase */
+async function sessaoDoGateway() {
+    if (sessaoGateway && sessaoExpira > Date.now()) return sessaoGateway;
+    const token = await tokenUsuario();
+    const r = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=" + encodeURIComponent(CFG.apiKey), {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "grant_type=" + encodeURIComponent("urn:ietf:params:oauth:grant-type:jwt-bearer") + "&assertion=" + encodeURIComponent(jwt)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: token, returnSecureToken: true })
     });
-    if (!r.ok) {
-        const t2 = await r.text();
-        throw new Error("conta de servico recusada (" + r.status + "): " + t2.slice(0, 120));
-    }
-    const j = await r.json();
-    if (!j.access_token) throw new Error("o Google nao devolveu token de acesso");
-    tokenAdmin = j.access_token;
-    /* o token dura 1h; renovamos com folga para nunca cair no meio de um pedido */
-    tokenAdminExpira = Date.now() + 50 * 60 * 1000;
-    return tokenAdmin;
+    const j = await r.json().catch(function () { return {}; });
+    if (!j.idToken) throw new Error("o Firebase nao aceitou a identidade do gateway (" + r.status + "): " + JSON.stringify(j).slice(0, 160));
+    sessaoGateway = j.idToken;
+    /* a sessao dura 1h; renovamos antes para nunca cair no meio de um pedido */
+    sessaoExpira = Date.now() + 50 * 60 * 1000;
+    return sessaoGateway;
 }
 
-/* FALA COM O BANCO - dois caminho, na ordem certa:
-   1) TOKEN DE ACESSO no cabecalho: e o que passa por cima das regras. So
-      funciona se a conta de servico tiver a permissao de admin do banco
-      (ainda nao concedida). Quando a permissao for concedida, este passa a valer e o banco
-      pode ser fechado de vez.
-   2) ?auth=<JWT>: o caminho antigo. Entra como usuario comum, entao so
-      funciona com o banco ABERTO. Serve para a loja nao parar enquanto a
-      permissao nao chega - e avisa qual dos dois esta valendo. */
+/* FALA COM O BANCO:
+   1) como USUARIO (uid gateway-convencao) - e o caminho que sobrevive ao banco
+      fechado, porque as regras o conhecem;
+   2) sem token nenhum - so serve com o banco aberto, e existe para a venda
+      nunca parar se o primeiro caminho falhar. */
 let bancoVia = "";
 async function banco(caminho, metodo, corpo) {
-    async function tentarComTokenDeAcesso() {
-        const token = await tokenDeAcesso();
-        const r = await fetch(CFG.db + caminho, {
-            method: metodo || "GET",
-            headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
-            body: corpo === undefined ? undefined : JSON.stringify(corpo)
-        });
-        return r;
-    }
-    async function tentarComAuthAntigo() {
-        const jwt = await jwtComEscopo("https://www.googleapis.com/auth/firebase.database", true);
+    async function chamar(comAuth) {
         /* se o caminho ja traz query (?shallow=true...), o & entra depois dela */
         const sep = caminho.indexOf("?") >= 0 ? "&" : "?";
-        const r = await fetch(CFG.db + caminho + sep + "auth=" + jwt, {
+        const r = await fetch(CFG.db + caminho + (comAuth ? sep + "auth=" + comAuth : ""), {
             method: metodo || "GET",
             headers: { "Content-Type": "application/json" },
             body: corpo === undefined ? undefined : JSON.stringify(corpo)
         });
         return r;
     }
-    let r = await tentarComTokenDeAcesso().catch(function () { return null; });
-    if (r && r.ok) { bancoVia = "admin"; return await r.text().then(function (x) { try { return x ? JSON.parse(x) : null; } catch (e) { return x; } }); }
-    /* o token de acesso nao serviu: tenta o caminho antigo para a venda nao parar */
-    r = await tentarComAuthAntigo();
+    function ler(r) {
+        return r.text().then(function (x) { try { return x ? JSON.parse(x) : null; } catch (e) { return x; } });
+    }
+    /* 1) com a identidade do gateway */
+    let r = null;
+    try {
+        r = await chamar(await sessaoDoGateway());
+        if (r.ok) { bancoVia = "identidade"; return await ler(r); }
+    } catch (e) { /* sem sessao: cai para o caminho aberto */ }
+    /* 2) sem token: enquanto o banco estiver aberto, a venda continua */
+    r = await chamar(null);
     if (!r.ok) {
         let detalhe = "";
         try { detalhe = (await r.text()).slice(0, 100); } catch (e) { /* sem corpo */ }
         throw new Error("banco respondeu " + r.status + (detalhe ? " (" + detalhe.replace(/\s+/g, " ") + ")" : ""));
     }
     bancoVia = "aberto";
-    return await r.text().then(function (x) { try { return x ? JSON.parse(x) : null; } catch (e) { return x; } });
+    return await ler(r);
 }
-
 /* ---------- formatar ---------- */
 function json(dados, status) {
     return new Response(JSON.stringify(dados), {
@@ -228,6 +232,7 @@ async function rotear(req, env) {
         if (env.FB_DB_URL) CFG.db = env.FB_DB_URL;
         if (env.FB_SA_EMAIL) CFG.email = env.FB_SA_EMAIL;
         if (env.FB_SA_KEY) CFG.chave = env.FB_SA_KEY;
+    if (env.FB_API_KEY) CFG.apiKey = env.FB_API_KEY;
         if (env.LOJA_SENHA) CFG.senha = env.LOJA_SENHA;
         if (env.BOT_SEGREDO) CFG.bot = env.BOT_SEGREDO;
         if (env.SESSAO_SEGREDO) segredoSessao = env.SESSAO_SEGREDO;
