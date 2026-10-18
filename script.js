@@ -492,9 +492,22 @@ function enviarPedidoGateway(pedido, cb) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ pedido: pedido })
         })
-            .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+            .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d, status: r.status }; }); })
             .then(function (res) {
-                if (!res.ok || !res.d || !res.d.chave) { if (cb) cb(false, "recusado"); return; }
+                if (!res.ok || !res.d || !res.d.chave) {
+                    /* O SERVIDOR RECUSOU POR REGRA (CPF, celular, valor minimo
+                       ou o limite do dia). Nao e queda de rede: reenviar nao
+                       resolve. O pedido sai da fila e o motivo fica guardado,
+                       senao o cliente veria "pedido feito" e o dono nunca
+                       receberia nada. */
+                    if (res.d && res.d.erro && res.status >= 400 && res.status < 500) {
+                        marcarRecusaDefinitiva(pedido, res.d.erro);
+                        if (cb) cb(false, "recusado", res.d.erro);
+                        return;
+                    }
+                    if (cb) cb(false, "recusado", (res.d && res.d.erro) || "");
+                    return;
+                }
                 /* a chave e o que permite acompanhar o pedido depois */
                 gwGuardarChave(pedido.id, res.d.chave);
                 if (cb) cb(true, "ok");
@@ -714,6 +727,28 @@ function agendarReenvio() {
             }
         }, AGENDA_REENVIO);
     } catch (e) { /* agenda e um luxo: sem ele, o reenvio manual ainda existe */ }
+}
+
+/* O SERVIDOR RECUSOU ESTE PEDIDO (CPF, celular, valor minimo ou o limite
+   do dia). Reenviar nao adianta: seria recusado de novo. Por isso o pedido
+   sai da fila de reenvio e o motivo fica guardado para o cliente ler - senao
+   ele veria "pedido feito" e o dono nunca receberia nada. */
+function marcarRecusaDefinitiva(pedido, motivo) {
+    if (!pedido || !pedido.id) return;
+    try {
+        var mapa = JSON.parse(localStorage.getItem("convencaoNuvemFalhou") || "{}");
+        delete mapa[pedido.id];
+        localStorage.setItem("convencaoNuvemFalhou", JSON.stringify(mapa));
+        localStorage.setItem("convencaoRecusado", JSON.stringify({
+            id: pedido.id, motivo: String(motivo || ""), quando: Date.now()
+        }));
+    } catch (e) { /* guardar o motivo e um extra: a fila ja foi limpa */ }
+}
+
+/* o que o cliente tem de ler quando o servidor recusou */
+function recusaDoServidor() {
+    try { return JSON.parse(localStorage.getItem("convencaoRecusado") || "null"); }
+    catch (e) { return null; }
 }
 
 /* a nuvem nao aceitou: o pedido segue salvo neste aparelho, mas o painel
@@ -997,6 +1032,28 @@ function criarPedido(dados) {
     /* antes de tudo: o cliente tem documento e celular em dia?
        O servidor exige, entao avisar aqui evita o cliente preencher tudo e
        so entao ouvir "CPF invalido". */
+    /* trava ANTES de criar: se este cliente ja tem pedido de hoje no aparelho
+       (feito ou ainda nao enviado), nao nasce um segundo - e o cliente recebe
+       o motivo na hora, em vez de so descobrir depois no painel. */
+    var soDigitos = function (v) { return String(v == null ? "" : v).replace(/\D/g, ""); };
+    var cpfHoje = soDigitos((function () {
+        try { return JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}").cpf; } catch (e) { return ""; }
+    })());
+    if (cpfHoje && typeof LIMITE_PEDIDOS_CLIENTE_DIA === "number") {
+        var meuHoje = 0;
+        var hojeLocal = String(diaLimite());
+        getPedidos().forEach(function (p) {
+            if (p && p.cpf && soDigitos(p.cpf) === cpfHoje && String(p.dia || hojeLocal) === hojeLocal) meuHoje++;
+        });
+        if (meuHoje >= LIMITE_PEDIDOS_CLIENTE_DIA) {
+            try { localStorage.setItem("convencaoLimiteRecusado", JSON.stringify({
+                quando: Date.now(), tipo: "cliente",
+                motivo: "Voce ja fez seu pedido de hoje. O limite e de " + LIMITE_PEDIDOS_CLIENTE_DIA
+                    + " pedido por cliente por dia: amanha, depois da meia-noite, voce pode pedir de novo."
+            })); } catch (e) { /* guardar e um extra */ }
+            return null;
+        }
+    }
     if (typeof problemaDoCliente === "function") {
         var falta = problemaDoCliente();
         if (falta) {

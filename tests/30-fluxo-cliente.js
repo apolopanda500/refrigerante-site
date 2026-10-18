@@ -88,8 +88,11 @@ const iBloq = carrinho.indexOf("function bloqueioFinalizar");
 const iFin = carrinho.indexOf("function finalizarPedidoCarrinho");
 if (iBloq < 0 || iFin < 0 || iBloq > iFin) falha("a finalizacao do carrinho perdeu o bloqueio de regras");
 else ok("a finalizacao tem o bloquei de regras (bloqueioFinalizar) antes de fechar o pedido");
+/* a finalizacao inteira, e nao uma janela fixa de caracteres */
+const fimFuncao = carrinho.indexOf("\n}", iFin) + 2;
+const corpoFinalizacao = carrinho.slice(iFin, fimFuncao > iFin ? fimFuncao : iFin + 20000);
 ["criarPedido(", "notificarTelegramPedido", "limparCarrinho", "ultimoPedido", "pedido-sucesso.html"].forEach(function (n) {
-    if (carrinho.slice(iFin, iFin + 3000).indexOf(n) < 0) falha("a finalizacao do carrinho nao usa " + n);
+    if (corpoFinalizacao.indexOf(n) < 0) falha("a finalizacao do carrinho nao usa " + n);
 });
 ["pedidosLiberados", "bairroForaDaArea", "entregaMinima", "calcularFrete", "regiaoCarrinho"].forEach(function (n) {
     if (carrinho.indexOf(n) < 0) falha("o carrinho nao consulta a regra " + n);

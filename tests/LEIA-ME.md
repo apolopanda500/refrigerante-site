@@ -177,3 +177,4 @@ A bateria `19-erros` (bloco 10) fiscaliza as duas últimas regras.
 | `43-dados-cifrados.js` | **Cifra**: o nome, telefone, CPF, endereço e observação do cliente são gravados **cifrados** (quem abrir o banco na internet vê só letras sem sentido) e o painel continua vendo tudo, porque quem decifra é o gateway |
 | `44-pedido-minimo.js` | **Mínimo**: pedido abaixo de R$ 100,00 é recusado **no servidor** (diz quanto falta), o frete não conta, e não dá para furar inflando o total |
 | `45-cliente-validado.js` | **Cliente validado**: CPF conferido pelos dígitos verificadores e celular de 11 dígitos são obrigatórios; **1 pedido por dia por CPF**, contado no servidor (trocar de celular não foge) |
+| `46-recusa-do-servidor.js` | **O servidor que diz não**: recusa por regra (CPF, celular, valor, limite) sai da fila e o cliente lê o motivo; queda de rede continua na fila para a venda não se perder |
