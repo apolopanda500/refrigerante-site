@@ -1138,7 +1138,7 @@ function tecladoPedidoTG(id) {
             [ { text: "✏️ Editar", callback_data: "ed|" + id },
               { text: "↩️ Reabrir", callback_data: "rb|" + id } ],
             [ { text: "❌ Cancelar", callback_data: "st|" + id + "|cancelado" } ],
-            [ { text: "🖥️ Abrir painel", url: "https://apolopanda500.github.io/refrigerante-site/admin.html" } ]
+            [ { text: "🖥️ Abrir painel", url: "https://convencao-site.rickjax123.workers.dev/admin.html" } ]
         ]
     };
 }

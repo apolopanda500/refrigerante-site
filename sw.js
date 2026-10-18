@@ -8,7 +8,7 @@
     - Ativacao: apaga caches antigos imediatamente
    ============================================ */
 
-var VERSAO = "20261018j";
+var VERSAO = "20261018n";
 var BASE = "convencao-cache-" + VERSAO;
 /* 8 s: tempo maximo de espera pela rede antes de cair no cache.
    No 4G a rede frequentemente passa de 3 s, entao um prazo curto demais
@@ -229,7 +229,11 @@ self.addEventListener("fetch", function (e) {
                         return r.resp;
                     }
                     if (cacheRes) return cacheRes;
-                    return cache.match("index.html").then(function (p) {
+                    /* a PROPRIA pagina, se ela ja foi visitada antes */
+                    return cache.match(caminho).then(function (minha) {
+                        if (minha) return minha;
+                        return cache.match("index.html");
+                    }).then(function (p) {
                         if (p) return p;
                         return new Response(
                             "<h1>Sem internet</h1><p>Abra o app de novo quando a conexao voltar.</p>",

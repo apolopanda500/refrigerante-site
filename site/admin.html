@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest-vendedor.json?v=20261018n">
+<meta name="theme-color" content="#3d4465">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Painel Vendedor">
+<link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261018n">
+<title>Painel do Vendedor - Refrigerantes Convenção</title>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+<link rel="stylesheet" href="style.css?v=20261018n">
+<script src="theme.js?v=20261018n"></script>
+
+<style>
+.page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
+.page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
+.page-head h1 { color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }
+.login-card { max-width:400px; margin:60px auto; background:#fff; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); padding:36px 30px; text-align:center; }
+.login-card .icone { width:70px; height:70px; border-radius:50%; background:var(--primary-color); color:#fff; font-size:1.8rem; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+.login-card input { width:100%; padding:13px; border:1px solid #ddd; border-radius:10px; font-size:1rem; margin:14px 0; text-align:center; }
+.login-card input:focus { outline:none; border-color:var(--primary-color); }
+.login-card button { width:100%; padding:13px; background:var(--primary-color); color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:1rem; cursor:pointer; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:22px; }
+.stat { background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06); padding:16px; text-align:center; }
+.stat .num { font-size:1.8rem; font-weight:bold; color:var(--primary-color); }
+.stat .lbl { font-size:0.82rem; color:#777; margin-top:2px; }
+.stat.verde .num { color:var(--texto-ok); }
+.stat.azul .num { color:#1565c0; }
+.filtros { display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+.filtro { padding:7px 15px; border:1px solid #ddd; background:#fff; border-radius:18px; cursor:pointer; font-size:0.85rem; font-weight:600; color:#666; }
+.filtro.ativo { background:var(--primary-color); color:#fff; border-color:var(--primary-color); }
+.pedido-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:18px 20px; margin-bottom:16px; }
+.pedido-topo { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+.pedido-topo b { font-size:1.1rem; }
+.pedido-meta { font-size:0.85rem; color:#888; }
+.pedido-itens { font-size:0.88rem; color:#555; background:#fafafa; border-radius:8px; padding:10px 12px; margin:8px 0; }
+.pedido-itens div { padding:2px 0; }
+.btn-st { padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; color:#fff; }
+.b-confirmar{background:#2196F3}.b-separar{background:#9C27B0}.b-enviar{background:#00BCD4}.b-entregar{background:#4CAF50}.b-cancelar{background:#f44336}.b-copiar{background:#607D8B}
+.btn-st{display:inline-flex;align-items:center;gap:6px}
+.btn-zap{display:inline-flex;align-items:center;gap:6px}
+.filtro{display:inline-flex;align-items:center;gap:6px}
+.filtro .filtro-count{background:rgba(0,0,0,.12);border-radius:10px;padding:1px 7px;font-size:.76rem;font-weight:800}
+.filtro.ativo .filtro-count{background:rgba(255,255,255,.28)}
+[data-theme="dark"] .filtro .filtro-count{background:rgba(255,255,255,.14)}
+ .btn-zap { background:#0e6b4f; color:#fff; padding:7px 14px; border:none; border-radius:16px; font-size:0.82rem; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+.vazio { text-align:center; padding:50px; color:#888; }
+.btn-sair { background:none; border:none; color:var(--texto-erro); cursor:pointer; font-size:0.9rem; }
+
+/* ============ TABELA PROFISSIONAL DE PEDIDOS ============ */
+.painel-busca{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.painel-busca input[type=text]{
+    flex:1;min-width:200px;padding:12px 14px;border:1px solid #d8dbe6;border-radius:10px;
+    font-size:1rem;font-family:inherit;background:#fff;color:#3d4465;
+}
+.painel-busca input[type=text]:focus{outline:none;border-color:#3d4465}
+.painel-busca select{padding:12px 14px;border:1px solid #d8dbe6;border-radius:10px;font-size:1rem;background:#fff;color:#3d4465;font-family:inherit}
+
+/* ===== seletor de periodo ampliado ===== */
+.periodo-barra{margin-bottom:14px}
+.periodo-linha{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.periodo-linha > label{font-weight:800;color:var(--primary-color,#3d4465);display:inline-flex;align-items:center;gap:6px}
+.periodo-linha select{padding:11px 12px;border:1px solid #d8dbe6;border-radius:10px;font-size:1rem;background:#fff;color:#3d4465;font-family:inherit;font-weight:700;min-height:44px;max-width:280px}
+.periodo-faixa{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.periodo-faixa input[type=date]{padding:10px 12px;border:1px solid #d8dbe6;border-radius:10px;font-size:.95rem;background:#fff;color:#3d4465;font-family:inherit;min-height:44px}
+.periodo-faixa .sep{color:#8a90a6;font-weight:700}
+.periodo-resumo{margin-top:9px;font-size:.88rem;font-weight:700;color:#5d6478;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.periodo-resumo .chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg-alt,#f4f5fa);border:1px solid var(--borda,#e6e8f3);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.periodo-resumo .chip i{color:var(--primary-color,#3d4465)}
+.periodo-resumo .aviso{color:var(--texto-erro,#d32f2f)}
+[data-theme="dark"] .periodo-linha select,
+[data-theme="dark"] .periodo-faixa input[type=date]{background:#232742;color:#e6e8f2;border-color:#353a5c}
+[data-theme="dark"] .periodo-resumo .chip{background:#1c1f33;border-color:#353a5c}
+
+.tab-wrap{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border:1px solid var(--borda)}
+.tabela-pedidos{width:100%;border-collapse:collapse;font-size:.95rem}
+.tabela-pedidos thead th{
+    background:#3d4465;color:#fff;text-align:left;padding:13px 12px;
+    font-size:.8rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;
+    position:sticky;top:0;z-index:2;
+}
+.tabela-pedidos tbody td{padding:12px;border-bottom:1px solid var(--borda);vertical-align:middle;color:#3d4465}
+.tabela-pedidos tbody tr:nth-child(even){background:#fafafd}
+.tabela-pedidos tbody tr:hover{background:#f0f2fa}
+.tabela-pedidos .td-id{font-weight:800;font-size:.95rem;white-space:nowrap}
+.tabela-pedidos .td-num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tabela-pedidos .td-total{font-weight:800;color:#3d4465;font-size:1.02rem}
+.tabela-pedidos .td-acoes{white-space:nowrap}
+.tabela-pedidos .td-cliente{font-weight:700}
+.tabela-pedidos .sub{display:block;font-size:.84rem;color:#5d6478;font-weight:600}
+[data-theme="dark"] .tabela-pedidos .sub{color:#aeb5cf}
+/* texto secundario com contraste bom em TODOS os temas */
+.config-label small, .pedido-meta, .aviso, .vazio { color: var(--text-muted); }
+.resumo-linha small, .ficha-grid { color: var(--text-muted); }
+[data-theme="dark"] .tabela-pedidos thead th{background:#232742;color:#ffb822}
+[data-theme="dark"] .tabela-pedidos tbody td{color:#e6e8f2}
+[data-theme="dark"] .tabela-pedidos tbody tr:nth-child(even){background:#1c1f33}
+[data-theme="dark"] .tabela-pedidos tbody tr:hover{background:#232742}
+[data-theme="dark"] .painel-busca input[type=text],
+[data-theme="dark"] .painel-busca select{background:#232742;color:#e6e8f2;border-color:#353a5c}
+
+/* ficha detalhada que abre ao clicar na linha */
+.ficha{background:#f7f8fc;border-left:4px solid #3d4465;border-radius:10px;padding:14px 16px;margin-top:2px}
+.ficha h4{margin:0 0 8px;font-size:.95rem;color:#3d4465;display:flex;align-items:center;gap:7px}
+.ficha-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:6px 18px;font-size:.9rem;color:#4a5070}
+.ficha-grid b{color:#3d4465}
+.ficha-linha{grid-column:1/-1;border-top:1px dashed #d8dbe6;padding-top:8px;margin-top:4px}
+[data-theme="dark"] .ficha{background:#1c1f33;border-left-color:#ffb822}
+[data-theme="dark"] .ficha h4,[data-theme="dark"] .ficha-grid b{color:#ffb822}
+[data-theme="dark"] .ficha-grid{color:#c8cee6}
+/* tabela do painel: mais densa (usa toda a largura) e legivel em qualquer tema */
+.tab-wrap{background:#fff}
+.tabela-pedidos{width:100%;table-layout:auto}
+.tabela-pedidos thead th{padding:11px 10px}
+.tabela-pedidos tbody td{padding:10px}
+.tabela-pedidos .td-total{font-size:1.08rem}
+@media(max-width:1100px){
+    .tabela-pedidos thead th,.tabela-pedidos tbody td{padding:8px 7px;font-size:.9rem}
+}
+
+/* linha clicavel */
+.linha-pedido{cursor:pointer}
+
+/* ===== bloco novo do painel: opcoes em botao (mesmo visual da loja) ===== */
+.opcoes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.opcoes .op-btn{
+    display:inline-flex;align-items:center;justify-content:center;min-height:44px;cursor:pointer;
+    padding:11px 18px;border:1px solid var(--borda,#eeeef4);border-radius:12px;
+    background:var(--bg-alt,#f7f7f7);color:var(--text-color,#333);
+    font:700 .92rem/1 'Segoe UI',sans-serif;
+}
+.opcoes .op-btn:hover{border-color:var(--primary-color,#3d4465)}
+.opcoes .op-btn.ativo{background:var(--primary-color,#3d4465);color:#fff;border-color:var(--primary-color,#3d4465)}
+[data-theme="dark"] .opcoes .op-btn.ativo{background:#ffb822;color:#232742;border-color:#ffb822}
+
+/* palavras e numeros maiores no painel (leitura confortavel) */
+body.admin{font-size:1.02rem}
+body.admin .card h3{font-size:1.15rem}
+body.admin .card h4{font-size:1.05rem}
+body.admin .tabela-pedidos{font-size:1.02rem}
+body.admin .tabela-pedidos td{padding:12px 14px}
+body.admin .tabela-pedidos th{font-size:.82rem;letter-spacing:.06em}
+body.admin .tabela-pedidos .td-id{font-size:1.12rem}
+body.admin .tabela-pedidos .td-total{font-size:1.3rem;font-weight:800}
+body.admin .tabela-pedidos .sub{font-size:.9rem}
+body.admin .stats b,body.admin .stat-num{font-size:1.6rem}
+body.admin .btn-st{font-size:.95rem;min-height:46px;padding:11px 18px}
+body.admin .filtro{font-size:.98rem;min-height:44px}
+
+/* ===== aviso de pedido novo (chegou de outro aparelho) ===== */
+#avisoNovos{display:none;align-items:center;gap:12px;flex-wrap:wrap;
+ margin:0 0 12px;padding:14px 16px;border-radius:14px;
+ background:#1b7f3b;color:#fff;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+#avisoNovos .spacer{flex:1}
+#avisoNovos button{background:rgba(255,255,255,.2);border:0;color:#fff;cursor:pointer;
+ border-radius:20px;padding:9px 16px;font-weight:800;min-height:44px}
+#avisoNovos .fechar{background:none;font-size:1.2rem;padding:0 6px;min-height:0}
+
+/* ===== CABECALHO DO PAINEL (so aqui, nao herda o da loja) =====
+   Sem isto o logo, o menu e o botao Sair ficavam empilhados
+   (parecia quebrado) e o painel mudava de cor sozinho. */
+body.admin .main-header{background:var(--primary-color,#3d4465)!important;border-bottom:0!important;box-shadow:0 2px 10px rgba(0,0,0,.18);animation:none!important}
+body.admin .main-header .container{max-width:1600px;width:100%;padding:0 12px;margin:0 auto}
+body.admin .page > .container{max-width:1600px;width:100%}
+body.admin .main-header nav{display:flex;align-items:center;gap:12px;width:100%;padding:8px 0;min-height:60px}
+body.admin .main-header .logo{
+    display:flex;align-items:center;gap:8px;flex:0 0 auto;white-space:nowrap;
+    font-size:1.1rem;font-weight:800;color:var(--accent-color,#ffb822);
+}
+body.admin .main-header .nav-links{
+    display:flex;gap:4px;list-style:none;flex:1 1 auto;min-width:0;
+    overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+body.admin .main-header .nav-links::-webkit-scrollbar{display:none}
+body.admin .main-header .nav-links a{
+    display:flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap;
+    padding:9px 14px;border-radius:20px;text-decoration:none;
+    color:rgba(255,255,255,.94)!important;font-size:.95rem;font-weight:700;
+}
+body.admin .main-header .nav-links a:hover{background:rgba(255,255,255,.15)!important;color:#fff!important}
+body.admin .main-header .header-actions{flex:0 0 auto;display:flex;align-items:center;gap:8px}
+body.admin .main-header .mobile-menu-btn{display:none!important}
+[data-theme="dark"] body.admin .main-header{background:#232742!important}
+[data-theme="guara"] body.admin .main-header{background:#1b7f3b!important}
+[data-theme="rosa"] body.admin .main-header{background:#8e2f6b!important}
+[data-theme="vermelho"] body.admin .main-header{background:#a11b0f!important}
+@media(max-width:640px){
+    body.admin .main-header .logo span{display:none}
+    body.admin .main-header .logo{font-size:0}
+    body.admin .main-header .logo i{font-size:1.4rem}
+    body.admin .main-header .nav-links a{padding:9px 12px;font-size:.9rem}
+}
+
+/* ===== opcao tela compacta (ligar E DESLIGAR funciona) ===== */
+body.admin[data-layout="compacto"] .card{padding:14px;margin-bottom:10px}
+body.admin[data-layout="compacto"] .tabela-pedidos td{padding:7px 10px}
+body.admin[data-layout="compacto"] .tabela-pedidos th{padding:8px 10px;font-size:.72rem}
+body.admin[data-layout="compacto"] .campo{margin-bottom:8px}
+body.admin[data-layout="compacto"] .btn-st{min-height:38px;padding:8px 14px}
+
+/* ==========================================================
+   LEITURA DA TABELA DO PAINEL: ROLAGEM ou CARTAO VERTICAL
+   O painel tem as proprias regras (body.admin),separate das
+   da loja: em cartao cada pedido vira um bloco com o rotulo
+   ACIMA do valor, para nao repetir nome de coluna e para o
+   texto grande (fonte do vendedor) caber inteiro na tela.
+   ========================================================== */
+body.admin[data-leitura=vertical] .tab-wrap{overflow:visible;background:none;border:0;box-shadow:none}
+body.admin[data-leitura=vertical] .tabela-pedidos,
+body.admin[data-leitura=vertical] .tabela-pedidos tbody,
+body.admin[data-leitura=vertical] .tabela-pedidos tr,
+body.admin[data-leitura=vertical] .tabela-pedidos td{display:block;width:100%;min-width:0}
+body.admin[data-leitura=vertical] .tabela-pedidos thead{display:none}
+body.admin[data-leitura=vertical] .tabela-pedidos{border-collapse:separate;font-size:1rem}
+body.admin[data-leitura=vertical] .tabela-pedidos tbody tr{
+    background:var(--bg,#fff);border:1px solid var(--borda);border-radius:14px;
+    padding:10px 14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(61,68,101,.07);
+}
+body.admin[data-leitura=vertical] .tabela-pedidos tbody tr:nth-child(even){background:var(--bg,#fff)}
+body.admin[data-leitura=vertical] .tabela-pedidos tbody tr:hover{background:var(--bg-alt,#f4f5fa)}
+body.admin[data-leitura=vertical] .tabela-pedidos td{
+    border-bottom:1px dashed var(--borda);padding:9px 0;text-align:left;
+    color:inherit;overflow-wrap:anywhere;
+}
+body.admin[data-leitura=vertical] .tabela-pedidos td:last-child{border-bottom:0;padding-bottom:2px}
+/* o rotulo vem do proprio td (data-label): aparece uma vez so */
+body.admin[data-leitura=vertical] .tabela-pedidos td::before{
+    content:attr(data-label);display:block;margin-bottom:2px;
+    font-size:.74rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--primary-color,#3d4465);
+}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-id,
+body.admin[data-leitura=vertical] .tabela-pedidos .td-total,
+body.admin[data-leitura=vertical] .tabela-pedidos .td-num{text-align:left;white-space:normal;font-size:1.05rem}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-id{margin-bottom:2px}
+/* os botoes de status ocupam a linha toda: e o que o dedo acerta */
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes{display:flex;flex-wrap:wrap;gap:6px;white-space:normal;justify-content:flex-end}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes::before{width:100%}
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-st,
+body.admin[data-leitura=vertical] .tabela-pedidos .td-acoes .btn-zap{flex:1 1 auto;min-width:40px;max-width:64px;min-height:44px;padding:9px 6px}
+/* a ficha do pedido (linha extra) fica dentro do mesmo cartao */
+body.admin[data-leitura=vertical] .tabela-pedidos .linha-ficha{
+    margin:-6px 0 12px;box-shadow:none;background:none;border:0;padding:0;
+}
+body.admin[data-leitura=vertical] .tabela-pedidos td[colspan]{padding:0 2px 6px;border-bottom:0}
+body.admin[data-leitura=vertical] .tabela-pedidos td[colspan]::before{content:none}
+[data-theme="dark"] body.admin[data-leitura=vertical] .tabela-pedidos tbody tr{background:#1c1f33;border-color:#353a5c;box-shadow:none}
+[data-theme="dark"] body.admin[data-leitura=vertical] .tabela-pedidos tbody tr:hover{background:#232742}
+[data-theme="dark"] body.admin[data-leitura=vertical] .tabela-pedidos td{border-bottom-color:#353a5c;color:#e6e8f2}
+[data-theme="dark"] body.admin[data-leitura=vertical] .tabela-pedidos td::before{color:#ffb822}
+
+/* ===== TICKS do acompanhamento (precisam ser legiveis com fonte grande) =====
+   Cada passo do pedido e uma linha com bolinha, o nome do status, a hora
+   exata e ha quanto tempo. Tudo com quebra de linha e sem altura fixa,
+   para o A grande do painel nao cortar nada. */
+.ficha-tick{
+    display:flex;align-items:flex-start;gap:9px;
+    padding:6px 2px;border-bottom:1px dashed var(--borda,#d8dbe6);
+    line-height:1.5;overflow-wrap:anywhere;min-height:34px;
+}
+.ficha-tick:last-of-type{border-bottom:0}
+.ficha-tick > i.fa-circle{color:var(--primary-color,#3d4465);font-size:.62rem;flex:0 0 auto;margin-top:.5em}
+.ficha-tick b{color:var(--primary-color,#3d4465)}
+.ficha-tick .sub{display:inline;color:var(--text-muted)}
+[data-theme="dark"] .ficha-tick{border-bottom-color:#353a5c}
+[data-theme="dark"] .ficha-tick > i.fa-circle,
+[data-theme="dark"] .ficha-tick b{color:#ffb822}
+/* fonte grande: a linha cresce com a letra, nunca fica com altura travada */
+[data-fonte="grande"] .ficha-tick,
+[data-fonte="muitogrande"] .ficha-tick{min-height:auto;padding:12px 4px}
+[data-fonte="muitogrande"] .ficha-tick > i.fa-circle{font-size:.8rem;margin-top:.4em}
+[id^="ticks-admin-"]{max-height:176px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:2px}
+.ficha-tick{overflow-wrap:break-word;word-wrap:break-word;word-break:break-word}
+
+/* Modo de leitura vertical: ticks ocupam a largura total do card */
+body.admin[data-leitura=vertical] .ficha-tick{width:100%;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+body.admin[data-leitura=vertical] .ficha-tick > i.fa-circle{margin-top:0}
+body.admin[data-leitura=vertical] .ficha-tick .sub{display:block;margin-top:2px}
+
+/* Botao minimizar ticks do vendedor */
+.tick-min-admin{background:none;border:none;color:var(--primary-color,#3d4465);font-size:.95rem;font-weight:800;padding:4px 12px;line-height:1;min-width:44px;min-height:44px;cursor:pointer}
+.tick-min-admin:hover{background:rgba(61,68,101,.1)}
+[data-theme="dark"] .tick-min-admin{color:#c3cae0}
+[data-theme="dark"] .tick-min-admin:hover{background:rgba(255,255,255,.08)}
+[data-theme="guara"] .tick-min-admin{color:#1b7f3b}
+[data-theme="guara"] .tick-min-admin:hover{background:rgba(27,127,59,.1)}
+[data-theme="rosa"] .tick-min-admin{color:#8e2f6b}
+[data-theme="rosa"] .tick-min-admin:hover{background:rgba(142,47,107,.1)}
+[data-theme="vermelho"] .tick-min-admin{color:#a11b0f}
+[data-theme="vermelho"] .tick-min-admin:hover{background:rgba(161,27,15,.1)}
+
+/* ===== campos grandes das ferramentas do vendedor ===== */
+.ferramenta-input{
+    width:100%;min-height:54px;padding:14px 16px;
+    font-size:1.15rem;font-weight:700;text-align:right;
+    border:2px solid var(--borda,#eeeef4);border-radius:12px;
+    background:var(--bg-alt,#f7f7f7);color:var(--text-color,#333);
+}
+.ferramenta-input:focus{outline:none;border-color:var(--primary-color,#3d4465);background:#fff}
+[data-theme="dark"] .ferramenta-input{background:#1e2138;color:#e6e8f2}
+[data-theme="dark"] .ferramenta-input:focus{background:#232742}
+#caixaFerramentas .campo label{font-size:.95rem;font-weight:800;margin-bottom:6px;display:block}
+#caixaFerramentas h4{letter-spacing:.01em}
+#contaCargaResultado .calc-destaque b,#calcResultado .calc-destaque b,#trocoResultado .calc-destaque b{font-size:1.3rem}
+
+/* ===== minimizar blocos do painel (so do vendedor) ===== */
+.btn-mini-bloco{
+    display:inline-flex;align-items:center;gap:7px;min-height:44px;cursor:pointer;
+    padding:8px 14px;border:0;border-radius:18px;
+    background:var(--primary-color,#3d4465);color:#fff;
+    font:800 .8rem/1 'Segoe UI',sans-serif;white-space:nowrap;
+}
+.btn-mini-bloco:hover{filter:brightness(1.12)}
+.btn-mini-bloco:focus-visible{outline:3px solid var(--accent-color,#ffb822);outline-offset:2px}
+.card h3 .btn-mini-bloco{float:right;margin:2px 0 0 10px}
+.card-corpo{min-width:0}
+[data-theme="dark"] .btn-mini-bloco{background:#ffb822;color:#232742}
+
+/* no celular a tabela vira lista */
+@media(max-width:720px){
+    .tabela-pedidos thead{display:none}
+    .tabela-pedidos,.tabela-pedidos tbody,.tabela-pedidos tr,.tabela-pedidos td{display:block;width:100%}
+    .tabela-pedidos tr{border-bottom:2px solid var(--borda);padding:10px 0}
+    .tabela-pedidos td{border:none;padding:5px 12px;display:flex;justify-content:space-between;gap:10px;text-align:left !important}
+    .tabela-pedidos td::before{content:attr(data-label);font-weight:800;color:#7a8199;font-size:.8rem;text-transform:uppercase;flex:0 0 auto}
+    /* a linha da ficha nao repete rotulo: e o detalhe do pedido */
+    .tabela-pedidos td[data-label=""]{display:block;padding:0 6px 10px}
+    .tabela-pedidos td[data-label=""]::before{content:none}
+    .tabela-pedidos .td-id{font-size:1rem}
+    .tabela-pedidos .td-total{font-size:1.1rem}
+}
+
+/* resumo do dia */
+.resumo-linha{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--borda);font-size:.95rem}
+.resumo-linha b{color:#3d4465;font-variant-numeric:tabular-nums}
+[data-theme="dark"] .resumo-linha b{color:#ffb822}
+[data-theme="dark"] .resumo-linha{border-bottom-color:#353a5c}
+
+/* calculadoras e anotacoes: resultado grande e leitura facil */
+.calc-vazio{display:block;padding:10px 12px;border-radius:10px;background:#fff8e6;color:#856404;font-weight:600;font-size:.9rem}
+.calc-destaque{
+    display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    padding:12px 14px;border-radius:12px;margin-bottom:10px;
+    background:#eef1fb;border:1px solid #d5daf0;
+}
+.calc-destaque span{font-size:.9rem;font-weight:700;color:#3d4465}
+.calc-destaque b{font-size:1.5rem;font-weight:800;color:var(--primary-color);font-variant-numeric:tabular-nums}
+.calc-destaque small{flex-basis:100%;font-size:.78rem;color:#767d95}
+.calc-divisor{border-top:2px solid #d5daf0;margin-top:6px;padding-top:8px}
+.calc-fim{margin-top:10px}
+.calc-copiar{margin-top:10px;min-height:44px;padding:10px 16px}
+.notas-lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.notas-item{
+    border:1px solid #e6e8f0;border-radius:12px;padding:11px 12px;background:#fbfcfe;
+}
+.ni-cab{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:5px}
+.ni-cab b{font-size:.92rem;color:#2c3252;font-weight:700}
+.ni-data{font-size:.76rem;color:#767d95;font-weight:600}
+.ni-texto{font-size:.84rem;color:#4a5170;line-height:1.4;margin-bottom:8px}
+.ni-acoes{display:flex;gap:6px}
+.ni-btn{
+    display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:0 13px;
+    border:1.5px solid #d8dbe6;background:#fff;border-radius:9px;
+    font-size:.8rem;font-weight:700;color:#3d4465;cursor:pointer;
+}
+.ni-btn:hover{background:#eef1fb}
+.ni-del{border-color:#f0c6c6;color:var(--texto-erro)}
+.ni-del:hover{background:#c62828;border-color:var(--texto-erro);color:#fff}
+[data-theme="dark"] .calc-vazio{background:#33280c;color:#f2dda6}
+[data-theme="dark"] .calc-destaque{background:#232742;border-color:#353a5c}
+[data-theme="dark"] .calc-destaque span,
+[data-theme="dark"] .calc-destaque small{color:#c3cae0}
+[data-theme="dark"] .notas-item{background:#1e2138;border-color:#353a5c}
+[data-theme="dark"] .ni-cab b{color:#e6e8f2}
+[data-theme="dark"] .ni-texto{color:#c3cae0}
+[data-theme="dark"] .ni-btn{background:#232742;border-color:#3d4470;color:#e6e8f2}
+
+/* ==========================================================
+   TIPOGRAFIA DO PAINEL DO VENDEDOR
+   As letras estavam finas e pequenas. Aqui o painel ganha
+   corpo, tamanho e contraste, sem mexer no site do cliente.
+   ========================================================== */
+body.admin{
+    font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    font-size:17px;line-height:1.5;font-weight:500;
+    -webkit-font-smoothing:antialiased;letter-spacing:.1px;
+}
+body.admin h1,body.admin h2,body.admin h3,body.admin h4{font-weight:700;letter-spacing:.2px;line-height:1.3}
+body.admin p,body.admin li,body.admin td,body.admin span,body.admin label{font-weight:500}
+body.admin table{font-size:.97rem}
+body.admin table td{padding:12px 16px;font-weight:500;color:#2c3252}
+body.admin table th{font-size:.78rem;font-weight:800;letter-spacing:.05em;padding:13px 16px}
+body.admin table td .sub,body.admin .sub{font-size:.82rem;font-weight:500;color:#767d95}
+body.admin small{font-size:.84rem;font-weight:500}
+body.admin input,body.admin select,body.admin textarea{
+    font-family:inherit;font-size:.97rem;font-weight:600;min-height:44px;
+}
+body.admin label{font-size:.9rem;font-weight:700;color:#3d4465}
+body.admin .btn-st,body.admin button{font-weight:700;font-size:.9rem}
+body.admin .painel-busca,body.admin .box,body.admin .card{font-size:.95rem;line-height:1.55}
+body.admin .resumo-linha,body.admin .wgt-linha{font-size:.93rem;padding:11px 0}
+body.admin .resumo-linha b,body.admin .wgt-linha b{font-weight:700}
+body.admin .badge{font-weight:800;letter-spacing:.03em}
+</style>
+</head>
+<body class="admin">
+<header class="main-header"><div class="container"><nav>
+<div class="logo"><i class="fa fa-leaf"></i><span>Refrigerantes Convenção</span></div>
+<span class="mobile-menu-btn"><span></span><span></span><span></span></span>
+<ul class="nav-links" id="mainNav"><li><a href="index.html"><i class="fa fa-store"></i> Ver loja</a></li></ul>
+<div class="header-actions"><button class="btn-sair" id="btnSair" onclick="sair()" style="display:none">Sair</button></div>
+</nav></div></header>
+
+<section class="page"><div class="container">
+
+<div id="loginTela">
+  <div class="login-card">
+    <div class="icone"><i class="fa fa-lock"></i></div>
+    <h2 style="color:var(--primary-color)">Painel do Vendedor</h2>
+    <p style="color:#777;font-size:0.9rem">Acesso restrito</p>
+    <input id="fUsuario" type="text" placeholder="Usuário" autocomplete="username" onkeydown="if(event.key==='Enter')entrar()">
+    <div style="position:relative">
+      <input id="fSenha" type="password" placeholder="Senha de acesso" autocomplete="current-password" style="padding-right:52px" onkeydown="if(event.key==='Enter')entrar()">
+      <button type="button" onclick="verSenha(this)" id="btnVerSenha" title="Mostrar/ocultar senha" aria-label="Mostrar ou ocultar senha" aria-pressed="false"
+        style="position:absolute;right:4px;top:50%;transform:translateY(-50%);
+               display:flex;align-items:center;justify-content:center;
+               width:44px;height:44px;min-width:44px;background:none;border:none;
+               color:var(--text-muted,#5f677f);cursor:pointer;font-size:1.05rem;
+               border-radius:8px;padding:0"></button>
+    </div>
+    <p id="loginErro" style="display:none;color:var(--texto-erro);font-size:0.85rem;margin:6px 0 0;font-weight:600"></p>
+    <button onclick="entrar()"><i class="fa fa-sign-in-alt"></i> Entrar</button>
+  </div>
+</div>
+
+<div id="painelTela" style="display:none">
+  <div class="page-head">
+    <h1><i class="fa fa-tachometer-alt"></i> Pedidos</h1>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">
+      <span style="color:#888;font-size:0.85rem"><i class="fa fa-bell"></i> Novos pedidos aparecem aqui</span>
+      <a class="btn-st b-copiar" href="apk/convencao-vendedor.apk" download target="_blank" rel="noopener" style="min-height:44px;padding:10px 14px;text-decoration:none"><i class="fa fa-android"></i> Baixar APK do painel</a>
+    </div>
+  </div>
+  <div class="periodo-barra">
+    <div class="periodo-linha">
+      <label for="periodoVendas"><i class="fa fa-calendar-day"></i> Período:</label>
+      <select id="periodoVendas" onchange="mudarPeriodo()" aria-label="Período">
+        <optgroup label="Dias">
+          <option value="hoje">Hoje</option>
+          <option value="ontem">Ontem</option>
+          <option value="anteontem">Anteontem</option>
+          <option value="d3">Últimos 3 dias</option>
+          <option value="d7">Últimos 7 dias</option>
+          <option value="d15">Últimos 15 dias</option>
+          <option value="d30">Últimos 30 dias</option>
+          <option value="d60">Últimos 60 dias</option>
+          <option value="d90">Últimos 90 dias</option>
+        </optgroup>
+        <optgroup label="Semanas">
+          <option value="estaSemana">Esta semana</option>
+          <option value="semPassada">Semana passada</option>
+        </optgroup>
+        <optgroup label="Meses">
+          <option value="mes">Este mês</option>
+          <option value="mesPassado">Mês passado</option>
+          <option value="m6">Últimos 6 meses</option>
+          <option value="m12">Últimos 12 meses</option>
+        </optgroup>
+        <optgroup label="Anos">
+          <option value="ano">Este ano</option>
+          <option value="anoPassado">Ano passado</option>
+        </optgroup>
+        <optgroup label="Outros">
+          <option value="custom">Personalizado…</option>
+          <option value="all">Tudo</option>
+        </optgroup>
+      </select>
+      <span class="periodo-faixa" id="periodoFaixa" style="display:none">
+        <input type="date" id="periodoDe" onchange="mudarPeriodo()" aria-label="Data inicial">
+        <span class="sep">até</span>
+        <input type="date" id="periodoAte" onchange="mudarPeriodo()" aria-label="Data final">
+      </span>
+    </div>
+    <div class="periodo-resumo" id="periodoResumo"></div>
+  </div>
+  <div id="avisoSincroniaAdmin" style="display:none;margin-bottom:12px;padding:12px 14px;border-radius:12px;background:var(--bg-alt);border:1px solid var(--borda);font-size:.88rem;font-weight:700"></div>
+<div id="avisoNovos">
+  <i class="fa fa-bell"></i>
+  <span id="avisoNovosTexto">Chegou pedido novo de outro aparelho!</span>
+  <span class="spacer"></span>
+  <button type="button" onclick="focarNovoPedido()"><i class="fa fa-arrow-down"></i> Ver na lista</button>
+  <button type="button" class="fechar" onclick="fecharAvisoNovos()" aria-label="Fechar">&times;</button>
+</div>
+
+<div class="stats" id="stats"></div>
+  <div class="filtros" id="filtros">
+    <button class="filtro ativo" data-f="todos" onclick="filtrarAdmin('todos',this)">Todos</button>
+    <button class="filtro" data-f="aguardando" onclick="filtrarAdmin('aguardando',this)">Aguardando</button>
+    <button class="filtro" data-f="confirmado" onclick="filtrarAdmin('confirmado',this)">Confirmados</button>
+    <button class="filtro" data-f="enviado" onclick="filtrarAdmin('enviado',this)">Enviados</button>
+    <button class="filtro" data-f="entregue" onclick="filtrarAdmin('entregue',this)">Entregues</button>
+  </div>
+  <div class="painel-busca">
+    <input type="text" id="buscaAdmin" placeholder="Buscar pedido, cliente, telefone, bairro, regiao ou produto..." oninput="buscaAdmin=this.value;renderAdmin()" autocomplete="off">
+    <button class="btn-st b-copiar" style="min-height:44px;padding:11px 16px" onclick="buscaAdmin='';document.getElementById('buscaAdmin').value='';renderAdmin()"><i class="fa fa-times"></i> Limpar</button>
+  </div>
+  <div id="listaPedidos"></div>
+  <div class="card" id="editorPrecos" style="margin-top:12px"></div>
+  <div class="card" id="caixaPrecosNuvem" style="margin-top:12px;display:none">
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-cloud"></i> Preços em tempo real</h3>
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Opcional. Com a URL do banco, os preços que você salvar aparecem na hora na página de todos os clientes. Crie em <b>console.firebase.google.com</b> → <b>Realtime Database</b> → modo <b>teste</b> e cole a URL aqui.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input id="cfgPrecosURL" type="text" placeholder="https://seu-banco.firebaseio.com" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
+      <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarPrecosURLAdmin(this)"><i class="fa fa-save"></i> Salvar URL</button>
+      <button id="btnTestarBanco" class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="testarPrecosURLAdmin(this)"><i class="fa fa-plug"></i> Testar</button>
+    </div>
+    <div id="precosURLMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
+    <div id="passoFirebase" style="display:none;margin-top:14px;background:var(--bg-alt);border:1px solid var(--borda);border-radius:12px;padding:16px">
+      <h4 style="margin:0 0 10px;color:var(--primary-color);font-size:1rem"><i class="fa fa-circle-info"></i> Como criar o banco (1 minuto)</h4>
+      <ol style="margin:0;padding-left:20px;font-size:.9rem;line-height:1.9;color:#4a5070">
+        <li>Abra <b>console.firebase.google.com</b> e entre no projeto <b>planning-with-ai-9b2c9</b>.</li>
+        <li>No menu da esquerda clique em <b>Realtime Database</b> (ou <i>Banco de dados em tempo real</i>).</li>
+        <li>Clique em <b>Criar banco de dados</b> → escolha a região <b>United States</b> → <b>Avançar</b>.</li>
+        <li>Escolha <b>Começar no modo de teste</b> e conclua.</li>
+        <li>Pronto! Não precisa colar nada aqui: o site encontra o banco sozinho.</li>
+      </ol>
+      <p style="margin:10px 0 0;font-size:.84rem;color:#7a8199">
+        Depois de criar, volte aqui e clique em <b>Testar</b>. Se aparecer “Tudo certo”, é só editar os preços e clicar em <b>Salvar e aplicar</b>: todos os clientes veem na hora.
+      </p>
+    </div>
+    <button class="btn-st b-copiar" style="margin-top:10px;min-height:44px;padding:9px 16px" onclick="verPassoFirebase()"><i class="fa fa-question-circle"></i> Como criar o banco</button>
+  </div>
+  <div class="card" id="caixaFerramentas" style="margin-top:12px">
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-briefcase"></i> Ferramentas do vendedor</h3>
+    <p style="font-size:.86rem;color:#777;margin:0 0 12px">Calculadoras grandes, pensadas para usar no balcão com o celular na mão.</p>
+
+    <h4 style="margin:16px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-calendar-day"></i> Resumo de hoje</h4>
+    <div class="stats" id="resumoDia" style="margin-bottom:6px"></div>
+
+    <h4 style="margin:16px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-calculator"></i> Calculadora de preço e lucro</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end">
+      <div class="campo"><label>Custo de compra (R$)</label><input id="calcCusto" type="text" inputmode="decimal" placeholder="20,00" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Margem (%)</label><input id="calcMargem" type="text" inputmode="decimal" placeholder="30" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Desconto (%)</label><input id="calcDesc" type="text" inputmode="decimal" placeholder="0" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Quantidade</label><input id="calcQtd" type="text" inputmode="numeric" placeholder="1" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Imposto sobre a venda (%)</label><input id="calcImposto" type="text" inputmode="decimal" placeholder="0" class="ferramenta-input" oninput="calcPreco()"></div>
+      <div class="campo"><label>Frete que você paga (R$)</label><input id="calcFrete" type="text" inputmode="decimal" placeholder="0,00" class="ferramenta-input" oninput="calcPreco()"></div>
+    </div>
+    <div id="calcResultado" style="margin-top:10px"></div>
+
+    <h4 style="margin:20px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-boxes-stacked"></i> Contagem das mercadorias</h4>
+    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Quantas latas, garrafas e packs saem dos produtos — e quanto pesa para a carga.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end">
+      <div class="campo"><label>Packs / caixas</label><input id="contaQtdPacks" type="text" inputmode="numeric" placeholder="10" class="ferramenta-input" oninput="contaCarga()"></div>
+      <div class="campo"><label>Unidades por pack</label><input id="contaUnidades" type="text" inputmode="numeric" placeholder="6" class="ferramenta-input" oninput="contaCarga()"></div>
+      <div class="campo"><label>Embalagens de 1,5 L no dia</label><input id="contaPet" type="text" inputmode="numeric" placeholder="12" class="ferramenta-input" oninput="contaCarga()"></div>
+    </div>
+    <div id="contaCargaResultado" style="margin-top:10px"></div>
+
+    <h4 style="margin:20px 0 8px;font-size:1rem;color:var(--primary-color)"><i class="fa fa-money-bill-wave"></i> Calculadora de troco</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end">
+      <div class="campo"><label>Total da compra (R$)</label><input id="trocoTotal" type="text" inputmode="decimal" placeholder="0,00" class="ferramenta-input" oninput="calcTroco()"></div>
+      <div class="campo"><label>Valor recebido (R$)</label><input id="trocoPago" type="text" inputmode="decimal" placeholder="0,00" class="ferramenta-input" oninput="calcTroco()"></div>
+    </div>
+    <div id="trocoResultado" style="margin-top:10px"></div>
+
+    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-file-lines"></i> Anotações da loja</h4>
+    <p style="font-size:.84rem;color:#777;margin:0 0 8px">Lista de compras, combinado com fornecedor, telefone de cliente, olho do dia... fica salvo aqui.</p>
+    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px;align-items:end;margin-bottom:8px">
+      <div class="campo"><label for="notasTitulo">Título da anotação</label><input id="notasTitulo" type="text" placeholder="Ex.: Lista de compras da quarta" style="width:100%;min-height:48px;padding:12px 14px;font-size:1rem"></div>
+      <div class="campo"><label for="notasData">Data</label><input id="notasData" type="date" style="width:100%;min-height:48px;padding:12px 14px;font-size:1rem"></div>
+    </div>
+    <textarea id="notasLoja" rows="6" placeholder="Ex.: ligar para o fornecedor de chopp às 8h&#10;Cliente Michele: trocar embalagem&#10;Faltando: barbear..."></textarea>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center">
+      <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarNotas()"><i class="fa fa-save"></i> Salvar</button>
+      <button class="btn-st b-copiar" style="min-height:44px;padding:11px 18px" onclick="baixarNotas()"><i class="fa fa-download"></i> Baixar .txt</button>
+      <button class="btn-st b-cancelar" style="min-height:44px;padding:11px 18px" onclick="historicoNotas()"><i class="fa fa-history"></i> Anotações salvas</button>
+      <span id="notasMsg" style="font-size:.86rem;font-weight:700"></span>
+    </div>
+    <div id="notasHistorico" style="margin-top:10px"></div>
+
+    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-clock-rotate-left"></i> Histórico de preços editados</h4>
+    <div id="histPrecos"></div>
+
+    <h4 style="margin:20px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-file-export"></i> Exportar e instalar</h4>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="exportarPedidos()"><i class="fa fa-file-csv"></i> Exportar pedidos (CSV/Excel)</button>
+      <button class="btn-st b-entregar" id="btnInstalarVendedor" style="min-height:44px;padding:11px 18px;display:none" onclick="instalarApp()"><i class="fa fa-download"></i> Instalar painel como app</button>
+    </div>
+  </div>
+
+  <div class="card" id="caixaConfigVendedor" style="margin-top:12px">
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-sliders-h"></i> Configurações do painel</h3>
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Vale só para este painel: tema e comandos aqui não mexem nas preferências do site do cliente.</p>
+    <h4 style="margin:12px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-palette"></i> Tema do painel</h4>
+    <div class="temas" id="temasVendedor">
+      <button class="tema-btn tema-claro" data-tema="claro" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Claro</span></button>
+      <button class="tema-btn tema-guara" data-tema="guara" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Guaraná</span></button>
+      <button class="tema-btn tema-rosa" data-tema="rosa" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Rosa</span></button>
+      <button class="tema-btn tema-vermelho" data-tema="vermelho" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Vermelho</span></button>
+      <button class="tema-btn tema-escuro" data-tema="dark" onclick="setTemaVendedor(this)"><span class="amostra"><i></i><i></i><i></i></span><span>Escuro</span></button>
+    </div>
+    <h4 style="margin:16px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-key"></i> Conexão do bot (Telegram)</h4>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input id="cfgTGToken" type="text" placeholder="Token do bot (em branco = padrão)" style="flex:1;min-width:220px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
+      <input id="cfgTGChat" type="text" placeholder="Chat ID do dono" style="width:190px;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:.95rem">
+      <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="salvarConfigBot(this)"><i class="fa fa-save"></i> Salvar</button>
+    </div>
+    <div id="configBotMsg" style="font-size:.86rem;font-weight:700;margin-top:8px"></div>
+
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-text-height"></i> Tamanho da letra do painel</h4>
+    <div class="opcoes" id="opcoesFonteVendedor">
+      <button class="op-btn op-fonte" data-v="pequeno" aria-label="Letra pequena" title="Letra pequena" onclick="setFonteVendedor(this)"><span style="font-size:.8rem">A</span><span style="font-size:.8rem">-</span></button>
+      <button class="op-btn op-fonte" data-v="normal" aria-label="Letra media" title="Letra media" onclick="setFonteVendedor(this)"><span style="font-size:1rem">A</span></button>
+      <button class="op-btn op-fonte" data-v="grande" aria-label="Letra grande" title="Letra grande" onclick="setFonteVendedor(this)"><span style="font-size:1.2rem">A</span><span style="font-size:1.2rem">+</span></button>
+      <button class="op-btn op-fonte" data-v="muitogrande" onclick="setFonteVendedor(this)"><span style="font-size:1.4rem">A</span><span style="font-size:1.4rem">++</span></button>
+    </div>
+    <p style="font-size:.82rem;color:#777;margin:6px 0 0">Valendo só no painel. O cliente continua com a letra dele.</p>
+
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-table"></i> Leitura da tabela de pedidos</h4>
+    <div class="opcoes" id="opcoesLeituraVendedor">
+      <button class="op-btn" data-v="horizontal" onclick="setLeituraVendedor(this)"><i class="fa fa-grip-lines"></i> Rolagem horizontal</button>
+      <button class="op-btn" data-v="vertical" onclick="setLeituraVendedor(this)"><i class="fa fa-grip-lines-vertical"></i> Cartões empilhados</button>
+    </div>
+    <p style="font-size:.82rem;color:#777;margin:6px 0 0">Em <b>cartões empilhados</b> cada pedido vira um bloco
+      com o nome de cada coluna à esquerda — bom para tela pequena. Em <b>rolagem horizontal</b> a tabela
+      fica como no computador. Essa escolha é só do painel.</p>
+
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-sync-alt"></i> Sincronização com a nuvem</h4>
+    <div class="opcoes" id="opcoesSyncVendedor">
+      <button class="op-btn" data-v="60000" onclick="setSyncVendedor(this)">A cada 1 minuto</button>
+      <button class="op-btn" data-v="120000" onclick="setSyncVendedor(this)">A cada 2 minutos</button>
+      <button class="op-btn" data-v="300000" onclick="setSyncVendedor(this)">A cada 5 minutos</button>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
+      <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="sincronizarAgora(this)"><i class="fa fa-cloud-download-alt"></i> Sincronizar agora</button>
+      <span id="syncMsg" style="font-size:.86rem;font-weight:700"></span>
+    </div>
+    <div id="versoesPainel" style="margin-top:12px"></div>
+
+    <h4 style="margin:18px 0 8px;font-size:.95rem;color:var(--primary-color)"><i class="fa fa-gauge-high"></i> Limite de pedidos por dia</h4>
+    <div class="opcoes" id="opcoesLimiteLoja">
+      <button class="op-btn" data-v="40" onclick="salvarLimiteLoja(this)">40</button>
+      <button class="op-btn" data-v="60" onclick="salvarLimiteLoja(this)">60</button>
+      <button class="op-btn" data-v="80" onclick="salvarLimiteLoja(this)">80</button>
+      <button class="op-btn" data-v="120" onclick="salvarLimiteLoja(this)">120</button>
+    </div>
+    <p style="font-size:.82rem;color:#777;margin:6px 0 0">Válvula de segurança: quando o site atinge esse número de pedidos
+      no dia, o botão <b>Finalizar</b> desliga para todo mundo e o cliente recebe o botão de falar com você —
+      a venda não se perde, você só libera a vaga na mão. O limite por cliente é <b>2 pedidos por dia</b>
+      (fonte única: <code>loja.js</code>), para travar pedido repetido e spam.</p>
+    <div id="capacidadeHoje" style="font-size:.86rem;font-weight:700;margin-top:10px"></div>
+  </div>
+
+  <div class="card" id="caixaBot" style="margin-top:12px">
+    <h3 style="padding:10px 0;margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-robot"></i> Bot do Telegram - comandos do vendedor</h3>
+    <p style="font-size:.84rem;color:#777;margin:0 0 10px">Além do aviso de novo pedido, o bot aceita comandos. Toque no botão <b>/</b> do Telegram para ver todos:
+      <b>/confirmar</b>, <b>/separacao</b>, <b>/enviado</b>, <b>/entregue</b>, <b>/cancelar</b>, <b>/ultimos</b>, <b>/status</b>, <b>/hoje</b> e <b>/ajuda</b>.
+      Na mensagem de cada pedido também tem botões para mudar o status com um toque.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <label style="display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600;cursor:pointer">
+        <input type="checkbox" id="cfgBotComandos" checked onchange="TelegramBot.ligadoMudou(this)"> Ligar os comandos
+      </label>
+      <button class="btn-st b-entregar" style="min-height:44px;padding:11px 18px" onclick="TelegramBot.registrarComandos(this)"><i class="fa fa-list"></i> Ativar comandos no bot</button>
+      <button class="btn-st b-enviar" style="min-height:44px;padding:11px 18px" onclick="TelegramBot.verificarAgora(this)"><i class="fa fa-sync"></i> Verificar agora</button>
+    </div>
+    <div id="botStatus" style="font-size:.86rem;font-weight:700;margin-top:10px;color:#666"></div>
+    <div id="botLog" style="font-size:.8rem;color:#777;margin-top:8px;display:grid;gap:2px"></div>
+    <p style="font-size:.78rem;color:#8a8a8a;margin:10px 0 0"><i class="fa fa-info-circle"></i> Os comandos são aplicados no navegador onde o painel está aberto (deixe esta página aberta para funcionar na hora). O status do cliente continua sendo alterado por aqui também.</p>
+  </div>
+
+</div>
+
+</div></section>
+
+<script src="script.js?v=20261018n"></script>
+<script src="loja.js?v=20261018n"></script>
+<script src="telegram.js?v=20261018n"></script>
+<script>
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    const nav = document.getElementById('mainNav');
+    if (menuBtn && nav) {
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                nav.classList.remove('active');
+            });
+        });
+        window.addEventListener('resize', function(){ if (window.innerWidth > 768) {
+            menuBtn.classList.remove('active');
+            nav.classList.remove('active');
+        }});
+    }
+</script>
+<script>
+let filtroAdminAtual = "todos";
+let buscaAdmin = "";
+let fichaAberta = "";
+
+/* mostrar/ocultar a senha. Desenha o icone sempre (o botao pode ter
+   nascido vazio no HTML) e avisa quem usa leitor de tela o estado atual,
+   com aria-pressed: true = senha visivel. */
+function verSenha(btn) {
+    var campo = document.getElementById("fSenha");
+    if (!campo) return;
+    var mostrando = campo.type === "password";
+    campo.type = mostrando ? "text" : "password";
+    var b = btn || document.getElementById("btnVerSenha");
+    if (b) {
+        b.innerHTML = '<i class="fa ' + (mostrando ? "fa-eye-slash" : "fa-eye") + '"></i>';
+        b.setAttribute("aria-pressed", mostrando ? "true" : "false");
+        b.setAttribute("aria-label", mostrando ? "Ocultar a senha" : "Mostrar a senha");
+        b.title = mostrando ? "Ocultar a senha" : "Mostrar a senha";
+    }
+    /* o cursor volta para o fim do que ja foi digitado. Se o navegador
+       nao aceitar setSelectionRange (campo sem tipo texto), a senha ja
+       esta revelada e o foco e cosmetico: o erro aqui nao trava nada */
+    try { campo.focus(); var n = campo.value.length; campo.setSelectionRange(n, n); }
+    catch (e) { /* proposital: o foco e cosmetico, a senha ja foi revelada */ }
+}
+/* o icone precisa existir antes do primeiro clique */
+document.addEventListener("DOMContentLoaded", function () {
+    var b = document.getElementById("btnVerSenha");
+    if (b) verSenha(b);
+});
+
+function entrar() {
+    const u = (document.getElementById("fUsuario").value || "").trim();
+    const s = document.getElementById("fSenha").value;
+    const erro = document.getElementById("loginErro");
+    if (erro) { erro.style.display = "none"; erro.innerText = ""; }
+    /* trava contra tentativas seguidas (forca bruta de senha) */
+    var tentativas = parseInt(sessionStorage.getItem("adminTentativas") || "0", 10);
+    if (tentativas >= 5) {
+        var espera = Math.ceil((Date.now() - (parseInt(sessionStorage.getItem("adminTravadoAte") || "0", 10))) / 1000);
+        if (espera > 0) {
+            if (erro) {
+                erro.innerText = "Muitas tentativas. Tente de novo em " + espera + " segundo(s).";
+                erro.style.display = "block";
+            }
+            document.getElementById("fSenha").value = "";
+            return;
+        }
+        sessionStorage.removeItem("adminTentativas");
+        sessionStorage.removeItem("adminTravadoAte");
+        tentativas = 0;
+    }
+    if (typeof credenciaisConfere === "function" ? credenciaisConfere(u, s) : (u === VENDEDOR_USUARIO && s === VENDEDOR_SENHA)) {
+        sessionStorage.removeItem("adminTentativas");
+        sessionStorage.removeItem("adminTravadoAte");
+        /* marca a sessao deste navegador: e o que garante que so o dono,
+           com a conta certa, veja os pedidos de todo mundo */
+        sessionStorage.setItem("adminLogado", "1");
+        sessionStorage.setItem("adminDono", String(Date.now()));
+        /* modo gateway: a MESMA senha libera o token de 12h do gateway,
+           que e o que passa a falar com o banco fechado. Senha errada
+           no gateway = painel sem token = nenhum pedido carrega. */
+        if (typeof gatewayLigado === "function" && gatewayLigado() && typeof gatewayEntrar === "function") {
+            gatewayEntrar(s, function (ok, motivo) {
+                if (ok) { mostrarPainel(); return; }
+                sessionStorage.removeItem("adminLogado");
+                sessionStorage.removeItem("adminDono");
+                document.getElementById("painelTela").style.display = "none";
+                if (typeof gatewaySair === "function") gatewaySair();
+                var aviso = document.getElementById("loginErro") || erro;
+                if (aviso) {
+                    aviso.innerText = "O gateway recusou a senha (" + String(motivo || "") +
+                        "). Sem ele o painel não consegue ler os pedidos. Confira a senha e a URL do Banco.";
+                    aviso.style.display = "block";
+                }
+            });
+            return;
+        }
+        mostrarPainel();
+    } else {
+        tentativas++;
+        sessionStorage.setItem("adminTentativas", String(tentativas));
+        if (tentativas >= 5) sessionStorage.setItem("adminTravadoAte", String(Date.now()));
+        if (erro) {
+            erro.innerText = "Usuário ou senha incorretos (" + tentativas + "/5). Verifique e tente novamente.";
+            erro.style.display = "block";
+        } else {
+            alert("Usuário ou senha incorretos!");
+        }
+        document.getElementById("fSenha").value = "";
+        document.getElementById("fSenha").focus();
+    }
+}
+function sair() {
+    sessionStorage.removeItem("adminLogado");
+    document.getElementById("painelTela").style.display = "none";
+    document.getElementById("loginTela").style.display = "block";
+    document.getElementById("btnSair").style.display = "none";
+}
+function mostrarPainel() {
+    document.getElementById("loginTela").style.display = "none";
+    document.getElementById("painelTela").style.display = "block";
+    document.getElementById("btnSair").style.display = "inline";
+    try { carregarPeriodo(); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    renderAdmin();
+    var chk = document.getElementById("cfgBotComandos");
+    if (chk) {
+        try { chk.checked = (typeof TelegramBot !== "undefined") ? TelegramBot.cfg().ligado : true; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    }
+    /* ferramentas + config do painel */
+    try { resumoDoDia(); carregarNotas(); historicoPrecos(); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    try { carregarConfigVendedor(); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    try { marcarConfigVendedor(); mostrarVersoes(); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    var bv = document.getElementById("btnInstalarVendedor");
+    if (bv && window.__promptInstalacao) bv.style.display = "inline-flex";
+    /* pedidos de TODOS os aparelhos (nuvem), no tempo escolhido pelo dono */
+    if (typeof sincronizarPedidosNuvem === "function") {
+        sincronizarPedidosNuvem(function (ok) {
+            try { localStorage.setItem("vendedorPrefs", JSON.stringify(
+                Object.assign({}, JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"), { ultimaSync: Date.now() }))); }
+            catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+            if (ok) renderAdmin();
+            if (ok) publicarCapacidadeLoja();
+            mostrarVersoes();
+            chegarNovosPedidos();
+            try {
+                var sync = document.getElementById("avisoSincroniaAdmin");
+                if (sync) {
+                    sync.style.display = "block";
+                    /* nuvem fora do ar: mostra o que esta vendo, para o dono
+                       nao achar que a lista esta vazia ou errada */
+                    if (ok) {
+                        sync.style.background = "";
+                        sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado às ' + dataHoraSegundos(Date.now())
+                            + ' · ' + getPedidos().length + ' pedido(s) neste painel, de todos os aparelhos.';
+                    } else {
+                        sync.style.background = "#8a6100";
+                        sync.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Nao consegui falar com a nuvem agora ('
+                            + dataHoraSegundos(Date.now()) + '). A lista abaixo e a ultima que baixou: '
+                            + getPedidos().length + ' pedido(s). Confira a internet e a URL do banco nas Configuracoes.';
+                    }
+                }
+            } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+        });
+        if (!window._syncPedidosTimer) iniciarSyncPedidos();
+    }
+    if (typeof TelegramBot !== "undefined") { TelegramBot.log("Painel aberto - comandos do bot em espera"); TelegramBot.iniciar(); TelegramBot.registrarSePendente(); }
+}
+/* ===== configuracoes PROPIAS do painel (independente do cliente) =====
+   Tudo aqui grava em vendedorPrefs. O site do cliente usa
+   refrigerantePrefs e nao enxerga nada disto. */
+function salvarPrefVendedor(campo, valor) {
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        p[campo] = valor;
+        localStorage.setItem("vendedorPrefs", JSON.stringify(p));
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+}
+function marcarOpcaoVendedor(id, valor) {
+    document.querySelectorAll("#" + id + " .op-btn").forEach(function (b) {
+        b.classList.toggle("ativo", b.dataset.v === valor);
+    });
+}
+function setFonteVendedor(btn) {
+    salvarPrefVendedor("cfgFonteTamanho", btn.dataset.v);
+    marcarOpcaoVendedor("opcoesFonteVendedor", btn.dataset.v);
+    if (typeof aplicarTema === "function") aplicarTema();
+}
+function setLeituraVendedor(btn) {
+    /* cada lado tem sua leitura: o painel usa as proprias regras
+       (body.admin[data-leitura=vertical]) e nao as da loja. */
+    salvarPrefVendedor("cfgLeitura", btn.dataset.v);
+    marcarOpcaoVendedor("opcoesLeituraVendedor", btn.dataset.v);
+    if (typeof aplicarTema === "function") aplicarTema();
+}
+function setSyncVendedor(btn) {
+    salvarPrefVendedor("cfgSyncMs", parseInt(btn.dataset.v, 10) || 60000);
+    marcarOpcaoVendedor("opcoesSyncVendedor", btn.dataset.v);
+    iniciarSyncPedidos();
+    var m = document.getElementById("syncMsg");
+    if (m) { m.style.color = "var(--texto-ok)"; m.textContent = "Sincronização salva neste painel."; }
+}
+/* ============================================================
+   A VALVA DO DIA: publica quantas vagas de hoje ja foram
+   usadas em /capacidade.json (chave publica, so numeros).
+   O cliente le esse total e trava quando a loja bateu o
+   teto - assim a trava vale para TODO mundo, e nao so para
+   quem esta neste aparelho. O painel e o unico lugar que ve
+   os pedidos de todos os aparelhos, entao e o unico que
+   publica esse numero certo.
+   ============================================================ */
+function limiteLojaDiaAdmin() {
+    var padrao = (typeof limiteLojaDia === "function") ? limiteLojaDia() : 80;
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        var v = parseInt(p.cfgLimitePedidosLoja, 10);
+        return (isNaN(v) || v < 1) ? padrao : v;
+    } catch (e) { return padrao; }
+}
+function publicarCapacidadeLoja(cb) {
+    if (typeof fetch !== "function" || typeof diaLimite !== "function") { if (cb) cb(false); return; }
+    var doDia = (typeof pedidosDoDia === "function") ? pedidosDoDia(getPedidos()) : [];
+    var dia = diaLimite(), quantos = doDia.length, teto = limiteLojaDiaAdmin();
+    /* modo gateway: publica pelo caminho seguro (o dono, com token) */
+    if (typeof gatewayLigado === "function" && gatewayLigado()) {
+        return publicarCapacidadeGateway(dia, quantos, teto, cb);
+    }
+    var corpo = JSON.stringify({ dia: dia, pedidos: quantos, limite: teto, quando: Date.now() });
+    var bases = (typeof nuvemEnderecos === "function") ? nuvemEnderecos() : [];
+    var i = 0;
+    (function tentar() {
+        if (i >= bases.length) { if (cb) cb(false); return; }
+        var base = bases[i++];
+        if (/\.json(\?|$)/i.test(base)) { tentar(); return; }   /* arquivo estatico e so leitura */
+        fetch(base + "/capacidade.json", { method: "PUT", body: corpo })
+            .then(function (r) { if (!r.ok) throw new Error("http " + r.status); if (cb) cb(true); })
+            .catch(function () { tentar(); });
+    })();
+}
+/* pedidos hoje x teto: o dono ve a valva enchendo antes de ela fechar */
+function avisoCapacidadePainel() {
+    var el = document.getElementById("capacidadeHoje");
+    if (!el) return;
+    var topo = limiteLojaDiaAdmin();
+    var feitos = (typeof pedidosDoDia === "function") ? pedidosDoDia(getPedidos()).length : 0;
+    var perto = topo > 0 && feitos >= topo * 0.8;
+    el.innerHTML = '<i class="fa fa-gauge' + (perto ? '-high' : '') + '"></i> Vagas de hoje: <b>'
+        + feitos + '</b> de <b>' + topo + '</b> pedidos'
+        + (perto ? ' — <b>o site vai bloquear em ' + topo + '</b>.' : '.');
+    el.style.color = perto ? "var(--texto-aviso)" : "var(--texto-ok)";
+}
+/* o dono escolhe o teto da loja no painel e o site ja passa a ler */
+function salvarLimiteLoja(btn) {
+    var v = parseInt(btn.dataset.v, 10);
+    if (isNaN(v) || v < 1) v = 80;
+    salvarPrefVendedor("cfgLimitePedidosLoja", v);
+    marcarOpcaoVendedor("opcoesLimiteLoja", String(v));
+    avisoCapacidadePainel();
+    publicarCapacidadeLoja();
+    var m = document.getElementById("syncMsg");
+    if (m) { m.style.color = "var(--texto-ok)"; m.textContent = "Limite de pedidos do dia salvo (" + v + ")."; }
+}
+
+/* pedidos de TODOS os aparelhos (nuvem), no tempo escolhido pelo dono */
+function iniciarSyncPedidos() {
+    if (typeof sincronizarPedidosNuvem !== "function") return;
+    if (window._syncPedidosTimer) { clearInterval(window._syncPedidosTimer); window._syncPedidosTimer = null; }
+    var ms = 60000;
+    try { ms = parseInt((JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").cfgSyncMs), 10) || 60000; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    window._syncPedidosTimer = setInterval(function () {
+        if (sessionStorage.getItem("adminLogado") === "1") {
+            sincronizarPedidosNuvem(function (ok) {
+                if (ok) { renderAdmin(); publicarCapacidadeLoja(); }
+                chegarNovosPedidos();
+            });
+        }
+    }, ms);
+}
+/* ===== atencao: avisa quando chega pedido de outro aparelho =====
+   (celular ou computador: o painel ve tudo) */
+var _pedidosAntes = null;
+function chegarNovosPedidos() {
+    var total = 0, ids = {};
+    try {
+        getPedidos().forEach(function (p) { total++; if (p && p.id) ids[p.id] = true; });
+    } catch (e) { return; }
+    if (_pedidosAntes === null) { _pedidosAntes = { total: total, ids: ids }; return; }
+    var novos = [];
+    Object.keys(ids).forEach(function (id) { if (!_pedidosAntes.ids[id]) novos.push(id); });
+    _pedidosAntes = { total: total, ids: ids };
+    if (!novos.length) return;
+    var box = document.getElementById("avisoNovos");
+    var txt = document.getElementById("avisoNovosTexto");
+    if (txt) {
+        txt.textContent = novos.length === 1
+            ? "Chegou 1 pedido novo (" + novos[0] + ") de outro aparelho."
+            : "Chegaram " + novos.length + " pedidos novos de outros aparelhos.";
+    }
+    if (box) {
+        box.style.display = "flex";
+        try {
+            var sync = document.getElementById("avisoSincroniaAdmin");
+            if (sync) {
+                sync.style.display = "block";
+                sync.innerHTML = '<i class="fa fa-cloud"></i> Sincronizado às ' + dataHoraSegundos(Date.now()) + ' · ' + total + ' pedido(s) neste painel, de todos os aparelhos.';
+            }
+        } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    }
+    try { if (navigator.vibrate) navigator.vibrate([90, 60, 90]); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    if (typeof renderAdmin === "function") renderAdmin();
+}
+function fecharAvisoNovos() {
+    var box = document.getElementById("avisoNovos");
+    if (box) box.style.display = "none";
+}
+function focarNovoPedido() {
+    fecharAvisoNovos();
+    var alvo = document.querySelector(".linha-pedido td.td-id");
+    if (alvo && typeof abrirFicha === "function") {
+        var tr = alvo.closest("tr");
+        if (tr && tr.getAttribute("onclick")) tr.click();
+    }
+    var lista = document.getElementById("listaPedidos");
+    if (lista && lista.scrollIntoView) lista.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function sincronizarAgora(btn) {
+    var msg = document.getElementById("syncMsg");
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sincronizando...'; }
+    if (msg) { msg.style.color = "var(--texto-aviso)"; msg.textContent = "Buscando pedidos novos na nuvem..."; }
+    function terminate(ok, extra) {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-cloud-download-alt"></i> Sincronizar agora'; }
+        if (msg) {
+            msg.style.color = ok ? "var(--texto-ok)" : "var(--texto-erro)";
+            msg.textContent = ok ? "Painel em dia" + (extra ? " (" + extra + ")" : "") : "Sem resposta da nuvem agora";
+        }
+        if (ok) renderAdmin();
+        mostrarVersoes();
+    }
+    if (typeof sincronizarPedidosNuvem === "function") {
+        sincronizarPedidosNuvem(function (ok) {
+            try {
+                var todos = getPedidos().length;
+                terminate(!!ok, todos + (todos === 1 ? " pedido" : " pedidos"));
+            } catch (e) { terminate(!!ok, ""); }
+        });
+    } else terminate(false, "");
+}
+/* versoes: cada um tem a sua configuracao, os dados continuam sincronizados.
+   Aproveita para conferir se o site publicado esta no ar. */
+function mostrarVersoes() {
+    var box = document.getElementById("versoesPainel");
+    if (!box) return;
+    var painelV = (typeof VERSAO_APP !== "undefined") ? VERSAO_APP : "?";
+    var pedidos = 0, sync = 0;
+    try { pedidos = getPedidos().length; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    try { sync = (JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").ultimaSync) || 0; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    box.innerHTML = '<div style="background:var(--bg-alt);border:1px solid var(--borda);border-radius:12px;padding:12px;font-size:.86rem">'
+        + '<div class="resumo-linha"><span>Versão deste painel (seu APK)</span><b>' + painelV + '</b></div>'
+        + '<div class="resumo-linha"><span>Versão publicada do site</span><b id="versaoSite"> conferindo...</b></div>'
+        + '<div class="resumo-linha"><span>APKs na versão</span><b id="versaoApk">—</b></div>'
+        + '<div class="resumo-linha"><span>Pedidos neste painel</span><b>' + pedidos + '</b></div>'
+        + '<div class="resumo-linha"><span>Última sincronização com a nuvem</span><b>'
+        + (sync ? tempoDesde(sync) + " atrás" : "agora") + '</b></div>'
+        + '<div style="margin-top:8px;color:#6b7280">Cada lado tem a sua configuração (tema, letra, tabela, tempo de sincronização). '
+        + 'Os <b>pedidos</b> e os <b>preços</b> são os mesmos e chegam pela nuvem. '
+        + 'O APK do cliente e o do vendedor são gerados sempre na versão do site.</div></div>';
+    try {
+        fetch("apk/versao-apk.txt", { cache: "no-store" })
+            .then(function (r) { return r.ok ? r.text() : ""; })
+            .then(function (t) {
+                var el = document.getElementById("versaoApk");
+                if (!el) return;
+                el.textContent = (t || "").trim() || "ainda não gerados nesta versão";
+            })
+            .catch(function () {});
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    try {
+        fetch("versao.txt", { cache: "no-store" })
+            .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
+            .then(function (t) {
+                var el = document.getElementById("versaoSite");
+                if (el) el.innerHTML = (t || "?").trim() + ' <span style="color:var(--texto-ok)">online</span>';
+            })
+            .catch(function () {
+                var el = document.getElementById("versaoSite");
+                if (el) el.innerHTML = '<span style="color:var(--texto-erro)">sem resposta do site</span>';
+            });
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+}
+function setTemaVendedor(btn){
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        p.cfgTema = btn.dataset.tema;
+        localStorage.setItem("vendedorPrefs", JSON.stringify(p));
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    marcarTemaVendedor();
+    if (typeof aplicarTema === "function") aplicarTema();
+}
+function marcarTemaVendedor(){
+    var tema = "claro";
+    try { tema = (JSON.parse(localStorage.getItem("vendedorPrefs") || "{}").cfgTema) || "claro"; } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    document.querySelectorAll("#temasVendedor .tema-btn").forEach(function(b){
+        b.classList.toggle("ativo", b.dataset.tema === tema);
+    });
+}
+function salvarConfigBot(btn){
+    var tok = (document.getElementById("cfgTGToken") || {}).value || "";
+    var chat = (document.getElementById("cfgTGChat") || {}).value || "";
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        p.cfgTelegramToken = tok.trim();
+        p.cfgTelegramChatId = chat.trim();
+        localStorage.setItem("vendedorPrefs", JSON.stringify(p));
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    var msg = document.getElementById("configBotMsg");
+    if (msg) { msg.style.color = "var(--texto-ok)"; msg.textContent = "Salvo neste painel (não afeta o site do cliente)."; }
+    if (btn) { btn.innerHTML = '<i class="fa fa-check"></i> Salvo'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-save"></i> Salvar'; }, 1500); }
+}
+function carregarConfigVendedor(){
+    var p = {};
+    try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    var t = document.getElementById("cfgTGToken");
+    if (t && document.activeElement !== t) t.value = p.cfgTelegramToken || "";
+    var c = document.getElementById("cfgTGChat");
+    if (c && document.activeElement !== c) c.value = p.cfgTelegramChatId || "";
+    marcarTemaVendedor();
+    marcarConfigVendedor();
+}
+/* marca as opcoes do painel com o que esta salvo nele */
+function marcarConfigVendedor() {
+    var p = {};
+    try { p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    marcarOpcaoVendedor("opcoesFonteVendedor", p.cfgFonteTamanho || "normal");
+    marcarOpcaoVendedor("opcoesLeituraVendedor", p.cfgLeitura || "horizontal");
+    marcarOpcaoVendedor("opcoesSyncVendedor", String(p.cfgSyncMs || 60000));
+    marcarOpcaoVendedor("opcoesLimiteLoja", String(p.cfgLimitePedidosLoja || 80));
+    avisoCapacidadePainel();
+}
+
+function filtrarAdmin(f, btn) {
+    filtroAdminAtual = f;
+    document.querySelectorAll(".filtro").forEach(b => b.classList.remove("ativo"));
+    btn.classList.add("ativo");
+    renderAdmin();
+}
+function renderAdmin() {
+    const selPeriodo = document.getElementById("periodoVendas");
+    const periodo = selPeriodo ? selPeriodo.value : "all";
+    const deEl = document.getElementById("periodoDe");
+    const ateEl = document.getElementById("periodoAte");
+    const de = deEl ? deEl.value : "";
+    const ate = ateEl ? ateEl.value : "";
+    const pedidos = filtrarPeriodo(getPedidos(), periodo, de, ate);
+
+    /* ---------- indicadores ---------- */
+    const total = pedidos.length;
+    const aguardando = pedidos.filter(p => p.status === "aguardando").length;
+    const andamento = pedidos.filter(p => ["confirmado","separacao","enviado"].includes(p.status)).length;
+    const entregues = pedidos.filter(p => p.status === "entregue").length;
+    const cancelados = pedidos.filter(p => p.status === "cancelado").length;
+    const faturamento = pedidos.filter(p => p.status !== "cancelado").reduce((t, p) => t + p.total, 0);
+    const ticket = total ? faturamento / pedidos.filter(p => p.status !== "cancelado").length : 0;
+
+    document.getElementById("stats").innerHTML =
+        '<div class="stat"><div class="num">' + total + '</div><div class="lbl">Total de pedidos</div></div>' +
+        '<div class="stat"><div class="num" style="color:#FF9800">' + aguardando + '</div><div class="lbl">Aguardando</div></div>' +
+        '<div class="stat azul"><div class="num">' + andamento + '</div><div class="lbl">Em andamento</div></div>' +
+        '<div class="stat verde"><div class="num">' + entregues + '</div><div class="lbl">Entregues</div></div>' +
+        '<div class="stat verde"><div class="num">' + formatBRL(faturamento) + '</div><div class="lbl">Faturamento</div></div>' +
+        '<div class="stat"><div class="num">' + formatBRL(ticket) + '</div><div class="lbl">Ticket médio</div></div>' +
+        '<div class="stat"><div class="num" style="color:var(--texto-erro)">' + cancelados + '</div><div class="lbl">Cancelados</div></div>';
+
+    renderResumoPeriodo(periodo, de, ate, pedidos, faturamento);
+
+    /* ---------- contadores nos filtros ---------- */
+    var rotulos = {todos:"Todos", aguardando:"Aguardando", confirmado:"Confirmados", enviado:"Enviados", entregue:"Entregues"};
+    document.querySelectorAll(".filtro").forEach(function(b){
+        var f = b.dataset.f;
+        if (!f || !rotulos[f]) return;
+        var n = (f === "todos") ? total : pedidos.filter(function(p){ return p.status === f; }).length;
+        b.innerHTML = rotulos[f] + ' <span class="filtro-count">' + n + '</span>';
+    });
+
+    /* ---------- lista filtrada ---------- */
+    let lista = pedidos;
+    if (filtroAdminAtual !== "todos") lista = lista.filter(p => p.status === filtroAdminAtual);
+
+    const termo = buscaAdmin.trim().toLowerCase();
+    if (termo) {
+        lista = lista.filter(function(p) {
+            return [p.id, p.nome, p.tel, p.bairro, p.regiao, p.pagamento].join(" ").toLowerCase().indexOf(termo) >= 0
+                || (p.itens || []).some(function(i){ return String(i.name || "").toLowerCase().indexOf(termo) >= 0; });
+        });
+    }
+
+    const box = document.getElementById("listaPedidos");
+    if (lista.length === 0) {
+        box.innerHTML = '<div class="vazio"><i class="fa fa-inbox"></i><p>Nenhum pedido encontrado.</p></div>';
+    } else {
+        box.innerHTML = tabelaPedidos(lista);
+    }
+    box.innerHTML = box.innerHTML + resumoProdutos(pedidos) + resumoPorStatus(pedidos);
+}
+
+/* ---------- tabela profissional ---------- */
+function tabelaPedidos(lista) {
+    let h = '<div class="tab-wrap"><table class="tabela-pedidos"><thead><tr>'
+        + '<th>Pedido</th><th>Cliente</th><th>Entrega</th><th>Pagamento</th>'
+        + '<th class="num">Frete</th><th class="num">Total</th>'
+        + '<th>Status</th><th class="acao">Ações</th></tr></thead><tbody>';
+    lista.forEach(function (p) {
+        const aberto = (fichaAberta === p.id);
+        h += '<tr class="linha-pedido" onclick="abrirFicha(\'' + p.id + '\')">'
+            + '<td data-label="Pedido" class="td-id">' + p.id + '<span class="sub">' + (typeof tick === "function" ? tick(p.criadoEm) : dataHora(p.criadoEm)) + '</span></td>'
+            + '<td data-label="Cliente" class="td-cliente">' + p.nome + '<span class="sub"><i class="fa fa-phone"></i> ' + p.tel + '</span></td>'
+            + '<td data-label="Entrega">' + (p.bairro || "—") + '<span class="sub">' + (p.regiao || "") + '</span></td>'
+            + '<td data-label="Pagamento">' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? '<span class="sub">troco p/ ' + p.troco + '</span>' : '') + '</td>'
+            + '<td data-label="Frete" class="td-num">' + (p.frete === 0 ? '<b style="color:var(--texto-ok)">GRÁTIS</b>' : formatBRL(p.frete)) + '</td>'
+            + '<td data-label="Total" class="td-num td-total">' + formatBRL(p.total) + '</td>'
+            + '<td data-label="Status">' + statusBadge(p.status) + '</td>'
+            + '<td data-label="Ações" class="td-acoes" onclick="event.stopPropagation()">' + botoesStatus(p) + '</td>'
+            + '</tr>';
+        if (aberto) h += '<tr class="linha-ficha"><td data-label="" colspan="8" style="padding:0 6px 10px">' + fichaPedido(p) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    return h;
+}
+
+/* ---------- botoes de status (todos os comandos) ---------- */
+function botoesStatus(p) {
+    let h = '';
+    if (p.status !== "confirmado" && p.status !== "entregue")
+        h += '<button class="btn-st b-confirmar" title="Confirmar pedido" onclick="mudarStatus(\'' + p.id + '\',\'confirmado\')"><i class="fa fa-check"></i></button>';
+    if (p.status !== "separacao")
+        h += '<button class="btn-st b-separar" title="Em separacao" onclick="mudarStatus(\'' + p.id + '\',\'separacao\')"><i class="fa fa-box"></i></button>';
+    if (p.status !== "enviado")
+        h += '<button class="btn-st b-enviar" title="Saiu para entrega" onclick="mudarStatus(\'' + p.id + '\',\'enviado\')"><i class="fa fa-truck"></i></button>';
+    if (p.status !== "entregue")
+        h += '<button class="btn-st b-entregar" title="Entregue" onclick="mudarStatus(\'' + p.id + '\',\'entregue\')"><i class="fa fa-home"></i></button>';
+    if (p.status !== "cancelado")
+        h += '<button class="btn-st b-cancelar" title="Cancelar" onclick="cancelarPedido(\'' + p.id + '\')"><i class="fa fa-times"></i></button>';
+    h += '<a class="btn-zap" title="Falar com o cliente no WhatsApp" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i></a>';
+    h += '<button class="btn-st b-copiar" title="Copiar resumo" onclick="copiarPedido(\'' + p.id + '\')"><i class="fa fa-copy"></i></button>';
+    return h;
+}
+
+/* ---------- ficha detalhada ---------- */
+function fichaPedido(p) {
+    let h = '<div class="ficha"><h4><i class="fa fa-file-text"></i> Detalhes do pedido ' + p.id + '</h4><div class="ficha-grid">';
+    h += '<div>Cliente: <b>' + p.nome + '</b></div>';
+    h += '<div>WhatsApp: <b>' + p.tel + '</b></div>';
+    h += '<div>CPF: <b>' + (p.cpf || "não informado") + '</b></div>';
+    h += '<div>Data: <b>' + dataHora(p.criadoEm) + '</b> <span class="sub">(' + dataHoraSegundos(p.criadoEm) + ')</span></div>';
+    h += '<div>Endereco: <b>' + p.end + (p.comp ? " (" + p.comp + ")" : "") + '</b></div>';
+    h += '<div>Bairro / Regiao: <b>' + (p.bairro || "—") + ' / ' + (p.regiao || "—") + '</b></div>';
+    h += '<div>Pagamento: <b>' + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + '</b></div>';
+    h += '<div>Frete: <b>' + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + '</b></div>';
+    h += '<div class="ficha-linha"><b>Itens:</b></div>';
+    (p.itens || []).forEach(function (i) {
+        h += '<div>' + i.name + ' <span class="sub">x' + i.qty + ' — ' + formatBRL(i.subtotal) + '</span></div>';
+    });
+    h += '<div class="ficha-linha"><b>Subtotal:</b> ' + formatBRL(p.subtotal)
+        + ' &nbsp;&nbsp; <b>Total:</b> ' + formatBRL(p.total) + '</div>';
+    if (p.historico && p.historico.length) {
+        h += '<div class="ficha-linha" style="display:flex;align-items:center;justify-content:space-between;"><b>Acompanhamento:</b> <span class="sub">cada passo com a hora exata</span> <button type="button" class="tick-min-admin" onclick="toggleTicksAdmin(\'' + p.id + '\')" title="Minimizar">—</button></div>';
+        h += '<div id="ticks-admin-' + p.id + '">';
+        p.historico.slice().reverse().forEach(function (ev) {
+            h += '<div class="ficha-tick"><i class="fa fa-circle"></i> ' + (STATUS_LABEL[ev.status] || ev.status)
+                + ' — ' + dataHoraSegundos(ev.quando)
+                + ' <span class="sub">(' + tempoDesde(ev.quando) + ')</span></div>';
+        });
+        h += '</div>';
+        var ultimo = p.historico[p.historico.length - 1];
+        if (ultimo && ultimo.quando) {
+            h += '<div class="ficha-linha"><b>Parado em:</b> ' + (STATUS_LABEL[ultimo.status] || ultimo.status)
+                + ' há ' + tempoDesde(ultimo.quando) + '</div>';
+        }
+    }
+    h += '<div class="ficha-linha"><b>Comandos:</b> '
+        + '<button class="btn-st b-copiar" onclick="copiarPedido(\'' + p.id + '\')"><i class="fa fa-copy"></i> Copiar</button> '
+        + '<a class="btn-zap" href="#" onclick="falarCliente(\'' + p.tel + '\',\'' + p.id + '\');return false;"><i class="fa fa-whatsapp"></i> WhatsApp</a>'
+        + '</div>';
+    h += '</div></div>';
+    return h;
+}
+
+function abrirFicha(id) {
+    fichaAberta = (fichaAberta === id) ? "" : id;
+    renderAdmin();
+}
+
+/* ---------- cancelamento com confirmacao ---------- */
+/* ---------- copiar texto (calculadoras) ---------- */
+function copiarTexto(txt) {
+    var s = String(txt == null ? "" : txt);
+    function pronto() { return true; }
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(s).catch(function () {});
+            return pronto();
+        }
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    try {
+        var t = document.createElement("textarea");
+        t.value = s;
+        t.style.position = "fixed";
+        t.style.opacity = "0";
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand("copy");
+        t.remove();
+        return pronto();
+    } catch (e) { return false; }
+}
+function cancelarPedido(id) {
+    if (!confirm("Cancelar o pedido " + id + "?")) return;
+    mudarStatus(id, "cancelado");
+}
+
+/* ---------- resumo dos produtos mais vendidos ---------- */
+function resumoProdutos(pedidos) {
+    var rp = {};
+    pedidos.forEach(function(p){ (p.itens || []).forEach(function(i){ var n = i.name || i.nome || ''; if (!rp[n]) rp[n] = {q:0}; rp[n].q += (i.qty || 0); }); });
+    var nomes = Object.keys(rp).sort(function(a,b){return (rp[b].q||0)-(rp[a].q||0);}).slice(0, 12);
+    if (!nomes.length) return '';
+    var htmlp = '<div class="card" style="margin-top:14px"><h4 style="margin:0 0 10px;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-star"></i> Produtos mais vendidos</h4>';
+    nomes.forEach(function (n) {
+        htmlp += '<div class="resumo-linha"><span>' + n + '</span><b>' + rp[n].q + ' un</b></div>';
+    });
+    htmlp += '</div>';
+    return htmlp;
+}
+
+/* ---------- resumo por status ---------- */
+function resumoPorStatus(pedidos) {
+    var ordem = ["aguardando","confirmado","separacao","enviado","entregue","cancelado"];
+    var html = '<div class="card" style="margin-top:14px"><h4 style="margin:0 0 10px;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-chart-bar"></i> Pedidos por status</h4>';
+    ordem.forEach(function (st) {
+        var ps = pedidos.filter(function (p){ return p.status === st; });
+        if (!ps.length) return;
+        var soma = ps.filter(function (p){ return p.status !== "cancelado"; }).reduce(function (t, p){ return t + p.total; }, 0);
+        html += '<div class="resumo-linha"><span>' + statusBadge(st) + '</span>'
+              + '<b>' + ps.length + ' pedido(s) — ' + formatBRL(soma) + '</b></div>';
+    });
+    html += '</div>';
+    return html;
+}
+
+
+/* ============================================
+   FERRAMENTAS DO VENDEDOR
+   Calculadora de preco/lucro, calculadora de troco,
+   notas/documentos, exportar e historico de precos.
+   Tudo salvo neste aparelho, sem sair do painel.
+   ============================================ */
+var K_FERRAMENTAS = "convencao_ferramentas";
+function ferramentasDados() {
+    try { return JSON.parse(localStorage.getItem(K_FERRAMENTAS) || "{}"); }
+    catch (e) { return {}; }
+}
+function salvarFerramentas(d) {
+    try { localStorage.setItem(K_FERRAMENTAS, JSON.stringify(d)); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+}
+
+function numero(v) {
+    var n = parseFloat(String(v || "").replace(/R\$/gi, "").replace(/\./g, "").replace(",", "."));
+    return isNaN(n) ? 0 : n;
+}
+function brl(v) { return formatBRL(v); }
+
+/* ---------- 1) calculadora de PRECO, LUCRO, IMPOSTO e MARGEM ----------
+   uso: digite o custo e a margem (ou o preco de venda) e o painel
+   mostra quanto voce GANHA de verdade, ja com imposto e frete. */
+function calcPreco() {
+    var el = function (id) { return document.getElementById(id); };
+    var custo = numero(el("calcCusto") ? el("calcCusto").value : 0);
+    var margem = numero(el("calcMargem") ? el("calcMargem").value : 0);
+    var desconto = numero(el("calcDesc") ? el("calcDesc").value : 0);
+    var qtd = Math.max(1, Math.round(numero(el("calcQtd") ? el("calcQtd").value : 0)) || 1);
+    var imposto = numero(el("calcImposto") ? el("calcImposto").value : 0);
+    var fretePago = numero(el("calcFrete") ? el("calcFrete").value : 0);
+    var fundo = el("calcResultado");
+
+    if (custo <= 0) { fundo.innerHTML = '<span class="calc-vazio">Digite o custo de compra do produto.</span>'; return; }
+
+    /* preco de venda sugerido a partir do custo + margem */
+    var venda = custo * (1 + margem / 100);
+    venda = venda * (1 - desconto / 100);              /* desconto dado ao cliente */
+    venda = arredonda2(venda);
+
+    /* o que sobra de verdade */
+    var custoTotal = arredonda2(custo + fretePago);
+    var impostoValor = arredonda2(venda * imposto / 100);
+    var lucro = arredonda2(venda - custoTotal - impostoValor);
+    var margemReal = venda > 0 ? (lucro / venda) * 100 : 0;
+    var markup = custo > 0 ? ((venda - custo - impostoValor) / (custo + fretePago)) * 100 : 0;
+    var corLucro = lucro > 0 ? "var(--texto-ok)" : "var(--texto-erro)";
+    var totalVenda = arredonda2(venda * qtd);
+    var lucroTotal = arredonda2(lucro * qtd);
+
+    fundo.innerHTML =
+        '<div class="calc-destaque"><span>Preço de venda sugerido</span><b>' + brl(venda) + '</b>'
+        + '<small>arredondado: ' + brl(venda) + '</small></div>'
+        + linhaCalc("Custo do produto", brl(custo))
+        + linhaCalc("Frete que voce paga", brl(fretePago))
+        + linhaCalc("Imposto (" + arredonda2(imposto) + "%)", brl(impostoValor))
+        + '<div class="resumo-linha calc-divisor"><span>Custo total</span><b>' + brl(custoTotal) + '</b></div>'
+        + '<div class="resumo-linha"><span>Lucro por unidade</span><b style="color:' + corLucro + '">' + brl(lucro) + '</b></div>'
+        + '<div class="resumo-linha"><span>Margem sobre a venda</span><b style="color:' + corLucro + '">' + arredonda2(margemReal).toFixed(2).replace(".", ",") + '%</b></div>'
+        + '<div class="resumo-linha"><span>Markup sobre o custo</span><b>' + arredonda2(markup).toFixed(2).replace(".", ",") + '%</b></div>'
+        + linhaCalc("Lucro com " + qtd + " un.", brl(lucroTotal), corLucro)
+        + linhaCalc("Venda total (" + qtd + " un.)", brl(totalVenda))
+        + (lucro <= 0 ? '<div class="aviso aviso-atencao calc-fim"><i class="fa fa-circle-exclamation"></i>'
+            + ' <span>Com esses numeros voce <b>perde dinheiro</b>. Aumente a margem ou negocie o custo.</span></div>' : '')
+        + '<button type="button" class="btn-st b-copiar calc-copiar" onclick="copiarTexto(\'' + brl(venda) + '\')">'
+        + '<i class="fa fa-copy"></i> Copiar preço</button>';
+}
+
+function linhaCalc(rotulo, valor, cor) {
+    return '<div class="resumo-linha"><span>' + rotulo + '</span><b' + (cor ? ' style="color:' + cor + '"' : '') + '>' + valor + '</b></div>';
+}
+
+/* arredonda para 2 casas (a calculadora do vendedor tambem) */
+function arredonda2(v) {
+    var n = parseFloat(v);
+    if (isNaN(n) || !isFinite(n)) return 0;
+    return Math.round((n + (n >= 0 ? 1e-9 : -1e-9)) * 100) / 100;
+}
+
+/* ---------- 2) calculadora de TROCO (notas e moedas) ---------- */
+function calcTroco() {
+    var total = numero(document.getElementById("trocoTotal").value);
+    var pago = numero(document.getElementById("trocoPago").value);
+    var out = document.getElementById("trocoResultado");
+    if (pago <= 0) { out.innerHTML = '<span class="calc-vazio">Digite o total e o valor recebido.</span>'; return; }
+
+    var troco = arredonda2(pago - total);
+    if (troco < 0) {
+        out.innerHTML = '<div class="aviso aviso-atencao"><i class="fa fa-circle-exclamation"></i>'
+            + ' <span>Falta <b>' + brl(arredonda2(-troco)) + '</b> para completar a conta.</span></div>';
+        return;
+    }
+
+    /* menor quantidade de notas/moedas: 100, 50, 20, 10, 5, 2, 1 */
+    var restante = troco, notas = [], moedas = [];
+    [100, 50, 20, 10, 5, 2, 1].forEach(function (n) {
+        var q = Math.floor(restante / n + 1e-9);
+        if (q > 0) { notas.push(q + "x " + n); restante = arredonda2(restante - q * n); }
+    });
+    [0.50, 0.25, 0.10, 0.05, 0.01].forEach(function (c) {
+        var q = Math.floor(restante / c + 1e-9);
+        if (q > 0) { moedas.push(q + "x " + c.toFixed(2).replace(".", ",")); restante = arredonda2(restante - q * c); }
+    });
+
+    out.innerHTML =
+        '<div class="calc-destaque"><span>Troco a dar</span><b style="color:var(--texto-ok)">' + brl(troco) + '</b></div>'
+        + (notas.length ? linhaCalc("Em notas", notas.join(" + ")) : '')
+        + (moedas.length ? linhaCalc("Em moedas", moedas.join(" + ")) : '')
+        + (restante > 0.009 ? linhaCalc("Sobra sem combina", brl(restante)) : linhaCalc("Bate certinho", "sem sobra", "var(--texto-ok)"))
+        + '<button type="button" class="btn-st b-copiar calc-copiar" onclick="copiarTexto(\'' + brl(troco) + '\')">'
+        + '<i class="fa fa-copy"></i> Copiar troco</button>';
+}
+
+/* ---------- 2b) conta de mercadorias: quantas unidades saem ---------- */
+function contaCarga() {
+    var packs = Math.max(0, Math.floor(numero((document.getElementById("contaQtdPacks") || {}).value)));
+    var unid = Math.max(0, Math.floor(numero((document.getElementById("contaUnidades") || {}).value)));
+    var pet = Math.max(0, Math.floor(numero((document.getElementById("contaPet") || {}).value)));
+    var out = document.getElementById("contaCargaResultado");
+    if (!out) return;
+    if (!packs && !pet) {
+        out.innerHTML = '<span class="calc-vazio">Digite os packs e as garrafas de 1,5 L.</span>';
+        return;
+    }
+    var total = packs * unid + pet;
+    var petTot = pet + (unid ? Math.round(packs * unid / 6) * 1.5 / 6 : 0);
+    out.innerHTML =
+        '<div class="calc-destaque"><span>Total de mercadorias</span><b style="color:var(--texto-ok)">' + total + ' un.</b></div>'
+        + linhaCalc("Packs", packs + (unid ? " x " + unid + " = " + (packs * unid) + " un." : ""))
+        + (pet ? linhaCalc("Garrafas de 1,5 L", pet + " un.") : "")
+        + linhaCalc("Equivalente em garrafas de 2 L", Math.round(total * 2 / 6) + " un.")
+        + linhaCalc("Volume aproximado", (total * 0.33).toFixed(1).replace(".", ",") + " L")
+        + '<button type="button" class="btn-st b-copiar calc-copiar" onclick="copiarTexto(\'' + total + ' unidades\')">'
+        + '<i class="fa fa-copy"></i> Copiar contagem</button>';
+}
+
+/* ---------- 3) notas / documentos da loja ---------- */
+function carregarNotas() {
+    var d = ferramentasDados();
+    var el = document.getElementById("notasLoja");
+    if (el && !el.value) el.value = d.notas || "";
+    var t = document.getElementById("notasTitulo");
+    if (t && !t.value) t.value = d.notasTitulo || "";
+    var dt = document.getElementById("notasData");
+    if (dt && !dt.value) dt.value = d.notasData || hojeISO();
+}
+/* ---------- anotacoes: titulo, data e historico ---------- */
+function notasHistorico() {
+    var d = ferramentasDados();
+    if (!d.notasHistorico) d.notasHistorico = [];
+    return d.notasHistorico;
+}
+function hojeISO() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function salvarNotas() {
+    var d = ferramentasDados();
+    var el = document.getElementById("notasLoja");
+    if (!el) return;
+    var texto = el.value.trim();
+    var msg = document.getElementById("notasMsg");
+    if (!texto) {
+        if (msg) { msg.style.color = "var(--texto-erro)"; msg.textContent = "Escreva alguma coisa antes de salvar."; }
+        return;
+    }
+    var titulo = (document.getElementById("notasTitulo") || {}).value || "Anotação";
+    var data = (document.getElementById("notasData") || {}).value || hojeISO();
+
+    d.notas = texto;
+    d.notasTitulo = titulo;
+    d.notasData = data;
+    d.notasSalvoEm = Date.now();
+
+    var hist = notasHistorico();
+    hist.unshift({ titulo: titulo, data: data, texto: texto, quando: Date.now() });
+    if (hist.length > 50) hist.length = 50;
+    salvarFerramentas(d);
+
+    if (msg) { msg.style.color = "var(--texto-ok)"; msg.textContent = "Anotação salva (" + data + ")."; }
+    historicoNotas();
+}
+/* lista as anotacoes ja salvas: da para abrir e apagar */
+function historicoNotas() {
+    var box = document.getElementById("notasHistorico");
+    if (!box) return;
+    var hist = notasHistorico();
+    if (!hist.length) { box.innerHTML = ""; return; }
+    var h = '<h5 style="margin:12px 0 6px;font-size:.88rem;color:var(--primary-color)">'
+          + '<i class="fa fa-history"></i> Anotações salvas (' + hist.length + ')</h5><div class="notas-lista">';
+    hist.forEach(function (n, i) {
+        var previa = String(n.texto).replace(/\s+/g, " ");
+        if (previa.length > 90) previa = previa.substring(0, 90) + "...";
+        h += '<div class="notas-item">'
+           + '<div class="ni-cab"><b>' + (n.titulo || "Anotação") + '</b><span class="ni-data">' + (n.data || "") + '</span></div>'
+           + '<div class="ni-texto">' + previa + '</div>'
+           + '<div class="ni-acoes">'
+           + '<button type="button" class="ni-btn" onclick="abrirNota(' + i + ')"><i class="fa fa-pen"></i> Abrir</button>'
+           + '<button type="button" class="ni-btn ni-del" onclick="apagarNota(' + i + ')"><i class="fa fa-trash"></i> Apagar</button>'
+           + '</div></div>';
+    });
+    h += '</div>';
+    box.innerHTML = h;
+}
+function abrirNota(i) {
+    var n = notasHistorico()[i];
+    if (!n) return;
+    document.getElementById("notasTitulo").value = n.titulo || "";
+    document.getElementById("notasData").value = n.data || hojeISO();
+    document.getElementById("notasLoja").value = n.texto || "";
+    document.getElementById("notasLoja").focus();
+    var m = document.getElementById("notasMsg");
+    if (m) { m.style.color = "#1d5fbf"; m.textContent = "Anotação aberta. Edite e salve de novo."; }
+}
+function apagarNota(i) {
+    if (!confirm("Apagar esta anotação?")) return;
+    notasHistorico().splice(i, 1);
+    salvarFerramentas(ferramentasDados());
+    historicoNotas();
+}
+function baixarNotas() {
+    var el = document.getElementById("notasLoja");
+    if (!el || !el.value.trim()) { alert("Escreva alguma coisa antes de baixar."); return; }
+    var blob = new Blob([el.value], { type: "text/plain;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "anotacoes-convencao.txt";
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+/* ---------- 4) exportar pedidos (CSV para Excel) ---------- */
+function exportarPedidos() {
+    var pedidos = getPedidos();
+    if (!pedidos.length) { alert("Nenhum pedido para exportar."); return; }
+    var linhas = ["Pedido;Data;Status;Cliente;WhatsApp;Bairro;Regiao;Pagamento;Troco;Subtotal;Frete;Total;Itens"];
+    pedidos.forEach(function (p) {
+        var itens = (p.itens || []).map(function (i) { return i.name + " x" + i.qty; }).join(" | ");
+        var data = p.criadoEm && typeof dataHoraSegundos === "function" ? dataHoraSegundos(p.criadoEm) : "";
+        linhas.push([p.id, data, (STATUS_LABEL[p.status] || p.status), p.nome, p.tel,
+            (p.bairro || "").replace(/;/g, ","), (p.regiao || "").replace(/;/g, ","), p.pagamento,
+            (p.troco || ""), p.subtotal, p.frete, p.total, itens.replace(/;/g, ",")].join(";"));
+    });
+    var blob = new Blob(["﻿" + linhas.join("\n")], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pedidos-convencao.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+/* ---------- 5) historico de precos editados ---------- */
+function historicoPrecos() {
+    var box = document.getElementById("histPrecos");
+    if (!box) return;
+    var d = ferramentasDados();
+    var hist = d.historicoPrecos || [];
+    if (!hist.length) { box.innerHTML = '<div class="vazio" style="padding:22px"><p>Nenhum preço editado ainda.</p></div>'; return; }
+    var h = "";
+    hist.slice(0, 40).forEach(function (r) {
+        h += '<div class="resumo-linha"><span>' + r.nome + '</span><b>' + r.de + " &rarr; " + r.para
+            + ' <small style="color:#8a8a8a">' + r.quando + '</small></b></div>';
+    });
+    box.innerHTML = h;
+}
+function registrarPreco(nome, de, para) {
+    var d = ferramentasDados();
+    d.historicoPrecos = d.historicoPrecos || [];
+    d.historicoPrecos.unshift({
+        nome: nome, de: de, para: para,
+        quando: (typeof dataCurta === "function" ? dataCurta(Date.now()) : "")
+    });
+    if (d.historicoPrecos.length > 60) d.historicoPrecos.length = 60;
+    salvarFerramentas(d);
+    historicoPrecos();
+}
+
+/* ---------- 6) resumo do dia ---------- */
+function resumoDoDia() {
+    var box = document.getElementById("resumoDia");
+    if (!box) return;
+    var hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    var doDia = getPedidos().filter(function (p) { return (p.criadoEm || 0) >= hoje.getTime(); });
+    var abertos = doDia.filter(function (p) { return p.status === "aguardando"; }).length;
+    var fat = doDia.filter(function (p) { return p.status !== "cancelado"; }).reduce(function (t, p) { return t + p.total; }, 0);
+    var itens = doDia.reduce(function (t, p) {
+        return t + (p.itens || []).reduce(function (s, i) { return s + (i.qty || 0); }, 0);
+    }, 0);
+    box.innerHTML =
+        '<div class="stat"><div class="num">' + doDia.length + '</div><div class="lbl">Pedidos hoje</div></div>'
+        + '<div class="stat"><div class="num" style="color:#FF9800">' + abertos + '</div><div class="lbl">Aguardando</div></div>'
+        + '<div class="stat verde"><div class="num">' + brl(fat) + '</div><div class="lbl">Faturamento do dia</div></div>'
+        + '<div class="stat azul"><div class="num">' + itens + '</div><div class="lbl">Itens vendidos</div></div>';
+    avisoCapacidadePainel();
+}
+function copiarPedido(id) {
+    const p = getPedidos().find(x => x.id === id);
+    if (!p) return;
+    var linhas = p.itens.map(function(i) { return "- " + i.name + " x" + i.qty + " = " + formatBRL(i.subtotal); }).join("\n");
+    var txt = "PEDIDO " + p.id + "\n"
+        + "Cliente: " + p.nome + (p.cpf ? "\nCPF: " + p.cpf : "") + "\n"
+        + "WhatsApp: " + p.tel + "\n"
+        + "Endereço: " + p.end + (p.comp ? " (" + p.comp + ")" : "") + " - " + p.bairro + "\n"
+        + "Região: " + p.regiao + "\n"
+        + "Pagamento: " + p.pagamento + (p.pagamento === "Dinheiro" && p.troco ? " (troco para " + p.troco + ")" : "") + "\n"
+        + "Frete: " + (p.frete === 0 ? "GRÁTIS" : formatBRL(p.frete)) + "\n"
+        + "Itens:\n" + linhas + "\n"
+        + "TOTAL: " + formatBRL(p.total) + "\n"
+        + "Status: " + (STATUS_LABEL[p.status] || p.status);
+    function pronto() { alert("Pedido " + p.id + " copiado!"); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(pronto).catch(function(){ copiarAntigo(txt); });
+    } else { copiarAntigo(txt); }
+}
+function copiarAntigo(txt) {
+    const ta = document.createElement("textarea");
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); alert("Pedido copiado!"); } catch (e) { alert("Não foi possível copiar."); }
+    document.body.removeChild(ta);
+}
+
+/* ============================================================
+   SELETOR DE PERIODO AMPLIADO (dias, semanas, meses, anos,
+   faixa personalizada) + resumo "inteligente" na tela.
+   t0 = null  -> sem inicio;  t1 = null -> ate agora.
+   ============================================================ */
+var MS_DIA = 86400000;
+function inicioDoDia(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }
+function isoData(ms) {
+    var d = new Date(ms);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function dataCurta(ms) {
+    var d = new Date(ms);
+    return String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + d.getFullYear();
+}
+function parseDataInput(v) {
+    /* "aaaa-mm-dd" (input date) montado no fuso LOCAL, sem escorregar
+       um dia por causa do UTC. */
+    if (!v) return null;
+    var p = String(v).split("-");
+    if (p.length !== 3) return null;
+    var d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+    return isNaN(d.getTime()) ? null : d;
+}
+function calcularIntervalo(periodo, de, ate) {
+    var agora = new Date();
+    var hoje0 = inicioDoDia(agora);
+    var ds = (agora.getDay() + 6) % 7;              /* segunda = 0 */
+    var iniSemana = hoje0 - ds * MS_DIA;
+    var t0 = null, t1 = null, label = "Tudo", erro = false;
+    function ultimosDias(n) { t0 = hoje0 - (n - 1) * MS_DIA; }
+    function desdeMes(qtd)  { t0 = new Date(agora.getFullYear(), agora.getMonth() - (qtd - 1), 1).getTime(); }
+    switch (periodo) {
+        case "hoje":       t0 = hoje0; label = "Hoje"; break;
+        case "ontem":      t0 = hoje0 - MS_DIA; t1 = hoje0 - 1; label = "Ontem"; break;
+        case "anteontem":  t0 = hoje0 - 2 * MS_DIA; t1 = hoje0 - MS_DIA - 1; label = "Anteontem"; break;
+        case "d3":         ultimosDias(3); label = "Últimos 3 dias"; break;
+        case "d7":         ultimosDias(7); label = "Últimos 7 dias"; break;
+        case "d15":        ultimosDias(15); label = "Últimos 15 dias"; break;
+        case "d30":        ultimosDias(30); label = "Últimos 30 dias"; break;
+        case "d60":        ultimosDias(60); label = "Últimos 60 dias"; break;
+        case "d90":        ultimosDias(90); label = "Últimos 90 dias"; break;
+        case "estaSemana": t0 = iniSemana; label = "Esta semana"; break;
+        case "semPassada": t0 = iniSemana - 7 * MS_DIA; t1 = iniSemana - 1; label = "Semana passada"; break;
+        case "mes":        desdeMes(1); label = "Este mês"; break;
+        case "mesPassado":
+            t0 = new Date(agora.getFullYear(), agora.getMonth() - 1, 1).getTime();
+            t1 = new Date(agora.getFullYear(), agora.getMonth(), 1).getTime() - 1;
+            label = "Mês passado"; break;
+        case "m6":         desdeMes(6);  label = "Últimos 6 meses"; break;
+        case "m12":        desdeMes(12); label = "Últimos 12 meses"; break;
+        case "ano":        t0 = new Date(agora.getFullYear(), 0, 1).getTime(); label = "Este ano"; break;
+        case "anoPassado":
+            t0 = new Date(agora.getFullYear() - 1, 0, 1).getTime();
+            t1 = new Date(agora.getFullYear(), 0, 1).getTime() - 1;
+            label = "Ano passado"; break;
+        case "custom": {
+            var dd = parseDataInput(de), da = parseDataInput(ate);
+            if (dd) t0 = inicioDoDia(dd);
+            if (da) t1 = inicioDoDia(da) + MS_DIA - 1;
+            label = "Personalizado";
+            if (dd && da && dd.getTime() > da.getTime()) {
+                erro = true;                       /* datas invertidas */
+                t0 = inicioDoDia(da);
+                t1 = inicioDoDia(dd) + MS_DIA - 1;
+            }
+            break;
+        }
+        default: label = "Tudo"; break;
+    }
+    return { t0: t0, t1: t1, label: label, erro: erro };
+}
+function filtrarPeriodo(pedidos, periodo, de, ate) {
+    if (!periodo || periodo === "all") return pedidos.slice();
+    var iv = calcularIntervalo(periodo, de, ate);
+    return pedidos.filter(function (p) {
+        var tn = p.criadoEm || 0;
+        if (iv.t0 != null && tn < iv.t0) return false;
+        if (iv.t1 != null && tn > iv.t1) return false;
+        return true;
+    });
+}
+function mudarPeriodo() {
+    var sel = document.getElementById("periodoVendas");
+    if (!sel) return;
+    var faixa = document.getElementById("periodoFaixa");
+    var de = document.getElementById("periodoDe");
+    var ate = document.getElementById("periodoAte");
+    if (sel.value === "custom") {
+        if (faixa) faixa.style.display = "inline-flex";
+        if (de && !de.value) de.value = isoData(Date.now() - 29 * MS_DIA);
+        if (ate && !ate.value) ate.value = isoData(Date.now());
+    } else if (faixa) {
+        faixa.style.display = "none";
+    }
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        p.cfgPeriodo = sel.value;
+        p.cfgPeriodoDe = de ? de.value : "";
+        p.cfgPeriodoAte = ate ? ate.value : "";
+        localStorage.setItem("vendedorPrefs", JSON.stringify(p));
+    } catch (e) {/* proposital: nao pode travar o painel */}
+    renderAdmin();
+}
+function carregarPeriodo() {
+    var sel = document.getElementById("periodoVendas");
+    if (!sel) return;
+    try {
+        var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+        if (p.cfgPeriodo) sel.value = p.cfgPeriodo;
+        var de = document.getElementById("periodoDe");
+        var ate = document.getElementById("periodoAte");
+        if (de && p.cfgPeriodoDe) de.value = p.cfgPeriodoDe;
+        if (ate && p.cfgPeriodoAte) ate.value = p.cfgPeriodoAte;
+    } catch (e) {/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    var faixa = document.getElementById("periodoFaixa");
+    if (faixa) faixa.style.display = (sel.value === "custom") ? "inline-flex" : "none";
+}
+function renderResumoPeriodo(periodo, de, ate, pedidos, faturamento) {
+    var box = document.getElementById("periodoResumo");
+    if (!box) return;
+    var iv = (periodo === "all") ? { t0: null, t1: null, label: "Tudo", erro: false } : calcularIntervalo(periodo, de, ate);
+    var chips = [];
+    chips.push('<span class="chip"><i class="fa fa-tag"></i> ' + iv.label + "</span>");
+    if (iv.t0 != null || iv.t1 != null) {
+        chips.push('<span class="chip"><i class="fa fa-calendar"></i> ' + (iv.t0 != null ? dataCurta(iv.t0) : "início") + " → " + (iv.t1 != null ? dataCurta(iv.t1) : "agora") + "</span>");
+    }
+    var t0 = iv.t0 != null ? iv.t0 : pedidos.reduce(function (m, p) { return Math.min(m, p.criadoEm || Infinity); }, Infinity);
+    var t1 = iv.t1 != null ? iv.t1 : Date.now();
+    if (isFinite(t0)) {
+        var nDias = Math.max(1, Math.round((t1 - t0) / MS_DIA) + 1);
+        chips.push('<span class="chip"><i class="fa fa-clock"></i> ' + nDias + " dia(s)</span>");
+    }
+    chips.push('<span class="chip"><i class="fa fa-receipt"></i> ' + pedidos.length + " pedido(s)</span>");
+    chips.push('<span class="chip"><i class="fa fa-dollar-sign"></i> ' + formatBRL(faturamento) + "</span>");
+    if (iv.erro) chips.push('<span class="aviso"><i class="fa fa-triangle-exclamation"></i> A data inicial é maior que a final — mostrando o intervalo invertido.</span>');
+    box.innerHTML = chips.join("");
+}
+function mudarStatus(id, status) {
+    atualizarStatus(id, status);
+    renderAdmin();
+}
+function falarCliente(tel, id) {
+    const p = getPedidos().find(x => x.id === id);
+    if (!p) return;
+    let msg = "Olá " + p.nome + "! Sobre seu pedido " + p.id + " (" + formatBRL(p.total) + "): ";
+    window.open("https://wa.me/" + String(tel).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
+}
+if (sessionStorage.getItem("adminLogado") === "1") mostrarPainel();
+</script>
+<script src="app.js?v=20261018n"></script>
+<script src="firebase-appcheck.js?v=20261018n"></script>
+<script src="app-update.js?v=20261018n"></script>
+<script>
+/* ============================================================
+   MINIMIZAR BLOCOS DO PAINEL
+   Vale so no painel do vendedor: o estado fica em
+   vendedorPrefs.miniCards e NUNCA chega ao site do cliente
+   (que usa refrigerantePrefs). O editor de precos ja vem
+   recolhido porque a lista de produtos e muito longa.
+   ============================================================ */
+var BLOCOS_MINI_PADRAO = ["editorPrecos"];
+var BLOCOS_MINI_MAP = {
+    editorPrecos: "editorPrecosCorpo",
+    caixaFerramentas: "corpoCaixaFerramentas",
+    caixaConfigVendedor: "corpoCaixaConfigVendedor",
+    caixaBot: "corpoCaixaBot",
+    caixaPrecosNuvem: "corpoCaixaPrecosNuvem"
+};
+function prefsPainel() {
+    try { return JSON.parse(localStorage.getItem("vendedorPrefs") || "{}"); } catch (e) { return {}; }
+}
+function salvarPrefsPainel(p) {
+    try { localStorage.setItem("vendedorPrefs", JSON.stringify(p)); } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+}
+function blocosMinimizados() {
+    var p = prefsPainel();
+    return Array.isArray(p.miniCards) ? p.miniCards : BLOCOS_MINI_PADRAO.slice();
+}
+function blocoMinimizado(chave) { return blocosMinimizados().indexOf(chave) >= 0; }
+function aplicarMini() {
+    Object.keys(BLOCOS_MINI_MAP).forEach(function (chave) {
+        var mini = blocoMinimizado(chave);
+        var corpo = document.getElementById(BLOCOS_MINI_MAP[chave]);
+        if (corpo) corpo.style.display = mini ? "none" : "";
+        var botoes = document.querySelectorAll('[data-mini-btn="' + chave + '"]');
+        for (var i = 0; i < botoes.length; i++) {
+            botoes[i].innerHTML = '<i class="fa fa-chevron-' + (mini ? "down" : "up") + '"></i> '
+                + (mini ? "Abrir" : "Minimizar");
+            botoes[i].setAttribute("aria-expanded", mini ? "false" : "true");
+        }
+    });
+}
+function alternarMini(chave) {
+    var p = prefsPainel();
+    var lista = (Array.isArray(p.miniCards) ? p.miniCards : BLOCOS_MINI_PADRAO.slice()).slice();
+    var i = lista.indexOf(chave);
+    if (i >= 0) lista.splice(i, 1); else lista.push(chave);
+    p.miniCards = lista;
+    salvarPrefsPainel(p);
+    aplicarMini();
+}
+/* embrulha o conteudo dos cards fixos do painel (uma vez so) */
+function prepararMini() {
+    ["caixaFerramentas", "caixaConfigVendedor", "caixaBot", "caixaPrecosNuvem"].forEach(function (id) {
+        var card = document.getElementById(id);
+        if (!card) return;
+        var corpoId = BLOCOS_MINI_MAP[id];
+        if (document.getElementById(corpoId)) return;
+        var cab = card.querySelector("h3");
+        if (!cab) return;
+        var corpo = document.createElement("div");
+        corpo.id = corpoId;
+        corpo.className = "card-corpo";
+        var irmao = cab.nextSibling;
+        while (irmao) { var proximo = irmao.nextSibling; corpo.appendChild(irmao); irmao = proximo; }
+        card.appendChild(corpo);
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "btn-mini-bloco";
+        b.setAttribute("data-mini-btn", id);
+        b.setAttribute("onclick", "alternarMini('" + id + "')");
+        cab.appendChild(b);
+    });
+}
+document.addEventListener("DOMContentLoaded", function () { prepararMini(); aplicarMini(); });
+if (document.readyState !== "loading") { prepararMini(); aplicarMini(); }
+
+</script>
+<script>
+(function(){
+  function fmtCampo(v){ return String(v||"").replace(/^\s*R\$\s*/i,"").trim(); }
+  function moedaBR(v){
+    var n = parseFloat(String(v).replace(/\./g,"").replace(",","."));
+    if(isNaN(n)) n = 0;
+    return n.toFixed(2).replace(".",",");
+  }
+  function pintar(){
+    var el = document.getElementById("editorPrecos");
+    if(!el || typeof PD === "undefined" || !PD.length) return;
+    var ov = {};
+    try{ ov = JSON.parse(localStorage.getItem("productPriceOverrides")||"{}"); }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    var url = (typeof precosURLCfg === "function") ? precosURLCfg() : "";
+
+    var h = "";
+    h += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:10px 0">';
+    h += '  <h3 style="margin:0;font-size:1.05rem;color:var(--primary-color)"><i class="fa fa-tags"></i> Editar precos dos produtos</h3>';
+    h += '  <button type="button" class="btn-mini-bloco" data-mini-btn="editorPrecos" onclick="alternarMini(\'editorPrecos\')">Minimizar</button>';
+    h += url
+       ? '  <span style="font-size:.8rem;font-weight:700;color:var(--texto-ok);background:var(--texto-ok-fundo);border-radius:10px;padding:5px 11px"><i class="fa fa-cloud"></i> Tempo real ligado: os clientes veem na hora</span>'
+       : '  <a href="configuracoes.html" style="font-size:.8rem;font-weight:700;color:var(--texto-aviso);background:var(--texto-aviso-fundo);border-radius:10px;padding:5px 11px;text-decoration:none"><i class="fa fa-exclamation-triangle"></i> Sem nuvem: vale so neste aparelho. Configurar</a>';
+    h += '</div>';
+    h += '<div id="editorPrecosCorpo" class="card-corpo">';
+    h += '<p style="font-size:.83rem;color:#777;margin:0 0 10px">Digite o valor com virgula (ex: 29,90). Depois clique em <b>Salvar e aplicar</b>.</p>';
+
+    (typeof CT !== "undefined" ? CT : []).forEach(function(c){
+      var itens = PD.filter(function(p){ return p.ct === c.id; });
+      if(!itens.length) return;
+      h += '<div style="margin-bottom:14px"><div style="font-weight:800;font-size:.88rem;color:var(--primary-color);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px"><i class="fa ' + c.ic + '"></i> ' + c.nm + '</div>';
+      itens.forEach(function(p){
+        /* chave estavel: codigo do produto no site oficial (k:12345).
+           Sem o codigo, cai para nome (so para produtos da lista antiga). */
+        var k = (typeof chavePreco === "function") ? chavePreco(p) : (p.ct + "|" + p.nm);
+        /* o preco salvo so vale se fizer sentido: 275,00 no lugar de 27,50 e
+           erro de digito e fica de fora (o do catalogo manda) */
+        var salvo = ov[k] !== undefined ? ov[k] : null;
+        var descartado = salvo !== null && (typeof precoSaneio === "function")
+                     && Math.abs(precoNumero(precoSaneio(salvo, p.pr)) - precoNumero(salvo)) > 0.004;
+        var valor = descartado ? p.pr : (salvo !== null ? salvo : p.pr);
+        h += '<div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-bottom:1px solid #eee">'
+           + '  <span style="flex:1;min-width:0;font-size:.92rem">' + p.nm + '</span>'
+           + '  <span style="font-size:.78rem;color:#999;white-space:nowrap">original ' + p.pr + '</span>'
+           + (descartado ? '  <span class="tb-tag t-agora" title="O preco salvo estava com um digito a mais. Voltamos ao do catalogo."><i class="fa fa-triangle-exclamation"></i> corrigido</span>' : '')
+           + '  <input class="preco-input" data-k="' + k + '" value="' + fmtCampo(valor) + '" inputmode="decimal" '
+           + '     style="width:110px;padding:9px 10px;border:1px solid #ddd;border-radius:9px;font-size:1rem;text-align:right">'
+           + '</div>';
+      });
+      h += '</div>';
+    });
+
+    h += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 6px">'
+       + '  <button class="btn-st b-entregar" style="min-height:46px;padding:11px 20px" onclick="painelPrecos.salvar(this)"><i class="fa fa-save"></i> Salvar e aplicar</button>'
+       + '  <button class="btn-st b-enviar" style="min-height:46px;padding:11px 20px" onclick="painelPrecos.recarregar(this)"><i class="fa fa-cloud-download-alt"></i> Recarregar da nuvem</button>'
+       + '  <button class="btn-st b-cancelar" style="min-height:46px;padding:11px 20px" onclick="painelPrecos.restaurar(this)"><i class="fa fa-undo"></i> Restaurar originais</button>'
+       + '</div>';
+    h += '</div>';
+    h += '<div id="precosMsg" style="font-size:.86rem;font-weight:700;margin:6px 0 2px"></div>';
+    el.innerHTML = h;
+    if (typeof aplicarMini === "function") aplicarMini();
+  }
+  function msg(texto, cor){
+    var m = document.getElementById("precosMsg");
+    if(m){ m.style.color = cor || "var(--texto-ok)"; m.innerHTML = texto; }
+  }
+/* aceita "29,50", "29.50", "2950", "1.234,56" e "1,234.56" sem errar a casa */
+  function lerPreco(texto){
+    var s = String(texto == null ? "" : texto).trim().replace(/R$\s*/i, "");
+    if (!s) return 0;
+    s = s.replace(/\s/g, "");
+    var temPonto = s.indexOf(".") >= 0;
+    var temVirgula = s.indexOf(",") >= 0;
+    if (temPonto && temVirgula) {
+      /* o ultimo separador e a casa decimal */
+      if (s.lastIndexOf(",") > s.lastIndexOf(".")) s = s.replace(/\./g, "").replace(",", ".");
+      else s = s.replace(/,/g, "");
+    } else if (temVirgula) {
+      s = s.replace(",", ".");                    /* 29,50 -> 29.50 */
+    } else if (temPonto) {
+      /* so ponto: se tem 3 casas, e milhar (1.234); se tem 1 ou 2, e decimal (27.5) */
+      var partes = s.split(".");
+      if (partes.length === 2 && partes[1].length !== 3) { /* mantem o decimal */ }
+      else s = s.replace(/\./g, "");
+    } else if (/^\d+$/.test(s) && s.length > 2 && s.length % 2 === 0) {
+      /* so digitos, tamanho par: o dono digitou em centavos (2950 = R$ 29,50).
+         sem isto o painel publicava R$ 2.950,00 no lugar de R$ 29,50 */
+      s = String(parseInt(s, 10) / 100);
+    }
+    var n = parseFloat(s);
+    return isNaN(n) || n < 0 ? 0 : n;
+  }
+  function lerCampos(){
+    var ov = {};
+    document.querySelectorAll(".preco-input").forEach(function(inp){
+      /* grava NUMERO, nao "R$ 27,50": numero nao sofre com virgula/ponto
+         e a nuvem fica sempre com valor limpo */
+      ov[inp.getAttribute("data-k")] = lerPreco(inp.value);
+    });
+    return ov;
+  }
+  window.painelPrecos = {
+    salvar: function(btn){
+      /* guarda no historico quais precos mudaram */
+      try {
+        var novos = lerCampos();
+        var antigos = (typeof precosLocais === "function") ? precosLocais() : {};
+        PD.forEach(function (p) {
+          var k = (typeof chavePreco === "function") ? chavePreco(p) : (p.ct + "|" + p.nm);
+          if (novos[k] !== undefined && novos[k] !== antigos[k]) {
+            if (typeof registrarPreco === "function") registrarPreco(p.nm, antigos[k] || p.pr, novos[k]);
+          }
+        });
+      } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+      try{ localStorage.setItem("productPriceOverrides", JSON.stringify(lerCampos())); }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+      if(typeof aplicarPrecosSalvar === "function") aplicarPrecosSalvar();
+      if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Salvando...'; }
+      if(typeof enviarPrecosNuvem === "function"){
+        enviarPrecosNuvem(function(ok, err){
+          if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-save"></i> Salvar e aplicar'; }
+          if(ok) msg('<i class="fa fa-check-circle"></i> Precos salvos e aplicados na pagina dos clientes em tempo real.');
+          else if(err === "nuvem nao configurada") msg('<i class="fa fa-check-circle"></i> Precos salvos. Ligados somente neste aparelho (configure a nuvem para os clientes verem na hora).', "var(--texto-aviso)");
+          else msg('<i class="fa fa-exclamation-triangle"></i> Salvos neste aparelho, mas a nuvem nao aceitou: ' + err, "var(--texto-erro)");
+        });
+      } else {
+        if(btn) btn.disabled = false;
+        msg('<i class="fa fa-check-circle"></i> Precos salvos e aplicados.');
+      }
+    },
+    recarregar: function(btn){
+      if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Buscando...'; }
+      if(typeof puxarPrecosNuvem === "function"){
+        puxarPrecosNuvem(function(){
+          if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-cloud-download-alt"></i> Recarregar da nuvem'; }
+          pintar();
+          msg('<i class="fa fa-check-circle"></i> Precos atualizados.');
+        });
+      } else { if(btn) btn.disabled = false; pintar(); }
+    },
+    restaurar: function(btn){
+      if(!confirm("Apagar todos os precos editados e voltar aos precos originais do site?")) return;
+      try{ localStorage.removeItem("productPriceOverrides"); }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+      if(typeof aplicarPrecosSalvar === "function") aplicarPrecosSalvar();
+      if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Restaurando...'; }
+      if(typeof enviarPrecosNuvem === "function"){
+        enviarPrecosNuvem(function(){
+          if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-undo"></i> Restaurar originais'; }
+          pintar();
+          msg('<i class="fa fa-check-circle"></i> Precos originais restaurados.');
+        });
+      } else { if(btn) btn.disabled = false; pintar(); msg("Precos originais restaurados."); }
+    }
+  };
+window.addEventListener("DOMContentLoaded", pintar);
+if(document.readyState !== "loading") pintar();
+
+/* repinta depois que o catalogo e os precos da nuvem chegarem.
+   Se o vendedor estiver digitando um preco, espera. */
+window.painelPrecos.repintar = function () {
+    try {
+        var foco = document.activeElement;
+        if (foco && foco.classList && foco.classList.contains("preco-input")) return;
+    } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    pintar();
+};
+})();
+</script>
+<script>
+/* ===== URL do banco de precos (tempo real) - so o vendedor ve ===== */
+function precosMsgAdmin(texto, cor){
+  var m = document.getElementById("precosURLMsg");
+  if(m){ m.style.color = cor || "var(--texto-ok)"; m.innerHTML = texto; }
+}
+function salvarPrecosURLAdmin(btn){
+  var inp = document.getElementById("cfgPrecosURL");
+  if(!inp) return;
+  var url = inp.value.trim().replace(/\/+$/,"");
+  try{
+    /* o painel guarda no vendedorPrefs: a config do cliente fica intacta */
+    var chave = (typeof chavePrefsLoja === "function") ? chavePrefsLoja() : "vendedorPrefs";
+    var p = JSON.parse(localStorage.getItem(chave) || "{}");
+    p.cfgPrecosURL = url;
+    localStorage.setItem(chave, JSON.stringify(p));
+  }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+  if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Salvando...'; }
+  setTimeout(function(){
+    if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa fa-save"></i> Salvar URL'; }
+    precosMsgAdmin(url ? "URL salva. Os preços agora vão em tempo real para os clientes." : "URL apagada. Os preços voltam a valer só neste aparelho.");
+  }, 400);
+}
+/* o campo "Banco" aceita duas coisas, e o teste precisa saber qual:
+   - URL do Firebase (ex.: https://projeto-default-rtdb.firebaseio.com): teste
+     de gravacao real (escreve, le e apaga uma chave de teste);
+   - URL do GATEWAY (o modo banco fechado): nao existe /precos.json la, entao
+     testar por escrita daria 404 e seria mentira. O teste certo e: o Worker
+     esta de pe com a conta de servico, a SENHA do painel bate com a do
+     gateway, e o dono consegue listar os pedidos. */
+function bancoEhGateway(url){
+  var u = String(url || "").trim().replace(/\/+$/, "");
+  if (!u || /\.json$/i.test(u)) return false;
+  return /\/api|workers\.dev|convencao-gateway/i.test(u);
+}
+function testarBancoGateway(url, btn){
+  precosMsgAdmin("Testando o gateway...", "var(--texto-aviso)");
+  fetch(url + "/api/saude", { cache: "no-store" })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (saude) {
+      if (!saude.ok || !saude.d || !saude.d.ok) throw new Error("o gateway nao respondeu");
+      if (!saude.d.servo) throw new Error("o gateway esta sem a conta de servico do Firebase");
+      return fetch(url + "/api/entrar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senha: (typeof VENDEDOR_SENHA !== "undefined" ? VENDEDOR_SENHA : "") })
+      }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); });
+    })
+    .then(function (login) {
+      if (!login.ok || !login.d || !login.d.token) throw new Error("a senha do painel nao bate com a do gateway");
+      return fetch(url + "/api/pedidos", { cache: "no-store", headers: { Authorization: "Bearer " + login.d.token } })
+        .then(function (r) { return { status: r.status }; });
+    })
+    .then(function (lista) {
+      if (lista.status !== 200) throw new Error("o dono entrou mas nao conseguiu listar os pedidos (HTTP " + lista.status + ")");
+      precosMsgAdmin("Tudo certo: o gateway esta de pe, a senha bate e o dono consegue ler os pedidos. Agora clique em Salvar URL.", "var(--texto-ok)");
+    })
+    .catch(function (e) {
+      var dica = "";
+      if (/Failed to fetch|NetworkError/.test(e.message)) dica = " O navegador bloqueou a conexao - confira a internet.";
+      if (/conta de servico/.test(e.message)) dica = " O gateway subiu sem a chave do Firebase (falta o tools/subir-gateway.js).";
+      precosMsgAdmin("Gateway nao deu conta: " + e.message + dica, "var(--texto-erro)");
+    });
+}
+function testarPrecosURLAdmin(btn){
+  var inp = document.getElementById("cfgPrecosURL");
+  var url = (inp ? inp.value.trim() : "").replace(/\/+$/, "");
+  if (!url) { precosMsgAdmin("Cole a URL do banco ou do gateway antes de testar.", "var(--texto-aviso)"); return; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Testando...'; }
+  function acabou() { if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-plug"></i> Testar'; } }
+  /* modo gateway: testa o caminho do gateway, nao o do Firebase */
+  if (bancoEhGateway(url)) {
+    var p = testarBancoGateway(url, btn);
+    var t0 = setInterval(acabou, 250);
+    setTimeout(function () { clearInterval(t0); acabou(); }, 12000);
+    return;
+  }
+  /* teste de verdade: escreve uma chave de teste, le de volta e apaga */
+  appCheckPronto();
+  var marca = "teste_" + Date.now();
+  var caminho = url + "/__teste_convencao.json";
+  fetch(caminho, {
+    method: "PUT",
+    headers: cabecalhosPrecos(),
+    body: JSON.stringify({ ok: true, quando: marca })
+  })
+    .then(function (r) {
+      if (!r.ok) throw new Error("gravação recusada (HTTP " + r.status + ")");
+      return fetch(caminho, { cache: "no-store", headers: cabecalhosPrecos() }).then(function (r2) {
+        if (!r2.ok) throw new Error("leitura recusada (HTTP " + r2.status + ")");
+        return r2.json();
+      });
+    })
+    .then(function (d) {
+      if (!d || d.quando !== marca) throw new Error("o banco devolveu outro conteudo");
+      return fetch(caminho, { method: "DELETE", headers: cabecalhosPrecos() });
+    })
+    .then(function () { acabou(); precosMsgAdmin("Tudo certo: o banco aceita gravacao e leitura. Agora e so salvar a URL.", "var(--texto-ok)"); })
+    .catch(function (e) {
+      var dica = "";
+      if (/Failed to fetch|NetworkError/.test(e.message)) dica = " O navegador bloqueou a conexao - confira a internet.";
+      if (/404/.test(e.message)) dica = " Se a URL for do gateway, use o botao Testar de novo (ele detecta o modo).";
+      acabou();
+      precosMsgAdmin("Nao deu: " + e.message + dica, "var(--texto-erro)");
+    });
+}
+
+/* mostra/oculta o passo a passo do Firebase */
+function verPassoFirebase(){
+  var el = document.getElementById("passoFirebase");
+  if(!el) return;
+  el.style.display = (el.style.display === "none") ? "block" : "none";
+}
+
+/* estado real da nuvem (verifica se o banco responde) */
+function checarNuvemPrecos(){
+  var msg = document.getElementById("precosURLMsg");
+  if (!msg || typeof listaEnderecos !== "function") return;
+  var lista = listaEnderecos(), i = 0;
+  msg.style.color = "var(--texto-aviso)";
+  msg.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Procurando o banco de preços...';
+  (function tentar(){
+    if (i >= lista.length){
+      msg.style.color = "var(--texto-aviso)";
+      msg.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Banco ainda não encontrado. Clique em <b>Como criar o banco</b> (leva 1 minuto).';
+      return;
+    }
+    var url = lista[i++];
+    fetch(caminhoPrecos(url), { cache: "no-store", headers: cabecalhosPrecos() })
+      .then(function (r) {
+        if (!r.ok) throw new Error("http " + r.status);
+        return r.json();
+      })
+      .then(function (dados) {
+        var n = (dados && typeof dados === "object") ? Object.keys(dados).length : 0;
+        var protecao = (typeof AppCheck !== "undefined" && AppCheck.ativo && AppCheck.ativo())
+            ? '<br><span style="color:var(--texto-ok)"><i class="fa fa-shield-alt"></i> App Check ligado: só este site consegue ler e gravar os preços.</span>'
+            : '';
+        msg.style.color = "var(--texto-ok)";
+        msg.innerHTML = '<i class="fa fa-check-circle"></i> Banco ligado! ' + n + ' preço(s) publicado(s). Os clientes veem as alterações na hora.' + protecao;
+        lembrarEndereco(url);
+      })
+      .catch(function () { tentar(); });
+  })();
+}
+document.addEventListener("DOMContentLoaded", function(){
+  var caixa = document.getElementById("caixaPrecosNuvem");
+  if(!caixa) return;
+  caixa.style.display = "";
+  var inp = document.getElementById("cfgPrecosURL");
+  try{
+    /* mostra a config do PAINEL (cai na do cliente se o painel ainda nao tem) */
+    if (typeof precosURLCfg === "function") { if (inp) inp.value = precosURLCfg(); }
+    else {
+      var p = JSON.parse(localStorage.getItem("vendedorPrefs") || "{}");
+      if(inp) inp.value = p.cfgPrecosURL || "";
+    }
+  }catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+  setTimeout(function(){ if (typeof checarNuvemPrecos === "function") checarNuvemPrecos(); }, 400);
+});
+</script>
+<script>
+/* SEM login automatico: o painel so abre com usuario e senha do dono.
+   (Havia aqui uma marcacao automatica de sessao, que deixava
+   qualquer pessoa entrar so abrindo admin.html.) */
+</script>
+<script>
+/* sincroniza com outras abas: se um pedido mudar, o painel atualiza sozinho */
+window.addEventListener("storage", function(e){
+    if (e.key === "convencao_pedidos" && sessionStorage.getItem("adminLogado") === "1" && typeof renderAdmin === "function") {
+        renderAdmin();
+    }
+});
+</script>
+<script>
+/* ticks do acompanhamento do vendedor: abrem e fecham com um toque */
+function toggleTicksAdmin(id){
+    var el = document.getElementById("ticks-admin-" + id);
+    if(el) el.style.display = (el.style.display === "none") ? "block" : "none";
+}
+</script>
+</body>
+</html>

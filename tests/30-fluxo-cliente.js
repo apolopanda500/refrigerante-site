@@ -27,7 +27,7 @@ const ctx = {
     document: {
         addEventListener: () => {}, querySelector: () => null, querySelectorAll: () => [],
         getElementById: () => null, getElementsByClassName: () => [], body: { classList: { add(){}, remove(){}, toggle(){} } } },
-    location: { href: "https://apolopanda500.github.io/refrigerante-site/carrinho.html", pathname: "/refrigerante-site/carrinho.html", reload: () => {} },
+    location: { href: "https://convencao-site.rickjax123.workers.dev/carrinho.html", pathname: "/refrigerante-site/carrinho.html", reload: () => {} },
     navigator: { userAgent: "teste", vibrate: () => {} },
     Notification: function () { return { requestPermission: () => Promise.resolve("granted") }; },
     setTimeout, clearTimeout, setInterval: () => 0, clearInterval,

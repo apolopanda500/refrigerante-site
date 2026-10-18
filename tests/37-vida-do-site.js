@@ -35,7 +35,7 @@ function lojaCom(bancoInicial, opts) {
             getElementById: () => null, documentElement: { setAttribute: () => {}, getAttribute: () => null },
             body: { classList: { add() {}, remove() {}, toggle() {} } }
         },
-        location: { href: "https://apolopanda500.github.io/refrigerante-site/index.html", pathname: "/refrigerante-site/index.html", reload: () => {} },
+        location: { href: "https://convencao-site.rickjax123.workers.dev/index.html", pathname: "/refrigerante-site/index.html", reload: () => {} },
         navigator: { userAgent: "teste", vibrate: () => {} },
         setTimeout, clearTimeout, setInterval: () => 0, clearInterval,
         fetch: (opts && opts.fetch) || (() => Promise.reject(new Error("sem rede"))),

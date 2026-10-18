@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261018j">
+<link rel="manifest" href="manifest.json?v=20261018n">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261018j">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261018n">
 <title>Histórico - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261018j">
-<script src="theme.js?v=20261018j"></script>
+<link rel="stylesheet" href="style.css?v=20261018n">
+<script src="theme.js?v=20261018n"></script>
 
 <style>
 .page{ padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }.page-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }.page-head h1{ color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }/* ===== resumo do historico (veio do perfil) - alinhado ===== */
@@ -98,13 +98,13 @@ body[data-leitura="vertical"] .pg{grid-template-columns:repeat(3,1fr)!important;
 <div id="listaPedidos"></div>
 </div></section>
 
-<script src="conta.js?v=20261018j"></script>
-<script src="firebase-appcheck.js?v=20261018j"></script>
-<script src="app-update.js?v=20261018j"></script>
-<script src="ia.js?v=20261018j"></script>
-<script src="central.js?v=20261018j"></script>
-<script src="loja.js?v=20261018j"></script>
-<script src="script.js?v=20261018j"></script>
+<script src="conta.js?v=20261018n"></script>
+<script src="firebase-appcheck.js?v=20261018n"></script>
+<script src="app-update.js?v=20261018n"></script>
+<script src="ia.js?v=20261018n"></script>
+<script src="central.js?v=20261018n"></script>
+<script src="loja.js?v=20261018n"></script>
+<script src="script.js?v=20261018n"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -166,12 +166,20 @@ function mostrarPedidos(){
         } catch(e) { sessao = null; }
     }
 
+    /* Quem ve o historico e o dono do proprio pedido. Sem perfil nao se ve
+       NADA: antes, sem perfil, a tela despejava todos os pedidos que estavam
+       no aparelho - num celular compartilhado ou usado para testar, isso
+       deixava pedido de outra pessoa na tela de qualquer um. */
     var lista = [];
-    if (sessao && sessao.tel) {
-      lista = todos.filter(function(p){ return mesmoTelefone(p.tel, sessao.tel); });
+    if (sessao && (sessao.cpf || sessao.tel)) {
+      var cpf = String(sessao.cpf || "").replace(/\D/g, "");
+      lista = todos.filter(function (p) {
+        var c = String(p && p.cpf || "").replace(/\D/g, "");
+        if (cpf && c) return c === cpf;
+        if (sessao.tel) return mesmoTelefone(p.tel, sessao.tel);
+        return false;
+      });
     }
-    // nao achou pelo telefone (ou nao esta logado): mostra tudo que este aparelho tem
-    if (!lista.length) lista = todos.slice();
 
     var textoEl = document.getElementById("sessaoTexto");
     if (textoEl) {
@@ -195,7 +203,18 @@ function mostrarPedidos(){
     /* 2) tenta sincronizar com a nuvem em segundo plano e atualiza sozinho */
     if (typeof sincronizarPedidosCliente === "function") {
         sincronizarPedidosCliente(function(junto){
-            pedidosAtuais = Array.isArray(junto) ? junto : lista;
+            /* mesmo filtro depois de sincronizar: a nuvem pode trazer coisa
+               de outra pessoa no aparelho, e o historico e do dono */
+            var base = Array.isArray(junto) ? junto : lista;
+            var cpf2 = String((sessao && sessao.cpf) || "").replace(/\D/g, "");
+            pedidosAtuais = (sessao && (cpf2 || sessao.tel))
+                ? base.filter(function (p) {
+                    var c = String(p && p.cpf || "").replace(/\D/g, "");
+                    if (cpf2 && c) return c === cpf2;
+                    if (sessao.tel) return mesmoTelefone(p.tel, sessao.tel);
+                    return false;
+                })
+                : [];
             filtroAtual = "todos";
             document.querySelectorAll(".filtro").forEach(function(b){
                 b.classList.toggle("ativo", b.dataset.f === "todos");

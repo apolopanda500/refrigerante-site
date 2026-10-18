@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 class MainActivity : androidx.appcompat.app.AppCompatActivity() {
 
     /** endereco da loja */
-    private val endereco: String = "https://apolopanda500.github.io/refrigerante-site/admin.html"
+    private val endereco: String = "https://convencao-site.rickjax123.workers.dev/admin.html"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

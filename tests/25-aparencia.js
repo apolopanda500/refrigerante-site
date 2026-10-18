@@ -18,35 +18,35 @@ const css = ler("style.css");
 console.log("=== 1. O CARTAO \"Aparência\" NA TELA ===");
 if (!/Apar\u00EAncia/.test(cfgH)) falha("configuracoes.html nao tem o cartao Aparência");
 else ok("cartao Aparência presente");
-if (!/Anima\u00E7\u00F5es reduzidas/.test(cfgH)) falha("falta o rotulo \"Animações reduzidas\"");
-else ok("rotulo \"Animações reduzidas\" presente");
-if (!/Reduzir anima\u00E7\u00F5es da interface/.test(cfgH)) falha("falta a descricao \"Reduzir animações da interface\"");
-else ok("descricao \"Reduzir animações da interface\" presente");
+/* as opcoes de aparencia sairam da tela de proposito (o dono pediu menos
+   botoes). A bateria confere que elas NAO voltaram e que nada ficou
+   quebrado por causa disso. */
+const saidas = ["Animações reduzidas", "Alto contraste", "Tela compacta", "Mostrar fotos dos produtos"];
+const sobrando = saidas.filter(function (r) { return cfgH.indexOf(r) >= 0; });
+if (!sobrando.length) ok("as opcoes de aparencia nao estao mais na tela (" + saidas.length + " removidas)");
+else falha("voltou para a tela: " + sobrando.join(", "));
+for (const id of ["cfgReducedMotion", "cfgAltoContraste", "cfgCompacto", "cfgVerImagens"]) {
+    if (cfgH.indexOf(id) >= 0) falha("a opcao " + id + " continua na tela");
+}
+ok("nenhum interruptor das opcoes removidas sobrou na tela");
 
-console.log("\n=== 2. O INTERRUPTOR ===");
-const inputs = cfgH.match(/id="cfgReducedMotion"/g) || [];
-if (inputs.length !== 1) falha("o interruptor cfgReducedMotion aparece " + inputs.length + " vez(es) (era 1)");
-else ok("um interruptor so (cfgReducedMotion)");
-if (!/type="checkbox" id="cfgReducedMotion"/.test(cfgH)) falha("cfgReducedMotion nao e um checkbox");
-else ok("e um interruptor liga/desliga");
-
-console.log("\n=== 3. O SALVAMENTO ===");
-if (!/var ids\s*=\s*\[[^\]]*"cfgReducedMotion"/.test(cfgH)) falha("cfgReducedMotion nao e salvo junto das outras opcoes");
-else ok("a escolha e salva nas preferencias");
+console.log("\n=== 2. O QUE FICOU NA TELHA ===");
+if (!/var ids\s*=\s*\[[^\]]*"cfgNotifPedido"/.test(cfgH)) falha("o aviso no aparelho (que ficou) nao e salvo junto das outras opcoes");
+else ok("a opcao que ficou e salva nas preferencias");
 if (!/salvarPrefs|localStorage\.setItem\("refrigerantePrefs"/.test(cfgH)) falha("configuracoes.html nao grava as preferencias");
 else ok("grava em refrigerantePrefs");
 
-console.log("\n=== 4. A APLICACAO (theme.js) ===");
-if (!/cfgReducedMotion/.test(tema)) falha("theme.js nao le a opcao cfgReducedMotion");
-else ok("theme.js le a opcao");
-const liga = /setAttribute\(\s*"data-motion"\s*,\s*"reduced"\s*\)/.test(tema);
-const desliga = /removeAttribute\(\s*"data-motion"\s*\)/.test(tema);
-if (!liga) falha("theme.js nao liga o atributo data-motion=reduced");
-else ok("liga data-motion=\"reduced\" quando marcado");
-if (!desliga) falha("theme.js nao tira o atributo quando desmarcado (o botao so ligaria)");
-else ok("tira o atributo quando desmarcado");
+console.log("\n=== 3. A APLICACAO (theme.js) ===");
+if (/cfgReducedMotion/.test(tema)) falha("theme.js ainda obedece cfgReducedMotion, que saiu da tela");
+else ok("theme.js nao le mais cfgReducedMotion");
+if (/cfgAltoContraste|cfgCompacto|cfgVerImagens/.test(tema)) falha("theme.js ainda obedece uma preferencia que saiu da tela");
+else ok("theme.js nao le mais as preferencias antigas (ninguem fica preso nelas)");
+if (/removeAttribute\(\s*"data-layout"/.test(tema) && /removeAttribute\(\s*"data-contraste"/.test(tema)) ok("a tela limpa o modo compacto e o alto contraste de quem ja tinha ligado");
+else falha("quem tinha ligado algo antes continua preso nisso, sem botao para desligar");
 
-console.log("\n=== 5. O CSS QUE CORTA AS ANIMACOES ===");
+
+/* as secoes antigas foram trocadas: as opcoes de aparencia sairam da tela */
+
 const bloco = (css.match(/\[data-motion="reduced"\][^{]*\{[^}]*\}/g) || []).join(" ");
 if (!bloco) falha("style.css nao tem regra [data-motion=\"reduced\"] (o interruptor nao faria nada)");
 else {

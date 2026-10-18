@@ -29,7 +29,7 @@ const ctx = {
         removeItem(k) { delete this._d[k]; }
     },
     document: { addEventListener: () => {}, querySelector: () => null, getElementById: () => null },
-    location: { href: "https://apolopanda500.github.io/refrigerante-site/index.html", pathname: "/refrigerante-site/index.html" },
+    location: { href: "https://convencao-site.rickjax123.workers.dev/index.html", pathname: "/refrigerante-site/index.html" },
     navigator: { userAgent: "teste", vibrate: () => {} },
     Notification: function () { return { requestPermission: () => Promise.resolve("granted") }; },
     fetch: () => Promise.reject(new Error("sem rede no teste")),

@@ -1,0 +1,193 @@
+/* ============================================
+   CONTA DO CLIENTE - fonte unica de verdade
+   Usado pelo Perfil, Configuracoes, Checkout,
+   Historico e Cabecalho. Sincroniza sozinho.
+   ============================================ */
+var Conta = (function () {
+
+    var K_CONTA  = "convencao_usuario";   // { nome, tel }
+    var K_PERFIL = "refrigerantePerfil";   // { nome, tel, email, endereco, bairro, complemento, rua, numero, observacao, cep }
+    var K_FOTO   = "refrigeranteFoto";     // dataURL da foto
+    var MAX_FOTO = 10 * 1024 * 1024;       // 10 MB no arquivo (a imagem e reduzida antes de salvar)
+    var FOTO_MAX_LADO = 1000;              // maior lado da foto salva, em pixels
+
+    function ler(chave, padrao) {
+        try {
+            var s = localStorage.getItem(chave);
+            return s ? JSON.parse(s) : padrao;
+        } catch (e) { return padrao; }
+    }
+    function gravar(chave, valor) {
+        try { localStorage.setItem(chave, JSON.stringify(valor)); return true; }
+        catch (e) { return false; }
+    }
+
+    /* ---------- dados ---------- */
+    function dados() {
+        var conta  = ler(K_CONTA, {})  || {};
+        var perfil = ler(K_PERFIL, {}) || {};
+        var nome   = (perfil.nome && perfil.nome.trim()) || (conta.nome && conta.nome.trim()) || "";
+        var tel    = (perfil.tel  && perfil.tel.trim())  || (conta.tel  && conta.tel.trim())  || "";
+        return {
+            nome: nome,
+            inicial: nome ? nome.charAt(0).toUpperCase() : "C",
+            tel: tel,
+            email: perfil.email || "",
+            endereco: perfil.endereco || "",
+            bairro: perfil.bairro || "",
+            rua: perfil.rua || "",
+            numero: perfil.numero || "",
+            complemento: perfil.complemento || "",
+            cpf: perfil.cpf || "",
+            observacao: perfil.observacao || "",
+            cep: perfil.cep || "",
+            temNome: !!nome,
+            temTel: !!tel,
+            foto: (function () { try { return localStorage.getItem(K_FOTO) || ""; } catch (e) { return ""; } })()
+        };
+    }
+
+    function estaVazia() {
+        var d = dados();
+        return !d.nome && !d.tel;
+    }
+
+    /* ---------- salvar ---------- */
+    function salvar(novo) {
+        var conta  = ler(K_CONTA, {})  || {};
+        var perfil = ler(K_PERFIL, {}) || {};
+
+        if (novo.nome !== undefined) {
+            conta.nome = String(novo.nome || "").trim();
+            perfil.nome = conta.nome;
+        }
+        if (novo.tel !== undefined) {
+            conta.tel = String(novo.tel || "").trim();
+            perfil.tel = conta.tel;
+        }
+        ['email', 'endereco', 'bairro', 'rua', 'numero', 'complemento', 'observacao', 'cep', 'cpf'].forEach(function (k) {
+            if (novo[k] !== undefined) perfil[k] = String(novo[k] || "").trim();
+        });
+
+        gravar(K_CONTA, conta);
+        gravar(K_PERFIL, perfil);
+        Conta.aplicarEmTodos();
+        return dados();
+    }
+
+    function salvarNome(nome) { return salvar({ nome: nome }); }
+
+    /* ---------- foto ---------- */
+    function salvarFoto(dataUrl) {
+        try { localStorage.setItem(K_FOTO, dataUrl); return true; }
+        catch (e) { return false; }
+    }
+    function lerFoto() {
+        try { return localStorage.getItem(K_FOTO) || ""; } catch (e) { return ""; }
+    }
+    function limparFoto() {
+        try { localStorage.removeItem(K_FOTO); } catch (e) {}
+        Conta.aplicarEmTodos();
+    }
+
+    function escolherArquivo(input, cb) {
+        var arq = input && input.files && input.files[0];
+        if (!arq) return;
+        if (arq.size > MAX_FOTO) {
+            if (typeof avisar === "function") avisar("Foto muito grande. Use uma imagem de ate 10 MB.");
+            else alert("Foto muito grande. Use uma imagem de ate 10 MB.");
+            input.value = "";
+            return;
+        }
+        var leitor = new FileReader();
+        leitor.onload = function (e) {
+            var original = String(e.target.result);
+            var img = new Image();
+            img.onload = function () {
+                var pronta = original;
+                try {
+                    var w = img.naturalWidth || img.width;
+                    var h = img.naturalHeight || img.height;
+                    var lado = Math.max(w, h);
+                    if (lado > FOTO_MAX_LADO) {
+                        var esc = FOTO_MAX_LADO / lado;
+                        var canvas = document.createElement("canvas");
+                        canvas.width = Math.max(1, Math.round(w * esc));
+                        canvas.height = Math.max(1, Math.round(h * esc));
+                        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                        pronta = canvas.toDataURL("image/jpeg", 0.88);
+                    }
+                } catch (err) { pronta = original; }
+                if (salvarFoto(pronta) && cb) cb(pronta);
+                else alert("Nao foi possivel salvar a foto. Tente uma imagem menor.");
+            };
+            img.onerror = function () {
+                if (salvarFoto(original) && cb) cb(original);
+                else alert("Nao foi possivel salvar a foto.");
+            };
+            img.src = original;
+        };
+        leitor.onerror = function () { alert("Nao foi possivel ler a imagem."); };
+        leitor.readAsDataURL(arq);
+    }
+
+    /* ---------- aplicar em qualquer elemento da pagina ---------- */
+    function aplicarEmTodos() {
+        var d = dados();
+
+        document.querySelectorAll("[data-conta='nome']").forEach(function (el) {
+            if (document.activeElement !== el) el.value = d.nome;
+            el.placeholder = d.nome || "Seu nome";
+        });
+        document.querySelectorAll("[data-conta='tel']").forEach(function (el) {
+            if (document.activeElement !== el) el.value = d.tel;
+            el.placeholder = d.tel || "Seu WhatsApp";
+        });
+        ['email', 'endereco', 'bairro', 'rua', 'numero', 'complemento', 'observacao', 'cep', 'cpf'].forEach(function (k) {
+            document.querySelectorAll("[data-conta='" + k + "']").forEach(function (el) {
+                if (document.activeElement !== el) el.value = d[k] || "";
+            });
+        });
+
+        document.querySelectorAll("[data-conta-foto]").forEach(function (box) {
+            var img = box.querySelector("img");
+            var txt = box.querySelector(".pa-texto, .avatar-texto");
+            if (d.foto) {
+                if (img) { img.src = d.foto; img.style.display = "block"; }
+                if (txt) txt.style.display = "none";
+            } else {
+                if (img) { img.removeAttribute("src"); img.style.display = "none"; }
+                if (txt) { txt.textContent = d.inicial; txt.style.display = "flex"; }
+            }
+        });
+
+        document.querySelectorAll("[data-conta='nome-mostrar']").forEach(function (el) {
+            el.textContent = d.nome || "Cliente";
+        });
+        document.querySelectorAll("[data-conta='tel-mostrar']").forEach(function (el) {
+            el.textContent = d.tel || "WhatsApp nao informado";
+        });
+
+        return d;
+    }
+
+    window.addEventListener("storage", function (e) {
+        if (e.key === K_CONTA || e.key === K_PERFIL || e.key === K_FOTO) Conta.aplicarEmTodos();
+    });
+
+    document.addEventListener("DOMContentLoaded", function () { Conta.aplicarEmTodos(); });
+
+    return {
+        dados: dados,
+        estaVazia: estaVazia,
+        salvar: salvar,
+        salvarNome: salvarNome,
+        salvarFoto: salvarFoto,
+        lerFoto: lerFoto,
+        limparFoto: limparFoto,
+        escolherArquivo: escolherArquivo,
+        aplicarEmTodos: aplicarEmTodos,
+        ler: ler,
+        gravar: gravar
+    };
+})();

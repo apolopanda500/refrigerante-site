@@ -1,0 +1,26 @@
+# ============================================
+#  SITE DA LOJA NO CLOUDFLARE (estatico)
+#
+#  O GitHub Pages nao serve repositorio PRIVADO no plano gratuito: ao deixar
+#  o repositorio privado, o site inteiro caiu (404). Este worker serve o site
+#  sem depender do GitHub, para o codigo poder ficar privado a vontade.
+#
+#  Uso:  wrangler deploy -c wrangler-site.toml
+# ============================================
+name = "convencao-site"
+main = "worker/site-estatico.js"
+compatibility_date = "2024-11-06"
+workers_dev = true
+
+# Os arquivos do site vivem aqui. O Worker so os entrega.
+[assets]
+directory = "site"
+binding = "ASSETS"
+not_found_handling = "none"
+# Sem isto, o Cloudflare responde 307 e joga /carrinho.html para /carrinho:
+# o navegador segue o redirecionamento, a pagina fica em loop e cai na home.
+# O site depende do endereco COM .html (o app e os links do painel usam).
+html_handling = "none"
+
+[observability]
+enabled = false

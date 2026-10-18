@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="manifest" href="manifest.json?v=20261018j">
+<link rel="manifest" href="manifest.json?v=20261018nj">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Convenção">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261018j">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261018nj">
 <title>Configurações - Refrigerantes Convenção</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261018j">
-<script src="theme.js?v=20261018j"></script>
+<link rel="stylesheet" href="style.css?v=20261018nj">
+<script src="theme.js?v=20261018nj"></script>
 
 <style>
 .page{ padding: 26px 0 60px; background: var(--light-bg); min-height: 100vh; }.page-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }.page-head h1{ color: var(--primary-color); font-size:1.6rem; display:flex; align-items:center; gap:10px; }.config-card{ background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:22px; margin-bottom:18px; }.config-card h2{ font-size:1.1rem; color:var(--text-color); margin-bottom:16px; display:flex; align-items:center; gap:10px; }.config-card h2 i{ color:var(--primary-color); }.config-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f0f0f0; flex-wrap:wrap; gap:10px; }.config-row:last-child{ border-bottom:none; }.config-label{ font-size:0.95rem; color:#555; }.config-label small{ display:block; color:#6b7280; font-size:0.8rem; margin-top:2px; }.toggle{ position:relative; width:52px; height:28px; }.toggle input{ opacity:0; width:0; height:0; }.toggle .slider{ position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; border-radius:28px; transition:0.3s; }.toggle .slider::before{ content:''; position:absolute; height:22px; width:22px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:0.3s; }.toggle input:checked + .slider{ background:var(--primary-color); }.toggle input:checked + .slider::before{ transform:translateX(24px); }.btn-perigo{ padding:10px 24px; background:#ff5252; color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; }.btn-perigo:hover{ background:#d32f2f; }.info-box{ background:var(--texto-ok-fundo); border-left:4px solid #43a047; padding:14px 18px; border-radius:8px; font-size:0.9rem; color:var(--texto-ok); margin-bottom:18px; }.version-info{ text-align:center; color:#6b7280; font-size:0.82rem; padding:20px 0 10px; }/* ===== linhas de configuracao empilhadas ===== */
@@ -140,19 +140,11 @@
 
 <div class="config-card">
   <h2><i class="fa fa-eye"></i> Aparência</h2>
-  <div class="config-row">
-    <div class="config-label">Animações reduzidas<small>Reduzir animações da interface</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgReducedMotion"><span class="slider"></span></label>
   </div>
-</div>
 
 <div class="config-card">
   <h2><i class="fa fa-shopping-cart"></i> Carrinho e Pedidos</h2>
-  <div class="config-row">
-    <div class="config-label">Lembrar último pedido<small>Preencher o último endereço automaticamente</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgLembrarPedido" checked><span class="slider"></span></label>
-  </div></div>
-
+  
 
 </div>
 
@@ -179,19 +171,7 @@
       <button class="op-btn" data-v="vertical" onclick="setOpcao('cfgLeitura',this)"><i class="fa fa-grip-lines-vertical"></i> Vertical</button>
     </div>
   </div>
-  <div class="config-row">
-    <div class="config-label">Alto contraste<small>Bordas fortes e texto mais escuro</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgAltoContraste"><span class="slider"></span></label>
-  </div>
-  <div class="config-row">
-    <div class="config-label">Tela compacta<small>Produtos menores, mais cabem na tela</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgCompacto"><span class="slider"></span></label>
-  </div>
-  <div class="config-row">
-    <div class="config-label">Mostrar fotos dos produtos<small>Desligue para o site carregar mais rápido</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgVerImagens" checked><span class="slider"></span></label>
-  </div>
-</div>
+      </div>
 
 <div class="config-card">
   <h2><i class="fa fa-user-circle"></i> Minha conta</h2>
@@ -218,42 +198,12 @@
 
 <div class="config-card">
   <h2><i class="fa fa-list-alt"></i> Preferências de compra</h2>
-  <div class="config-row">
-    <div class="config-label">Confirmar antes de finalizar<small>Perguntar antes de enviar o pedido</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgConfirmarPedido" checked><span class="slider"></span></label>
-  </div>
-  <div class="config-row">
-    <div class="config-label">Salvar endereço automaticamente<small>Completar os dados no checkout</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgSalvarEndereco" checked><span class="slider"></span></label>
-  </div>
-</div>
+    </div>
 
 
 <div class="config-card">
   <h2><i class="fa fa-sliders-h"></i> Entrega e pagamento</h2>
-  <div class="config-row config-col">
-    <div class="config-label">Quando prefere receber
-      <small>Usamos para organizar a rota do caminhão</small>
-    </div>
-    <div class="opcoes" id="cfgHorarioEntrega">
-      <button class="op-btn" data-v="manha" onclick="setOpcao('cfgHorarioEntrega',this)">Manhã</button>
-      <button class="op-btn" data-v="tarde" onclick="setOpcao('cfgHorarioEntrega',this)">Tarde</button>
-    </div>
-  </div>
-  <div class="config-row config-col">
-    <div class="config-label">Forma de pagamento preferida
-      <small>Já deixamos marcado no checkout</small>
-    </div>
-    <div class="opcoes" id="cfgPagamento">
-      <button class="op-btn" data-v="Pix" onclick="setOpcao('cfgPagamento',this)">Pix</button>
-      <button class="op-btn" data-v="Dinheiro" onclick="setOpcao('cfgPagamento',this)">Dinheiro</button>
-    </div>
-  </div>
-  <div class="config-row">
-    <div class="config-label">Acompanhamento automatico<small>O pedido avança sozinho, sem precisar falar com ninguem</small></div>
-    <label class="toggle"><input type="checkbox" id="cfgAutoStatus" checked><span class="slider"></span></label>
-  </div>
-</div>
+      </div>
 
 <!-- IA do cliente: SO o botao flutuante do canto da tela.
      Este bloco (provedor, URL, chave, modelo e o botao Testar)
@@ -313,13 +263,13 @@
 </div>
 </div></section>
 
-<script src="conta.js?v=20261018j"></script>
-<script src="firebase-appcheck.js?v=20261018j"></script>
-<script src="app-update.js?v=20261018j"></script>
-<script src="ia.js?v=20261018j"></script>
-<script src="central.js?v=20261018j"></script>
-<script src="loja.js?v=20261018j"></script>
-<script src="script.js?v=20261018j"></script>
+<script src="conta.js?v=20261018nj"></script>
+<script src="firebase-appcheck.js?v=20261018nj"></script>
+<script src="app-update.js?v=20261018nj"></script>
+<script src="ia.js?v=20261018nj"></script>
+<script src="central.js?v=20261018nj"></script>
+<script src="loja.js?v=20261018nj"></script>
+<script src="script.js?v=20261018nj"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -344,7 +294,8 @@
 (function() {
     var prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch(e) {}
-    var ids = ["cfgReducedMotion","cfgLembrarPedido","cfgAltoContraste","cfgCompacto","cfgVerImagens","cfgConfirmarPedido","cfgSalvarEndereco","cfgAutoStatus"];
+    /* o unico interruptor que sobrou na tela */
+    var ids = ["cfgNotifPedido"];
     ids.forEach(function(id) {
         var el = document.getElementById(id);
         if (!el) return;
@@ -352,16 +303,9 @@
         el.addEventListener("change", function() {
             prefs[id] = el.checked;
             try { localStorage.setItem("refrigerantePrefs", JSON.stringify(prefs)); } catch(e) {}
-            if (id === "cfgReducedMotion") {
-                if (el.checked) {
-                    document.documentElement.setAttribute("data-motion", "reduced");
-                } else {
-                    document.documentElement.removeAttribute("data-motion");
-                }
-            }
-            if (id === "cfgAltoContraste" || id === "cfgCompacto" || id === "cfgVerImagens") {
-                if (typeof aplicarTema === "function") aplicarTema();
-            }
+            /* as opcoes que dependem do visual sairam da tela: o site ja vem
+               no visual normal, com as fotos aparecendo */
+            if (typeof aplicarTema === "function") aplicarTema();
         });
     });
 })();
@@ -602,7 +546,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
     setTimeout(function(){
         var p = carregarPrefs();
-        ["cfgFonteTamanho","cfgHorarioEntrega","cfgPagamento"].forEach(function(id){
+        ["cfgFonteTamanho","cfgLeitura"].forEach(function(id){
             var v = p[id] || "normal";
             document.querySelectorAll("#" + id + " .op-btn").forEach(function(b){
                 b.classList.toggle("ativo", b.dataset.v === v);

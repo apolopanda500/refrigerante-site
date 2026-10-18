@@ -40,7 +40,7 @@ function cenario(nome, plano, semGateway) {
             setItem(k, v) { this._d[k] = String(v); }, removeItem(k) { delete this._d[k]; }
         },
         document: { addEventListener: () => {}, querySelector: () => null, querySelectorAll: () => [], getElementById: () => null, documentElement: { setAttribute: () => {} }, body: { classList: { add() {}, remove() {}, toggle() {} } } },
-        location: { href: "https://apolopanda500.github.io/refrigerante-site/index.html", pathname: "/refrigerante-site/index.html", reload: () => {} },
+        location: { href: "https://convencao-site.rickjax123.workers.dev/index.html", pathname: "/refrigerante-site/index.html", reload: () => {} },
         navigator: { userAgent: "teste", vibrate: () => {} },
         setTimeout, clearTimeout, setInterval: () => 0, clearInterval,
         fetch: plano,

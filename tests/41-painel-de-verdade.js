@@ -40,7 +40,7 @@ const falha = (m) => { console.log("  ERRO " + m); erros++; };
 const ok = (m) => console.log("  ok  " + m);
 const esperar = (ms) => new Promise(function (r) { setTimeout(r, ms); });
 
-const SITE = "https://apolopanda500.github.io/refrigerante-site/";
+const SITE = "https://convencao-site.rickjax123.workers.dev/";
 const PORTA_BASE = 9470;
 const PORTA = PORTA_BASE + Math.floor(Math.random() * 400);
 const NAVEGADOR = [

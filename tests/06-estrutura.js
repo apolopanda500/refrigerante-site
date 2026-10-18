@@ -509,9 +509,18 @@ if (!/body\.admin\[data-leitura="vertical"\] \.tabela-pedidos \.td-acoes/.test(c
 if (!/body\.admin \.main-header\{background:var\(--primary-color/.test(adm9)) {
     falha("o cabecalho do painel precisa de CSS proprio (estava empilhado e torto)");
 } else console.log("  ok  cabecalho do painel com layout proprio");
-if (!/data-layout="compacto"\] \.tabela-pedidos td\{padding:7px 10px\}/.test(adm9) || !/cfgCompacto === true/.test(th)) {
-    falha("a tela compacta nao liga e desliga (faltou tema.js ou o CSS do painel)");
-} else console.log("  ok  tela compacta liga e desliga");
+/* A tela compacta saiu de proposito (o dono pediu menos opcoes na tela de
+   configuracao). O que importa agora e que a preferencia antiga NAO
+   continue valendo sozinha: quem tinha ligado algo no aparelho tem de
+   voltar ao visual normal, sem botao para desligar. */
+if (/cfgCompacto|cfgAltoContraste|cfgVerImagens/.test(th)) {
+    falha("o site ainda obedece a preferencia antiga que saiu da tela (alguem ficaria preso nela)");
+} else console.log("  ok  as preferencias antigas nao valem mais (visual normal, fotos sempre visiveis)");
+if (!/data-layout/.test(th)) falha("a tela nao limpa o atributo de layout compacto");
+else console.log("  ok  a tela tira o modo compacto de quem ja tinha ligado");
+const cfg = fs.readFileSync(path.join(dir, "configuracoes.html"), "utf8");
+if (/Alto contraste|Tela compacta|Mostrar fotos/.test(cfg)) falha("as tres opcoes ainda estao na tela de configuracao");
+else console.log("  ok  as tres opcoes sairam da tela de configuracao");
 
 /* ticks recolhiveis */
 const hist2 = fs.readFileSync(path.join(dir, "meus-pedidos.html"), "utf8");

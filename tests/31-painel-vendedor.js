@@ -34,7 +34,7 @@ const ctx = {
         setItem(k, v) { this._d[k] = String(v); }, removeItem(k) { delete this._d[k]; }
     },
     document: { addEventListener: () => {}, querySelector: () => null, querySelectorAll: () => [], getElementById: () => null, documentElement: { setAttribute: () => {}, getAttribute: () => null }, body: { classList: { add(){}, remove(){}, toggle(){} } } },
-    location: { href: "https://apolopanda500.github.io/refrigerante-site/admin.html", pathname: "/refrigerante-site/admin.html", search: "", hash: "" },
+    location: { href: "https://convencao-site.rickjax123.workers.dev/admin.html", pathname: "/refrigerante-site/admin.html", search: "", hash: "" },
     navigator: { userAgent: "teste", vibrate: () => {} },
     setTimeout, clearTimeout, setInterval: () => 0, clearInterval,
     fetch: () => Promise.reject(new Error("sem rede")), alert: () => {}, confirm: () => true,

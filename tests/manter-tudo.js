@@ -95,8 +95,8 @@ else ok("todos os links internos apontam para arquivo que existe");
 /* ---------- 4. links externos (so com --online) ---------- */
 console.log("\n=== 4. LINKS EXTERNOS ===");
 const externos = [
-    "https://apolopanda500.github.io/refrigerante-site/",
-    "https://apolopanda500.github.io/refrigerante-site/admin.html",
+    "https://convencao-site.rickjax123.workers.dev/",
+    "https://convencao-site.rickjax123.workers.dev/admin.html",
     "https://refrigerantesconvencaorio.entregaaki.app.br/Principal/Publico/Produtos"
 ];
 if (!ONLINE) {

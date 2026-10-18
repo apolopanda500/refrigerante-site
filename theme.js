@@ -54,9 +54,10 @@
         if (tema === "claro") { h.removeAttribute("data-theme"); if (b) b.removeAttribute("data-theme"); }
         else { h.setAttribute("data-theme", tema); if (b) b.setAttribute("data-theme", tema); }
 
-        // Animate? — controla a animacao
-        if (p.cfgReducedMotion) { h.setAttribute("data-motion", "reduced"); if (b) b.setAttribute("data-motion", "reduced"); }
-        else { h.removeAttribute("data-motion"); if (b) b.removeAttribute("data-motion"); }
+        // Animacao: a opcao saiu da tela (o dono pediu menos botoes). O
+        // site fica sempre com as animacoes normais, e a preferencia
+        // antiga, se ainda estiver salva no aparelho, e descartada aqui.
+        h.removeAttribute("data-motion"); if (b) b.removeAttribute("data-motion");
 
         // Tamanho da fonte
         var tam = p.cfgFonteTamanho || "normal";
@@ -69,19 +70,13 @@
         if ((p.cfgLeitura || "horizontal") === "vertical") { h.setAttribute("data-leitura", "vertical"); if (b) b.setAttribute("data-leitura", "vertical"); }
         else { h.removeAttribute("data-leitura"); if (b) b.removeAttribute("data-leitura"); }
 
-        // Alto contraste
-        if (p.cfgAltoContraste) { h.setAttribute("data-contraste", "alto"); if (b) b.setAttribute("data-contraste", "alto"); }
-        else { h.removeAttribute("data-contraste"); if (b) b.removeAttribute("data-contraste"); }
-
-        // Modo compacto (tela mais fechada, menos rolagem).
-        // Precisa LIGAR e DESLIGAR: se o atributo nao for removido,
-        // o botao so liga e a tela fica compacta para sempre.
-        if (p.cfgCompacto === true || p.cfgCompacto === "1") { h.setAttribute("data-layout", "compacto"); if (b) b.setAttribute("data-layout", "compacto"); }
-        else { h.removeAttribute("data-layout"); if (b) b.removeAttribute("data-layout"); }
-
-        // Ver imagens dos produtos
-        if (p.cfgVerImagens === false) { h.setAttribute("data-imagens", "ocultas"); if (b) b.setAttribute("data-imagens", "ocultas"); }
-        else { h.removeAttribute("data-imagens"); if (b) b.removeAttribute("data-imagens"); }
+        // Alto contraste, tela compacta e fotos dos produtos: as tres
+        // opcoes sairam da tela. O site fica sempre no visual normal,
+        // com as fotos aparecendo - e a preferencia antiga que ainda
+        // estiver salva no aparelho e descartada aqui.
+        h.removeAttribute("data-contraste"); if (b) b.removeAttribute("data-contraste");
+        h.removeAttribute("data-layout"); if (b) b.removeAttribute("data-layout");
+        h.removeAttribute("data-imagens"); if (b) b.removeAttribute("data-imagens");
     }
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", aplicar);

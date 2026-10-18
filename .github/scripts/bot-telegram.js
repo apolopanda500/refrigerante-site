@@ -40,7 +40,7 @@ if (!TOKEN) {
 }
 const CHAT  = String(process.env.TG_CHAT || "1810807613");
 const OFFSET_PATH = "/bot/offset.json";
-const PAINEL_URL  = "https://apolopanda500.github.io/refrigerante-site/admin.html";
+const PAINEL_URL  = "https://convencao-site.rickjax123.workers.dev/admin.html";
 
 const STATUS_LABEL = {
     aguardando: "Aguardando confirmação",

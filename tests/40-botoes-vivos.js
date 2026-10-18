@@ -32,7 +32,7 @@ const falha = (m) => { console.log("  ERRO " + m); erros++; };
 const ok = (m) => console.log("  ok  " + m);
 const esperar = (ms) => new Promise(function (r) { setTimeout(r, ms); });
 
-const SITE = "https://apolopanda500.github.io/refrigerante-site/";
+const SITE = "https://convencao-site.rickjax123.workers.dev/";
 const GATEWAY = "https://convencao-gateway.rickjax123.workers.dev";
 const PORTA_BASE = 9370;
 const PORTA = PORTA_BASE + Math.floor(Math.random() * 400);
@@ -171,7 +171,7 @@ function conectar(url) {
 
     console.log("=== 1. O BOTAO DA IA ABRE O ASSISTENTE (home) ===");
     await abrir("index.html");
-    const temFab = await esperarAte('!!document.getElementById("iaFab")', 15000);
+    const temFab = await esperarAte('!!document.getElementById("iaFab")', 45000);
     if (!temFab) falha("a home nao criou o botao da IA (iaFab)");
     else ok("o botao da IA existe na home (criado por ia.js, ligado por addEventListener)");
 
@@ -190,7 +190,7 @@ function conectar(url) {
     const paginas = ["carrinho.html", "meus-pedidos.html", "perfil.html", "configuracoes.html", "pedido-sucesso.html"];
     for (const p of paginas) {
         await abrir(p);
-        const r = await esperarAte('!!document.getElementById("iaFab")', 15000);
+        const r = await esperarAte('!!document.getElementById("iaFab")', 45000);
         if (r) ok(p + ": botao da IA presente e clicavel");
         else falha(p + ": sem botao da IA (o cliente ficaria sem o assistente nessa tela)");
     }

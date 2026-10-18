@@ -14,11 +14,11 @@
    de ficar preso numa versao antiga (foi o defeito do
    Historico mostrar versao velha depois do Ctrl+F5).
    ============================================ */
-var VERSAO_APP = "20261018j";
+var VERSAO_APP = "20261018n";
 
 /* nome do cache vivo: sw.js monta "convencao-cache-" + VERSAO.
    Mantido aqui so para conferir; o service worker e a fonte da verdade. */
-var CACHE_ATUAL = "convencao-cache-20261018j";
+var CACHE_ATUAL = "convencao-cache-20261018n";
 
 /* tira os caches ANTIGOS (o do service worker atual fica de pe:
    se apagassemos tudo, o app ficaria sem nada offline) */

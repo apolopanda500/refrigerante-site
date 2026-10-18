@@ -29,7 +29,7 @@ function novoCliente(nome, tel, bairro, regiao, itens, pagamento, troco) {
             setItem(k, v) { this._d[k] = String(v); }, removeItem(k) { delete this._d[k]; }
         },
         document: { addEventListener: () => {}, querySelector: () => null, querySelectorAll: () => [], getElementById: () => null, documentElement: { setAttribute: () => {} }, body: { classList: { add() {}, remove() {}, toggle() {} } } },
-        location: { href: "https://apolopanda500.github.io/refrigerante-site/carrinho.html", pathname: "/refrigerante-site/carrinho.html", reload: () => {} },
+        location: { href: "https://convencao-site.rickjax123.workers.dev/carrinho.html", pathname: "/refrigerante-site/carrinho.html", reload: () => {} },
         navigator: { userAgent: "teste", vibrate: () => {} },
         setTimeout, clearTimeout, setInterval: () => 0, clearInterval,
         fetch: () => Promise.reject(new Error("sem rede")),
@@ -92,7 +92,7 @@ const painelCtx = {
         setItem(k, v) { this._d[k] = String(v); }, removeItem(k) { delete this._d[k]; }
     },
     document: { addEventListener: () => {}, querySelector: () => null, querySelectorAll: () => [], getElementById: () => null, documentElement: { setAttribute: () => {} }, body: { classList: { add() {}, remove() {}, toggle() {} } } },
-    location: { href: "https://apolopanda500.github.io/refrigerante-site/admin.html", pathname: "/refrigerante-site/admin.html", reload: () => {} },
+    location: { href: "https://convencao-site.rickjax123.workers.dev/admin.html", pathname: "/refrigerante-site/admin.html", reload: () => {} },
     navigator: { userAgent: "teste", vibrate: () => {} },
     setTimeout, clearTimeout, setInterval: () => 0, clearInterval,
     fetch: (url, op) => {

@@ -74,7 +74,7 @@ console.log("\n=== 4. A MENSAGEM DO PEDIDO TEM BOTAO PARA O PAINEL ===");
     else ok("teclado do pedido no script.js");
     if (!/callback_data:\s*"st\|"/.test(s)) falha("os botoes do pedido perderam o callback de status");
     else ok("botoes do pedido com callback de status");
-    if (!/url:\s*"https:\/\/apolopanda500\.github\.io\/refrigerante-site\/admin\.html"/.test(s)) falha("falta o botao \"Abrir painel\" (URL) na mensagem");
+    if (!/url:\s*"https:\/\/convencao-site\.rickjax123\.workers\.dev\/admin\.html"/.test(s)) falha("falta o botao \"Abrir painel\" (URL) na mensagem");
     else ok("mensagem tem o botao para abrir o painel");
 }
 

@@ -84,7 +84,7 @@ console.log("\n=== 8. O DEPLOY ESTA NO AR ===");
 if (!ONLINE) {
     console.log("  --  pulado (rode com --online para conferir o site publicado)");
 } else {
-    const site = "https://apolopanda500.github.io/refrigerante-site/";
+    const site = "https://convencao-site.rickjax123.workers.dev/";
     /* baixa pelo node (o powershell nem sempre tem o mesmo acesso a rede) */
     const pega = (u) => {
         const codigo = "fetch(process.argv[1]).then(function(r){return r.text();})"
