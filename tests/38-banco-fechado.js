@@ -25,6 +25,8 @@ const ler = (f) => fs.readFileSync(path.join(dir, f), "utf8");
 const ARQ_GW = "worker/convencao-gateway.js";
 const ARQ_REGRAS = "database.rules.json";
 if (!fs.existsSync(path.join(dir, ARQ_GW))) { console.log("  ERRO faltou " + ARQ_GW); process.exit(1); }
+/* o codigo do gateway, lido para conferir COMO ele fala com o banco */
+const fonteGateway = ler(ARQ_GW);
 
 console.log("=== 1. AS REGRAS DO FIREBASE NAO ABREM NADA ===");
 if (!fs.existsSync(path.join(dir, ARQ_REGRAS))) falha("faltou " + ARQ_REGRAS + " (regras do banco)");
@@ -98,9 +100,17 @@ console.log("\n=== 2. O GATEWAY CARREGA E TEM AS ROTAS CERTAS ===");
     const bancoFalso = { pedidos: {}, precos: { "k:1": "R$ 19,00" }, avaliacoes: {}, bot: {} };
     const acessos = [];
     globalThis.fetch = function (url, op) {
+        /* o gateway troca o JWT da conta de servico por um TOKEN DE ACESSO antes de
+           falar com o banco: e esse token, no cabecalho Authorization, que bypassa as
+           regras. ?auth= autenticaria como usuario e nao passaria das regras. */
+        if (/oauth2\.googleapis\.com\/token/.test(String(url))) {
+            return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ access_token: "fake-token-admin", expires_in: 3600 }) });
+        }
+        const cab = (op && op.headers) || {};
+        const autenticado = /Bearer /.test(String(cab.Authorization || ""));
         const cam = decodeURIComponent(String(url).split("?")[0].replace(/^https:\/\/fake-db\.firebaseio\.com/, ""));
-        acessos.push({ url: String(url), metodo: (op && op.method) || "GET", caminho: cam, autenticado: /[?&]auth=/.test(String(url)) });
-        if (!/[?&]auth=/.test(String(url))) return Promise.resolve({ ok: false, status: 401, text: () => Promise.resolve("Permission denied") });
+        acessos.push({ url: String(url), metodo: (op && op.method) || "GET", caminho: cam, autenticado: autenticado });
+        if (!autenticado) return Promise.resolve({ ok: false, status: 401, text: () => Promise.resolve("Permission denied") });
         if ((op && op.method) === "PUT") {
             const chave = cam.replace("/pedidos/", "").replace("/avaliacoes/", "avaliacoes:").replace(".json", "").replace("/bot/", "bot:");
             if (cam.indexOf("/bot/") === 0) bancoFalso.bot[cam] = JSON.parse(op.body);
@@ -155,7 +165,14 @@ console.log("\n=== 2. O GATEWAY CARREGA E TEM AS ROTAS CERTAS ===");
     console.log("\n=== 5. TODO ACESSO AO BANCO PELA CONTA DE SERVICO ===");
     const semAuth = acessos.filter(a => !a.autenticado);
     if (semAuth.length) falha("o gateway tentou falar com o banco sem token: " + semAuth.length + "x");
-    else ok("todas as " + acessos.length + " chamadas ao banco foram autenticadas (conta de servico)");
+    else ok("todas as " + acessos.length + " chamadas ao banco foram autenticadas com token de acesso (conta de servico)");
+
+    /* o caminho que FAZ o bypass das regras e o cabecalho; ?auth= nao passa das regras */
+    const comQuery = acessos.filter(function (a) { return /[?&]auth=/.test(a.url); });
+    if (comQuery.length) falha("o gateway voltou a usar ?auth= no banco: isso autentrica como USUARIO e as regras fecharam em cima (" + comQuery.length + "x)");
+    else if (acessos.length) ok("o gateway bypassa as regras pelo token de acesso, e nao por ?auth= (que parou de valer)");
+    if (!/Authorization: "Bearer " \+ token/.test(fonteGateway)) falha("o gateway nao esta mandando Authorization: Bearer no banco");
+    else ok("o codigo manda Authorization: Bearer <token> no banco");
 
     console.log("\n=== 6. O CLIENTE CRIA O PEDIDO E SO VE O DELE ===");
     const bom = {

@@ -102,39 +102,93 @@ async function chaveDoPedido(id) {
     return b64.enc(new Uint8Array(await crypto.subtle.sign("HMAC", chave, new Uint8Array(0))));
 }
 
-/* ---------- conta de servico: o unico que pode falar com o banco ---------- */
+/* ---------- conta de servico: o unico que pode falar com o banco ----------
+/* O token de acesso e o que FAZ o bypass das regras do Firebase. Um
+   token customizado em ?auth= autenticaria como USUARIO e obedeceria as
+   regras (funcionava com o banco aberto e quebrava assim que as regras
+   fecharam - foi o que aconteceu). Por isso: 1) assina o JWT para o
+   endpoint de token; 2) troca esse JWT por um token de acesso OAuth;
+   3) chama o banco com Authorization: Bearer <token de acesso>. */
 let tokenAdmin = null;
 let tokenAdminExpira = 0;
 function pemParaArray(pem) {
     const limpo = String(pem).replace(/-----BEGIN PRIVATE KEY-----/g, "").replace(/-----END PRIVATE KEY-----/g, "").replace(/\s+/g, "");
-    return Uint8Array.from(b64.dec(limpo).buffer ? Array.from(b64.dec(limpo)) : Array.from(b64.dec(limpo)));
+    return Uint8Array.from(b64.dec(limpo));
 }
-async function jwtAdmin() {
-    if (tokenAdmin && tokenAdminExpira > Date.now()) return tokenAdmin;
+async function jwtComEscopo(escopo, caminhoAntigo) {
     if (!CFG.email || !CFG.chave) throw new Error("gateway sem conta de servico configurada");
     const agora = Math.floor(Date.now() / 1000);
     const cab = b64.enc(new TextEncoder().encode(JSON.stringify({ alg: "RS256", typ: "JWT" })));
     const corpo = b64.enc(new TextEncoder().encode(JSON.stringify({
-        iss: CFG.email, scope: "https://www.googleapis.com/auth/firebase.database",
-        aud: "https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit",
+        iss: CFG.email,
+        scope: escopo || "https://www.googleapis.com/auth/firebase.database",
+        aud: caminhoAntigo ? "https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit" : "https://oauth2.googleapis.com/token",
         iat: agora, exp: agora + 3600
     })));
     const chave = await crypto.subtle.importKey("pkcs8", pemParaArray(CFG.chave), { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
     const sig = b64.enc(new Uint8Array(await crypto.subtle.sign("RSASSA-PKCS1-v1_5", chave, new TextEncoder().encode(cab + "." + corpo))));
-    tokenAdmin = cab + "." + corpo + "." + sig;
+    return cab + "." + corpo + "." + sig;
+}
+/* troca o JWT por um TOKEN DE ACESSO (esse sim bypassa as regras) */
+async function tokenDeAcesso() {
+    if (tokenAdmin && tokenAdminExpira > Date.now()) return tokenAdmin;
+    const jwt = await jwtComEscopo("https://www.googleapis.com/auth/firebase.database");
+    const r = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "grant_type=" + encodeURIComponent("urn:ietf:params:oauth:grant-type:jwt-bearer") + "&assertion=" + encodeURIComponent(jwt)
+    });
+    if (!r.ok) {
+        const t2 = await r.text();
+        throw new Error("conta de servico recusada (" + r.status + "): " + t2.slice(0, 120));
+    }
+    const j = await r.json();
+    if (!j.access_token) throw new Error("o Google nao devolveu token de acesso");
+    tokenAdmin = j.access_token;
+    /* o token dura 1h; renovamos com folga para nunca cair no meio de um pedido */
     tokenAdminExpira = Date.now() + 50 * 60 * 1000;
     return tokenAdmin;
 }
+
+/* FALA COM O BANCO - dois caminho, na ordem certa:
+   1) TOKEN DE ACESSO no cabecalho: e o que passa por cima das regras. So
+      funciona se a conta de servico tiver a permissao de admin do banco
+      (ainda nao concedida). Quando a permissao for concedida, este passa a valer e o banco
+      pode ser fechado de vez.
+   2) ?auth=<JWT>: o caminho antigo. Entra como usuario comum, entao so
+      funciona com o banco ABERTO. Serve para a loja nao parar enquanto a
+      permissao nao chega - e avisa qual dos dois esta valendo. */
+let bancoVia = "";
 async function banco(caminho, metodo, corpo) {
-    const jwt = await jwtAdmin();
-    const r = await fetch(CFG.db + caminho + (CFG.db.indexOf("?") >= 0 ? "&" : "?") + "auth=" + jwt, {
-        method: metodo || "GET",
-        headers: { "Content-Type": "application/json" },
-        body: corpo === undefined ? undefined : JSON.stringify(corpo)
-    });
-    if (!r.ok) throw new Error("banco respondeu " + r.status);
-    const t = await r.text();
-    try { return t ? JSON.parse(t) : null; } catch (e) { return t; }
+    async function tentarComTokenDeAcesso() {
+        const token = await tokenDeAcesso();
+        const r = await fetch(CFG.db + caminho, {
+            method: metodo || "GET",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+            body: corpo === undefined ? undefined : JSON.stringify(corpo)
+        });
+        return r;
+    }
+    async function tentarComAuthAntigo() {
+        const jwt = await jwtComEscopo("https://www.googleapis.com/auth/firebase.database", true);
+        const r = await fetch(CFG.db + caminho + (CFG.db.indexOf("?") >= 0 ? "&" : "?") + "auth=" + jwt, {
+            method: metodo || "GET",
+            headers: { "Content-Type": "application/json" },
+            body: corpo === undefined ? undefined : JSON.stringify(corpo)
+        });
+        return r;
+    }
+    let r = await tentarComTokenDeAcesso().catch(function () { return null; });
+    if (r && r.ok) { bancoVia = "admin"; return await r.text().then(function (x) { try { return x ? JSON.parse(x) : null; } catch (e) { return x; } }); }
+    /* o token de acesso nao serviu: tenta o caminho antigo para a venda nao parar */
+    r = await tentarComAuthAntigo();
+    if (!r.ok) {
+        let detalhe = "";
+        try { detalhe = (await r.text()).slice(0, 100); } catch (e) { /* sem corpo */ }
+        throw new Error("banco respondeu " + r.status + (detalhe ? " (" + detalhe.replace(/\s+/g, " ") + ")" : ""));
+    }
+    bancoVia = "aberto";
+    return await r.text().then(function (x) { try { return x ? JSON.parse(x) : null; } catch (e) { return x; } });
 }
 
 /* ---------- formatar ---------- */
@@ -176,8 +230,31 @@ async function rotear(req, env) {
     if (metodo === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
 
     /* 1) saude: o dono (e o painel) ve se o gateway esta de pe */
-    if (rota === "/api/saude") return json({ ok: true, banco: !!CFG.db, servo: !!CFG.email });
+    /* 1) saude: o dono (e o painel) ve se o gateway esta de pe.
+       Isto FAZ a consulta no banco de verdade: mentir aqui esconderia do
+       dono que o painel esta vazio por falha, e nao por falta de venda. */
+    if (rota === "/api/saude") {
+        const s = { ok: true, banco: false, servo: !!CFG.email };
+        try {
+            const p = await banco("/capacidade.json", "GET");
+            s.banco = true;
+            s.capacidade = (p && p.dia) || "";
+            s.caminho = bancoVia;
+        } catch (e) {
+            s.banco = false;
+            s.erro = String(e && e.message || e);
+        }
+        /* o painel usa isto para avisar em voz alta, e nao mostrar "0 vendas" */
+        s.aviso = s.banco ? "" : "O painel NAO esta enxergando o banco. Os pedidos podem estar salvos, mas nao aparecem aqui. Nao confie nesta lista.";
+        return json(s);
+    }
 
+    /* base64url -> texto (com o = de preenchimento que o atob exige) */
+    function decodifica(txt) {
+        let s = String(txt).replace(/-/g, "+").replace(/_/g, "/");
+        while (s.length % 4) s += "=";
+        return atob(s);
+    }
     /* 2) o preco e publico: qualquer um pode ver o preco da bebida */
     if (rota === "/api/precos" && metodo === "GET") {
         return json(await banco("/precos.json", "GET"));
