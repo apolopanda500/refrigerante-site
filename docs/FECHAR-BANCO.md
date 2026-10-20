@@ -55,7 +55,7 @@ e só o painel (ou o gateway) escreve nela.
 > ```powershell
 > node tools/subir-gateway.js
 > ```
-> O script lê o JSON de `Downloads`, sobe os 6 segredos, republica e
+> O script lê o JSON de `Downloads`, sobe os 7 segredos, republica e
 > testa ao vivo — e **apaga o JSON da chave do disco** no final.
 
 1. Crie uma conta em <https://dash.cloudflare.com> (tem plano grátis).
@@ -68,6 +68,7 @@ e só o painel (ou o gateway) escreve nela.
    | `FB_DB_URL` | `https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com` |
    | `FB_SA_EMAIL` | o `client_email` do passo 1 |
    | `FB_SA_KEY` | o campo `private_key` do JSON (com as linhas `-----BEGIN...`) |
+   | `FB_API_KEY` | a **API Key web** do projeto (Firebase Console > Configurações do projeto > Geral) — é pública, mas o gateway precisa dela para trocar o token |
    | `LOJA_SENHA` | **a mesma senha que você usa no painel** |
    | `BOT_SEGREDO` | um texto inventado por você (ex.: 32 caracteres) |
    | `SESSAO_SEGREDO` | outro texto inventado (só o seu) |

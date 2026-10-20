@@ -6,7 +6,7 @@
    O que este script faz sozinho:
      1. confere se o Wrangler esta instalado (instala se preciso)
      2. le o JSON da conta de servico do Firebase
-     3. monta os 6 segredos e envia para o Worker
+     3. monta os 7 segredos e envia para o Worker
      4. publica o codigo do gateway
      5. testa ao vivo o Worker recem publicado
      6. APAGA o JSON da conta de servico do disco
@@ -69,14 +69,16 @@ const segredos = {
     FB_DB_URL: "https://planning-with-ai-9b2c9-default-rtdb.firebaseio.com",
     FB_SA_EMAIL: chave.client_email,
     FB_SA_KEY: chave.private_key,
+    FB_API_KEY: process.env.FB_API_KEY || "",
     LOJA_SENHA: process.env.LOJA_SENHA || "",
     BOT_SEGREDO: process.env.BOT_SEGREDO || "",
     SESSAO_SEGREDO: process.env.SESSAO_SEGREDO || ""
 };
-const faltando = ["LOJA_SENHA", "BOT_SEGREDO", "SESSAO_SEGREDO"].filter(function (k) { return !segredos[k]; });
+const faltando = ["FB_API_KEY", "LOJA_SENHA", "BOT_SEGREDO", "SESSAO_SEGREDO"].filter(function (k) { return !segredos[k]; });
 if (faltando.length) {
     console.log("Faltaram estas senhas (o script nao adivinha): " + faltando.join(", "));
     console.log("Defina antes de rodar:");
+    console.log('  $env:FB_API_KEY="a API Key web do projeto Firebase"');
     console.log('  $env:LOJA_SENHA="a senha do painel"');
     console.log('  $env:BOT_SEGREDO="um texto seu"');
     console.log('  $env:SESSAO_SEGREDO="outro texto seu"');
