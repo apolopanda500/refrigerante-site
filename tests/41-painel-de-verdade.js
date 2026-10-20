@@ -44,10 +44,19 @@ const SITE = "https://convencao-site.rickjax123.workers.dev/";
 const PORTA_BASE = 9470;
 const PORTA = PORTA_BASE + Math.floor(Math.random() * 400);
 const NAVEGADOR = [
+    process.env.CHROME_BIN,
+    process.env.CHROME_PATH,
     "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
     "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
-    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-].find(function (p) { return fs.existsSync(p); });
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "/usr/bin/google-chrome",
+    "/usr/bin/google-chrome-stable",
+    "/opt/google/chrome/chrome",
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+    "/snap/bin/chromium",
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+].find(function (p) { return p && fs.existsSync(p); });
 
 /* a senha do dono, sem mostrar */
 const SENHA = (fs.readFileSync(path.join(dir, "script.js"), "utf8")

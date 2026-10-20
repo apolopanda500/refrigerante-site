@@ -17,5 +17,10 @@ jobs:
             node --check "$f" || exit 1
           done
           echo "Sintaxe OK"
+      - name: Navegador para os testes de clique
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
       - name: Baterias de teste (TUDO 10/10)
+        env:
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
         run: node tests/rodar-todos.js
