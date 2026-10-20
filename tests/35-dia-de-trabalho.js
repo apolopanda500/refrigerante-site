@@ -244,6 +244,64 @@ setTimeout(function () {
     if (depois.historico.length !== antes + 1) falha("o botao do Telegram nao somou passo no historico");
     else ok("botao do Telegram soma passo e grava (" + antes + " -> " + depois.historico.length + "), status: " + depois.status);
 
+    /* ---------- 10. o dia seguinte: o mesmo CPF volta a poder pedir ---------- */
+    console.log("\n=== 10. O DIA SEGUINTE (MESMO CPF) ===");
+    const CPF_DIA = "15350946056";
+    let agoraDia = new Date("2026-10-19T13:00:00-03:00").getTime();
+    class DataDoTeste extends Date {
+        constructor(...args) { if (args.length === 0) super(agoraDia); else super(...args); }
+        static now() { return agoraDia; }
+    }
+    const diaCtx = {
+        console,
+        Date: DataDoTeste,
+        localStorage: {
+            _d: {}, getItem(k) { return this._d[k] === undefined ? null : this._d[k]; },
+            setItem(k, v) { this._d[k] = String(v); }, removeItem(k) { delete this._d[k]; }
+        },
+        document: { addEventListener: () => {}, querySelector: () => null, querySelectorAll: () => [], getElementById: () => null, documentElement: { setAttribute: () => {} }, body: { classList: { add() {}, remove() {}, toggle() {} } } },
+        location: { href: "https://convencao-site.rickjax123.workers.dev/carrinho.html", pathname: "/refrigerante-site/carrinho.html", reload: () => {} },
+        navigator: { userAgent: "teste", vibrate: () => {} },
+        setTimeout, clearTimeout, setInterval: () => 0, clearInterval,
+        fetch: () => Promise.reject(new Error("sem rede")),
+        alert: () => {}, confirm: () => true, Image: function () {}
+    };
+    diaCtx.window = diaCtx;
+    diaCtx.addEventListener = () => {};
+    vm.createContext(diaCtx);
+    vm.runInContext(ler("loja.js"), diaCtx);
+    vm.runInContext(ler("conta.js"), diaCtx);
+    vm.runInContext(ler("script.js"), diaCtx);
+    diaCtx.localStorage.setItem("refrigerantePerfil", JSON.stringify({ nome: "Cliente Do Dia", cpf: CPF_DIA, tel: "21987654321", bairro: "Japeri" }));
+    diaCtx.localStorage.setItem("convencao_usuario", JSON.stringify({ nome: "Cliente Do Dia", tel: "21987654321" }));
+    diaCtx.localStorage.setItem("refrigerantePrefs", JSON.stringify({ nome: "Cliente Do Dia", cpf: CPF_DIA, tel: "21987654321", cfgAvisoPedido: false }));
+    const criarNoDia = vm.runInContext("criarPedido", diaCtx);
+    const dadosDia = {
+        cpf: CPF_DIA, nome: "Cliente Do Dia", tel: "21987654321",
+        end: "Rua do Dia, 100", bairro: "Japeri", regiao: "japeri",
+        frete: 12, pagamento: "Pix", troco: "",
+        itens: [{ name: "Coca-Cola 2L", qty: 4, price: 27.5, priceNum: 27.5, subtotal: 110 }],
+        subtotal: 110, total: 122
+    };
+    const dia1 = criarNoDia(dadosDia);
+    const dia1Repetido = criarNoDia(dadosDia);
+    if (!dia1 || !dia1.id) falha("o primeiro pedido do dia nao nasceu");
+    else if (dia1Repetido) falha("o mesmo CPF fez 2 pedidos no mesmo dia");
+    else ok("dia 1: primeiro pedido nasce, segundo do mesmo CPF e barrado");
+
+    agoraDia = new Date("2026-10-20T13:00:00-03:00").getTime();
+    const dia2 = criarNoDia(dadosDia);
+    if (!dia2 || !dia2.id) falha("o mesmo CPF nao conseguiu pedir no dia seguinte (pedido antigo contou como hoje)");
+    else ok("dia 2: o mesmo CPF volta a pedir (o pedido de ontem nao conta mais)");
+
+    /* cancelar libera a cota do dia: o proximo pedido do mesmo CPF passa */
+    if (dia2 && dia2.id) {
+        vm.runInContext("(function (id) { var ps = getPedidos(); var p = ps.filter(function (x) { return x.id === id; })[0]; if (p) { p.status = 'cancelado'; savePedidos(ps); } })", diaCtx)(dia2.id);
+        const dia2Cancelado = criarNoDia(dadosDia);
+        if (!dia2Cancelado || !dia2Cancelado.id) falha("pedido cancelado continuou comendo a cota do cliente");
+        else ok("pedido cancelado nao come a cota: o cliente pede de novo no mesmo dia");
+    }
+
     console.log("\n" + (erros === 0 ? "*** DIA DE TRABALHO 10/10 ***" : "*** " + erros + " ERRO(S) NO DIA DE TRABALHO ***"));
     process.exit(erros ? 1 : 0);
 }, 120);

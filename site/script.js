@@ -1059,7 +1059,7 @@ function criarPedido(dados) {
         var meuHoje = 0;
         var hojeLocal = String(diaLimite());
         getPedidos().forEach(function (p) {
-            if (p && p.cpf && soDigitos(p.cpf) === cpfHoje && String(p.dia || hojeLocal) === hojeLocal) meuHoje++;
+            if (!p || p.status === "cancelado" || !p.cpf || soDigitos(p.cpf) !== cpfHoje) return;
         });
         if (meuHoje >= LIMITE_PEDIDOS_CLIENTE_DIA) {
             try { localStorage.setItem("convencaoLimiteRecusado", JSON.stringify({

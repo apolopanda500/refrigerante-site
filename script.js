@@ -1059,7 +1059,14 @@ function criarPedido(dados) {
         var meuHoje = 0;
         var hojeLocal = String(diaLimite());
         getPedidos().forEach(function (p) {
-            if (p && p.cpf && soDigitos(p.cpf) === cpfHoje && String(p.dia || hojeLocal) === hojeLocal) meuHoje++;
+            if (!p || p.status === "cancelado" || !p.cpf || soDigitos(p.cpf) !== cpfHoje) return;
+            /* a data tem de ser a do PEDIDO (criadoEm), nunca "hoje" por padrao:
+               sem isso, todo pedido antigo contava como se fosse de hoje e o
+               cliente ficava preso para sempre depois do primeiro dia. */
+            var diaPedido = (typeof dataDoPedido === "function")
+                ? dataDoPedido(p)
+                : String(p.dia || "");
+            if (diaPedido === hojeLocal) meuHoje++;
         });
         if (meuHoje >= LIMITE_PEDIDOS_CLIENTE_DIA) {
             try { localStorage.setItem("convencaoLimiteRecusado", JSON.stringify({

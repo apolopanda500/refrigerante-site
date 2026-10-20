@@ -459,7 +459,7 @@ function limitePedidosTexto() {
     var c = limiteClienteDia();
     var l = limiteLojaDia();
     var t = c > 0
-        ? "Cada cliente pode fazer até " + c + " pedidos por dia."
+        ? "Cada cliente pode fazer até " + c + (c === 1 ? " pedido" : " pedidos") + " por dia."
         : "Não há limite de pedidos por cliente.";
     return t + " A loja atende até " + l + " pedidos por dia.";
 }
