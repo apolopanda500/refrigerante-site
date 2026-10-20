@@ -292,7 +292,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
   (ver `build-apk.ps1` e `.github/scripts`/fluxo documentado no histórico de commits).
 - **Versão dos APK = versão do site:** tanto `apk/android/build.js` quanto
   `build-apk.ps1` leem `versao.txt`. O `versionName` é a mesma versão publicada
-  (ex.: `20261020e`) e o `versionCode` é a data `YYYYMMDD` (vendedor recebe +100).
+  (ex.: `20261020f`) e o `versionCode` é a data `YYYYMMDD` (vendedor recebe +100).
   Depois de gerar, o script grava `apk/versao-apk.txt` e o painel mostra
   "APKs na versão" ao lado da versão publicada.
   **Build sem interação (usado nesta máquina):**

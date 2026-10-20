@@ -1,6 +1,6 @@
 # Refrigerantes Convenção - Online Store
 
-**Versão atual:** 20261020e  
+**Versão atual:** 20261020f  
 **Loja:** https://convencao-site.rickjax123.workers.dev/  
 **Painel:** https://convencao-site.rickjax123.workers.dev/admin.html
 
