@@ -16,17 +16,14 @@ Guia rápido, sem termos técnicos.
 
 ## Antes do primeiro pedido (faça uma vez)
 
-1. **Feche o banco do Firebase.** Hoje ele ainda aceita leitura sem senha.
-   No Firebase Console, abra **Realtime Database > Regras**, apague o que
-   estiver lá e publique exatamente:
-
-   ```json
-   { "rules": { ".read": false, ".write": false } }
-   ```
-
-   O site e o gateway continuam funcionando: o gateway usa a conta de
-   serviço por dentro. Depois rode `node tools/checar-banco-real.js` e
-   confira que os três caminhos respondem 401/403 (fechado).
+1. **Confira o banco do Firebase (já fechado).** As regras de
+   `database.rules.json` estão publicadas: só o gateway (uid
+   `gateway-convencao`) lê e grava pedidos; `/precos` e `/capacidade`
+   continuam públicos de propósito. **Não** publique
+   `{"rules":{".read":false,".write":false}}`: isso quebra o gateway.
+   Rode `node tools/checar-banco-real.js` e confira:
+   `/pedidos`, `/avaliacoes`, `/config`, `/controle` e `/bot` = 401;
+   `/precos` e `/capacidade` = 200.
 
 2. **Teste o painel no celular.** Entre com a senha, escolha
    **Manter conectado: 7 dias**, feche o app e abra de novo: tem de entrar

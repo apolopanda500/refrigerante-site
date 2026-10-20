@@ -171,17 +171,31 @@ em Node (`module.exports.rotear`), com um `http.createServer` simples.
 Dá para rodar na sua máquina ou em qualquer hospedagem com Node — mas
 aí ele precisa ficar ligado 24h, senão o painel não sincroniza.
 
-## O QUE VALE ENQUANTO O BANCO NAO FECHA
+## BANCO FECHADO DE VERDADE (20/10/2026)
 
-Fechar as regras depende de o gateway ter identidade no Firebase, e o Google
-ainda nao aceitou a troca do token assinado (INVALID_CUSTOM_TOKEN). ate la, o
-que protege o cliente nao e a regra: e a **cifra**. O gateway grava nome,
-telefone, CPF, endereco e observacao cifrados (AES-GCM, chave no segredo do
-Worker), entao quem abrir o banco na internet ve so letras sem sentido.
-A bateria 43 prova isso. Status, valor e regiao ficam em claro porque o sistema
-precisa deles para filtrar.
+As regras de `database.rules.json` estao publicadas e o gateway tem
+identidade no Firebase. O problema do `INVALID_CUSTOM_TOKEN` era o token
+personalizado sem o campo `sub` e o Worker sem o segredo `FB_API_KEY`;
+os dois foram corrigidos e o `/api/saude` agora responde
+`{"ok":true,"banco":true,"servo":true,"caminho":"identidade"}`.
 
-**Residuo conhecido:** se o gateway cair, o cliente grava o pedido direto no
-Firebase pelo caminho de reserva e esse texto puro passa. E o preco de manter a
-venda nunca parar. Para fechar de vez, faca o gateway ter identidade e publique
-as regras de `database.rules.json`.
+Conferido sem senha em 20/10/2026:
+
+| Caminho | Resposta | Significado |
+|---|---|---|
+| `/pedidos.json` | 401 | fechado (nome, CPF, telefone, endereco) |
+| `/avaliacoes.json` | 401 | fechado |
+| `/config.json` | 401 | fechado |
+| `/controle.json` | 401 | fechado |
+| `/bot.json` | 401 | fechado |
+| `/precos.json` | 200 | publico de proposito (preco) |
+| `/capacidade.json` | 200 | publico de proposito (so numeros) |
+
+Ainda vale a **cifra** como segunda camada: nome, telefone, CPF, endereco e
+observacao sao gravados com AES-GCM (bateria 43). Status, valor e regiao ficam
+em claro para o painel filtrar.
+
+**Se o gateway cair:** o cliente tenta o caminho antigo direto no Firebase,
+mas o banco fechado recusa e o pedido fica guardado no aparelho. O painel
+mostra o aviso de que nao esta vendo o banco. Conserte o gateway antes de
+vender; nao reabra as regras.

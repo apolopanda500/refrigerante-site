@@ -75,49 +75,55 @@ Data da validacao: **20/10/2026** · Versao validada: **20261020f**
 
 ---
 
-## 6. O QUE AINDA NAO ESTA PRONTO (reconferido em 20/10/2026)
+## 6. O BANCO DO FIREBASE ESTA FECHADO (reconferido em 20/10/2026)
 
-Tudo acima esta validado por bateria. Para **trabalhar com pessoas de
-verdade**, sobrou **um** ponto que so o dono pode fechar. O outro foi
-resolvido e esta registrado abaixo.
-
-### 6.1 🔴 O BANCO DO FIREBASE ESTA ABERTO (leitura e escrita)
-
-Reconferido de verdade em 20/10/2026 com `node tools/checar-banco-real.js`,
+As regras de `database.rules.json` foram publicadas no projeto
+`planning-with-ai-9b2c9` e conferidas com `node tools/checar-banco-real.js`
 sem senha:
 
 ```
-GET  /pedidos.json     -> HTTP 200  ( anybody le ): nome, CPF, telefone, endereco
-PUT  /qualquer-chave   -> HTTP 200  ( anybody escreve )
-DELETE /qualquer-chave -> HTTP 200  ( anybody apaga )
+GET /pedidos.json    -> HTTP 401  (ninguem de fora le nome, CPF, telefone, endereco)
+GET /avaliacoes.json -> HTTP 401
+GET /config.json     -> HTTP 401
+GET /controle.json   -> HTTP 401
+GET /bot.json        -> HTTP 401
+GET /precos.json     -> HTTP 200  (publico de proposito: preco da bebida)
+GET /capacidade.json -> HTTP 200  (publico de proposito: so numeros do dia)
 ```
 
-Ou seja: qualquer pessoa com a URL do projeto consegue **ler os pedidos
-de todo mundo (com CPF)** e ainda **mexer** no banco. Para uma loja de
-bebidas com clientes reais isso e o item mais urgente.
+**O gateway continua lendo e gravando** porque se identifica no Firebase
+como o usuario `gateway-convencao` (token assinado pela conta de servico).
+As regras liberam **somente esse uid**; nao ha leitura/escrita publica em
+`/pedidos`, `/avaliacoes`, `/config`, `/controle` nem `/bot`.
 
-**Como fechar (Firebase Console > Realtime Database > Regras):**
+Regras publicadas (resumo; o arquivo completo esta em `database.rules.json`):
 
 ```json
 {
   "rules": {
-    ".read": false,
-    ".write": false,
-    "pedidos": { ".read": false, ".write": false },
-    "precos":  { ".read": true,  ".write": false },
-    "avaliacoes": { ".read": false, ".write": false }
+    "precos":     { ".read": true, ".write": "auth.uid === 'gateway-convencao'" },
+    "capacidade": { ".read": true, ".write": "auth.uid === 'gateway-convencao'" },
+    "pedidos":    { ".read": "auth.uid === 'gateway-convencao'", ".write": "auth.uid === 'gateway-convencao'" },
+    "avaliacoes": { ".read": "auth.uid === 'gateway-convencao'", ".write": "auth.uid === 'gateway-convencao'" },
+    "config":     { ".read": "auth.uid === 'gateway-convencao'", ".write": "auth.uid === 'gateway-convencao'" },
+    "controle":   { ".read": "auth.uid === 'gateway-convencao'", ".write": "auth.uid === 'gateway-convencao'" },
+    "bot":        { ".read": "auth.uid === 'gateway-convencao'", ".write": "auth.uid === 'gateway-convencao'" }
   }
 }
 ```
 
-Isso **não quebra mais o site**: desde a versão 20261020c o pedido, o
-painel e os preços passam pelo gateway (`convencao-gateway`), que usa a
-conta de serviço por dentro e ignora as regras públicas. O caminho antigo
-direto no Firebase ficou só como reserva de leitura.
+**Correcao aplicada no gateway:** o token personalizado precisava do campo
+`sub` (alem de `iss`, `aud`, `uid`, `iat` e `exp`) e o Worker precisava do
+segredo `FB_API_KEY`. Sem isso o Firebase respondia `INVALID_CUSTOM_TOKEN`
+e o `/api/saude` caia para o caminho publico (401). Depois da correcao,
+`/api/saude` responde `{"ok":true,"banco":true,"servo":true,"caminho":"identidade"}`.
 
-Depois de publicar as regras, rode `node tools/checar-banco-real.js`:
-`pedidos`, `avaliacoes` e `precos` têm de responder **401/403**. Se algum
-responder 200, o banco continua aberto.
+Depois de qualquer mudanca nas regras, rode:
+
+```powershell
+node tools/checar-banco-real.js   # pedidos/avaliacoes/config/controle/bot = 401
+node tools/testar-gateway.js      # cria, le e cancela um pedido de teste real
+```
 
 ### 6.2 🟢 RESOLVIDO — O TOKEN DO TELEGRAM SAIU DO CODIGO
 

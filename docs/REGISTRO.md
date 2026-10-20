@@ -6,6 +6,23 @@
 
 ---
 
+## 0.1 Correção final do banco fechado (20/10/2026)
+
+- **Banco fechado publicado** (`database.rules.json`): `/pedidos`,
+  `/avaliacoes`, `/config`, `/controle` e `/bot` respondem **401** sem senha;
+  `/precos` e `/capacidade` continuam **200** de propósito (preço e vagas).
+- **Gateway recuperou a identidade:** o token personalizado não tinha o campo
+  `sub` e o Worker não tinha o segredo `FB_API_KEY`. O Firebase respondia
+  `INVALID_CUSTOM_TOKEN` e o `/api/saude` caía para o caminho público (401).
+  Corrigidos os dois; agora `/api/saude` = `banco:true, caminho:identidade`.
+- **Teste ao vivo do gateway:** 11/11 no modo local e `testar-gateway.js`
+  criou, leu, alterou e cancelou um pedido real (CPF de teste válido).
+- **Baterias ajustadas:** 38 passou a validar a regra por uid do gateway;
+  `checar-banco-real.js` confere os 5 caminhos sensíveis e os 2 públicos.
+- **Validação:** 47/47 baterias, com 38/40/41 em 10/10.
+
+---
+
 ## 0. Publicação 20261020f (20/10/2026)
 
 - **Login do APK do vendedor não ficava salvo.** O login era guardado só em
@@ -28,8 +45,8 @@
 - **Versão publicada:** 20261020f no site, nos dois APKs e no gateway.
 - **Validação:** 47/47 baterias (duas rodadas), cliente e vendedor 3/3 no site
   real, entrega online 10/10 e APKs 200 na mesma versão.
-- **Pendência do dono:** fechar as regras do Firebase antes do primeiro pedido
-  (seção 6.1 de `VALIDACAO`; conferir com `node tools/checar-banco-real.js`).
+- **Banco do Firebase:** fechado em 20/10/2026 (ver seção 0.1); conferido com
+  `node tools/checar-banco-real.js`.
 
 ---
 
@@ -184,16 +201,13 @@ guia do dono em `docs/MANUAL-DONO.md` e o mapa validado em
 Nada aqui é stabilized só porque os testes passam — são buracos que **só o
 dono fecha**, porque exigem conta, senha e decisão de negócio:
 
-1. 🔴 **O banco do Firebase está aberto** (leitura e escrita): qualquer
-   pessoa com a URL do projeto lê os pedidos com CPF e ainda apaga.
-   **Confirmado ao vivo em 17/10/2026**: `GET /pedidos.json` → HTTP 200 com
-   nome, telefone, CPF, endereço e bairro preenchidos. Passo a passo em
-   `docs/FECHAR-BANCO.md`.
-   **O que já está pronto:** o gateway foi **publicado** na conta
-   Cloudflare do dono (`convencao-gateway.rickjax123.workers.dev`) e testado
-   ao vivo — de pé, com as rotas sensíveis recusando (401/403). Falta **só a
-   chave da conta de serviço** (5 min no console do Firebase), e depois
-   `node tools/subir-gateway.js` sobe os 6 segredos e apaga a chave do disco.
+1. 🟢 **RESOLVIDO — o banco do Firebase foi fechado em 20/10/2026.**
+   `/pedidos`, `/avaliacoes`, `/config`, `/controle` e `/bot` respondem 401
+   sem senha; só o gateway (uid `gateway-convencao`) lê e grava.
+   `/precos` e `/capacidade` continuam públicos de propósito. O gateway
+   recuperou a identidade (campo `sub` no token + segredo `FB_API_KEY`) e o
+   `testar-gateway.js` fez um pedido real de ponta a ponta. Detalhes na
+   seção 6 de `docs/VALIDACAO.md`.
 2. 🔴 **O token do Telegram está no código público** (`script.js`,
    `telegram.js` e os workflows). Trocar o bot e guardar o token novo
    em **GitHub Secrets** + no gateway, nunca no site.

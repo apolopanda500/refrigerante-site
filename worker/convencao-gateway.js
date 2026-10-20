@@ -44,7 +44,8 @@ const CFG = {
     email: (typeof process !== "undefined" && process.env && process.env.FB_SA_EMAIL) || "",
     chave: (typeof process !== "undefined" && process.env && process.env.FB_SA_KEY) || "",
     senha: (typeof process !== "undefined" && process.env && process.env.LOJA_SENHA) || "",
-    bot: (typeof process !== "undefined" && process.env && process.env.BOT_SEGREDO) || ""
+    bot: (typeof process !== "undefined" && process.env && process.env.BOT_SEGREDO) || "",
+    apiKey: (typeof process !== "undefined" && process.env && process.env.FB_API_KEY) || ""
 };
 const TTL = 12 * 60 * 60 * 1000;   /* sessao do dono: 12 horas */
 
@@ -248,6 +249,7 @@ async function tokenUsuario() {
     const cab = b64.enc(new TextEncoder().encode(JSON.stringify({ alg: "RS256", typ: "JWT" })));
     const corpo = b64.enc(new TextEncoder().encode(JSON.stringify({
         iss: CFG.email,
+        sub: CFG.email,
         aud: "https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit",
         iat: agora,
         exp: agora + 3600,
@@ -306,16 +308,18 @@ async function banco(caminho, metodo, corpo) {
 
     /* 1) com a identidade do gateway */
     let r = null;
+    let erroIdentidade = null;
     try {
         r = await chamar(await sessaoDoGateway());
         if (r.ok) { bancoVia = "identidade"; return caminho.indexOf("/pedidos") === 0 ? await pedidosParaLer(await ler(r)) : await ler(r); }
-    } catch (e) { /* sem sessao: cai para o caminho aberto */ }
+    } catch (e) { erroIdentidade = e; }
     /* 2) sem token: enquanto o banco estiver aberto, a venda continua */
     r = await chamar(null);
     if (!r.ok) {
         let detalhe = "";
         try { detalhe = (await r.text()).slice(0, 100); } catch (e) { /* sem corpo */ }
-        throw new Error("banco respondeu " + r.status + (detalhe ? " (" + detalhe.replace(/\s+/g, " ") + ")" : ""));
+        throw new Error("banco respondeu " + r.status + (detalhe ? " (" + detalhe.replace(/\s+/g, " ") + ")" : "")
+            + (erroIdentidade ? " | identidade: " + String(erroIdentidade.message || erroIdentidade).slice(0, 160) : ""));
     }
     bancoVia = "aberto";
     return caminho.indexOf("/pedidos") === 0 ? await pedidosParaLer(await ler(r)) : await ler(r);

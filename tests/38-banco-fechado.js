@@ -35,14 +35,17 @@ const regras = JSON.parse(ler(ARQ_REGRAS));
    A segunda excecao e /capacidade: quantas vagas de pedidos do dia ainda tem
    (a valvula anti-travamento). Sao SO numeros do dia (dia/pedidos/limite) -
    nome, CPF, telefone e endereco nao ficam ali, e a bateria 39 fiscaliza. */
+const GATEWAY_UID = "gateway-convencao";
 const PODE_ABRIR = ["/precos/.read", "/capacidade/.read"];
+const ehGateway = (v) => typeof v === "string" && v.indexOf(GATEWAY_UID) >= 0;
+const seguro = (v) => v === false || ehGateway(v);
 const varrer = (obj, caminho) => {
     const problemas = [];
     Object.keys(obj || {}).forEach(function (chave) {
         if (chave === ".read" || chave === ".write") {
-            if (obj[chave] !== false && !(PODE_ABRIR.indexOf(caminho + chave) >= 0 && obj[chave] === true)) {
-                problemas.push(caminho + chave + " = " + JSON.stringify(obj[chave]));
-            }
+            const publicoDeProposito = chave === ".read" && PODE_ABRIR.indexOf(caminho + chave) >= 0 && obj[chave] === true;
+            if (obj[chave] === true && !publicoDeProposito) problemas.push(caminho + chave + " = true");
+            if (!seguro(obj[chave]) && !publicoDeProposito) problemas.push(caminho + chave + " = " + JSON.stringify(obj[chave]));
         } else if (chave === ".indexOn" || chave.startsWith("$") || chave === ".validate") {
             /* regra auxiliar */
         } else if (typeof obj[chave] === "object") {
@@ -53,23 +56,31 @@ const varrer = (obj, caminho) => {
 };
 const abertas = varrer(regras.rules, "/");
 if (abertas.length) falha("regra que deixa o banco aberto: " + abertas.join(", "));
-else ok("nenhuma regra abre leitura ou escrita para fora (nem em /pedidos, /avaliacoes ou /bot)");
-if (regras.rules[".read"] !== false || regras.rules[".write"] !== false) falha("a raiz do banco precisa estar fechada");
-else ok("raiz fechada: .read = false e .write = false");
+else ok("nenhuma regra abre leitura/escrita para o mundo (so o gateway, autenticado)");
+if (regras.rules[".read"] === true || regras.rules[".write"] === true) falha("a raiz do banco nao pode estar aberta");
+else ok("raiz sem leitura/escrita publica (padrao do Firebase = fechado)");
 if (regras.rules.precos[".read"] !== true) falha("o preco precisa continuar publico de leitura");
 else ok("so o preco fica publico para leitura (e a escrita e do gateway)");
 ["pedidos", "avaliacoes", "bot"].forEach(function (p) {
-    if (regras.rules[p][".read"] !== false || regras.rules[p][".write"] !== false) falha("/" + p + " nao esta fechado");
+    const r = regras.rules[p] || {};
+    if (!seguro(r[".read"]) || !seguro(r[".write"])) falha("/" + p + " nao esta protegido (so o gateway pode ler/escrever)");
 });
-ok("/pedidos, /avaliacoes e /bot: leitura e escrita fechadas para o mundo");
+ok("/pedidos, /avaliacoes e /bot: leitura e escrita so para o gateway autenticado");
+/* o gateway se identifica com a conta de servico: se a regra sumir,
+   ele perde o acesso e os pedidos param - por isso a regra e exigida. */
+["pedidos", "avaliacoes", "config", "controle", "bot"].forEach(function (p) {
+    const r = regras.rules[p] || {};
+    if (!ehGateway(r[".read"]) || !ehGateway(r[".write"])) falha("/" + p + " precisa liberar exatamente o uid " + GATEWAY_UID);
+});
+ok("as regras reconhecem o uid do gateway (" + GATEWAY_UID + ")");
 
 /* /capacidade e a unica outra leitura publica: tem que continuar
    SO com numeros do dia, nunca dado de cliente */
 console.log("\n=== 1b. /capacidade ABRE LEITURA, MAS SO COM NUMERO ===");
 if (!regras.rules.capacidade || regras.rules.capacidade[".read"] !== true) falha("/capacidade precisa de leitura publica (a valvula do dia)");
 else ok("/capacidade com leitura publica (o cliente precisa das vagas do dia)");
-if (!regras.rules.capacidade || regras.rules.capacidade[".write"] !== false) falha("/capacidade nao pode ter escrita publica: quem publica e o painel/gateway");
-else ok("/capacidade com escrita fechada (so o painel publica)");
+if (!regras.rules.capacidade || !ehGateway(regras.rules.capacidade[".write"])) falha("/capacidade: escrita so para o gateway autenticado");
+else ok("/capacidade com escrita so do gateway (nada de escrita publica)");
 /* o que o painel grava ali tem que ser so contagem, nunca cliente */
 const admin = ler("admin.html");
 const iCap = admin.indexOf("function publicarCapacidadeLoja");

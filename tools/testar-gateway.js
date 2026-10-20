@@ -16,6 +16,21 @@ const GW = "https://convencao-gateway.rickjax123.workers.dev";
 const SENHA = require("fs").readFileSync("C:\\Users\\Micro\\refrigerante-site\\script.js", "utf8")
     .match(/VENDEDOR_SENHA\s*=\s*"([^"]*)"/)[1];
 
+/* CPF valido e diferente a cada rodada: o gateway aceita 1 pedido por CPF
+   por dia, entao um CPF fixo fazia o segundo teste falhar. */
+function cpfDeTeste() {
+    const n = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+    const dv = (base) => {
+        let soma = 0;
+        base.forEach((d, i) => { soma += d * (base.length + 1 - i); });
+        const resto = (soma * 10) % 11;
+        return resto === 10 ? 0 : resto;
+    };
+    n.push(dv(n));
+    n.push(dv(n));
+    return n.join("");
+}
+
 function req(rota, metodo, corpo, headers) {
     return new Promise((resolve) => {
         const u = new URL(GW + rota);
@@ -41,7 +56,7 @@ function req(rota, metodo, corpo, headers) {
 
     console.log("=== 1. SAUDE E PRECO ===");
     const s = await req("/api/saude", "GET");
-    if (s.status === 200 && s.dados.ok && s.dados.servo) ok("saude: " + JSON.stringify(s.dados));
+    if (s.status === 200 && s.dados.ok && s.dados.servo && s.dados.banco) ok("saude: " + JSON.stringify(s.dados));
     else falha("saude: " + s.status + " " + JSON.stringify(s.dados));
     const pr = await req("/api/precos", "GET");
     if (pr.status === 200 && pr.dados && Object.keys(pr.dados).length) ok("precos publicos: " + Object.keys(pr.dados).length + " preco(s)");
@@ -68,10 +83,10 @@ function req(rota, metodo, corpo, headers) {
     console.log("\n=== 4. O CLIENTE CRIA O PEDIDO DELE E GANHA A CHAVE ===");
     const id = "CV" + new Date().toISOString().slice(0,10).replace(/-/g,"") + "-001-" + String(Date.now()).slice(-5);
     const pedido = {
-        id: id, nome: "TESTE GATEWAY", tel: "21999999999", cpf: "00000000000",
+        id: id, nome: "TESTE GATEWAY", tel: "21999999999", cpf: cpfDeTeste(),
         end: "Rua do Teste, 1", bairro: "Japeri", regiao: "japeri", frete: 0,
-        pagamento: "Pix", troco: "", itens: [{ name: "Teste", qty: 1, price: 10, priceNum: 10, subtotal: 10 }],
-        subtotal: 10, total: 10, status: "aguardando", criadoEm: Date.now(),
+        pagamento: "Pix", troco: "", itens: [{ name: "Teste", qty: 1, price: 100, priceNum: 100, subtotal: 100 }],
+        subtotal: 100, total: 100, status: "aguardando", criadoEm: Date.now(),
         historico: [{ status: "aguardando", quando: Date.now() }]
     };
     const malformado = await req("/api/pedido", "POST", { pedido: { id: "x", nome: "A" } });
@@ -89,7 +104,7 @@ function req(rota, metodo, corpo, headers) {
     const chaveErrada = await req("/api/meu-pedido?id=" + encodeURIComponent(id), "GET", null, { "X-Chave-Pedido": "chave-inventada" });
     if (chaveErrada.status === 403) ok("chave inventada: 403 (nao da para adivinhar)");
     else falha("chave inventada deu " + chaveErrada.status);
-    const comChave = await req("/api/meu-pedido?id=" + encodeURIComponent(id), "GET", null, { "X-Chave-Pedido": chave });
+    const comChave = await req("/api/meu-pedido?id=" + encodeURIComponent(id), "GET", null, { "X-Chave-Pedido": chave || "sem-chave" });
     if (comChave.status === 200 && comChave.dados && comChave.dados.id === id) ok("com a chave: ve o proprio pedido");
     else falha("com a chave deu " + comChave.status);
 

@@ -26,18 +26,22 @@ const RAIZ = path.resolve(__dirname, "..");
     process.env.LOJA_SENHA = "senha-do-dono-123";
     process.env.BOT_SEGREDO = "segredo-do-robo-456";
     process.env.SESSAO_SEGREDO = "sessao-segreda-789";
+    process.env.FB_API_KEY = "chave-de-teste";
     process.env.PORT = "8791";
 
     const banco = { pedidos: {}, precos: { "k:9": "R$ 19,00" } };
     globalThis.fetch = async function (url, op) {
+        if (String(url).indexOf("identitytoolkit.googleapis.com") >= 0) return { ok: true, status: 200, json: async () => ({ idToken: "sessao-de-teste" }), text: async () => JSON.stringify({ idToken: "sessao-de-teste" }) };
         const cam = decodeURIComponent(String(url).split("?")[0].replace("https://banco-falso.firebaseio.com", ""));
         if (!/[?&]auth=/.test(String(url))) return { ok: false, status: 401, text: async () => "Permission denied" };
         if ((op && op.method) === "PUT") {
-            banco.pedidos[cam.replace("/pedidos/", "").replace(".json", "")] = JSON.parse(op.body);
+            if (cam.indexOf("/pedidos/") === 0) banco.pedidos[cam.replace("/pedidos/", "").replace(".json", "")] = JSON.parse(op.body);
             return { ok: true, text: async () => "true" };
         }
         const dados = cam === "/precos.json" ? banco.precos
-            : (cam === "/pedidos.json" ? banco.pedidos : banco.pedidos[cam.replace("/pedidos/", "").replace(".json", "")]);
+            : cam === "/pedidos.json" ? banco.pedidos
+            : cam.indexOf("/controle/") === 0 ? { n: 1 }
+            : banco.pedidos[cam.replace("/pedidos/", "").replace(".json", "")];
         return { ok: true, text: async () => JSON.stringify(dados) };
     };
 
@@ -88,21 +92,23 @@ const RAIZ = path.resolve(__dirname, "..");
         method: "POST",
         body: {
             pedido: {
-                id: ID, nome: "Ana Ribeiro", tel: "21988112233", end: "Rua A, 100", bairro: "Seropedica",
+                id: ID, nome: "Ana Ribeiro", tel: "21988112233", cpf: "11144477735", end: "Rua A, 100", bairro: "Seropedica",
                 regiao: "seropedica", itens: [{ name: "Guarana 350ml", qty: 6, subtotal: 114 }],
                 subtotal: 114, frete: 0, total: 114, status: "aguardando", criadoEm: Date.now()
             }
         }
     });
     confere(criado.status === 200 && !!criado.dados.chave, "cliente cria o pedido e recebe a chave");
+    if (!criado.dados.chave) console.log("    resposta: " + JSON.stringify(criado.dados));
 
-    const meu = await pedir("/api/meu-pedido?id=" + ID, { headers: { "X-Chave-Pedido": criado.dados.chave } });
+    const meu = await pedir("/api/meu-pedido?id=" + ID, { headers: { "X-Chave-Pedido": criado.dados.chave || "sem-chave" } });
     confere(meu.status === 200 && meu.dados.id === ID, "cliente ve o proprio pedido com a chave");
 
     const semChave = await pedir("/api/meu-pedido?id=" + ID);
     confere(semChave.status === 403, "cliente sem chave nao ve nada");
 
     const dono = await pedir("/api/pedidos", { headers: { Authorization: login.dados.token } });
+    if (dono.status !== 200 || Object.keys(dono.dados || {}).length !== 1) console.log("    dono:", dono.status, JSON.stringify(dono.dados).slice(0, 300));
     confere(dono.status === 200 && Object.keys(dono.dados || {}).length === 1, "dono logado lista os pedidos");
 
     const mudou = await pedir("/api/status", {

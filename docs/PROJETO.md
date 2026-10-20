@@ -204,8 +204,9 @@ de propósito para não apagar o catálogo.
 - Mesmo banco: `/pedidos.json` guarda os pedidos de **todos** os aparelhos —
   o cliente faz o pedido, `enviarPedidoNuvem()` grava lá e o painel chama
   `sincronizarPedidosNuvem()` (na abertura e a cada minuto) para baixar e
-  juntar com os locais. **Privacidade:** o banco está aberto (modo teste) —
-  reforce as regras do Firebase em produção.
+  juntar com os locais. **Privacidade:** o banco está fechado desde
+  20/10/2026; só o gateway (uid `gateway-convencao`) lê e grava os pedidos.
+  `/precos` e `/capacidade` são públicos de propósito.
 - **O gateway é o caminho padrão do site** (`GATEWAY_PADRAO` em `script.js`):
   o cliente não tem campo para colar URL — ele simplesmente usa o gateway,
   e o caminho antigo (direto no Firebase) fica de **reserva** para quando o

@@ -1,45 +1,32 @@
 {
   "rules": {
-    ".read": false,
-    ".write": false,
-
-    "_observacao": [
-      "BANCO FECHADO DE VERDADE.",
-      "Nao existe mais nenhum caminho aberto: quem fala com o banco e o",
-      "GATEWAY (worker/convencao-gateway.js) usando a conta de servico do",
-      "Firebase (Admin SDK contorna estas regras por design).",
-      "O preco continua publico de leitura, porque todo cliente precisa ver",
-      "o preco da bebida - porem a ESCRITA e do gateway (o dono publica).",
-      "O mesmo vale para /capacidade: o cliente precisa saber quantas vagas",
-      "de pedidos do dia ainda tem (a valvula anti-travamento). Sao SO",
-      "numeros do dia - nome, CPF, telefone e endereco NAO ficam ali.",
-      "Sem o gateway no ar, o site para de sincronizar: faca o passo a passo",
-      "em docs/FECHAR-BANCO.md e so entao cole estas regras."
-    ],
-
     "precos": {
       ".read": true,
-      ".write": false
+      ".write": "auth != null && auth.uid === 'gateway-convencao'"
     },
-
     "capacidade": {
       ".read": true,
-      ".write": false
+      ".write": "auth != null && auth.uid === 'gateway-convencao'"
     },
-
     "pedidos": {
-      ".read": false,
-      ".write": false
+      ".read": "auth != null && auth.uid === 'gateway-convencao'",
+      ".write": "auth != null && auth.uid === 'gateway-convencao'"
     },
-
     "avaliacoes": {
-      ".read": false,
-      ".write": false
+      ".read": "auth != null && auth.uid === 'gateway-convencao'",
+      ".write": "auth != null && auth.uid === 'gateway-convencao'"
     },
-
+    "config": {
+      ".read": "auth != null && auth.uid === 'gateway-convencao'",
+      ".write": "auth != null && auth.uid === 'gateway-convencao'"
+    },
+    "controle": {
+      ".read": "auth != null && auth.uid === 'gateway-convencao'",
+      ".write": "auth != null && auth.uid === 'gateway-convencao'"
+    },
     "bot": {
-      ".read": false,
-      ".write": false
+      ".read": "auth != null && auth.uid === 'gateway-convencao'",
+      ".write": "auth != null && auth.uid === 'gateway-convencao'"
     }
   }
 }
