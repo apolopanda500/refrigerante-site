@@ -144,6 +144,7 @@ refrigerante-site/
 |   +-- docs/REGISTRO.md ............. historico de decisoes e correcoes
 |   +-- docs/VALIDACAO.md ............ mapa de validacao por bateria
 |   +-- docs/TROCAR-TOKEN-BOT.md ..... troca dos tokens dos robos
+|   +-- docs/ENTREGA.md .............. entrega final, links e checklist do primeiro dia
 |
 +-- IMAGENS
 |   +-- img/icon-*.png ............... icones do app

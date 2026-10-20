@@ -6,6 +6,21 @@
 
 ---
 
+## 0.2 Entrega final (20/10/2026)
+
+- **Projeto entregue** com site, painel, gateway, APKs e documentação na
+  versão **20261020f**. Resumo operacional em `docs/ENTREGA.md`.
+- **Banco fechado e gateway com identidade:** paths sensíveis = 401;
+  `/precos` e `/capacidade` = 200; `/api/saude` = `banco:true`.
+- **Validação final:** 47/47 baterias, cliente e painel 10/10, entrega
+  online 10/10 e pedido real criado/cancelado pelo gateway.
+- **Commits finais:** `69b58d8` (correção do gateway e regras), `182a6fe`
+  (FB_API_KEY no deploy) e o commit de entrega deste documento.
+- **Pendência do dono:** só operar a loja e fazer o primeiro pedido real de
+  conferência. Nenhuma pendência técnica conhecida.
+
+---
+
 ## 0.1 Correção final do banco fechado (20/10/2026)
 
 - **Banco fechado publicado** (`database.rules.json`): `/pedidos`,

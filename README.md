@@ -6,8 +6,8 @@
 
 > **Antes de vender:** o banco do Firebase já está fechado (seção 6 de
 > `docs/VALIDACAO.md`). Confirme com `node tools/checar-banco-real.js` e
-> `node tools/testar-gateway.js`. O checklist do primeiro dia está em
-> `docs/MANUAL-DONO.md`.
+> `node tools/testar-gateway.js`. O checklist do primeiro dia e os links
+> oficiais estão em `docs/ENTREGA.md` e `docs/MANUAL-DONO.md`.
 
 ## Site de Vendas
 
