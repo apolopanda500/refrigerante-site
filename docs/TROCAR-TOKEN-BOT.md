@@ -51,6 +51,24 @@ O painel usa o token que **você cola em Configurações** (fica no aparelho do
 vendedor, não no código). Depois da troca, cole o token novo lá também — senão o
 painel continua tentando chamar o Telegram com o token velho.
 
+### 4. Chave do Google (Firebase)
+
+O alerta do GitHub também aponta uma `apiKey` antiga em `firebase-appcheck.js`.
+Chave web do Firebase não é senha, mas precisa de restrição para ninguém usar a
+sua cota:
+
+1. Google Cloud Console > APIs e serviços > Credenciais.
+2. Apague a chave antiga (ou gere outra).
+3. Em "Restrições de aplicativo", escolha **Sites** e cadastre
+   `apolopanda500.github.io/*` e `convencao-site.rickjax123.workers.dev/*`.
+4. Em "Restrições de API", deixe só o que o site usa (App Check, Identity
+   Toolkit e Realtime Database).
+5. Se usar, cole a chave nova só no lugar da `apiKey` em `firebase-appcheck.js`.
+6. No GitHub, feche o alerta como **revoked**.
+
+Apagar do arquivo não apaga o histórico do Git: o que resolve é revogar a chave
+no Google e fechar o alerta.
+
 ## Como conferir que está certo
 
 - **Actions**: rode o workflow na mão e veja se o log mostra o robô atendendo.
