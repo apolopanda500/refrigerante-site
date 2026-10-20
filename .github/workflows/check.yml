@@ -6,21 +6,18 @@ on:
     - cron: '0 6 * * *'
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
       - name: Sintaxe de todo JS (site, testes e robos)
+        shell: bash
         run: |
           for f in *.js tests/*.js .github/scripts/*.js; do
             node --check "$f" || exit 1
           done
           echo "Sintaxe OK"
-      - name: Navegador para os testes de clique
-        id: chrome
-        uses: browser-actions/setup-chrome@v1
       - name: Baterias de teste (TUDO 10/10)
-        env:
-          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
         run: node tests/rodar-todos.js
