@@ -390,6 +390,23 @@ function limiteLojaDia() {
 function digitosCpf(v) {
     return String(v == null ? "" : v).replace(/\D/g, "");
 }
+/* CPF do cliente: o Perfil (Conta) e a fonte; refrigerantePrefs e so
+   a ultima reserva. Ler so as preferencias fazia a valvula nao achar
+   o CPF de quem preencheu o Perfil. */
+function cpfDoClienteLocal() {
+    try {
+        if (typeof Conta !== "undefined" && Conta.dados) {
+            var d = Conta.dados();
+            if (d && d.cpf) return digitosCpf(d.cpf);
+        }
+    } catch (e) { /* perfil bloqueado nao pode travar a valvula */ }
+    try {
+        var p = JSON.parse(localStorage.getItem("refrigerantePerfil") || "{}") || {};
+        if (p.cpf) return digitosCpf(p.cpf);
+    } catch (e) { /* perfil corrompido: tenta as preferencias */ }
+    try { return digitosCpf(JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}").cpf); }
+    catch (e) { return ""; }
+}
 function checaLimitePedidos(tel, lista) {
     var doDia = pedidosDoDia(lista);
 
@@ -398,9 +415,7 @@ function checaLimitePedidos(tel, lista) {
         /* A identidade do cliente e o CPF, nao o telefone: e o CPF que o
            servidor usa para contar. Contar pelo telefone aqui so fazia o
            aparelho e o servidor discordarem do mesmo cliente. */
-        var prefs = {};
-        try { prefs = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch (e) { prefs = {}; }
-        var alvo = digitosCpf(prefs.cpf);
+        var alvo = cpfDoClienteLocal();
         var feito = 0;
         if (alvo) {
             doDia.forEach(function (p) { if (digitosCpf(p.cpf) === alvo) feito++; });

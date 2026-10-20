@@ -142,7 +142,13 @@ function gatewayGravar(valores) {
 }
 
 function fbGet(path) {
-    if (VIA_GATEWAY) return gatewayGet().then((d) => (d || {})[path.replace(/\.json$/, "")] || null);
+    if (VIA_GATEWAY) return gatewayGet().then((d) => {
+        d = d || {};
+        /* /api/bot devolve {pedidos, offset} - sem a barra do caminho */
+        if (/^\/pedidos\.json$/.test(path)) return d.pedidos || null;
+        if (/offset/.test(path)) return (d.offset === undefined ? null : d.offset);
+        return null;
+    });
     return fetch(BASE + path + "?t=" + Date.now(), { cache: "no-store" })
         .then((r) => r.text())
         .then((t) => { try { return JSON.parse(t); } catch (e) { return null; } });
@@ -221,6 +227,37 @@ function tecladoPedido(id) {
         ]
     };
 }
+/* ---------- aviso de pedido novo ----------
+   O cliente pode estar sem token no aparelho (o token vive no segredo do
+   GitHub). Por isso quem avisa e ESTE robo: ele ve os pedidos que chegaram
+   na nuvem e ainda nao foram avisados (campo tgAviso). */
+async function avisarPedidosNovos() {
+    let lista = [];
+    try { lista = await todosPedidos(); } catch (e) { return; }
+    const limiteIdade = Date.now() - 24 * 3600 * 1000;
+    const pendentes = lista
+        .filter((p) => p && p.id && p.status === "aguardando" && !p.tgAviso
+            && Number(p.criadoEm || 0) >= limiteIdade)
+        .sort((a, b) => Number(a.criadoEm || 0) - Number(b.criadoEm || 0))
+        .slice(0, 10);                       /* no maximo 10 por rodada */
+
+    for (const p of pendentes) {
+        try {
+            await tg("sendMessage", {
+                chat_id: CHAT,
+                text: mensagemPedido(p) + "\n\nToque nos botoes ou digite /status " + p.id,
+                disable_web_page_preview: true,
+                reply_markup: JSON.stringify(tecladoPedido(p.id))
+            });
+            p.tgAviso = Date.now();
+            await gravarPedido(p);
+        } catch (e) {
+            console.log("aviso de pedido novo falhou: " + e.message);
+            break;
+        }
+    }
+}
+
 function editarMensagemPedido(chatId, msgId, p) {
     return tg("editMessageText", {
         chat_id: chatId, message_id: msgId,
@@ -409,6 +446,10 @@ async function rodar() {
             else if (u.message) await tratarMensagem(u.message);
         } catch (e) { console.log("erro ao tratar atualizacao: " + e.message); }
     }
+
+    /* avisa no chat do dono os pedidos que chegaram desde a ultima rodada */
+    try { await avisarPedidosNovos(); }
+    catch (e) { console.log("aviso: nao avisei pedidos novos: " + e.message); }
 
     if (novoOffset !== offset) {
         try { await fbPut(OFFSET_PATH, novoOffset); } catch (e) { console.log("aviso: nao guardei o offset: " + e.message); }

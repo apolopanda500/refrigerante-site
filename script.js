@@ -277,11 +277,29 @@ function celularValido(tel) {
     return true;
 }
 
+/* ---------- de onde vem o CPF e o celular do cliente ----------
+   O Perfil grava em refrigerantePerfil/convencao_usuario (Conta).
+   Ler refrigerantePrefs aqui fazia o pedido ser recusado mesmo com o
+   Perfil preenchido - a tela pedia o CPF que o cliente ja tinha. */
+function dadosDoCliente() {
+    try {
+        if (typeof Conta !== "undefined" && Conta.dados) {
+            var d = Conta.dados();
+            if (d && (d.cpf || d.tel)) return d;
+        }
+    } catch (e) { /* perfil bloqueado nao pode travar o pedido */ }
+    try {
+        var p = JSON.parse(localStorage.getItem("refrigerantePerfil") || "{}") || {};
+        if (p.cpf || p.tel) return p;
+    } catch (e) { /* perfil corrompido: tenta as preferencias */ }
+    try { return JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}") || {}; }
+    catch (e) { return {}; }
+}
+
 /* ---------- o cliente esta com documento e celular em dia? ----------
    Devolve "" quando esta tudo certo, ou o texto do que falta. */
 function problemaDoCliente() {
-    var p = {};
-    try { p = JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}"); } catch (e) { p = {}; }
+    var p = dadosDoCliente();
     var cpf = String(p.cpf || "").replace(/\D/g, "");
     if (!cpf) return "Coloque o seu CPF no Perfil para pedir. E ele que identifica a sua conta.";
     if (!cpfValido(cpf)) return "O CPF do Perfil nao confere. Confira os 11 digitos.";
@@ -1036,9 +1054,7 @@ function criarPedido(dados) {
        (feito ou ainda nao enviado), nao nasce um segundo - e o cliente recebe
        o motivo na hora, em vez de so descobrir depois no painel. */
     var soDigitos = function (v) { return String(v == null ? "" : v).replace(/\D/g, ""); };
-    var cpfHoje = soDigitos((function () {
-        try { return JSON.parse(localStorage.getItem("refrigerantePrefs") || "{}").cpf; } catch (e) { return ""; }
-    })());
+    var cpfHoje = soDigitos(dadosDoCliente().cpf || dados.cpf || "");
     if (cpfHoje && typeof LIMITE_PEDIDOS_CLIENTE_DIA === "number") {
         var meuHoje = 0;
         var hojeLocal = String(diaLimite());
@@ -1150,7 +1166,7 @@ function notificarTelegramPedido(p) {
     /* sem token configurado o painel nao chama o Telegram: o token padrao
        vivia neste arquivo, e o repositorio e publico - qualquer um lia. */
     var token = String(prefs.cfgTelegramToken || "").trim();
-    if (!token) { if (cb) cb(false, "sem token do Telegram"); return; }
+    if (!token) return;                                   // sem token: quem avisa e o robo 24/7
     var chat  = prefs.cfgTelegramChatId || "1810807613";  // chat do vendedor (@Rickcao22)
     if (!token || !chat) return;
 
@@ -1172,7 +1188,7 @@ function notificarTelegram(texto) {
     /* sem token configurado o painel nao chama o Telegram: o token padrao
        vivia neste arquivo, e o repositorio e publico - qualquer um lia. */
     var token = String(prefs.cfgTelegramToken || "").trim();
-    if (!token) { if (cb) cb(false, "sem token do Telegram"); return; }
+    if (!token) return;                                   // sem token: quem avisa e o robo 24/7
     var chat  = prefs.cfgTelegramChatId  || "1810807613";   // chat do vendedor (@Rickcao22)
     if (!token || !chat || !texto) return;
     var url = "https://api.telegram.org/bot" + token + "/sendMessage"

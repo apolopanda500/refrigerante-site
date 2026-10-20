@@ -57,8 +57,13 @@ versionados.forEach(function (f) {
 if (!grandes.length) ok("nenhum arquivo inutil passa de 600 KB (os 2 APK sao o download do site)");
 else falha("arquivo grande demais no git: " + grandes.join(", "));
 const apks = versionados.filter(f => /\.apk$/i.test(f));
-if (apks.length === 2) ok("os 2 APK (cliente e vendedor) versionados para o site oferecer o download");
-else falha("esperado 2 APK no git (cliente e vendedor), tem " + apks.length);
+/* o Cloudflare serve a pasta site/, entao os APK existem tambem la.
+   Cada copia (raiz e site/) precisa ter os dois: cliente e vendedor. */
+const naRaiz = apks.filter(f => !/^site\//i.test(f));
+const noSite = apks.filter(f => /^site\//i.test(f));
+if (naRaiz.length === 2 && (noSite.length === 0 || noSite.length === 2))
+    ok("os 2 APK (cliente e vendedor) versionados" + (noSite.length ? " na raiz e em site/" : ""));
+else falha("esperado 2 APK por pasta (raiz" + (noSite.length ? " e site/" : "") + "), tem " + apks.length);
 
 console.log("\n=== 5. O QUE VAI PARA O AR ESTA COMPLETO ===");
 /* os arquivos que o site usa de verdade */

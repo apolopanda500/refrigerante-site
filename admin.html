@@ -11,6 +11,10 @@
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
 <link rel="icon" type="image/png" href="img/icon-192.png?v=20261018rn">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
@@ -1097,7 +1101,9 @@ function salvarConfigBot(btn){
         p.cfgTelegramToken = tok.trim();
         p.cfgTelegramChatId = chat.trim();
         localStorage.setItem("vendedorPrefs", JSON.stringify(p));
+        if (tok.trim()) localStorage.removeItem("convencao_tg_token_ruim");
     } catch(e){/* proposital: painel nao pode ficar em branco por causa de uma tela */}
+    if (typeof TelegramBot !== "undefined") { try { TelegramBot.iniciar(); } catch (e) { /* o botao salvar nao pode falhar */ } }
     var msg = document.getElementById("configBotMsg");
     if (msg) { msg.style.color = "var(--texto-ok)"; msg.textContent = "Salvo neste painel (não afeta o site do cliente)."; }
     if (btn) { btn.innerHTML = '<i class="fa fa-check"></i> Salvo'; setTimeout(function(){ btn.innerHTML = '<i class="fa fa-save"></i> Salvar'; }, 1500); }

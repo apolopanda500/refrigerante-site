@@ -266,6 +266,10 @@ var TelegramBot = (function () {
 
     /* ---------- 1) registra os comandos no menu do bot ---------- */
     function registrarComandos(btn, automatico) {
+        if (!cfg().token) {
+            if (!automatico) status("Sem token local: quem responde aos comandos e o robo do servidor (24/7). Cole o token em Configuracoes do painel para responder na hora.", "var(--texto-aviso)");
+            return Promise.resolve();
+        }
         if (!automatico) status("ativando comandos...", "var(--texto-aviso)");
         return api("setMyCommands", { commands: JSON.stringify(COMANDOS) })
             .then(function () {
@@ -303,6 +307,11 @@ var TelegramBot = (function () {
     function verificarAgora(btn) {
         var c = cfg();
         if (!c.ligado) { status("Comandos desligados (veja a opcao acima).", "var(--texto-aviso)"); return; }
+        if (!c.token) {
+            status("Sem token local. Os avisos e botoes sao processados pelo robo do servidor (24/7), a cada 5 min.", "var(--texto-aviso)");
+            log("Sem token no painel: usando o robo do servidor");
+            return;
+        }
         status("verificando...", "var(--texto-aviso)");
         var local = Number(localStorage.getItem(K_OFFSET) || 0);
         return lerOffsetNuvem().then(function (naNuvem) {
@@ -338,6 +347,12 @@ var TelegramBot = (function () {
                     }).catch(function () {});
                 } else if (/fetch|network|failed/i.test(msg)) {
                     status("Sem conexao com o Telegram agora - comandos ficam em espera.", "var(--texto-aviso)");
+                } else if (/not found|unauthorized|404|401/i.test(msg)) {
+                    /* token invalido/revogado: nao adianta repetir a cada 20 s */
+                    parar();
+                    try { localStorage.setItem("convencao_tg_token_ruim", "1"); } catch(e){/* proposital: o bot nao pode derrubar o painel */}
+                    status("Token do bot invalido neste painel. O robo do servidor (24/7) continua funcionando; cole um token novo em Configuracoes do painel.", "var(--texto-aviso)");
+                    log("Token do bot invalido: " + msg + " - avisos seguem pelo robo do servidor");
                 } else {
                     status("Falha ao verificar: " + msg, "var(--texto-erro)");
                 }
@@ -506,6 +521,18 @@ var TelegramBot = (function () {
     function iniciar() {
         parar();
         if (!cfg().ligado) return;
+        if (!cfg().token) {
+            status("Bot do servidor (24/7) ativo. Para responder na hora por aqui, cole o token em Configuracoes do painel.", "var(--texto-aviso)");
+            log("Sem token local: avisos e botoes seguem pelo robo do servidor");
+            return;
+        }
+        try {
+            if (localStorage.getItem("convencao_tg_token_ruim")) {
+                status("Token do bot invalido. O robo do servidor continua; cole um token novo em Configuracoes do painel.", "var(--texto-aviso)");
+                log("Token do bot invalido - polling local parado");
+                return;
+            }
+        } catch (e) { /* sem localStorage: segue o fluxo normal */ }
         /* webhook antigo derruba o getUpdates com erro 409:
            remove uma vez e guarda que ja foi feito */
         try {
