@@ -424,6 +424,12 @@ function tratarMensagem(msg) {
 
 /* ---------- loop principal (uma rodada) ---------- */
 async function rodar() {
+    try {
+        const me = await tg("getMe");
+        console.log("Bot ligado: @" + me.username + " (id " + me.id + ")");
+    } catch (e) {
+        console.log("aviso: nao consegui identificar o bot: " + e.message);
+    }
     try { await tg("setMyCommands", { commands: JSON.stringify(COMANDOS) }); }
     catch (e) { console.log("aviso: nao registrei o menu de comandos: " + e.message); }
 
