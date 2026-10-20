@@ -86,7 +86,7 @@ chaves**. Aparece no relatório como "regra removida" ou "seletor aparado".
 node tests/manter-tudo.js                # alinha versões, datas, links, docs e robô
 node tests/manter-tudo.js --online       # confere também os links externos
 node tests/manter-tudo.js --com-catalogo # roda o robô do catálogo de verdade
-node tests/bump-versao.js 20261020c      # sobe a versao dos assets (obrigatorio a cada publicacao)
+node tests/bump-versao.js 20261020d      # sobe a versao dos assets (obrigatorio a cada publicacao)
 node tools/gerar-icone.js                # gera os icones do site e dos apps
 node apk/android/build.js                # gera o projeto Android (cliente e vendedor)
 ```
