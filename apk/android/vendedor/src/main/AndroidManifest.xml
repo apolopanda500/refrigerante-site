@@ -2,33 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.convencao.vendedor">
 
-    <!-- a loja precisa de internet; sem isso nao ha pedido nem aviso -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- AVISO DE PEDIDO: no Android 13+ isso precisa ser pedidoexplicitamente,
-         senao o site chama Notification.requestPermission() e nunca recebe nada -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <!-- GPS: a localizacao da entrega (a loja usa para saber onde esta o pedido) -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <!-- FOTO E VIDEO: a foto do perfil e as fotos dos produtos -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <!-- Android antigo (ate o 12): o armazenamento era tudo junto -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
-
-    <!-- CONTATOS: o cliente cadastra o proprio numero por aqui -->
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-
-    <!-- o GPS e a camera sao opcionais: quem nao quiser negar continua usando a loja -->
-    <uses-feature android:name="android.hardware.location" android:required="false" />
-    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -36,7 +11,6 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_vendedor"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="false"
         android:theme="@style/AppTheme">
 
         <activity
