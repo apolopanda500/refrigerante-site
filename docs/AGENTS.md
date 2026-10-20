@@ -23,4 +23,6 @@
   ANTES DE PUBLICAR
   - node tests/manter-tudo.js  (versões, datas, links, docs, robô)
   - node tests/rodar-todos.js  (tem que dar TUDO 10/10)
+  - login do painel: prazo em localStorage (1, 7 ou 30 dias).
+    nao volte para sessionStorage sozinho: o APK perde ao fechar.
 */

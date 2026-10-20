@@ -292,7 +292,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
   (ver `build-apk.ps1` e `.github/scripts`/fluxo documentado no histórico de commits).
 - **Versão dos APK = versão do site:** tanto `apk/android/build.js` quanto
   `build-apk.ps1` leem `versao.txt`. O `versionName` é a mesma versão publicada
-  (ex.: `20261016d`) e o `versionCode` é a data `YYYYMMDD` (vendedor recebe +100).
+  (ex.: `20261020c`) e o `versionCode` é a data `YYYYMMDD` (vendedor recebe +100).
   Depois de gerar, o script grava `apk/versao-apk.txt` e o painel mostra
   "APKs na versão" ao lado da versão publicada.
   **Build sem interação (usado nesta máquina):**
@@ -314,7 +314,7 @@ e aplica as mudanças. Sem painel aberto, os comandos ficam na fila.
 ```bash
 node tests/manter-tudo.js            # versoes, datas, links, docs, robo
 node --check *.js                    # sintaxe
-node tests/rodar-todos.js            # 43 baterias (tem que dar TUDO 10/10)
+node tests/rodar-todos.js            # 47 baterias (tem que dar TUDO 10/10)
 node tests/13-validar-css.js         # CSS inteiro: sintaxe, classe sem uso, cobertura
 node tests/limpar-css-morto.js       # CSS morto: so o relatorio (--aplicar limpa)
 git add -A
@@ -350,6 +350,8 @@ admin.html **não tem login automático**: abre a tela de usuário e senha
 tentativas erradas. É **um acesso só**, e é ele que baixa os pedidos de todos os
 aparelhos (via `sincronizarPedidosNuvem`, na abertura e a cada minuto).
 
+No login, o dono escolhe **Manter conectado** (1, 7 ou 30 dias). O prazo fica no `localStorage` do aparelho e o token do gateway tambem; sem escolha, a sessao dura 12 horas. **Sair** apaga o login salvo (teste 23, secao 6).
+
 Duas regras ao mexer nisso:
 
 - **O usuário não diferencia maiúscula de minúscula** (`credenciaisConfere()` /
@@ -359,7 +361,7 @@ Duas regras ao mexer nisso:
   gateway já está publicado** (`worker/convencao-gateway.js`, Cloudflare Worker)
   e o site tem os **dois modos**: campo *Banco* vazio = caminho antigo; com a
   URL do gateway = cliente cria pedido em `/api/pedido` e ganha uma chave, dono
-  entra em `/api/entrar` e leva token de 12 h. Fechar as regras só é seguro
+  entra em `/api/entrar` e leva token de 12 h (ou de 1 a 30 dias com o "Manter conectado"). Fechar as regras só é seguro
   depois de apontar o painel para o gateway (`docs/FECHAR-BANCO.md`).
 ---
 
@@ -485,7 +487,7 @@ sumia. A bateria `14-cores` confere o contraste das duas versões.
   só entrega; domingo não tem loja nem freteiro.
 
 ### Qualidade automatica (rodar certo sempre vai rodar certo)
-- Testes: node tests/rodar-todos.js - 43 baterias, TUDO 10/10. A 13a e o lint
+- Testes: node tests/rodar-todos.js - 47 baterias, TUDO 10/10. A 13a e o lint
   do CSS; da 14a a 24a vem cor, imagem, letra/numero, tamanho, codigo, erro,
   documento, repositorio e entrega (esta ultima com --online confere o site no ar);
   a 25a confere a opcao "Aparência" (Animações reduzidas), a 26a o bot do

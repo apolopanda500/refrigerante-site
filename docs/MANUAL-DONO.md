@@ -14,6 +14,15 @@ Guia rápido, sem termos técnicos.
 
 ---
 
+## Login salvo no painel
+
+Na tela de entrada do painel, escolha em **Manter conectado**: *Só neste acesso*,
+*1 dia*, *7 dias* (padrão) ou *30 dias*. O APK do vendedor lembra o login nesse
+prazo; se vencer, ele pede a senha de novo. O botão **Sair** apaga o login do
+aparelho.
+
+---
+
 ## 1. Mudar preço
 
 1. Entre no **Painel do Vendedor** (usuário e senha).

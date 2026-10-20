@@ -36,7 +36,7 @@ se nenhuma falhar. Acompanhe cada arquivo:
 | `21-repositorio.js` | **Repositório**: `.gitignore`, nenhum build/`.gradle` versionado, sem arquivo grande demais, sem segredo de verdade no histórico |
 | `22-entrega.js` | **Entrega**: commit feito, push na frente, versão do repositório igual à do site no ar |
 `24-textos.js` | **Texto do cliente**: palavra na tela sem o acento certo, caractere corrompido, menu e nome das regioes (so o que aparece na tela; codigo com acento seria erro)
-| `23-acesso-vendedor.js` | **Acesso do vendedor**: um acesso só de usuário e senha, trava de 5 tentativas, usuário sem differentiate maiúscula (o dono não fica trancado fora) e o painel baixando os pedidos de **todo** aparelho pela nuvem |
+| `23-acesso-vendedor.js` | **Acesso do vendedor**: um acesso só de usuário e senha, trava de 5 tentativas, usuário sem differentiate maiúscula (o dono não fica trancado fora) o painel baixando os pedidos de **todo** aparelho pela nuvem e o login salvo por 1, 7 ou 30 dias (sobrevive a fechar o APK) |
 | `25-aparencia.js` | **Aparência**: a opção "Animações reduzidas" ("Reduzir animações da interface") existe na tela, salva, aplica o atributo e o CSS corta as animações em todas as páginas do cliente |
 | `26-bot.js` | **Bot do Telegram 24/7**: o workflow `.github/workflows/bot.yml` roda a cada 5 min, o robô lê o Telegram (getUpdates), aplica o status nos pedidos do Firebase e responde no chat; o teclado do pedido tem os botões de status e o botão "Abrir painel" |
 | `27-entrega-minima.js` | **Valor mínimo para entrega**: a regra sai de `loja.js` (`entregaMinima()`, padrão R$ 100,00), a finalização dentro do carrinho bloqueia abaixo disso (botão desliga) e o cliente vê quanto falta |
@@ -86,7 +86,7 @@ chaves**. Aparece no relatório como "regra removida" ou "seletor aparado".
 node tests/manter-tudo.js                # alinha versões, datas, links, docs e robô
 node tests/manter-tudo.js --online       # confere também os links externos
 node tests/manter-tudo.js --com-catalogo # roda o robô do catálogo de verdade
-node tests/bump-versao.js 20261016d      # sobe a versao dos assets (obrigatorio a cada publicacao)
+node tests/bump-versao.js 20261020c      # sobe a versao dos assets (obrigatorio a cada publicacao)
 node tools/gerar-icone.js                # gera os icones do site e dos apps
 node apk/android/build.js                # gera o projeto Android (cliente e vendedor)
 ```

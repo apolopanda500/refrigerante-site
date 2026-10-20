@@ -95,7 +95,7 @@ O site tem **dois modos**, e a troca é só o campo **Banco**:
 | Campo "Banco" | O que acontece | Quando usar |
 |---|---|---|
 | **vazio** | modo antigo: o navegador fala direto no Firebase (banco aberto) | botão de voltar; antes de fechar |
-| **URL do gateway** | tudo passa pelo gateway: o cliente cria o pedido em `/api/pedido` e ganha uma **chave**, o dono entra em `/api/entrar` e leva um **token de 12 h** | para poder fechar o banco |
+| **URL do gateway** | tudo passa pelo gateway: o cliente cria o pedido em `/api/pedido` e ganha uma **chave**, o dono entra em `/api/entrar` e leva um **token de 12 h** (ou de 1 a 30 dias com o "Manter conectado") | para poder fechar o banco |
 
 **No painel:** *Configurações do painel → Banco*, cole
 `https://convencao-gateway.rickjax123.workers.dev` e salve.

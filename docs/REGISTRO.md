@@ -6,6 +6,19 @@
 
 ---
 
+## 0. Publicação 20261020c (20/10/2026)
+
+- **Login do APK do vendedor não ficava salvo.** O login era guardado só em
+  `sessionStorage`, que o Android descarta ao fechar a Custom Tab. Agora a tela
+  de login tem **Manter conectado** (1, 7 ou 30 dias) e o token fica no
+  `localStorage` com prazo; o gateway assina tokens de até 30 dias. **Sair**
+  apaga o login do aparelho. Coberto pelo teste 23 (seção 6) e pelo teste 38.
+- **Versão publicada:** 20261020c no site, nos dois APKs e no gateway.
+- **Validação:** 47/47 baterias, simulação 10/10 na raiz e em `site/`, entrega
+  online 10/10.
+
+---
+
 ## 1. O que foi pedido (na ordem)
 
 1. Ler a pasta `docs/` e entender o projeto.
@@ -140,10 +153,10 @@ Como ficou (tudo com fonte única em `loja.js`, `checaLimitePedidos()`):
 ## 4. Como continuar
 
 ```powershell
-node tests/rodar-todos.js            # as 39 baterias, tem que dar TUDO 10/10
+node tests/rodar-todos.js            # as 47 baterias, tem que dar TUDO 10/10
 node tests/manter-tudo.js            # versão, datas, links, docs, robô
 node .github/scripts/sync-catalogo.js  # conferir o catálogo e a divergência de preço
-node tests/bump-versao.js 20261017v  # só na hora de publicar
+node tests/bump-versao.js 20261020c  # só na hora de publicar
 node apk/android/build.js            # projeto Android na MESMA versão do site
 gradle -p apk/android :cliente:assembleRelease :vendedor:assembleRelease
 ```
