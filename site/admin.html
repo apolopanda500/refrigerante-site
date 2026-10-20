@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest-vendedor.json?v=20261020dn">
+<link rel="manifest" href="manifest-vendedor.json?v=20261020en">
 <meta name="theme-color" content="#3d4465">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Painel Vendedor">
 <link rel="apple-touch-icon" href="img/icon-192-vendedor.png">
-<link rel="icon" type="image/png" href="img/icon-192.png?v=20261020dn">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=20261020en">
 <title>Painel do Vendedor - Refrigerantes Convenção</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -18,8 +18,8 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="style.css?v=20261020dn">
-<script src="theme.js?v=20261020dn"></script>
+<link rel="stylesheet" href="style.css?v=20261020en">
+<script src="theme.js?v=20261020en"></script>
 
 <style>
 .page { padding: 110px 0 60px; background: var(--light-bg); min-height: 100vh; }
@@ -690,9 +690,9 @@ body.admin .badge{font-weight:800;letter-spacing:.03em}
 
 </div></section>
 
-<script src="script.js?v=20261020dn"></script>
-<script src="loja.js?v=20261020dn"></script>
-<script src="telegram.js?v=20261020dn"></script>
+<script src="script.js?v=20261020en"></script>
+<script src="loja.js?v=20261020en"></script>
+<script src="telegram.js?v=20261020en"></script>
 <script>
     // Mobile menu toggle
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -1881,9 +1881,9 @@ function falarCliente(tel, id) {
 }
 iniciarPainelSeLogado();
 </script>
-<script src="app.js?v=20261020dn"></script>
-<script src="firebase-appcheck.js?v=20261020dn"></script>
-<script src="app-update.js?v=20261020dn"></script>
+<script src="app.js?v=20261020en"></script>
+<script src="firebase-appcheck.js?v=20261020en"></script>
+<script src="app-update.js?v=20261020en"></script>
 <script>
 /* ============================================================
    MINIMIZAR BLOCOS DO PAINEL
@@ -2131,6 +2131,7 @@ window.painelPrecos.repintar = function () {
 function precosMsgAdmin(texto, cor){
   var m = document.getElementById("precosURLMsg");
   if(m){ m.style.color = cor || "var(--texto-ok)"; m.innerHTML = texto; }
+  if (testeBancoAgora && !/Testando/i.test(String(texto))) testeBancoAgora = false;
 }
 function salvarPrecosURLAdmin(btn){
   var inp = document.getElementById("cfgPrecosURL");
@@ -2192,6 +2193,7 @@ function testarBancoGateway(url, btn){
 }
 function testarPrecosURLAdmin(btn){
   nuvemChecagemId++;
+  testeBancoAgora = true;
   var inp = document.getElementById("cfgPrecosURL");
   var url = (inp ? inp.value.trim() : "").replace(/\/+$/, "");
   if (!url) { precosMsgAdmin("Cole a URL do banco ou do gateway antes de testar.", "var(--texto-aviso)"); return; }
@@ -2243,7 +2245,9 @@ function verPassoFirebase(){
 
 /* estado real da nuvem (verifica se o banco responde) */
 var nuvemChecagemId = 0;
+var testeBancoAgora = false;
 function checarNuvemPrecos(){
+  if (testeBancoAgora) return;
   var minhaChecagem = ++nuvemChecagemId;
   var msg = document.getElementById("precosURLMsg");
   if (!msg || typeof listaEnderecos !== "function") return;

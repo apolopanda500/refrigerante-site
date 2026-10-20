@@ -1,7 +1,7 @@
 # Árvore do projeto — mapa completo
 
 > Mapa para o dia a dia: **onde mexer** em cada assunto.
-> Versão atual do site e dos APKs: **20261020d**.
+> Versão atual do site e dos APKs: **20261020e**.
 > Se algo não estiver aqui, provavelmente não existe mais.
 > Para conferir tudo, rode `node tests/manter-tudo.js` e `node tests/rodar-todos.js`.
 
@@ -66,12 +66,12 @@ refrigerante-site/
 |   +-- catalogo.json ............... catalogo do dia (gerado pelo robo)
 |   +-- precos-base.json ............ precos do dono (o robo NUNCA altera)
 |   +-- database.rules.json ......... regras do Firebase (banco fechado)
-|   +-- versao.txt .................. versao publicada: 20261020d
+|   +-- versao.txt .................. versao publicada: 20261020e
 |
 +-- APK ANDROID
 |   +-- apk/
-|   |   +-- convencao-cliente.apk ... APK do cliente (versao 20261020d)
-|   |   +-- convencao-vendedor.apk .. APK do painel (versao 20261020d)
+|   |   +-- convencao-cliente.apk ... APK do cliente (versao 20261020e)
+|   |   +-- convencao-vendedor.apk .. APK do painel (versao 20261020e)
 |   |   +-- convencao.jks ........... chave de assinatura (NAO versionar)
 |   |   +-- versao-projeto.txt ...... versao do projeto Android gerado
 |   |   +-- versao-apk.txt .......... versao do APK assinado
@@ -85,7 +85,7 @@ refrigerante-site/
 +-- SITE PUBLICADO (copia espelhada usada pelo Cloudflare)
 |   +-- site/
 |       +-- *.html, *.js, *.css ..... mesmos arquivos da raiz
-|       +-- versao.txt .............. 20261020d
+|       +-- versao.txt .............. 20261020e
 |       +-- apk/ .................... APKs e versao-apk.txt para download
 |
 +-- GATEWAY E DEPLOY
@@ -202,7 +202,7 @@ Tudo que mostra data passa por `dataHoraSegundos()` / `dataCurta()` em
 node tests/manter-tudo.js      # versoes, datas, links, docs, robo
 node tests/rodar-todos.js      # 47 baterias - tem que dar TUDO 10/10
 node tests/limpar-css-morto.js # CSS morto: relatorio (--aplicar limpa)
-node tests/bump-versao.js 20261020d
+node tests/bump-versao.js 20261020e
 node apk/android/build.js      # projeto Android na MESMA versao do site
 gradle -p apk/android :cliente:assembleRelease :vendedor:assembleRelease
 git add -A

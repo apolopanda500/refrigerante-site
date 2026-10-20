@@ -4,7 +4,7 @@
 > ordem, e **qual bateria prova** cada passo. Nenhum passo aqui e
 > palavra: tudo foi executado em sandbox (`node tests/rodar-todos.js`).
 
-Data da validacao: **20/10/2026** · Versao validada: **20261020d**
+Data da validacao: **20/10/2026** · Versao validada: **20261020e**
 · Baterias: **47**, todas 10/10.
 
 ---
@@ -140,7 +140,7 @@ o proxy - nunca para o site.
 - 47 baterias, todas 10/10, rodando o codigo de verdade.
 - Login do painel/APK com "Manter conectado" (1, 7 ou 30 dias), token salvo no
   aparelho e expirado apagado sozinho; teste 23.
-- Site no ar na versao vigente (20261020d), com APK do cliente e do
+- Site no ar na versao vigente (20261020e), com APK do cliente e do
   vendedor **rebuildados e assinados na mesma versao**.
 - Robo do catalogo, robo do Telegram 24/7 e bot do painel funcionando.
 - Documentacao: `PROJETO`, `ARVORE`, `MANUAL-DONO`, `LEIA-ME`,
