@@ -75,15 +75,16 @@ Data da validacao: **20/10/2026** · Versao validada: **20261020f**
 
 ---
 
-## 6. O QUE AINDA NAO ESTA PRONTO (achado na validacao de 17/10/2026)
+## 6. O QUE AINDA NAO ESTA PRONTO (reconferido em 20/10/2026)
 
-Tudo acima esta validado por bateria. Mas, para **trabalhar com
-pessoas de verdade**, existem dois buracos de seguranca que so o dono
-pode fechar:
+Tudo acima esta validado por bateria. Para **trabalhar com pessoas de
+verdade**, sobrou **um** ponto que so o dono pode fechar. O outro foi
+resolvido e esta registrado abaixo.
 
 ### 6.1 🔴 O BANCO DO FIREBASE ESTA ABERTO (leitura e escrita)
 
-Testado de verdade em 17/10/2026, sem senha:
+Reconferido de verdade em 20/10/2026 com `node tools/checar-banco-real.js`,
+sem senha:
 
 ```
 GET  /pedidos.json     -> HTTP 200  ( anybody le ): nome, CPF, telefone, endereco
@@ -109,18 +110,25 @@ bebidas com clientes reais isso e o item mais urgente.
 }
 ```
 
-Mas isso quebra o painel (que hoje lê e escreve direto). O caminho
-certo e colocar um **proxy autenticado** (Cloud Function ou Cloudflare
-Worker) entre o site e o banco: o site chama o proxy, o proxy confere
-a senha do painel e so ele fala com o Firebase.
+Isso **não quebra mais o site**: desde a versão 20261020c o pedido, o
+painel e os preços passam pelo gateway (`convencao-gateway`), que usa a
+conta de serviço por dentro e ignora as regras públicas. O caminho antigo
+direto no Firebase ficou só como reserva de leitura.
 
-### 6.2 🔴 O TOKEN DO TELEGRAM ESTA NO CODIGO PUBLICO
+Depois de publicar as regras, rode `node tools/checar-banco-real.js`:
+`pedidos`, `avaliacoes` e `precos` têm de responder **401/403**. Se algum
+responder 200, o banco continua aberto.
 
-O token aparece em `script.js`, `telegram.js` e nos dois workflows.
-Ele e o mesmo em todas as paginas da internet. Quem le o codigo
-consegue ler a conversa do bot e mandar mensagem no chat do dono.
-Se trocar o bot, o token novo tem de ir para **GitHub Secrets** e para
-o proxy - nunca para o site.
+### 6.2 🟢 RESOLVIDO — O TOKEN DO TELEGRAM SAIU DO CODIGO
+
+O token que estava em `script.js`, `telegram.js` e nos workflows foi
+confirmado como **revogado** (a API do Telegram responde 401) e o alerta
+do GitHub foi fechado como *revoked*. O robô lê `TG_TOKEN` de
+**GitHub Secrets**; nenhum token novo pode voltar para o site.
+
+A chave web do Firebase (`apiKey`) também foi tratada: ela é pública por
+projeto, está restrita por API e o alerta foi fechado como *false
+positive*. Nenhuma chave privada da conta de serviço está no repositório.
 
 ### 6.3 🟡 MENOR, MAS SABIDO
 
@@ -132,10 +140,25 @@ o proxy - nunca para o site.
   global (vem do painel). Para o do cliente ser global também, a contagem
   tem de passar pelo gateway (passo 2 de `docs/FECHAR-BANCO.md`).
 - O dono ainda precisa **testar no celular de verdade** um pedido
-  completo (as baterias rodam a logica em sandbox, nao ha navegador).
+  completo, com o APK instalado (as baterias 40/41 usam navegador no PC).
 - 8 precos de chopp divergem do site oficial: decisao de negocio.
 
-### 6.4 O QUE JA ESTA PRONTO (so para deixar claro)
+### 6.4 SIMULACAO REAL NO AR (20/10/2026)
+
+As duas telas que o público usa foram abertas em navegador de verdade
+contra o site publicado, **três rodadas seguidas** cada uma:
+
+| Tela | Bateria | Rodadas | Resultado |
+|---|---|---|---|
+| Cliente (home, catálogo, carrinho, botões) | `tests/40-botoes-vivos.js` | 3 | 10/10 nas 3 |
+| Vendedor (login, pedidos, status, testar banco) | `tests/41-painel-de-verdade.js` | 3 | 10/10 nas 3 |
+
+Também rodaram `tests/30-fluxo-cliente.js` e `tests/31-painel-vendedor.js`
+(10/10) e a suíte completa **duas vezes** (47/47). Entrega online 10/10 na
+versão **20261020f**, com os dois APKs baixando 200 e assinados na mesma
+versão.
+
+### 6.5 O QUE JA ESTA PRONTO (so para deixar claro)
 
 - 47 baterias, todas 10/10, rodando o codigo de verdade.
 - Login do painel/APK com "Manter conectado" (1, 7 ou 30 dias), token salvo no
@@ -143,5 +166,7 @@ o proxy - nunca para o site.
 - Site no ar na versao vigente (20261020f), com APK do cliente e do
   vendedor **rebuildados e assinados na mesma versao**.
 - Robo do catalogo, robo do Telegram 24/7 e bot do painel funcionando.
+- GitHub Actions sem avisos: as 7 rotinas passaram com as actions atuais.
+- Alertas de segredo do GitHub: **0 abertos** (1 revogado, 1 falso positivo).
 - Documentacao: `PROJETO`, `ARVORE`, `MANUAL-DONO`, `LEIA-ME`,
   `VALIDACAO` (este) e `REGISTRO` (o que foi feito).

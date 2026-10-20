@@ -4,6 +4,10 @@
 **Loja:** https://convencao-site.rickjax123.workers.dev/  
 **Painel:** https://convencao-site.rickjax123.workers.dev/admin.html
 
+> **Antes de vender:** feche as regras do Firebase (seção 6.1 de
+> `docs/VALIDACAO.md`) e rode `node tools/checar-banco-real.js`. O checklist
+> do primeiro dia está em `docs/MANUAL-DONO.md`.
+
 ## Site de Vendas
 
 Loja de refrigerantes online com produtos frescos e horário de entrega.

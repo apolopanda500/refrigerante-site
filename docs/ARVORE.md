@@ -126,6 +126,7 @@ refrigerante-site/
 |   +-- tests/38-banco-fechado.js .... gateway, regras, chave e token com prazo
 |   +-- tests/LEIA-ME.md ............. como rodar e o que cada bateria confere
 |   +-- tools/testar-gateway.js ...... testa o Worker de verdade (cancela o teste)
+|   +-- tools/checar-banco-real.js ... confere se o Firebase esta fechado de verdade
 |   +-- tools/teste-offline-sw.js .... abre offline e confere a tela
 |   +-- tools/fumaca-gateway.js ...... fumaca rapida do gateway
 |   +-- tools/botoes.js .............. confere botoes e toques

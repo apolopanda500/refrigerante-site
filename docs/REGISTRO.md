@@ -13,9 +13,23 @@
   de login tem **Manter conectado** (1, 7 ou 30 dias) e o token fica no
   `localStorage` com prazo; o gateway assina tokens de até 30 dias. **Sair**
   apaga o login do aparelho. Coberto pelo teste 23 (seção 6) e pelo teste 38.
+- **Resultado do botão Testar era apagado.** A checagem automática da nuvem
+  podia sobrescrever "Tudo certo" com "Banco ligado!" ao abrir o painel. Agora
+  ela só roda com a área vazia e nunca durante um teste manual. Coberto pelo
+  teste 41, que passou 5 vezes seguidas e 3 rodadas contra o site no ar.
+- **CI sem avisos:** todas as actions foram para as versões atuais
+  (checkout/setup-node v7, Pages v6/v5); as 7 rotinas passaram sem anotação.
+- **Alertas de segredo:** 0 abertos. Token do Telegram confirmado revogado
+  (401) e fechado como *revoked*; chave web do Firebase fechada como *false
+  positive* (é pública e está restrita por API).
+- **Ambiente limpo:** caches regeneráveis do Windows/Gradle/npm/pip e builds
+  temporários apagados (14 GB livres). Ficaram só o keystore `apk/convencao.jks`
+  e os segredos locais ignorados, que não vão para o GitHub.
 - **Versão publicada:** 20261020f no site, nos dois APKs e no gateway.
-- **Validação:** 47/47 baterias, simulação 10/10 na raiz e em `site/`, entrega
-  online 10/10.
+- **Validação:** 47/47 baterias (duas rodadas), cliente e vendedor 3/3 no site
+  real, entrega online 10/10 e APKs 200 na mesma versão.
+- **Pendência do dono:** fechar as regras do Firebase antes do primeiro pedido
+  (seção 6.1 de `VALIDACAO`; conferir com `node tools/checar-banco-real.js`).
 
 ---
 

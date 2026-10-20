@@ -14,6 +14,36 @@ Guia rápido, sem termos técnicos.
 
 ---
 
+## Antes do primeiro pedido (faça uma vez)
+
+1. **Feche o banco do Firebase.** Hoje ele ainda aceita leitura sem senha.
+   No Firebase Console, abra **Realtime Database > Regras**, apague o que
+   estiver lá e publique exatamente:
+
+   ```json
+   { "rules": { ".read": false, ".write": false } }
+   ```
+
+   O site e o gateway continuam funcionando: o gateway usa a conta de
+   serviço por dentro. Depois rode `node tools/checar-banco-real.js` e
+   confira que os três caminhos respondem 401/403 (fechado).
+
+2. **Teste o painel no celular.** Entre com a senha, escolha
+   **Manter conectado: 7 dias**, feche o app e abra de novo: tem de entrar
+   direto. Clique em **Sair** e confirme que ele pede a senha outra vez.
+
+3. **Faça um pedido de teste você mesmo**, com um endereço conhecido.
+   Confira: pedido aparece no painel, o Telegram avisa, o status muda e o
+   cliente vê o histórico em **Meus pedidos**.
+
+4. **Instale o APK do cliente** pelo botão **Configurações > Baixar
+   aplicativo** e faça um pedido por ele. A versão do APK tem de ser a
+   mesma do site (`apk/versao-apk.txt`).
+
+5. Só depois disso divulgue o link para os clientes.
+
+---
+
 ## Login salvo no painel
 
 Na tela de entrada do painel, escolha em **Manter conectado**: *Só neste acesso*,
