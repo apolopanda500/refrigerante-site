@@ -484,6 +484,14 @@ if (codigoAuto.length !== 1) {
 } else console.log("  ok  nenhum login automatico: so abre com usuario e senha");
 if (!/adminTentativas/.test(adm9) || !/adminTravadoAte/.test(adm9)) falha("falta o trava de tentativas de login");
 else console.log("  ok  trava de 5 tentativas antes de travar o painel");
+/* o APK do vendedor perde a sessionStorage ao fechar: o login salvo
+   tem de ficar no localStorage com prazo (1, 7 ou 30 dias). */
+if (!/id="fLembrar"/.test(adm9) || !/value="30"/.test(adm9)) falha("o login nao oferece 'manter conectado' com prazo");
+else console.log("  ok  login com prazo de 1, 7 ou 30 dias");
+if (!/localStorage\.setItem\("adminLogadoAte"/.test(adm9) || !/function sessaoAdminAtiva/.test(adm9)) falha("o login salvo nao sobrevive a fechar o APK");
+else console.log("  ok  login salvo no aparelho com prazo (sobrevive a fechar o APK)");
+if (!/gatewayEntrar\(s, function[\s\S]{0,900}\}, dias\)/.test(adm9)) falha("o painel nao pede ao gateway a sessao longa");
+else console.log("  ok  o painel pede ao gateway a sessao longa escolhida");
 ["VENDEDOR_USUARIO", "VENDEDOR_SENHA"].forEach(function (c) {
     const sc11 = fs.readFileSync(path.join(dir, "script.js"), "utf8");
     if (sc11.indexOf("const " + c) < 0) falha("script.js sem " + c + " (credencial do painel)");

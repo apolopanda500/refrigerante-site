@@ -498,12 +498,17 @@ async function rotear(req, env) {
         return json(await banco("/precos.json", "GET"));
     }
 
-    /* 3) login do dono: senha -> token de 12 horas */
+    /* 3) login do dono: senha -> token. Sem "dias" a sessao dura 12h;
+          com "dias" (1, 7 ou 30) o token dura o prazo escolhido no
+          "manter conectado" do APK do vendedor. */
     if (rota === "/api/entrar" && metodo === "POST") {
         const corpo = await lerCorpo(req);
         if (!CFG.senha || String(corpo.senha || "") !== CFG.senha) return json({ erro: "senha invalida" }, 401);
-        const cab = b64.enc(new TextEncoder().encode(JSON.stringify({ dono: true, exp: Date.now() + TTL })));
-        return json({ token: cab + "." + (await assinar(cab)) });
+        const dias = Math.max(0, Math.min(30, parseInt(corpo.dias, 10) || 0));
+        const ttl = dias ? dias * 24 * 60 * 60 * 1000 : TTL;
+        const exp = Date.now() + ttl;
+        const cab = b64.enc(new TextEncoder().encode(JSON.stringify({ dono: true, exp })));
+        return json({ token: cab + "." + (await assinar(cab)), expiraEm: exp });
     }
 
     /* 4) o cliente cria o pedido dele (nao precisa de senha: e o pedido

@@ -396,14 +396,15 @@ function nuvemEnderecos() {
      - o cliente cria o pedido em POST /api/pedido e GANHA UMA
        CHAVE; so com essa chave ele volta a ler o pedido dele;
      - o dono entra com a senha em POST /api/entrar e recebe um
-       token de 12h; so com ele ele lista e muda status;
+       token; so com ele ele lista e muda status;
      - ninguem mais le o pedido dos outros.
 
    A chave e o token NUNCA vao para a nuvem: ficam so neste
    aparelho (localStorage e sessionStorage).
    ============================================ */
 var GW_CHAVES = "convencaoChaves";      /* pedido -> chave do gateway */
-var GW_TOKEN = "convencaoToken";        /* token do dono (12h) */
+var GW_TOKEN = "convencaoToken";        /* token do dono */
+var GW_TOKEN_ATE = "convencaoTokenAte"; /* quando o token salvo expira */
 
 /* ---------- O GATEWAY DA LOJA (padrao do site) ----------
    Endereco do Worker que guarda os pedidos. Ele entra aqui como
@@ -449,10 +450,8 @@ function gatewayLigado() { return gatewayURL() !== ""; }
 /* headers do dono (painel). Sem token, o gateway recusa. */
 function gatewayCabecalhoDono(extra) {
     var h = extra || {};
-    try {
-        var t = sessionStorage.getItem(GW_TOKEN);
-        if (t) h.Authorization = "Bearer " + t;
-    } catch (e) { /* proposital: aba anonima nao guarda sessao */ }
+    var t = gatewayToken();
+    if (t) h.Authorization = "Bearer " + t;
     return h;
 }
 
@@ -470,31 +469,63 @@ function gwChaveDoPedido(id) {
     catch (e) { return ""; }
 }
 
-/* ---------- o dono entra e ganha o token de 12 horas ----------
+/* ---------- o dono entra e ganha o token do gateway ----------
+   `dias` > 0 pede uma sessao longa (1, 7 ou 30 dias) e guarda o
+   token no aparelho: o APK do vendedor nao perde o login ao fechar.
    Senha errada devolve 401 e nao guarda nada: o painel nao
    entra no modo gateway e o dono ve o erro na tela. */
-function gatewayEntrar(senha, cb) {
+function gatewayEntrar(senha, cb, dias) {
     var u = gatewayURL();
     if (!u) { if (cb) cb(false, "sem gateway"); return; }
+    var lembrar = Math.max(0, Math.min(30, parseInt(dias, 10) || 0));
     try {
         fetch(u + "/api/entrar", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ senha: String(senha || "") })
+            body: JSON.stringify({ senha: String(senha || ""), dias: lembrar })
         })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
         .then(function (res) {
             if (!res.ok || !res.d || !res.d.token) { if (cb) cb(false, "senha invalida"); return; }
             try { sessionStorage.setItem(GW_TOKEN, res.d.token); } catch (e) { /* aba anonima */ }
+            try {
+                if (lembrar > 0) {
+                    var ate = parseInt(res.d.expiraEm, 10) || (Date.now() + lembrar * 24 * 60 * 60 * 1000);
+                    localStorage.setItem(GW_TOKEN, res.d.token);
+                    localStorage.setItem(GW_TOKEN_ATE, String(ate));
+                } else {
+                    localStorage.removeItem(GW_TOKEN);
+                    localStorage.removeItem(GW_TOKEN_ATE);
+                }
+            } catch (e) { /* aba anonima */ }
             if (cb) cb(true, "ok");
         })
         .catch(function () { if (cb) cb(false, "gateway nao respondeu"); });
     } catch (e) { if (cb) cb(false, "erro"); }
 }
 function gatewayToken() {
-    try { return sessionStorage.getItem(GW_TOKEN) || ""; } catch (e) { return ""; }
+    try {
+        var t = sessionStorage.getItem(GW_TOKEN);
+        if (t) return t;
+    } catch (e) { /* aba anonima */ }
+    try {
+        var salvo = localStorage.getItem(GW_TOKEN) || "";
+        var ate = parseInt(localStorage.getItem(GW_TOKEN_ATE) || "0", 10);
+        if (salvo && ate > Date.now()) return salvo;
+        if (salvo || ate) {
+            localStorage.removeItem(GW_TOKEN);
+            localStorage.removeItem(GW_TOKEN_ATE);
+        }
+    } catch (e) { /* aba anonima */ }
+    return "";
 }
-function gatewaySair() { try { sessionStorage.removeItem(GW_TOKEN); } catch (e) {} }
+function gatewaySair() {
+    try { sessionStorage.removeItem(GW_TOKEN); } catch (e) {}
+    try {
+        localStorage.removeItem(GW_TOKEN);
+        localStorage.removeItem(GW_TOKEN_ATE);
+    } catch (e) {}
+}
 
 /* ============================================
    PEDIDO NOVO PELO GATEWAY

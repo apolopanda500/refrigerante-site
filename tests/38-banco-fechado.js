@@ -162,6 +162,19 @@ console.log("\n=== 2. O GATEWAY CARREGA E TEM AS ROTAS CERTAS ===");
     if (comToken.status !== 200) falha("o dono nao conseguiu listar os pedidos");
     else ok("dono logado lista os pedidos: " + Object.keys(comToken.dados || {}).length + " no banco");
 
+    /* o APK do vendedor pede "manter conectado" (1, 7 ou 30 dias) */
+    const login7 = await chamar("/api/entrar", { method: "POST", body: JSON.stringify({ senha: "senha-do-dono-123", dias: 7 }) });
+    const expDoToken = (t) => JSON.parse(Buffer.from(String(t).split(".")[0].replace(/-/g, "+").replace(/_/g, "/"), "base64").toString()).exp;
+    const diasDoToken = login7.dados.token ? (expDoToken(login7.dados.token) - Date.now()) / 86400000 : 0;
+    if (diasDoToken > 6.9 && diasDoToken < 7.1) ok("manter conectado 7 dias: o token vale 7 dias");
+    else falha("o token de 7 dias nao durou 7 dias (" + diasDoToken.toFixed(2) + ")");
+    if (login7.dados.expiraEm) ok("o login devolve expiraEm para o aparelho guardar o prazo");
+    else falha("o login nao devolveu expiraEm");
+    const login999 = await chamar("/api/entrar", { method: "POST", body: JSON.stringify({ senha: "senha-do-dono-123", dias: 999 }) });
+    const dias999 = login999.dados.token ? (expDoToken(login999.dados.token) - Date.now()) / 86400000 : 0;
+    if (dias999 <= 30.1) ok("pedido de 999 dias fica limitado a 30 dias");
+    else falha("o gateway aceitou mais de 30 dias de sessao (" + dias999.toFixed(2) + ")");
+
     console.log("\n=== 5. TODO ACESSO AO BANCO PELA CONTA DE SERVICO ===");
     const semAuth = acessos.filter(a => !a.autenticado);
     if (semAuth.length) falha("o gateway tentou falar com o banco sem token: " + semAuth.length + "x");
