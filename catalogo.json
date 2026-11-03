@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-11-02T23:44:11.207Z",
+  "geradoEm": "2026-11-03T19:53:00.106Z",
   "fonte": "https://refrigerantesconvencaorio.entregaaki.app.br/Principal/Publico/Produtos",
   "gruposOficiais": {
     "Grupo500000001": "DESTAQUES",
@@ -282,6 +282,14 @@
     },
     {
       "ct": "ch",
+      "nm": "Chopp Lev 500ml Pet",
+      "ds": "Pacote com 6 un.",
+      "pr": "R$ 29,50",
+      "im": "img/cat/100000637.jpg",
+      "key": "100000637"
+    },
+    {
+      "ct": "ch",
       "nm": "Chopp Ravache Black 500ml Pet",
       "ds": "Pacote com 6 un.",
       "pr": "R$ 34,50",
@@ -295,6 +303,14 @@
       "pr": "R$ 29,50",
       "im": "img/cat/100000614.jpg",
       "key": "100000614"
+    },
+    {
+      "ct": "ch",
+      "nm": "Chopp Ravache Ipa 500ml Pet",
+      "ds": "Pacote com 6 un.",
+      "pr": "R$ 29,50",
+      "im": "img/cat/500000022.jpg",
+      "key": "500000022"
     },
     {
       "ct": "ch",
