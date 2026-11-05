@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-11-04T22:16:37.876Z",
+  "geradoEm": "2026-11-05T20:23:17.337Z",
   "fonte": "https://refrigerantesconvencaorio.entregaaki.app.br/Principal/Publico/Produtos",
   "gruposOficiais": {
     "Grupo500000001": "DESTAQUES",
@@ -49,28 +49,12 @@
   ],
   "produtos": [
     {
-      "ct": "ch",
-      "nm": "Chopp Galega Radler 300ml Com 6 Und.",
-      "ds": "Ver detalhes",
-      "pr": "R$ 18,49",
-      "im": "img/cat/500000190.jpg",
-      "key": "500000190"
-    },
-    {
       "ct": "re",
       "nm": "Chinotto 269ml",
       "ds": "Pacote com 6 un.",
       "pr": "R$ 25,00",
       "im": "img/cat/100000425.jpg",
       "key": "100000425"
-    },
-    {
-      "ct": "ch",
-      "nm": "Chopp Galega Radler 300ml Com 6 Und.",
-      "ds": "Ver detalhes",
-      "pr": "R$ 18,49",
-      "im": "img/cat/500000190.jpg",
-      "key": "500000190"
     },
     {
       "ct": "mx",
@@ -170,14 +154,6 @@
     },
     {
       "ct": "35",
-      "nm": "Cola Convenção 350ml",
-      "ds": "Pacote com 12 un.",
-      "pr": "R$ 19,00",
-      "im": "img/cat/500000053.jpg",
-      "key": "500000053"
-    },
-    {
-      "ct": "35",
       "nm": "Guaraná 350ml",
       "ds": "Pacote com 12 un.",
       "pr": "R$ 19,00",
@@ -210,14 +186,6 @@
     },
     {
       "ct": "ag",
-      "nm": "Água 1500ml",
-      "ds": "Pacote com 6 un.",
-      "pr": "R$ 15,80",
-      "im": "img/cat/100000403.jpg",
-      "key": "100000403"
-    },
-    {
-      "ct": "ag",
       "nm": "Água 510ml",
       "ds": "Pacote com 12 un.",
       "pr": "R$ 14,70",
@@ -231,14 +199,6 @@
       "pr": "R$ 19,00",
       "im": "img/cat/100000401.jpg",
       "key": "100000401"
-    },
-    {
-      "ct": "ag",
-      "nm": "Agua C/Gas 1,5l",
-      "ds": "Ver detalhes",
-      "pr": "R$ 22,50",
-      "im": "img/cat/500000089.jpg",
-      "key": "500000089"
     },
     {
       "ct": "60",
