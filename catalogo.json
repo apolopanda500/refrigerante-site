@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-11-10T21:59:54.780Z",
+  "geradoEm": "2026-11-11T19:55:14.631Z",
   "fonte": "https://refrigerantesconvencaorio.entregaaki.app.br/Principal/Publico/Produtos",
   "gruposOficiais": {
     "Grupo500000001": "DESTAQUES",
@@ -49,12 +49,28 @@
   ],
   "produtos": [
     {
+      "ct": "ch",
+      "nm": "Chopp Galega Radler 300ml Com 6 Und.",
+      "ds": "Ver detalhes",
+      "pr": "R$ 18,49",
+      "im": "img/cat/500000190.jpg",
+      "key": "500000190"
+    },
+    {
       "ct": "re",
       "nm": "Chinotto 269ml",
       "ds": "Pacote com 6 un.",
       "pr": "R$ 25,00",
       "im": "img/cat/100000425.jpg",
       "key": "100000425"
+    },
+    {
+      "ct": "ch",
+      "nm": "Chopp Galega Radler 300ml Com 6 Und.",
+      "ds": "Ver detalhes",
+      "pr": "R$ 18,49",
+      "im": "img/cat/500000190.jpg",
+      "key": "500000190"
     },
     {
       "ct": "mx",
@@ -143,6 +159,14 @@
       "pr": "R$ 27,50",
       "im": "img/cat/100000484.jpg",
       "key": "100000484"
+    },
+    {
+      "ct": "2l",
+      "nm": "Vitts limão 2 litros",
+      "ds": "Pacote com 6 un.",
+      "pr": "R$ 28,00",
+      "im": "img/cat/100000487.jpg",
+      "key": "100000487"
     },
     {
       "ct": "35",
