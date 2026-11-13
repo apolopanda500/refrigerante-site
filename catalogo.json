@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-11-12T22:28:54.884Z",
+  "geradoEm": "2026-11-13T20:08:42.154Z",
   "fonte": "https://refrigerantesconvencaorio.entregaaki.app.br/Principal/Publico/Produtos",
   "gruposOficiais": {
     "Grupo500000001": "DESTAQUES",
@@ -231,6 +231,14 @@
       "pr": "R$ 19,00",
       "im": "img/cat/100000401.jpg",
       "key": "100000401"
+    },
+    {
+      "ct": "ag",
+      "nm": "Agua C/Gas 1,5l",
+      "ds": "Ver detalhes",
+      "pr": "R$ 22,50",
+      "im": "img/cat/500000089.jpg",
+      "key": "500000089"
     },
     {
       "ct": "60",
